@@ -50,7 +50,7 @@ export default function Explore() {
         </div>
 
         {/* Search Bar */}
-        <div className="flex gap-3 mb-4">
+        <div className="flex gap-3 mb-4 flex-wrap">
           <div className="flex-1 relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
             <Input
@@ -63,6 +63,14 @@ export default function Explore() {
           <Button variant="outline" className="border-white/10" onClick={() => setShowFilters(!showFilters)}>
             <Filter className="w-4 h-4 mr-2" /> Filters
           </Button>
+          <div className="flex rounded-lg overflow-hidden border border-white/10">
+            <button onClick={() => setViewMode('grid')} className={`px-3 py-2 text-sm flex items-center gap-1.5 ${viewMode === 'grid' ? 'bg-primary text-primary-foreground' : 'bg-muted/30 text-muted-foreground hover:bg-muted/50'}`}>
+              <LayoutGrid className="w-4 h-4" /> Grid
+            </button>
+            <button onClick={() => setViewMode('map')} className={`px-3 py-2 text-sm flex items-center gap-1.5 ${viewMode === 'map' ? 'bg-primary text-primary-foreground' : 'bg-muted/30 text-muted-foreground hover:bg-muted/50'}`}>
+              <Map className="w-4 h-4" /> Map
+            </button>
+          </div>
         </div>
 
         {/* Filters */}
