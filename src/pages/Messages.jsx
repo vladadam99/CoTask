@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { useCurrentUser } from '@/lib/useCurrentUser';
@@ -28,8 +28,27 @@ export default function Messages() {
     queryKey: ['messages', activeConvo?.id],
     queryFn: () => base44.entities.Message.filter({ conversation_id: activeConvo.id }, 'created_date', 100),
     enabled: !!activeConvo,
-    refetchInterval: 5000,
   });
+
+  // Real-time message subscription
+  useEffect(() => {
+    if (!activeConvo) return;
+    const unsub = base44.entities.Message.subscribe((event) => {
+      if (event.data?.conversation_id === activeConvo.id) {
+        queryClient.invalidateQueries({ queryKey: ['messages', activeConvo.id] });
+      }
+    });
+    return unsub;
+  }, [activeConvo?.id, queryClient]);
+
+  // Real-time conversation subscription
+  useEffect(() => {
+    const unsub = base44.entities.Conversation.subscribe(() => {
+      queryClient.invalidateQueries({ queryKey: ['conversations'] });
+      queryClient.invalidateQueries({ queryKey: ['latest-conversations'] });
+    });
+    return unsub;
+  }, [queryClient]);
 
   useEffect(() => {
     if (scrollRef.current) scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
