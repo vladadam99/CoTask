@@ -55,7 +55,28 @@ const AuthenticatedApp = () => {
   // Render the main app
   return (
     <Routes>
-      {/* Add your page Route elements here */}
+      <Route path="/" element={<Navigate to="/Landing" replace />} />
+      <Route path="/Landing" element={<Landing />} />
+      <Route path="/RoleSelect" element={<RoleSelect />} />
+      <Route path="/Onboarding" element={<Onboarding />} />
+      <Route path="/UserDashboard" element={<UserDashboard />} />
+      <Route path="/AvatarDashboard" element={<AvatarDashboard />} />
+      <Route path="/EnterpriseDashboard" element={<EnterpriseDashboard />} />
+      <Route path="/Explore" element={<Explore />} />
+      <Route path="/AvatarView" element={<AvatarView />} />
+      <Route path="/CreateBooking" element={<CreateBooking />} />
+      <Route path="/Bookings" element={<Bookings />} />
+      <Route path="/BookingDetail" element={<BookingDetail />} />
+      <Route path="/Messages" element={<Messages />} />
+      <Route path="/LiveSessions" element={<LiveSessions />} />
+      <Route path="/Saved" element={<Saved />} />
+      <Route path="/Profile" element={<Profile />} />
+      <Route path="/AdminDashboard" element={<AdminDashboard />} />
+      <Route path="/HowItWorks" element={<HowItWorks />} />
+      <Route path="/Pricing" element={<Pricing />} />
+      <Route path="/FAQ" element={<FAQ />} />
+      <Route path="/Contact" element={<Contact />} />
+      <Route path="/Safety" element={<Safety />} />
       <Route path="*" element={<PageNotFound />} />
     </Routes>
   );
