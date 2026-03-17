@@ -8,6 +8,8 @@ import GlassCard from '@/components/ui/GlassCard';
 import StatusBadge from '@/components/ui/StatusBadge';
 import { Button } from '@/components/ui/button';
 import { Home, Search, Calendar, MessageSquare, Radio, Heart, User, Settings, ArrowRight, MapPin, Star, Clock } from 'lucide-react';
+import LatestMessages from '@/components/dashboard/LatestMessages';
+import Suggestions from '@/components/dashboard/Suggestions';
 
 const navItems = [
   { icon: Home, label: 'Home', path: '/UserDashboard' },

@@ -7,7 +7,8 @@ import PublicNav from '@/components/landing/PublicNav';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
-import { Search, MapPin, Star, Shield, Filter, Radio } from 'lucide-react';
+import { Search, MapPin, Star, Shield, Filter, Radio, Map } from 'lucide-react';
+import AvatarMap from '@/components/explore/AvatarMap';
 
 const CATEGORIES = [
   'All', 'City Guide', 'Property Walkthrough', 'Shopping Help', 'Event Attendance',

@@ -5,7 +5,8 @@ import { base44 } from '@/api/base44Client';
 import { useCurrentUser } from '@/lib/useCurrentUser';
 import GlassCard from '@/components/ui/GlassCard';
 import StatusBadge from '@/components/ui/StatusBadge';
-import { Calendar, ArrowLeft, Search } from 'lucide-react';
+import { Calendar, ArrowLeft, Search, LayoutGrid, CalendarDays } from 'lucide-react';
+import BookingCalendar from '@/components/bookings/BookingCalendar';
 import { Input } from '@/components/ui/input';
 
 const TABS = ['All', 'Pending', 'Active', 'Completed', 'Cancelled'];
