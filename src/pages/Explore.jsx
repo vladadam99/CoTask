@@ -95,8 +95,15 @@ export default function Explore() {
           ))}
         </div>
 
+        {/* Map View */}
+        {viewMode === 'map' && !isLoading && (
+          <div className="mb-6">
+            <AvatarMap avatars={filtered} />
+          </div>
+        )}
+
         {/* Results */}
-        {isLoading ? (
+        {viewMode === 'grid' && isLoading ? (
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {[1,2,3,4,5,6].map(i => (
               <div key={i} className="glass rounded-xl p-5 animate-pulse">
