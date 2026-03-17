@@ -5,7 +5,29 @@ import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import PageNotFound from './lib/PageNotFound';
 import { AuthProvider, useAuth } from '@/lib/AuthContext';
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';
-// Add page imports here
+import { Navigate } from 'react-router-dom';
+// Pages
+import Landing from './pages/Landing';
+import RoleSelect from './pages/RoleSelect';
+import Onboarding from './pages/Onboarding';
+import UserDashboard from './pages/UserDashboard';
+import AvatarDashboard from './pages/AvatarDashboard';
+import EnterpriseDashboard from './pages/EnterpriseDashboard';
+import Explore from './pages/Explore';
+import AvatarView from './pages/AvatarView';
+import CreateBooking from './pages/CreateBooking';
+import Bookings from './pages/Bookings';
+import BookingDetail from './pages/BookingDetail';
+import Messages from './pages/Messages';
+import LiveSessions from './pages/LiveSessions';
+import Saved from './pages/Saved';
+import Profile from './pages/Profile';
+import AdminDashboard from './pages/AdminDashboard';
+import HowItWorks from './pages/HowItWorks';
+import Pricing from './pages/Pricing';
+import FAQ from './pages/FAQ';
+import Contact from './pages/Contact';
+import Safety from './pages/Safety';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
