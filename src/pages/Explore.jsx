@@ -156,7 +156,7 @@ export default function Explore() {
               </Link>
             ))}
           </div>
-        ) : (
+        ) : viewMode === 'grid' ? (
           <GlassCard className="p-12 text-center">
             <Search className="w-10 h-10 text-muted-foreground mx-auto mb-4" />
             <h3 className="font-semibold mb-2">No avatars found</h3>
@@ -165,7 +165,7 @@ export default function Explore() {
               Clear filters
             </Button>
           </GlassCard>
-        )}
+        ) : null}
 
         <div className="text-center mt-8 text-sm text-muted-foreground">
           {filtered.length} avatar{filtered.length !== 1 ? 's' : ''} found
