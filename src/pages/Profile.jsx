@@ -1,0 +1,66 @@
+import React from 'react';
+import { Link } from 'react-router-dom';
+import { useCurrentUser } from '@/lib/useCurrentUser';
+import GlassCard from '@/components/ui/GlassCard';
+import { Badge } from '@/components/ui/badge';
+import { User, Mail, MapPin, Globe, Settings, LogOut, ArrowLeft } from 'lucide-react';
+import { base44 } from '@/api/base44Client';
+
+export default function Profile() {
+  const { user } = useCurrentUser();
+  const dashPath = user?.app_role === 'avatar' ? '/AvatarDashboard' : user?.app_role === 'enterprise' ? '/EnterpriseDashboard' : '/UserDashboard';
+
+  return (
+    <div className="min-h-screen pb-12 px-4">
+      <div className="max-w-2xl mx-auto pt-8">
+        <Link to={dashPath} className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground mb-6">
+          <ArrowLeft className="w-4 h-4" /> Dashboard
+        </Link>
+
+        <div className="text-center mb-8">
+          <div className="w-20 h-20 rounded-2xl bg-primary/10 flex items-center justify-center text-3xl font-bold text-primary mx-auto mb-4">
+            {user?.full_name?.[0] || 'U'}
+          </div>
+          <h1 className="text-2xl font-bold">{user?.full_name || 'User'}</h1>
+          <p className="text-muted-foreground text-sm">{user?.email}</p>
+          <Badge className="mt-2 bg-primary/10 text-primary border-primary/20 capitalize">{user?.app_role || 'user'}</Badge>
+        </div>
+
+        <div className="space-y-3">
+          <GlassCard className="p-5">
+            <h3 className="font-semibold mb-4">Profile Details</h3>
+            <div className="space-y-3 text-sm">
+              <div className="flex items-center gap-3">
+                <User className="w-4 h-4 text-muted-foreground" />
+                <span className="text-muted-foreground">Name</span>
+                <span className="ml-auto font-medium">{user?.full_name || 'Not set'}</span>
+              </div>
+              <div className="flex items-center gap-3">
+                <Mail className="w-4 h-4 text-muted-foreground" />
+                <span className="text-muted-foreground">Email</span>
+                <span className="ml-auto font-medium">{user?.email}</span>
+              </div>
+              <div className="flex items-center gap-3">
+                <MapPin className="w-4 h-4 text-muted-foreground" />
+                <span className="text-muted-foreground">City</span>
+                <span className="ml-auto font-medium">{user?.city || 'Not set'}</span>
+              </div>
+              <div className="flex items-center gap-3">
+                <Globe className="w-4 h-4 text-muted-foreground" />
+                <span className="text-muted-foreground">Language</span>
+                <span className="ml-auto font-medium">{user?.preferred_language || 'English'}</span>
+              </div>
+            </div>
+          </GlassCard>
+
+          <button onClick={() => base44.auth.logout('/Landing')} className="w-full text-left">
+            <GlassCard className="p-4 flex items-center gap-3" hover>
+              <LogOut className="w-5 h-5 text-red-400" />
+              <span className="font-medium text-sm text-red-400">Sign out</span>
+            </GlassCard>
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
