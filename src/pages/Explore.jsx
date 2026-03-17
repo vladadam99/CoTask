@@ -118,7 +118,7 @@ export default function Explore() {
               </div>
             ))}
           </div>
-        ) : filtered.length > 0 ? (
+        ) : viewMode === 'grid' && filtered.length > 0 ? (
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {filtered.map(avatar => (
               <Link key={avatar.id} to={`/AvatarView?id=${avatar.id}`}>
