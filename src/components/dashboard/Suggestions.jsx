@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
@@ -18,7 +18,7 @@ export default function Suggestions({ user }) {
   });
 
   // Derive top categories from past bookings
-  const topCategories = React.useMemo(() => {
+  const topCategories = useMemo(() => {
     const counts = {};
     bookings.forEach(b => { if (b.category) counts[b.category] = (counts[b.category] || 0) + 1; });
     return Object.entries(counts).sort((a, b) => b[1] - a[1]).map(([cat]) => cat);
@@ -26,7 +26,7 @@ export default function Suggestions({ user }) {
 
   // Suggest avatars matching top categories, excluding already-booked ones
   const bookedAvatarEmails = new Set(bookings.map(b => b.avatar_email));
-  const suggested = React.useMemo(() => {
+  const suggested = useMemo(() => {
     if (topCategories.length === 0) {
       return avatars.filter(a => a.is_featured).slice(0, 3);
     }
