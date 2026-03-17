@@ -15,6 +15,7 @@ export default function Bookings() {
   const { user } = useCurrentUser();
   const [tab, setTab] = useState('All');
   const [search, setSearch] = useState('');
+  const [viewMode, setViewMode] = useState('list'); // 'list' | 'calendar'
 
   const isAvatar = user?.app_role === 'avatar';
 
@@ -46,7 +47,17 @@ export default function Bookings() {
           <ArrowLeft className="w-4 h-4" /> Back to Dashboard
         </Link>
 
-        <h1 className="text-2xl font-bold mb-6">Bookings</h1>
+        <div className="flex items-center justify-between mb-6">
+          <h1 className="text-2xl font-bold">Bookings</h1>
+          <div className="flex rounded-lg overflow-hidden border border-white/10">
+            <button onClick={() => setViewMode('list')} className={`px-3 py-1.5 text-sm flex items-center gap-1.5 ${viewMode === 'list' ? 'bg-primary text-primary-foreground' : 'bg-muted/30 text-muted-foreground hover:bg-muted/50'}`}>
+              <LayoutGrid className="w-4 h-4" /> List
+            </button>
+            <button onClick={() => setViewMode('calendar')} className={`px-3 py-1.5 text-sm flex items-center gap-1.5 ${viewMode === 'calendar' ? 'bg-primary text-primary-foreground' : 'bg-muted/30 text-muted-foreground hover:bg-muted/50'}`}>
+              <CalendarDays className="w-4 h-4" /> Calendar
+            </button>
+          </div>
+        </div>
 
         <div className="relative mb-4">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
