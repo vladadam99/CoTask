@@ -5,7 +5,7 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/
 
 const faqs = [
   { q: 'What is CoTask?', a: 'CoTask is a live human presence marketplace. It connects people and businesses with local avatars who can physically go to a location and act as your remote eyes, hands, and guide in real time.' },
-  { q: 'How is this different from a video call?', a: 'Unlike video calls, your CoTask avatar is physically at the location. They walk, interact, pick things up, ask questions, and stream everything live. It's real-world presence, not screen-to-screen communication.' },
+  { q: 'How is this different from a video call?', a: "Unlike video calls, your CoTask avatar is physically at the location. They walk, interact, pick things up, ask questions, and stream everything live. It's real-world presence, not screen-to-screen communication." },
   { q: 'What can I use CoTask for?', a: 'Live city tours, property walkthroughs, shopping assistance, event attendance, queue standing, campus tours, business site inspections, product demos, family support, and much more.' },
   { q: 'How do I become an avatar?', a: 'Sign up, choose "Avatar" as your role, complete your profile, pass verification, and start accepting bookings. All you need is a smartphone and reliable internet connection.' },
   { q: 'How much do avatars earn?', a: 'Avatars set their own rates and keep 85% of every booking. Rates vary by service type, location, and experience. Most avatars earn between $25–$100 per hour.' },
