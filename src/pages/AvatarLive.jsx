@@ -71,9 +71,16 @@ export default function AvatarLive() {
 
   return (
     <AppShell navItems={navItems} user={user}>
-      <div className="mb-8">
-        <h1 className="text-2xl lg:text-3xl font-bold mb-1">Live Sessions</h1>
-        <p className="text-muted-foreground text-sm">Manage and start your live avatar sessions</p>
+      <div className="flex items-start justify-between mb-8">
+        <div>
+          <h1 className="text-2xl lg:text-3xl font-bold mb-1">Live Sessions</h1>
+          <p className="text-muted-foreground text-sm">Manage and start your live avatar sessions</p>
+        </div>
+        <Link to="/LiveStreamStudio">
+          <Button className="gap-2 glow-primary-sm">
+            <Clapperboard className="w-4 h-4" /> Launch Studio
+          </Button>
+        </Link>
       </div>
 
       {/* Active Session */}
