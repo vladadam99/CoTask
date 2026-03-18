@@ -331,7 +331,7 @@ export default function GlobeMap({ avatars = [], focusCity = '' }) {
     let isDragging = false;
     let prevMouse = { x: 0, y: 0 };
     let rotationVelocity = { x: 0, y: 0 };
-    let autoRotate = true;
+    autoRotateRef.current = true;
     const raycaster = new THREE.Raycaster();
     const mouse = new THREE.Vector2();
 
