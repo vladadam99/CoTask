@@ -32,6 +32,7 @@ export default function LiveStreamStudio() {
   const [isRecording, setIsRecording] = useState(false);
   const [recordedChunks, setRecordedChunks] = useState([]);
   const [attachedBooking, setAttachedBooking] = useState(null);
+  const [annotationsOn, setAnnotationsOn] = useState(false);
 
   const videoRef = useRef(null);
   const streamRef = useRef(null);
@@ -155,6 +156,24 @@ export default function LiveStreamStudio() {
   const stopRecording = () => {
     mediaRecorderRef.current?.stop();
     setIsRecording(false);
+  };
+
+  const saveRecordingToDB = async (blob, durationSeconds) => {
+    try {
+      const { file_url } = await base44.integrations.Core.UploadFile({ file: blob });
+      await base44.entities.Recording.create({
+        avatar_email: user.email,
+        client_name: attachedBooking?.client_name || '',
+        session_id: currentSessionId || '',
+        booking_id: attachedBooking?.id || '',
+        title: `${attachedBooking?.category || 'Session'} — ${new Date().toLocaleDateString()}`,
+        category: attachedBooking?.category || '',
+        duration_seconds: durationSeconds,
+        file_url,
+        stream_mode: viewMode === '360' ? '360' : 'standard',
+        file_size_mb: Math.round(blob.size / 1024 / 1024 * 10) / 10,
+      });
+    } catch (_) { /* silent — download fallback still works */ }
   };
 
   // Go live
