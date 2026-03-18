@@ -408,7 +408,16 @@ export default function LiveStreamStudio() {
               </h2>
               <CameraSourcePicker
                 selected={selectedSource}
-                onSelect={startCamera}
+                onSelect={(source) => {
+                  // For Insta360: just select it and show connection options — don't auto-start camera
+                  if (source.id === 'insta360') {
+                    setSelectedSource(source);
+                    setViewMode('360');
+                    setError('');
+                  } else {
+                    startCamera(source);
+                  }
+                }}
                 availableSources={availableSources.length ? availableSources : ['phone-front', 'phone-rear', 'insta360', 'meta-glasses']}
               />
             </GlassCard>
