@@ -8,6 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
 import { Search, MapPin, Star, Shield, Filter, Radio, Map, LayoutGrid } from 'lucide-react';
+import AvatarMap from '@/components/explore/AvatarMap';
 import GlobeMap from '@/components/explore/GlobeMap';
 
 const CATEGORIES = [
@@ -95,10 +96,10 @@ export default function Explore() {
           ))}
         </div>
 
-        {/* Globe View */}
+        {/* Map View */}
         {viewMode === 'map' && !isLoading && (
           <div className="mb-6">
-            <GlobeMap avatars={filtered} />
+            <AvatarMap avatars={filtered} />
           </div>
         )}
 
