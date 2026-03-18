@@ -118,6 +118,11 @@ export default function LiveStreamStudio() {
   // Selected Insta360 device override
   const [insta360DeviceId, setInsta360DeviceId] = useState(null);
 
+  // Wireless / Wi-Fi stream state
+  const [wifiStreamUrl, setWifiStreamUrl] = useState('');
+  const [wifiStreamActive, setWifiStreamActive] = useState(false);
+  const [wifiConnecting, setWifiConnecting] = useState(false);
+
   // Start camera stream
   const startCamera = useCallback(async (source, overrideDeviceId = null) => {
     setError('');
