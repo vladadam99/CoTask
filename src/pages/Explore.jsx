@@ -69,7 +69,7 @@ export default function Explore() {
               <LayoutGrid className="w-4 h-4" /> Grid
             </button>
             <button onClick={() => setViewMode('map')} className={`px-3 py-2 text-sm flex items-center gap-1.5 ${viewMode === 'map' ? 'bg-primary text-primary-foreground' : 'bg-muted/30 text-muted-foreground hover:bg-muted/50'}`}>
-              <Map className="w-4 h-4" /> Map
+              <Map className="w-4 h-4" /> Globe
             </button>
           </div>
         </div>
