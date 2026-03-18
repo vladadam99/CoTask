@@ -319,7 +319,8 @@ export default function LiveStreamStudio() {
       URL.revokeObjectURL(url);
       // Also save to Recording Library
       saveRecordingToDB(blob, durationSeconds);
-      setRecordedChunks([]);
+      // Keep chunks for replay panel
+      setRecordedChunks(chunks);
     };
     mediaRecorderRef.current = mr;
     mr.start(1000);
