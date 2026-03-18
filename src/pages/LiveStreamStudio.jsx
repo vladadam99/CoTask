@@ -358,7 +358,7 @@ export default function LiveStreamStudio() {
                 <h2 className="text-sm font-semibold mb-3 flex items-center gap-2">
                   <span className="w-2 h-2 rounded-full bg-purple-400" /> Select Insta360 Device
                 </h2>
-                <p className="text-xs text-muted-foreground mb-3">Pick the USB/external device that corresponds to your Insta360 camera:</p>
+                <p className="text-xs text-muted-foreground mb-3">Pick the device that corresponds to your Insta360 camera, or use the Wi-Fi panel below:</p>
                 <div className="space-y-2">
                   {videoDevices.map((d, i) => (
                     <button
