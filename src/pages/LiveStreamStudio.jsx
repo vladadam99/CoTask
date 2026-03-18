@@ -115,20 +115,46 @@ export default function LiveStreamStudio() {
     },
   });
 
+  // Selected Insta360 device override
+  const [insta360DeviceId, setInsta360DeviceId] = useState(null);
+
   // Start camera stream
-  const startCamera = useCallback(async (source) => {
+  const startCamera = useCallback(async (source, overrideDeviceId = null) => {
     setError('');
     if (streamRef.current) {
       streamRef.current.getTracks().forEach(t => t.stop());
     }
     try {
-      // For Insta360 / Meta, try deviceId-based selection if available
-      // Otherwise fall back to facingMode
-      const constraints = {
-        video: { facingMode: source.facingMode, width: { ideal: 1920 }, height: { ideal: 1080 } },
-        audio: true,
-      };
-      const stream = await navigator.mediaDevices.getUserMedia(constraints);
+      let videoConstraints;
+
+      if (source.id === 'insta360' || source.id === 'meta-glasses') {
+        // Try to find the exact device by label first
+        const matchedDevice = videoDevices.find(d => {
+          const label = d.label.toLowerCase();
+          if (source.id === 'insta360') return label.includes('insta360') || label.includes('360') || label.includes('usb') || label.includes('insta');
+          if (source.id === 'meta-glasses') return label.includes('meta') || label.includes('glasses') || label.includes('oculus');
+          return false;
+        });
+        const deviceId = overrideDeviceId || insta360DeviceId || matchedDevice?.deviceId;
+        if (deviceId) {
+          videoConstraints = { deviceId: { exact: deviceId }, width: { ideal: 3840 }, height: { ideal: 1920 } };
+        } else {
+          // Fallback: pick the last video device (most likely the USB/external one on Android)
+          const lastDevice = videoDevices[videoDevices.length - 1];
+          videoConstraints = lastDevice
+            ? { deviceId: { exact: lastDevice.deviceId }, width: { ideal: 3840 }, height: { ideal: 1920 } }
+            : { facingMode: source.facingMode, width: { ideal: 1920 }, height: { ideal: 1080 } };
+        }
+      } else {
+        // Phone front/rear — use facingMode
+        videoConstraints = {
+          facingMode: source.facingMode,
+          width: { ideal: 1920 },
+          height: { ideal: 1080 },
+        };
+      }
+
+      const stream = await navigator.mediaDevices.getUserMedia({ video: videoConstraints, audio: true });
       streamRef.current = stream;
       if (videoRef.current) {
         videoRef.current.srcObject = stream;
@@ -137,9 +163,9 @@ export default function LiveStreamStudio() {
       setSelectedSource(source);
       setViewMode(source.mode);
     } catch (err) {
-      setError(`Could not access camera: ${err.message}. Check browser permissions.`);
+      setError(`Could not access camera: ${err.message}. Check browser permissions and that the Insta360 is connected via USB-C.`);
     }
-  }, []);
+  }, [videoDevices, insta360DeviceId]);
 
   // Toggle mic/cam tracks
   const toggleMic = () => {
