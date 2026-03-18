@@ -1,0 +1,155 @@
+import React, { useState, useEffect } from 'react';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { base44 } from '@/api/base44Client';
+import { useCurrentUser } from '@/lib/useCurrentUser';
+import AppShell from '@/components/layout/AppShell';
+import GlassCard from '@/components/ui/GlassCard';
+import { Button } from '@/components/ui/button';
+import { Switch } from '@/components/ui/switch';
+import { useToast } from '@/components/ui/use-toast';
+import {
+  Home, Inbox, Calendar, Radio, MessageSquare, DollarSign,
+  Star, User, Settings, Shield, Bell, Smartphone, Camera, Headphones, Car
+} from 'lucide-react';
+
+const navItems = [
+  { icon: Home, label: 'Home', path: '/AvatarDashboard' },
+  { icon: Inbox, label: 'Requests', path: '/AvatarRequests' },
+  { icon: Calendar, label: 'Schedule', path: '/AvatarSchedule' },
+  { icon: Radio, label: 'Live', path: '/AvatarLive' },
+  { icon: MessageSquare, label: 'Messages', path: '/Messages' },
+  { icon: DollarSign, label: 'Earnings', path: '/AvatarEarnings' },
+  { icon: Star, label: 'Reviews', path: '/AvatarReviews' },
+  { icon: User, label: 'Profile', path: '/AvatarProfileEdit' },
+  { icon: Settings, label: 'Settings', path: '/AvatarSettings' },
+];
+
+export default function AvatarSettings() {
+  const { user, loading } = useCurrentUser();
+  const queryClient = useQueryClient();
+  const { toast } = useToast();
+
+  const { data: profile } = useQuery({
+    queryKey: ['avatar-profile-settings', user?.email],
+    queryFn: async () => {
+      const profiles = await base44.entities.AvatarProfile.filter({ user_email: user.email });
+      return profiles[0] || null;
+    },
+    enabled: !!user,
+  });
+
+  const [equipment, setEquipment] = useState({
+    has_360_camera: false,
+    has_smartphone: true,
+    has_data_connection: true,
+    has_headset: false,
+    has_vehicle: false,
+  });
+
+  useEffect(() => {
+    if (profile) {
+      setEquipment({
+        has_360_camera: profile.has_360_camera || false,
+        has_smartphone: profile.has_smartphone ?? true,
+        has_data_connection: profile.has_data_connection ?? true,
+        has_headset: profile.has_headset || false,
+        has_vehicle: profile.has_vehicle || false,
+      });
+    }
+  }, [profile]);
+
+  const updateProfile = useMutation({
+    mutationFn: (data) => base44.entities.AvatarProfile.update(profile.id, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['avatar-profile-settings'] });
+      toast({ title: 'Settings saved' });
+    },
+  });
+
+  const toggle = (key) => {
+    const updated = { ...equipment, [key]: !equipment[key] };
+    setEquipment(updated);
+    if (profile) updateProfile.mutate(updated);
+  };
+
+  if (loading) return <div className="min-h-screen flex items-center justify-center"><div className="w-8 h-8 border-4 border-primary/20 border-t-primary rounded-full animate-spin" /></div>;
+
+  const equipmentItems = [
+    { key: 'has_smartphone', icon: Smartphone, label: '360° Smartphone', desc: 'Can stream via smartphone' },
+    { key: 'has_360_camera', icon: Camera, label: '360° Camera', desc: 'Have a dedicated 360° camera' },
+    { key: 'has_data_connection', icon: Radio, label: 'Data Connection', desc: 'Reliable mobile data connection' },
+    { key: 'has_headset', icon: Headphones, label: 'Headset / Earpiece', desc: 'Can use voice/AR headset' },
+    { key: 'has_vehicle', icon: Car, label: 'Vehicle', desc: 'Can travel by vehicle for sessions' },
+  ];
+
+  return (
+    <AppShell navItems={navItems} user={user}>
+      <div className="mb-8">
+        <h1 className="text-2xl lg:text-3xl font-bold mb-1">Settings</h1>
+        <p className="text-muted-foreground text-sm">Manage your equipment and account preferences</p>
+      </div>
+
+      {!profile ? (
+        <GlassCard className="p-10 text-center">
+          <p className="text-sm text-muted-foreground">No avatar profile found. Complete onboarding first.</p>
+        </GlassCard>
+      ) : (
+        <div className="space-y-6 max-w-lg">
+          {/* Equipment */}
+          <GlassCard className="p-5">
+            <h2 className="font-semibold text-sm mb-4">Equipment & Capabilities</h2>
+            <div className="space-y-4">
+              {equipmentItems.map(item => (
+                <div key={item.key} className="flex items-center justify-between gap-4">
+                  <div className="flex items-center gap-3">
+                    <item.icon className="w-4 h-4 text-muted-foreground" />
+                    <div>
+                      <p className="text-sm font-medium">{item.label}</p>
+                      <p className="text-xs text-muted-foreground">{item.desc}</p>
+                    </div>
+                  </div>
+                  <Switch checked={equipment[item.key]} onCheckedChange={() => toggle(item.key)} />
+                </div>
+              ))}
+            </div>
+          </GlassCard>
+
+          {/* Verification Status */}
+          <GlassCard className="p-5">
+            <div className="flex items-center gap-3 mb-3">
+              <Shield className="w-4 h-4 text-primary" />
+              <h2 className="font-semibold text-sm">Verification Status</h2>
+            </div>
+            <p className="text-sm text-muted-foreground mb-3">
+              Status: <span className="capitalize font-medium text-foreground">{profile.verification_status || 'pending'}</span>
+            </p>
+            {profile.verification_status === 'pending' && (
+              <p className="text-xs text-muted-foreground">Contact support to start your identity verification process.</p>
+            )}
+            {profile.verification_status === 'verified' && (
+              <p className="text-xs text-green-400">Your identity is verified. You may receive a verified badge.</p>
+            )}
+          </GlassCard>
+
+          {/* Account */}
+          <GlassCard className="p-5">
+            <h2 className="font-semibold text-sm mb-4">Account</h2>
+            <div className="space-y-2 text-sm text-muted-foreground">
+              <p><span className="text-foreground font-medium">Email:</span> {user?.email}</p>
+              <p><span className="text-foreground font-medium">Name:</span> {user?.full_name}</p>
+              <p><span className="text-foreground font-medium">Role:</span> {user?.role}</p>
+            </div>
+            <Button
+              variant="destructive"
+              size="sm"
+              className="mt-4"
+              onClick={() => base44.auth.logout('/Landing')}
+            >
+              Sign Out
+            </Button>
+          </GlassCard>
+        </div>
+      )}
+    </AppShell>
+  );
+}
