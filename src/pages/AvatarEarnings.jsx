@@ -197,7 +197,7 @@ export default function AvatarEarnings() {
               {profile.payout_status === 'active'
                 ? 'Connected and active — earnings are paid out automatically.'
                 : profile.payout_status === 'pending'
-                ? 'Setup in progress — we'll notify you when it's ready.'
+                ? "Setup in progress — we'll notify you when it's ready."
                 : 'Not connected — set up payouts to receive your funds.'}
             </p>
           </div>
