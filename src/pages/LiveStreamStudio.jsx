@@ -10,7 +10,8 @@ import ViewModeToggle from '@/components/live/ViewModeToggle';
 import StreamHUD from '@/components/live/StreamHUD';
 import StreamViewer360 from '@/components/live/StreamViewer360';
 import StreamChatbox from '@/components/live/StreamChatbox';
-import { ArrowLeft, Radio, AlertTriangle, Wifi, MessageCircle, Circle, Square as StopIcon } from 'lucide-react';
+import AnnotationCanvas from '@/components/live/AnnotationCanvas';
+import { ArrowLeft, Radio, AlertTriangle, Wifi, MessageCircle, Circle, Square as StopIcon, PenLine, Library } from 'lucide-react';
 
 export default function LiveStreamStudio() {
   const { user, loading } = useCurrentUser();
@@ -31,6 +32,7 @@ export default function LiveStreamStudio() {
   const [isRecording, setIsRecording] = useState(false);
   const [recordedChunks, setRecordedChunks] = useState([]);
   const [attachedBooking, setAttachedBooking] = useState(null);
+  const [annotationsOn, setAnnotationsOn] = useState(false);
 
   const videoRef = useRef(null);
   const streamRef = useRef(null);
@@ -136,14 +138,31 @@ export default function LiveStreamStudio() {
     const chunks = [];
     const mr = new MediaRecorder(streamRef.current, { mimeType: 'video/webm;codecs=vp9' });
     mr.ondataavailable = e => { if (e.data.size > 0) chunks.push(e.data); };
-    mr.onstop = () => {
+    mr.onstop = async () => {
       const blob = new Blob(chunks, { type: 'video/webm' });
+      // Download locally
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
       a.download = `stream-recording-${Date.now()}.webm`;
       a.click();
       URL.revokeObjectURL(url);
+      // Save to library
+      try {
+        const file = new File([blob], `Recording-${Date.now()}.webm`, { type: 'video/webm' });
+        const { file_url } = await base44.integrations.Core.UploadFile({ file });
+        await base44.entities.SessionRecording.create({
+          avatar_email: user?.email,
+          client_email: attachedBooking?.client_email || '',
+          client_name: attachedBooking?.client_name || '',
+          booking_id: attachedBooking?.id || '',
+          category: attachedBooking?.category || '',
+          title: `Session — ${new Date().toLocaleDateString()}`,
+          file_url,
+          size_bytes: blob.size,
+          duration_seconds: Math.round(elapsed),
+        });
+      } catch (_) { /* upload failure is silent — file already downloaded */ }
       setRecordedChunks([]);
     };
     mediaRecorderRef.current = mr;
@@ -316,6 +335,9 @@ export default function LiveStreamStudio() {
                     )}
                   </div>
 
+                  {/* Annotation canvas */}
+                  <AnnotationCanvas enabled={annotationsOn} />
+
                   {/* HUD bottom */}
                   {isLive && (
                     <StreamHUD
@@ -369,6 +391,12 @@ export default function LiveStreamStudio() {
                       <StopIcon className="w-3 h-3 fill-white" /> Stop & Save
                     </button>
                   )}
+                  <button
+                    onClick={() => setAnnotationsOn(v => !v)}
+                    className={`flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg transition-colors border ${annotationsOn ? 'bg-yellow-500/20 border-yellow-500/30 text-yellow-400' : 'bg-secondary border-white/10 text-muted-foreground hover:text-foreground'}`}
+                  >
+                    <PenLine className="w-3 h-3" /> Annotate
+                  </button>
                   <button
                     onClick={() => setChatOpen(v => !v)}
                     className={`flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg transition-colors border ${chatOpen ? 'bg-primary/20 border-primary/30 text-primary' : 'bg-secondary border-white/10 text-muted-foreground hover:text-foreground'}`}
