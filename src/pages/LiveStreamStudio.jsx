@@ -182,7 +182,10 @@ export default function LiveStreamStudio() {
     if (!streamRef.current) return;
     const chunks = [];
     const startTime = Date.now();
-    const mr = new MediaRecorder(streamRef.current, { mimeType: 'video/webm;codecs=vp9' });
+    // Pick best supported codec — Android Chrome often only supports vp8 or baseline webm
+    const mimeTypes = ['video/webm;codecs=vp9', 'video/webm;codecs=vp8', 'video/webm', 'video/mp4'];
+    const mimeType = mimeTypes.find(m => MediaRecorder.isTypeSupported(m)) || '';
+    const mr = new MediaRecorder(streamRef.current, mimeType ? { mimeType } : {});
     mr.ondataavailable = e => { if (e.data.size > 0) chunks.push(e.data); };
     mr.onstop = () => {
       const blob = new Blob(chunks, { type: 'video/webm' });
