@@ -67,6 +67,50 @@ export default function GlobeMap({ avatars = [], focusCity = '' }) {
     setSelectedAvatar(avatar);
   }, []);
 
+  // Animate globe to focusCity
+  useEffect(() => {
+    if (!focusCity) return;
+    const coords = getCityCoords(focusCity);
+    if (!coords) return;
+    const { globe, markerObjects } = sceneRef.current;
+    if (!globe) return;
+
+    const [lat, lon] = coords;
+    // Target rotation: lon → Y axis, lat → X axis (inverted for Three.js)
+    const targetY = -(lon * Math.PI) / 180;
+    const targetX = (lat * Math.PI) / 180;
+
+    let startY = globe.rotation.y;
+    let startX = globe.rotation.x;
+    // Normalize Y delta to shortest path
+    let dy = targetY - startY;
+    while (dy > Math.PI) dy -= 2 * Math.PI;
+    while (dy < -Math.PI) dy += 2 * Math.PI;
+
+    const duration = 1200; // ms
+    const start = performance.now();
+
+    const animateTo = (now) => {
+      const t = Math.min((now - start) / duration, 1);
+      // Ease in-out
+      const ease = t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
+      globe.rotation.y = startY + dy * ease;
+      globe.rotation.x = startX + (targetX - startX) * ease;
+      if (markerObjects) {
+        markerObjects.forEach(m => {
+          m.rotation.y = globe.rotation.y;
+          m.rotation.x = globe.rotation.x;
+        });
+      }
+      if (t < 1) requestAnimationFrame(animateTo);
+    };
+    requestAnimationFrame(animateTo);
+
+    // Also select first avatar in that city
+    const match = avatars.find(a => a.city?.toLowerCase().includes(focusCity.toLowerCase()));
+    if (match) setSelectedAvatar(match);
+  }, [focusCity, avatars]);
+
   useEffect(() => {
     const el = mountRef.current;
     if (!el) return;
