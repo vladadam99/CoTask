@@ -57,6 +57,8 @@ export default function LiveStreamStudio() {
         setVideoDevices(vids);
 
         const next = ['phone-front', 'phone-rear'];
+        // Always make insta360 selectable so user can use Wi-Fi wireless mode
+        next.push('insta360');
         vids.forEach(d => {
           const label = d.label.toLowerCase();
           if (label.includes('insta360') || label.includes('360') || label.includes('usb') || label.includes('insta')) {
