@@ -337,7 +337,7 @@ export default function GlobeMap({ avatars = [], focusCity = '' }) {
 
     const onMouseDown = (e) => {
       isDragging = true;
-      autoRotate = false;
+      autoRotateRef.current = false;
       prevMouse = { x: e.clientX, y: e.clientY };
       rotationVelocity = { x: 0, y: 0 };
     };
