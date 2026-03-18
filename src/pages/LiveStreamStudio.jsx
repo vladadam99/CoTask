@@ -295,6 +295,31 @@ export default function LiveStreamStudio() {
               />
             </GlassCard>
 
+            {/* Insta360 device selector — shown when insta360 is selected and multiple devices exist */}
+            {selectedSource?.id === 'insta360' && videoDevices.length > 1 && (
+              <GlassCard className="p-5">
+                <h2 className="text-sm font-semibold mb-3 flex items-center gap-2">
+                  <span className="w-2 h-2 rounded-full bg-purple-400" /> Select Insta360 Device
+                </h2>
+                <p className="text-xs text-muted-foreground mb-3">Pick the USB/external device that corresponds to your Insta360 camera:</p>
+                <div className="space-y-2">
+                  {videoDevices.map((d, i) => (
+                    <button
+                      key={d.deviceId}
+                      onClick={() => { setInsta360DeviceId(d.deviceId); startCamera(selectedSource, d.deviceId); }}
+                      className={`w-full text-left text-xs px-3 py-2 rounded-lg border transition-colors ${
+                        insta360DeviceId === d.deviceId
+                          ? 'bg-purple-500/20 border-purple-500/40 text-purple-300'
+                          : 'bg-card/40 border-white/5 text-muted-foreground hover:border-white/20 hover:text-foreground'
+                      }`}
+                    >
+                      <span className="font-medium">{d.label || `Camera ${i + 1}`}</span>
+                    </button>
+                  ))}
+                </div>
+              </GlassCard>
+            )}
+
             {/* View mode */}
             {selectedSource && (
               <GlassCard className="p-5">
