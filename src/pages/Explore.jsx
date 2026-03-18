@@ -99,7 +99,7 @@ export default function Explore() {
         {/* Map View */}
         {viewMode === 'map' && !isLoading && (
           <div className="mb-6">
-            <AvatarMap avatars={filtered} />
+            <GlobeMap avatars={filtered} />
           </div>
         )}
 
