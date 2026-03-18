@@ -4,8 +4,8 @@ import { base44 } from '@/api/base44Client';
 import { useCurrentUser } from '@/lib/useCurrentUser';
 import AppShell from '@/components/layout/AppShell';
 import GlassCard from '@/components/ui/GlassCard';
-import StatusBadge from '@/components/ui/StatusBadge';
 import { Link } from 'react-router-dom';
+import PayoutSetup from '@/components/earnings/PayoutSetup';
 import {
   Home, Inbox, Calendar, Radio, MessageSquare, DollarSign,
   Star, User, Settings, TrendingUp, ArrowUpRight, Wallet, Clock
@@ -188,22 +188,8 @@ export default function AvatarEarnings() {
         </GlassCard>
       </div>
 
-      {/* Payout status */}
-      {profile && (
-        <GlassCard className="p-5 mb-8 flex items-center justify-between gap-4">
-          <div>
-            <p className="font-semibold text-sm mb-1">Payout Account</p>
-            <p className="text-xs text-muted-foreground">
-              {profile.payout_status === 'active'
-                ? 'Connected and active — earnings are paid out automatically.'
-                : profile.payout_status === 'pending'
-                ? "Setup in progress — we'll notify you when it's ready."
-                : 'Not connected — set up payouts to receive your funds.'}
-            </p>
-          </div>
-          <StatusBadge status={profile.payout_status || 'not_connected'} />
-        </GlassCard>
-      )}
+      {/* Payout setup */}
+      {profile && <PayoutSetup profile={profile} />}
 
       {/* Transaction history */}
       <h2 className="text-lg font-semibold mb-4">Transaction History</h2>
