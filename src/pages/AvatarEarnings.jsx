@@ -4,13 +4,14 @@ import { base44 } from '@/api/base44Client';
 import { useCurrentUser } from '@/lib/useCurrentUser';
 import AppShell from '@/components/layout/AppShell';
 import GlassCard from '@/components/ui/GlassCard';
+import StatusBadge from '@/components/ui/StatusBadge';
 import { Link } from 'react-router-dom';
-import PayoutSetup from '@/components/earnings/PayoutSetup';
 import {
   Home, Inbox, Calendar, Radio, MessageSquare, DollarSign,
-  Star, User, Settings, TrendingUp, ArrowUpRight, Wallet, Clock, Film
+  Star, User, Settings, TrendingUp, ArrowUpRight, Wallet, Clock
 } from 'lucide-react';
 import { format, subMonths, startOfMonth, endOfMonth, isWithinInterval } from 'date-fns';
+import PayoutSetup from '@/components/earnings/PayoutSetup';
 import {
   AreaChart, Area, BarChart, Bar, XAxis, YAxis, Tooltip,
   ResponsiveContainer, CartesianGrid
@@ -26,7 +27,6 @@ const navItems = [
   { icon: Star, label: 'Reviews', path: '/AvatarReviews' },
   { icon: User, label: 'Profile', path: '/AvatarProfileEdit' },
   { icon: Settings, label: 'Settings', path: '/AvatarSettings' },
-  { icon: Film, label: 'Recordings', path: '/RecordingLibrary' },
 ];
 
 const CustomTooltip = ({ active, payload, label }) => {
@@ -189,8 +189,8 @@ export default function AvatarEarnings() {
         </GlassCard>
       </div>
 
-      {/* Payout setup */}
-      {profile && <PayoutSetup profile={profile} />}
+      {/* Automated Payout Setup */}
+      {user && <PayoutSetup avatarEmail={user.email} />}
 
       {/* Transaction history */}
       <h2 className="text-lg font-semibold mb-4">Transaction History</h2>
