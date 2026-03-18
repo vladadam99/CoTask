@@ -617,11 +617,11 @@ export default function LiveStreamStudio() {
           <h3 className="text-sm font-semibold mb-2">Device Connection Tips</h3>
           <ul className="text-xs text-muted-foreground space-y-1.5 leading-relaxed list-disc list-inside">
             <li><strong className="text-foreground">Phone cameras</strong> — detected automatically. Grant camera permission when prompted.</li>
-            <li><strong className="text-foreground">Insta360 on Android</strong> — connect via USB-C. Open Chrome, allow camera access, then select Insta360 from the device picker that appears above. The camera name should include "Insta360" or "USB Video".</li>
-            <li><strong className="text-foreground">Insta360 tip</strong> — if the camera isn't detected, open the Insta360 app first to wake the device, then return here and re-select "Insta360" as the source.</li>
-            <li><strong className="text-foreground">USB permissions on Android</strong> — Chrome may ask to allow USB device access. Tap "Allow" and make sure "Use by default" is checked.</li>
-            <li><strong className="text-foreground">360° view</strong> — available when Insta360 is selected. Client can drag to look in any direction.</li>
-            <li><strong className="text-foreground">Meta Glasses</strong> — connect via USB tethering. It mirrors as a camera device in the list.</li>
+            <li><strong className="text-foreground">Insta360 Wi-Fi (recommended)</strong> — on your Insta360, enable Wi-Fi hotspot mode. On your Android, join that Wi-Fi network. Then select "Insta360" above and tap "Connect via Wi-Fi". No cable needed.</li>
+            <li><strong className="text-foreground">Default stream address</strong> — most Insta360 models (X3, ONE RS, ONE X2) use <code className="text-purple-300">192.168.42.1:8080</code>. If yours differs, enter the correct IP in the Wi-Fi panel.</li>
+            <li><strong className="text-foreground">Insta360 hotspot name</strong> — usually starts with "Insta360" followed by the model. Password is on the camera label or in the Insta360 app settings.</li>
+            <li><strong className="text-foreground">360° view</strong> — automatically enabled when Insta360 is connected. Client can drag to look in any direction.</li>
+            <li><strong className="text-foreground">Meta Glasses</strong> — connect via USB tethering or use their companion Wi-Fi mode.</li>
           </ul>
         </GlassCard>
 
