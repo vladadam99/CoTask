@@ -414,7 +414,7 @@ export default function GlobeMap({ avatars = [], focusCity = '' }) {
     let animId;
     const animate = () => {
       animId = requestAnimationFrame(animate);
-      if (autoRotate) {
+      if (autoRotateRef.current) {
         globe.rotation.y += 0.002;
         markerObjects.forEach(m => { m.rotation.y = globe.rotation.y; });
       } else if (!isDragging) {
@@ -428,7 +428,7 @@ export default function GlobeMap({ avatars = [], focusCity = '' }) {
           m.rotation.y = globe.rotation.y;
         });
         if (Math.abs(rotationVelocity.x) < 0.0001 && Math.abs(rotationVelocity.y) < 0.0001) {
-          autoRotate = true;
+          autoRotateRef.current = true;
         }
       }
       renderer.render(scene, camera);
