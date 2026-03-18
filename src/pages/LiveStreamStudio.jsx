@@ -122,6 +122,15 @@ export default function LiveStreamStudio() {
   // Selected Insta360 device override
   const [insta360DeviceId, setInsta360DeviceId] = useState(null);
 
+  // Active device ID for multi-camera switcher
+  const [activeDeviceId, setActiveDeviceId] = useState(null);
+
+  // Auto-reconnection state
+  const [reconnecting, setReconnecting] = useState(false);
+  const [reconnectAttempts, setReconnectAttempts] = useState(0);
+  const reconnectTimerRef = useRef(null);
+  const lastSourceRef = useRef(null);
+
   // Wireless / Wi-Fi stream state
   const [wifiStreamUrl, setWifiStreamUrl] = useState('');
   const [wifiStreamActive, setWifiStreamActive] = useState(false);
