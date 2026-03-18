@@ -438,6 +438,26 @@ export default function LiveStreamStudio() {
               </GlassCard>
             )}
 
+            {/* Multi-Camera Switcher */}
+            {videoDevices.length > 1 && (
+              <MultiCameraSwitcher
+                videoDevices={videoDevices}
+                activeDeviceId={activeDeviceId}
+                onSwitch={switchCamera}
+              />
+            )}
+
+            {/* Auto-reconnect status */}
+            {reconnecting && (
+              <div className="flex items-center gap-2 bg-yellow-500/10 border border-yellow-500/20 rounded-xl p-3 text-xs text-yellow-400">
+                <span className="w-3 h-3 border-2 border-yellow-400/30 border-t-yellow-400 rounded-full animate-spin shrink-0" />
+                Reconnecting camera… attempt {reconnectAttempts}/5
+              </div>
+            )}
+
+            {/* Stream Quality Monitor */}
+            <StreamQualityMonitor streamRef={streamRef} isLive={isLive} />
+
             {/* Insta360 Wi-Fi Wireless Connect */}
             {selectedSource?.id === 'insta360' && (
               <GlassCard className="p-5">
