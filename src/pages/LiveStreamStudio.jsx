@@ -39,24 +39,43 @@ export default function LiveStreamStudio() {
   const timerRef = useRef(null);
   const mediaRecorderRef = useRef(null);
 
-  // Detect available cameras
+  // Device list for picker (label + deviceId)
+  const [videoDevices, setVideoDevices] = useState([]);
+
+  // Detect available cameras — request permission first so labels are populated
   useEffect(() => {
-    navigator.mediaDevices?.enumerateDevices().then(devices => {
-      const hasVideo = devices.some(d => d.kind === 'videoinput');
-      if (hasVideo) {
-        // Always mark phone sources as available if any camera found
-        setAvailableSources(prev => {
-          const next = [...prev, 'phone-front', 'phone-rear'];
-          // Insta360 / Meta would be USB/Bluetooth — listed as available if extra cams found
-          if (devices.filter(d => d.kind === 'videoinput').length > 1) {
-            next.push('insta360', 'meta-glasses');
+    const detect = async () => {
+      try {
+        // Request permission first so Android populates device labels
+        const tempStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
+        tempStream.getTracks().forEach(t => t.stop());
+      } catch (_) { /* ignore — enumerateDevices still works without labels */ }
+
+      try {
+        const devices = await navigator.mediaDevices.enumerateDevices();
+        const vids = devices.filter(d => d.kind === 'videoinput');
+        setVideoDevices(vids);
+
+        const next = ['phone-front', 'phone-rear'];
+        vids.forEach(d => {
+          const label = d.label.toLowerCase();
+          if (label.includes('insta360') || label.includes('360') || label.includes('usb') || label.includes('insta')) {
+            next.push('insta360');
           }
-          return [...new Set(next)];
+          if (label.includes('meta') || label.includes('glasses') || label.includes('oculus')) {
+            next.push('meta-glasses');
+          }
         });
+        // If there are extra video devices beyond phone's built-in, mark all special sources available
+        if (vids.length > 1) {
+          next.push('insta360', 'meta-glasses');
+        }
+        setAvailableSources([...new Set(next)]);
+      } catch (_) {
+        setAvailableSources(['phone-front', 'phone-rear', 'insta360', 'meta-glasses']);
       }
-    }).catch(() => {
-      setAvailableSources(['phone-front', 'phone-rear', 'insta360', 'meta-glasses']);
-    });
+    };
+    detect();
   }, []);
 
   // Ready bookings
