@@ -14,6 +14,9 @@ import { ArrowLeft, Radio, AlertTriangle, Wifi, MessageCircle, Circle, Square as
 import AnnotationCanvas from '@/components/live/AnnotationCanvas';
 import StreamQualityMonitor from '@/components/live/StreamQualityMonitor';
 import MultiCameraSwitcher from '@/components/live/MultiCameraSwitcher';
+import AIStreamHighlights from '@/components/live/AIStreamHighlights';
+import StreamPoll from '@/components/live/StreamPoll';
+import StreamReplay from '@/components/live/StreamReplay';
 
 export default function LiveStreamStudio() {
   const { user, loading } = useCurrentUser();
