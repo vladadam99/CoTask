@@ -35,6 +35,7 @@ import Pricing from './pages/Pricing';
 import FAQ from './pages/FAQ';
 import Contact from './pages/Contact';
 import Safety from './pages/Safety';
+import LiveStreamStudio from './pages/LiveStreamStudio';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
