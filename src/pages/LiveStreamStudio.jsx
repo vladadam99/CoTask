@@ -369,6 +369,7 @@ export default function LiveStreamStudio() {
 
   useEffect(() => () => {
     clearInterval(timerRef.current);
+    clearTimeout(reconnectTimerRef.current);
     streamRef.current?.getTracks().forEach(t => t.stop());
   }, []);
 
