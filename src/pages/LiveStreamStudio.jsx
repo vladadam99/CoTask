@@ -205,7 +205,7 @@ export default function LiveStreamStudio() {
           <div className="w-16" />
         </div>
 
-        <div className="grid lg:grid-cols-3 gap-6">
+        <div className={`grid gap-6 ${chatOpen && isLive ? 'lg:grid-cols-4' : 'lg:grid-cols-3'}`}>
 
           {/* LEFT — Controls */}
           <div className="space-y-5">
