@@ -341,6 +341,9 @@ export default function LiveStreamStudio() {
                     )}
                   </div>
 
+                  {/* Annotation canvas overlay */}
+                  {annotationsOn && isLive && <AnnotationCanvas />}
+
                   {/* HUD bottom */}
                   {isLive && (
                     <StreamHUD
@@ -394,6 +397,12 @@ export default function LiveStreamStudio() {
                       <StopIcon className="w-3 h-3 fill-white" /> Stop & Save
                     </button>
                   )}
+                  <button
+                    onClick={() => setAnnotationsOn(v => !v)}
+                    className={`flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg transition-colors border ${annotationsOn ? 'bg-yellow-500/20 border-yellow-500/30 text-yellow-400' : 'bg-secondary border-white/10 text-muted-foreground hover:text-foreground'}`}
+                  >
+                    <Pen className="w-3 h-3" /> Annotate
+                  </button>
                   <button
                     onClick={() => setChatOpen(v => !v)}
                     className={`flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg transition-colors border ${chatOpen ? 'bg-primary/20 border-primary/30 text-primary' : 'bg-secondary border-white/10 text-muted-foreground hover:text-foreground'}`}
