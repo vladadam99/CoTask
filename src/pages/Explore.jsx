@@ -24,6 +24,8 @@ export default function Explore() {
   const [search, setSearch] = useState('');
   const [category, setCategory] = useState(initialCat);
   const [city, setCity] = useState('');
+  const [locationSearch, setLocationSearch] = useState('');
+  const [focusCity, setFocusCity] = useState('');
   const [showFilters, setShowFilters] = useState(false);
   const [viewMode, setViewMode] = useState('grid'); // 'grid' | 'map'
 
