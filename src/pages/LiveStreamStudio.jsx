@@ -180,8 +180,19 @@ export default function LiveStreamStudio() {
       }
       setSelectedSource(source);
       setViewMode(source.mode);
+      setReconnectAttempts(0);
+      setReconnecting(false);
+      // Track active device for multi-camera switcher
+      const deviceId = videoConstraints.deviceId?.exact || null;
+      setActiveDeviceId(deviceId);
+      lastSourceRef.current = { source, deviceId: overrideDeviceId || insta360DeviceId };
+
+      // Listen for stream ending (e.g. cable unplugged) → trigger auto-reconnect
+      stream.getVideoTracks().forEach(track => {
+        track.addEventListener('ended', () => handleStreamEnded(source));
+      });
     } catch (err) {
-      setError(`Could not access camera: ${err.message}. Check browser permissions and that the Insta360 is connected via USB-C.`);
+      setError(`Could not access camera: ${err.message}. Check browser permissions and that the camera is connected.`);
     }
   }, [videoDevices, insta360DeviceId]);
 
