@@ -1,0 +1,188 @@
+import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { base44 } from '@/api/base44Client';
+import { useCurrentUser } from '@/lib/useCurrentUser';
+import AppShell from '@/components/layout/AppShell';
+import GlassCard from '@/components/ui/GlassCard';
+import StatusBadge from '@/components/ui/StatusBadge';
+import { Button } from '@/components/ui/button';
+import {
+  Home, Inbox, Calendar, Radio, MessageSquare, DollarSign,
+  Star, User, Settings, Clock, CheckCircle, XCircle, Eye, MapPin
+} from 'lucide-react';
+
+const navItems = [
+  { icon: Home, label: 'Home', path: '/AvatarDashboard' },
+  { icon: Inbox, label: 'Requests', path: '/AvatarRequests' },
+  { icon: Calendar, label: 'Schedule', path: '/AvatarSchedule' },
+  { icon: Radio, label: 'Live', path: '/AvatarLive' },
+  { icon: MessageSquare, label: 'Messages', path: '/Messages' },
+  { icon: DollarSign, label: 'Earnings', path: '/AvatarEarnings' },
+  { icon: Star, label: 'Reviews', path: '/AvatarReviews' },
+  { icon: User, label: 'Profile', path: '/AvatarProfileEdit' },
+  { icon: Settings, label: 'Settings', path: '/AvatarSettings' },
+];
+
+const TABS = [
+  { key: 'pending', label: 'Pending', icon: Clock },
+  { key: 'accepted', label: 'Accepted', icon: CheckCircle },
+  { key: 'all', label: 'All', icon: Inbox },
+];
+
+export default function AvatarRequests() {
+  const { user, loading: userLoading } = useCurrentUser();
+  const queryClient = useQueryClient();
+  const [activeTab, setActiveTab] = useState('pending');
+
+  const { data: bookings = [], isLoading } = useQuery({
+    queryKey: ['avatar-all-bookings', user?.email],
+    queryFn: () => base44.entities.Booking.filter({ avatar_email: user.email }, '-created_date', 50),
+    enabled: !!user,
+  });
+
+  const updateBooking = useMutation({
+    mutationFn: ({ id, status }) => base44.entities.Booking.update(id, { status }),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['avatar-all-bookings'] }),
+  });
+
+  if (userLoading) return (
+    <div className="min-h-screen flex items-center justify-center">
+      <div className="w-8 h-8 border-4 border-primary/20 border-t-primary rounded-full animate-spin" />
+    </div>
+  );
+
+  const filtered = activeTab === 'all'
+    ? bookings
+    : bookings.filter(b => b.status === activeTab);
+
+  const pendingCount = bookings.filter(b => b.status === 'pending').length;
+
+  return (
+    <AppShell navItems={navItems} user={user}>
+      <div className="mb-8">
+        <h1 className="text-2xl lg:text-3xl font-bold mb-1">Booking Requests</h1>
+        <p className="text-muted-foreground text-sm">
+          {pendingCount > 0 ? `You have ${pendingCount} pending request${pendingCount > 1 ? 's' : ''}` : 'No pending requests right now'}
+        </p>
+      </div>
+
+      {/* Tabs */}
+      <div className="flex gap-2 mb-6">
+        {TABS.map(tab => (
+          <button
+            key={tab.key}
+            onClick={() => setActiveTab(tab.key)}
+            className={`flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+              activeTab === tab.key
+                ? 'bg-primary text-primary-foreground'
+                : 'bg-muted/50 text-muted-foreground hover:bg-muted'
+            }`}
+          >
+            <tab.icon className="w-4 h-4" />
+            {tab.label}
+            {tab.key === 'pending' && pendingCount > 0 && (
+              <span className="ml-1 bg-white/20 text-xs px-1.5 py-0.5 rounded-full">{pendingCount}</span>
+            )}
+          </button>
+        ))}
+      </div>
+
+      {/* List */}
+      {isLoading ? (
+        <div className="space-y-3">
+          {[1, 2, 3].map(i => (
+            <GlassCard key={i} className="p-5 animate-pulse">
+              <div className="h-4 bg-muted rounded w-1/3 mb-2" />
+              <div className="h-3 bg-muted rounded w-1/2" />
+            </GlassCard>
+          ))}
+        </div>
+      ) : filtered.length === 0 ? (
+        <GlassCard className="p-12 text-center">
+          <Inbox className="w-10 h-10 text-muted-foreground mx-auto mb-3" />
+          <p className="text-sm text-muted-foreground">No {activeTab === 'all' ? '' : activeTab} requests found</p>
+        </GlassCard>
+      ) : (
+        <div className="space-y-3">
+          {filtered.map(booking => (
+            <GlassCard key={booking.id} className="p-5">
+              <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2 mb-1 flex-wrap">
+                    <span className="font-semibold text-sm">{booking.category}</span>
+                    {booking.service_type && (
+                      <span className="text-xs text-muted-foreground">· {booking.service_type}</span>
+                    )}
+                    <StatusBadge status={booking.status} />
+                  </div>
+                  <p className="text-sm text-muted-foreground mb-1">
+                    <span className="font-medium text-foreground">{booking.client_name}</span>
+                    {booking.client_type === 'enterprise' && (
+                      <span className="ml-1 text-xs bg-blue-500/10 text-blue-400 px-1.5 py-0.5 rounded">Enterprise</span>
+                    )}
+                  </p>
+                  <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted-foreground mt-2">
+                    {booking.scheduled_date && (
+                      <span className="flex items-center gap-1">
+                        <Calendar className="w-3 h-3" />
+                        {booking.scheduled_date} {booking.scheduled_time && `at ${booking.scheduled_time}`}
+                      </span>
+                    )}
+                    {booking.location && (
+                      <span className="flex items-center gap-1">
+                        <MapPin className="w-3 h-3" /> {booking.location}
+                      </span>
+                    )}
+                    {booking.duration_minutes && (
+                      <span className="flex items-center gap-1">
+                        <Clock className="w-3 h-3" /> {booking.duration_minutes} min
+                      </span>
+                    )}
+                  </div>
+                  {booking.notes && (
+                    <p className="text-xs text-muted-foreground mt-2 italic line-clamp-2">"{booking.notes}"</p>
+                  )}
+                </div>
+
+                <div className="flex flex-col items-end gap-3 flex-shrink-0">
+                  <span className="text-lg font-bold text-primary">
+                    ${booking.total_amount || booking.amount || 0}
+                  </span>
+                  <div className="flex gap-2">
+                    <Link to={`/BookingDetail?id=${booking.id}`}>
+                      <Button size="sm" variant="outline" className="h-8 gap-1">
+                        <Eye className="w-3 h-3" /> View
+                      </Button>
+                    </Link>
+                    {booking.status === 'pending' && (
+                      <>
+                        <Button
+                          size="sm"
+                          className="h-8 gap-1 bg-green-600 hover:bg-green-700"
+                          onClick={() => updateBooking.mutate({ id: booking.id, status: 'accepted' })}
+                          disabled={updateBooking.isPending}
+                        >
+                          <CheckCircle className="w-3 h-3" /> Accept
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="destructive"
+                          className="h-8 gap-1"
+                          onClick={() => updateBooking.mutate({ id: booking.id, status: 'declined' })}
+                          disabled={updateBooking.isPending}
+                        >
+                          <XCircle className="w-3 h-3" /> Decline
+                        </Button>
+                      </>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </GlassCard>
+          ))}
+        </div>
+      )}
+    </AppShell>
+  );
+}
