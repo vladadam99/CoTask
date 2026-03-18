@@ -130,17 +130,46 @@ export default function LiveStreamStudio() {
     setCamOn(v => !v);
   };
 
+  // Recording
+  const startRecording = () => {
+    if (!streamRef.current) return;
+    const chunks = [];
+    const mr = new MediaRecorder(streamRef.current, { mimeType: 'video/webm;codecs=vp9' });
+    mr.ondataavailable = e => { if (e.data.size > 0) chunks.push(e.data); };
+    mr.onstop = () => {
+      const blob = new Blob(chunks, { type: 'video/webm' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `stream-recording-${Date.now()}.webm`;
+      a.click();
+      URL.revokeObjectURL(url);
+      setRecordedChunks([]);
+    };
+    mediaRecorderRef.current = mr;
+    mr.start(1000);
+    setIsRecording(true);
+  };
+
+  const stopRecording = () => {
+    mediaRecorderRef.current?.stop();
+    setIsRecording(false);
+  };
+
   // Go live
   const goLive = (booking) => {
     if (!selectedSource) { setError('Select a camera source first.'); return; }
+    setAttachedBooking(booking);
     setIsLive(true);
     setElapsed(0);
+    setChatOpen(true);
     timerRef.current = setInterval(() => setElapsed(e => e + 1), 1000);
     startSessionMutation.mutate({ booking, streamMode: viewMode });
   };
 
   // End session
   const endSession = () => {
+    if (isRecording) stopRecording();
     setIsLive(false);
     clearInterval(timerRef.current);
     streamRef.current?.getTracks().forEach(t => t.stop());
