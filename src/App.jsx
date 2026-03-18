@@ -92,6 +92,7 @@ const AuthenticatedApp = () => {
       <Route path="/FAQ" element={<FAQ />} />
       <Route path="/Contact" element={<Contact />} />
       <Route path="/Safety" element={<Safety />} />
+      <Route path="/LiveStreamStudio" element={<LiveStreamStudio />} />
       <Route path="*" element={<PageNotFound />} />
     </Routes>
   );
