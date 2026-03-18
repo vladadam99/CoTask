@@ -9,7 +9,8 @@ import CameraSourcePicker, { SOURCES } from '@/components/live/CameraSourcePicke
 import ViewModeToggle from '@/components/live/ViewModeToggle';
 import StreamHUD from '@/components/live/StreamHUD';
 import StreamViewer360 from '@/components/live/StreamViewer360';
-import { ArrowLeft, Radio, AlertTriangle, Wifi } from 'lucide-react';
+import StreamChatbox from '@/components/live/StreamChatbox';
+import { ArrowLeft, Radio, AlertTriangle, Wifi, MessageCircle, Circle, Square as StopIcon } from 'lucide-react';
 
 export default function LiveStreamStudio() {
   const { user, loading } = useCurrentUser();
@@ -26,10 +27,15 @@ export default function LiveStreamStudio() {
   const [availableSources, setAvailableSources] = useState([]);
   const [error, setError] = useState('');
   const [currentSessionId, setCurrentSessionId] = useState(null);
+  const [chatOpen, setChatOpen] = useState(false);
+  const [isRecording, setIsRecording] = useState(false);
+  const [recordedChunks, setRecordedChunks] = useState([]);
+  const [attachedBooking, setAttachedBooking] = useState(null);
 
   const videoRef = useRef(null);
   const streamRef = useRef(null);
   const timerRef = useRef(null);
+  const mediaRecorderRef = useRef(null);
 
   // Detect available cameras
   useEffect(() => {
