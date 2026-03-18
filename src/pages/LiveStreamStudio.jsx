@@ -172,6 +172,56 @@ export default function LiveStreamStudio() {
     }
   }, [videoDevices, insta360DeviceId]);
 
+  // Connect Insta360 via Wi-Fi (HTTP stream from camera's hotspot)
+  const connectWifiStream = useCallback(async (customUrl = null) => {
+    setError('');
+    setWifiConnecting(true);
+
+    // Insta360 cameras broadcast a preview stream over their Wi-Fi hotspot.
+    // Common endpoints: http://192.168.42.1:8080/stream (X3, ONE RS, ONE X2)
+    // User can also enter any MJPEG/HTTP stream URL.
+    const url = customUrl || wifiStreamUrl || 'http://192.168.42.1:8080/stream';
+
+    if (streamRef.current) {
+      streamRef.current.getTracks().forEach(t => t.stop());
+      streamRef.current = null;
+    }
+
+    try {
+      if (videoRef.current) {
+        videoRef.current.srcObject = null;
+        videoRef.current.src = url;
+        videoRef.current.crossOrigin = 'anonymous';
+        await videoRef.current.play();
+        setWifiStreamActive(true);
+        setWifiStreamUrl(url);
+        setSelectedSource(SOURCES.find(s => s.id === 'insta360'));
+        setViewMode('360');
+      }
+    } catch (err) {
+      // MJPEG streams don't trigger play() correctly — set src and let browser handle it
+      if (videoRef.current) {
+        videoRef.current.src = url;
+        videoRef.current.load();
+        setWifiStreamActive(true);
+        setWifiStreamUrl(url);
+        setSelectedSource(SOURCES.find(s => s.id === 'insta360'));
+        setViewMode('360');
+      }
+    } finally {
+      setWifiConnecting(false);
+    }
+  }, [wifiStreamUrl]);
+
+  const disconnectWifiStream = () => {
+    if (videoRef.current) {
+      videoRef.current.src = '';
+      videoRef.current.srcObject = null;
+    }
+    setWifiStreamActive(false);
+    setSelectedSource(null);
+  };
+
   // Toggle mic/cam tracks
   const toggleMic = () => {
     streamRef.current?.getAudioTracks().forEach(t => { t.enabled = !t.enabled; });
