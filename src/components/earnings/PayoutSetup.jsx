@@ -1,146 +1,177 @@
-import React, { useState } from 'react';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import React, { useState, useEffect } from 'react';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import GlassCard from '@/components/ui/GlassCard';
 import { Button } from '@/components/ui/button';
-import { CreditCard, CheckCircle2, Clock, AlertCircle, ChevronRight, Banknote, Zap } from 'lucide-react';
-import { useToast } from '@/components/ui/use-toast';
+import { CreditCard, RefreshCw, CheckCircle2, ChevronDown } from 'lucide-react';
 
-const PAYOUT_SCHEDULES = [
-  { id: 'instant', label: 'Instant', desc: '1% fee · funds within minutes', icon: Zap },
-  { id: 'daily', label: 'Daily', desc: 'No fee · next business day', icon: Clock },
-  { id: 'weekly', label: 'Weekly', desc: 'No fee · every Monday', icon: Banknote },
+const METHODS = [
+  { id: 'bank_transfer', label: 'Bank Transfer' },
+  { id: 'paypal', label: 'PayPal' },
+  { id: 'stripe', label: 'Stripe Connect' },
+  { id: 'wise', label: 'Wise' },
 ];
 
-export default function PayoutSetup({ profile }) {
+const SCHEDULES = [
+  { id: 'weekly', label: 'Weekly' },
+  { id: 'biweekly', label: 'Bi-weekly' },
+  { id: 'monthly', label: 'Monthly' },
+];
+
+export default function PayoutSetup({ avatarEmail }) {
   const queryClient = useQueryClient();
-  const { toast } = useToast();
-  const [step, setStep] = useState(profile?.payout_status === 'active' ? 'active' : 'setup');
-  const [form, setForm] = useState({ account_name: '', account_number: '', routing: '', schedule: 'weekly' });
-  const [saving, setSaving] = useState(false);
 
-  const handleConnect = async () => {
-    if (!form.account_name || !form.account_number || !form.routing) {
-      toast({ title: 'Please fill in all fields', variant: 'destructive' });
-      return;
-    }
-    setSaving(true);
-    await base44.entities.AvatarProfile.update(profile.id, { payout_status: 'pending' });
-    queryClient.invalidateQueries({ queryKey: ['avatar-profile-earnings'] });
-    // Simulate verification delay
-    setTimeout(async () => {
-      await base44.entities.AvatarProfile.update(profile.id, { payout_status: 'active' });
-      queryClient.invalidateQueries({ queryKey: ['avatar-profile-earnings'] });
-      setStep('active');
-      toast({ title: 'Payout account connected!', description: 'Earnings will be paid out automatically.' });
-    }, 1500);
-    setSaving(false);
-  };
+  const { data: existing } = useQuery({
+    queryKey: ['payout-settings', avatarEmail],
+    queryFn: async () => {
+      const r = await base44.entities.PayoutSettings.filter({ avatar_email: avatarEmail });
+      return r[0] || null;
+    },
+    enabled: !!avatarEmail,
+  });
 
-  if (step === 'active' || profile?.payout_status === 'active') {
-    return (
-      <GlassCard className="p-5 mb-8">
-        <div className="flex items-center gap-4">
-          <div className="w-10 h-10 rounded-xl bg-green-500/10 flex items-center justify-center shrink-0">
-            <CheckCircle2 className="w-5 h-5 text-green-400" />
-          </div>
-          <div className="flex-1">
-            <p className="font-semibold text-sm">Payout Account Active</p>
-            <p className="text-xs text-muted-foreground mt-0.5">Earnings are automatically transferred after each completed session.</p>
-          </div>
-          <Button size="sm" variant="outline" onClick={() => setStep('setup')} className="shrink-0 gap-1">
-            <CreditCard className="w-3.5 h-3.5" /> Edit
-          </Button>
+  const [form, setForm] = useState({
+    method: 'bank_transfer', account_name: '', account_number: '',
+    routing_number: '', paypal_email: '', wise_email: '',
+    schedule: 'weekly', minimum_payout: 20, currency: 'USD',
+  });
+
+  useEffect(() => {
+    if (existing) setForm(f => ({ ...f, ...existing }));
+  }, [existing]);
+
+  const save = useMutation({
+    mutationFn: async (data) => {
+      if (existing?.id) return base44.entities.PayoutSettings.update(existing.id, { ...data, is_active: true });
+      return base44.entities.PayoutSettings.create({ ...data, avatar_email: avatarEmail, is_active: true });
+    },
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['payout-settings', avatarEmail] }),
+  });
+
+  const set = (k, v) => setForm(f => ({ ...f, [k]: v }));
+
+  return (
+    <GlassCard className="p-6 mb-8">
+      <div className="flex items-center gap-3 mb-5">
+        <div className="w-9 h-9 rounded-lg bg-green-500/10 flex items-center justify-center">
+          <CreditCard className="w-4 h-4 text-green-400" />
         </div>
-        <div className="mt-4 grid grid-cols-3 gap-3">
-          {PAYOUT_SCHEDULES.map(s => (
-            <div
-              key={s.id}
-              onClick={() => setForm(f => ({ ...f, schedule: s.id }))}
-              className={`rounded-xl border p-3 cursor-pointer transition-all ${form.schedule === s.id ? 'border-primary/40 bg-primary/10' : 'border-white/10 bg-secondary/30 hover:border-white/20'}`}
+        <div>
+          <h2 className="font-semibold text-sm">Automated Payouts</h2>
+          <p className="text-xs text-muted-foreground">Configure how and when you receive your earnings</p>
+        </div>
+        {existing?.is_active && (
+          <div className="ml-auto flex items-center gap-1.5 text-xs text-green-400">
+            <CheckCircle2 className="w-4 h-4" /> Active
+          </div>
+        )}
+      </div>
+
+      <div className="grid sm:grid-cols-2 gap-4 mb-4">
+        {/* Payout method */}
+        <div>
+          <label className="text-xs text-muted-foreground mb-1.5 block">Payout Method</label>
+          <div className="relative">
+            <select
+              value={form.method}
+              onChange={e => set('method', e.target.value)}
+              className="w-full bg-secondary border border-border rounded-lg px-3 py-2 text-sm appearance-none pr-8"
             >
-              <s.icon className={`w-4 h-4 mb-1.5 ${form.schedule === s.id ? 'text-primary' : 'text-muted-foreground'}`} />
-              <p className={`text-xs font-semibold ${form.schedule === s.id ? 'text-primary' : ''}`}>{s.label}</p>
-              <p className="text-xs text-muted-foreground">{s.desc}</p>
+              {METHODS.map(m => <option key={m.id} value={m.id}>{m.label}</option>)}
+            </select>
+            <ChevronDown className="absolute right-2.5 top-2.5 w-4 h-4 text-muted-foreground pointer-events-none" />
+          </div>
+        </div>
+
+        {/* Schedule */}
+        <div>
+          <label className="text-xs text-muted-foreground mb-1.5 block">Payout Schedule</label>
+          <div className="flex gap-2">
+            {SCHEDULES.map(s => (
+              <button
+                key={s.id}
+                onClick={() => set('schedule', s.id)}
+                className={`flex-1 text-xs py-2 rounded-lg border transition-colors ${form.schedule === s.id ? 'bg-primary/10 border-primary/30 text-primary' : 'border-border text-muted-foreground hover:text-foreground'}`}
+              >
+                {s.label}
+              </button>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Method-specific fields */}
+      {form.method === 'bank_transfer' && (
+        <div className="grid sm:grid-cols-3 gap-3 mb-4">
+          {[
+            { key: 'account_name', label: 'Account Name', placeholder: 'John Smith' },
+            { key: 'account_number', label: 'Account Number', placeholder: '••••••••1234' },
+            { key: 'routing_number', label: 'Routing Number', placeholder: '021000021' },
+          ].map(f => (
+            <div key={f.key}>
+              <label className="text-xs text-muted-foreground mb-1.5 block">{f.label}</label>
+              <input
+                type="text"
+                value={form[f.key]}
+                onChange={e => set(f.key, e.target.value)}
+                placeholder={f.placeholder}
+                className="w-full bg-secondary border border-border rounded-lg px-3 py-2 text-sm"
+              />
             </div>
           ))}
         </div>
-      </GlassCard>
-    );
-  }
-
-  if (profile?.payout_status === 'pending') {
-    return (
-      <GlassCard className="p-5 mb-8 flex items-center gap-4">
-        <div className="w-10 h-10 rounded-xl bg-yellow-500/10 flex items-center justify-center shrink-0">
-          <Clock className="w-5 h-5 text-yellow-400 animate-pulse" />
+      )}
+      {form.method === 'paypal' && (
+        <div className="mb-4">
+          <label className="text-xs text-muted-foreground mb-1.5 block">PayPal Email</label>
+          <input
+            type="email"
+            value={form.paypal_email}
+            onChange={e => set('paypal_email', e.target.value)}
+            placeholder="you@paypal.com"
+            className="w-full bg-secondary border border-border rounded-lg px-3 py-2 text-sm max-w-sm"
+          />
         </div>
+      )}
+      {form.method === 'wise' && (
+        <div className="mb-4">
+          <label className="text-xs text-muted-foreground mb-1.5 block">Wise Email</label>
+          <input
+            type="email"
+            value={form.wise_email}
+            onChange={e => set('wise_email', e.target.value)}
+            placeholder="you@wise.com"
+            className="w-full bg-secondary border border-border rounded-lg px-3 py-2 text-sm max-w-sm"
+          />
+        </div>
+      )}
+
+      {/* Minimum payout */}
+      <div className="flex items-center gap-4 mb-5">
         <div>
-          <p className="font-semibold text-sm">Verification In Progress</p>
-          <p className="text-xs text-muted-foreground mt-0.5">We are verifying your bank details. This usually takes 1–2 business days.</p>
+          <label className="text-xs text-muted-foreground mb-1.5 block">Minimum Payout ($)</label>
+          <input
+            type="number"
+            min={5}
+            value={form.minimum_payout}
+            onChange={e => set('minimum_payout', Number(e.target.value))}
+            className="w-28 bg-secondary border border-border rounded-lg px-3 py-2 text-sm"
+          />
         </div>
-      </GlassCard>
-    );
-  }
-
-  // Not connected — show setup form
-  return (
-    <GlassCard className="p-5 mb-8">
-      <div className="flex items-center gap-3 mb-5">
-        <div className="w-9 h-9 rounded-xl bg-primary/10 flex items-center justify-center">
-          <CreditCard className="w-4.5 h-4.5 text-primary" />
-        </div>
-        <div>
-          <p className="font-semibold text-sm">Set Up Automated Payouts</p>
-          <p className="text-xs text-muted-foreground">Connect your bank account to receive earnings automatically</p>
-        </div>
-      </div>
-
-      <div className="grid md:grid-cols-3 gap-3 mb-5">
-        {PAYOUT_SCHEDULES.map(s => (
-          <div
-            key={s.id}
-            onClick={() => setForm(f => ({ ...f, schedule: s.id }))}
-            className={`rounded-xl border p-3 cursor-pointer transition-all ${form.schedule === s.id ? 'border-primary/40 bg-primary/10' : 'border-white/10 bg-secondary/30 hover:border-white/20'}`}
-          >
-            <s.icon className={`w-4 h-4 mb-1.5 ${form.schedule === s.id ? 'text-primary' : 'text-muted-foreground'}`} />
-            <p className={`text-xs font-semibold ${form.schedule === s.id ? 'text-primary' : ''}`}>{s.label}</p>
-            <p className="text-xs text-muted-foreground">{s.desc}</p>
+        {existing?.last_payout_date && (
+          <div className="text-xs text-muted-foreground">
+            Last payout: <span className="text-foreground font-medium">${existing.last_payout_amount || 0}</span> on {existing.last_payout_date}
           </div>
-        ))}
+        )}
       </div>
 
-      <div className="space-y-3 mb-5">
-        <input
-          className="w-full bg-secondary/50 border border-white/10 rounded-lg px-3 py-2.5 text-sm placeholder:text-muted-foreground focus:outline-none focus:border-primary/40"
-          placeholder="Account holder name"
-          value={form.account_name}
-          onChange={e => setForm(f => ({ ...f, account_name: e.target.value }))}
-        />
-        <div className="grid grid-cols-2 gap-3">
-          <input
-            className="bg-secondary/50 border border-white/10 rounded-lg px-3 py-2.5 text-sm placeholder:text-muted-foreground focus:outline-none focus:border-primary/40"
-            placeholder="Account number"
-            value={form.account_number}
-            onChange={e => setForm(f => ({ ...f, account_number: e.target.value }))}
-          />
-          <input
-            className="bg-secondary/50 border border-white/10 rounded-lg px-3 py-2.5 text-sm placeholder:text-muted-foreground focus:outline-none focus:border-primary/40"
-            placeholder="Routing number"
-            value={form.routing}
-            onChange={e => setForm(f => ({ ...f, routing: e.target.value }))}
-          />
-        </div>
-      </div>
-
-      <div className="flex items-center gap-3 bg-blue-500/5 border border-blue-500/20 rounded-xl p-3 text-xs text-muted-foreground mb-4">
-        <AlertCircle className="w-4 h-4 text-blue-400 shrink-0" />
-        Your banking details are encrypted and never stored in plain text. Payouts are processed securely.
-      </div>
-
-      <Button className="w-full gap-2" onClick={handleConnect} disabled={saving}>
-        {saving ? <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" /> : <ChevronRight className="w-4 h-4" />}
-        {saving ? 'Connecting…' : 'Connect Bank Account'}
+      <Button
+        onClick={() => save.mutate(form)}
+        disabled={save.isPending}
+        className="gap-2"
+      >
+        {save.isPending ? <RefreshCw className="w-4 h-4 animate-spin" /> : <CheckCircle2 className="w-4 h-4" />}
+        {existing?.is_active ? 'Update Payout Settings' : 'Activate Automated Payouts'}
       </Button>
     </GlassCard>
   );

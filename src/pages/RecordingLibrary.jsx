@@ -7,10 +7,10 @@ import GlassCard from '@/components/ui/GlassCard';
 import { Button } from '@/components/ui/button';
 import {
   Home, Inbox, Calendar, Radio, MessageSquare, DollarSign,
-  Star, User, Settings, Film, Download, Share2, Trash2, Clock, HardDrive
+  Star, User, Settings, Film, Play, Share2, Trash2, Clock,
+  Download, Eye, EyeOff
 } from 'lucide-react';
 import { format } from 'date-fns';
-import { useToast } from '@/components/ui/use-toast';
 
 const navItems = [
   { icon: Home, label: 'Home', path: '/AvatarDashboard' },
@@ -24,68 +24,35 @@ const navItems = [
   { icon: Settings, label: 'Settings', path: '/AvatarSettings' },
 ];
 
-function formatBytes(bytes) {
-  if (!bytes) return '—';
-  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(0)} KB`;
-  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
-}
-
-function formatDuration(secs) {
-  if (!secs) return '—';
-  const m = Math.floor(secs / 60), s = secs % 60;
-  return `${m}m ${s}s`;
+function formatDuration(seconds) {
+  if (!seconds) return '—';
+  const m = Math.floor(seconds / 60);
+  const s = seconds % 60;
+  return `${m}:${String(s).padStart(2, '0')}`;
 }
 
 export default function RecordingLibrary() {
   const { user, loading } = useCurrentUser();
-  const { toast } = useToast();
   const queryClient = useQueryClient();
-  const [uploading, setUploading] = useState(false);
+  const [preview, setPreview] = useState(null);
 
-  const { data: recordings = [], isLoading } = useQuery({
-    queryKey: ['session-recordings', user?.email],
-    queryFn: () => base44.entities.SessionRecording.filter({ avatar_email: user.email }, '-created_date', 50),
+  const { data: recordings = [] } = useQuery({
+    queryKey: ['recordings', user?.email],
+    queryFn: () => base44.entities.Recording.filter({ avatar_email: user.email }, '-created_date', 50),
     enabled: !!user,
   });
 
-  const deleteMutation = useMutation({
-    mutationFn: (id) => base44.entities.SessionRecording.delete(id),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['session-recordings'] });
-      toast({ title: 'Recording deleted' });
-    },
+  const toggleShare = useMutation({
+    mutationFn: (r) => base44.entities.Recording.update(r.id, { is_shared_with_client: !r.is_shared_with_client }),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['recordings', user?.email] }),
   });
 
-  const shareMutation = useMutation({
-    mutationFn: ({ id, val }) => base44.entities.SessionRecording.update(id, { is_shared_with_client: val }),
-    onSuccess: (_, { val }) => {
-      queryClient.invalidateQueries({ queryKey: ['session-recordings'] });
-      toast({ title: val ? 'Shared with client' : 'Sharing revoked' });
-    },
+  const deleteRec = useMutation({
+    mutationFn: (id) => base44.entities.Recording.delete(id),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['recordings', user?.email] }),
   });
 
-  const handleUpload = async (e) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    setUploading(true);
-    try {
-      const { file_url } = await base44.integrations.Core.UploadFile({ file });
-      await base44.entities.SessionRecording.create({
-        avatar_email: user.email,
-        title: file.name.replace(/\.[^/.]+$/, ''),
-        file_url,
-        size_bytes: file.size,
-        duration_seconds: 0,
-      });
-      queryClient.invalidateQueries({ queryKey: ['session-recordings'] });
-      toast({ title: 'Recording uploaded!' });
-    } catch {
-      toast({ title: 'Upload failed', variant: 'destructive' });
-    }
-    setUploading(false);
-  };
-
-  if (loading || isLoading) return (
+  if (loading) return (
     <div className="min-h-screen flex items-center justify-center">
       <div className="w-8 h-8 border-4 border-primary/20 border-t-primary rounded-full animate-spin" />
     </div>
@@ -93,80 +60,88 @@ export default function RecordingLibrary() {
 
   return (
     <AppShell navItems={navItems} user={user}>
-      <div className="flex items-center justify-between mb-8">
-        <div>
-          <h1 className="text-2xl lg:text-3xl font-bold mb-1">Recording Library</h1>
-          <p className="text-muted-foreground text-sm">{recordings.length} session recording{recordings.length !== 1 ? 's' : ''}</p>
-        </div>
-        <label className="cursor-pointer">
-          <input type="file" accept="video/*" className="hidden" onChange={handleUpload} />
-          <Button disabled={uploading} className="gap-2">
-            {uploading ? <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" /> : <Film className="w-4 h-4" />}
-            {uploading ? 'Uploading…' : 'Upload Recording'}
-          </Button>
-        </label>
+      <div className="mb-8">
+        <h1 className="text-2xl lg:text-3xl font-bold mb-1 flex items-center gap-3">
+          <Film className="w-7 h-7 text-primary" /> Recording Library
+        </h1>
+        <p className="text-muted-foreground text-sm">Browse, share, and manage your session recordings</p>
       </div>
 
       {recordings.length === 0 ? (
-        <GlassCard className="p-16 text-center">
-          <Film className="w-12 h-12 text-muted-foreground/40 mx-auto mb-4" />
-          <p className="text-muted-foreground text-sm mb-2">No recordings yet</p>
-          <p className="text-xs text-muted-foreground/60">Recordings saved during live sessions will appear here, or upload manually above.</p>
+        <GlassCard className="p-14 text-center">
+          <Film className="w-12 h-12 text-muted-foreground/30 mx-auto mb-4" />
+          <p className="font-medium mb-1">No recordings yet</p>
+          <p className="text-sm text-muted-foreground">
+            Start a live session and hit Record — your clips will appear here automatically.
+          </p>
         </GlassCard>
       ) : (
-        <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-5">
-          {recordings.map(rec => (
-            <GlassCard key={rec.id} className="p-0 overflow-hidden flex flex-col">
-              {/* Thumbnail / placeholder */}
-              <div className="h-36 bg-secondary/50 flex items-center justify-center relative">
-                {rec.thumbnail_url ? (
-                  <img src={rec.thumbnail_url} alt="" className="w-full h-full object-cover" />
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          {recordings.map(r => (
+            <GlassCard key={r.id} className="overflow-hidden flex flex-col">
+              {/* Thumbnail / preview area */}
+              <div
+                className="relative bg-black/40 aspect-video flex items-center justify-center cursor-pointer group"
+                onClick={() => r.file_url && setPreview(r)}
+              >
+                {r.thumbnail_url ? (
+                  <img src={r.thumbnail_url} alt={r.title} className="w-full h-full object-cover" />
                 ) : (
                   <Film className="w-10 h-10 text-muted-foreground/30" />
                 )}
-                {rec.is_shared_with_client && (
-                  <span className="absolute top-2 right-2 bg-green-500/20 text-green-400 text-xs px-2 py-0.5 rounded-full border border-green-500/20">
-                    Shared
-                  </span>
+                {r.file_url && (
+                  <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-black/40">
+                    <div className="w-12 h-12 rounded-full bg-white/20 flex items-center justify-center">
+                      <Play className="w-5 h-5 text-white fill-white" />
+                    </div>
+                  </div>
+                )}
+                {/* Mode badge */}
+                <span className="absolute top-2 left-2 text-xs bg-black/60 text-white px-2 py-0.5 rounded-md uppercase">
+                  {r.stream_mode || 'std'}
+                </span>
+                {r.is_shared_with_client && (
+                  <span className="absolute top-2 right-2 text-xs bg-green-500/80 text-white px-2 py-0.5 rounded-md">Shared</span>
                 )}
               </div>
 
-              <div className="p-4 flex-1 flex flex-col gap-3">
-                <div>
-                  <p className="font-medium text-sm truncate">{rec.title}</p>
-                  {rec.client_name && <p className="text-xs text-muted-foreground mt-0.5">Client: {rec.client_name}</p>}
-                  {rec.category && <p className="text-xs text-muted-foreground">{rec.category}</p>}
-                </div>
-
+              <div className="p-4 flex flex-col gap-2 flex-1">
+                <p className="font-medium text-sm truncate">{r.title}</p>
                 <div className="flex items-center gap-3 text-xs text-muted-foreground">
-                  {rec.duration_seconds > 0 && (
-                    <span className="flex items-center gap-1"><Clock className="w-3 h-3" />{formatDuration(rec.duration_seconds)}</span>
+                  {r.client_name && <span>{r.client_name}</span>}
+                  {r.duration_seconds && (
+                    <span className="flex items-center gap-1">
+                      <Clock className="w-3 h-3" /> {formatDuration(r.duration_seconds)}
+                    </span>
                   )}
-                  <span className="flex items-center gap-1"><HardDrive className="w-3 h-3" />{formatBytes(rec.size_bytes)}</span>
-                  <span className="ml-auto">{rec.created_date ? format(new Date(rec.created_date), 'MMM d') : ''}</span>
+                  {r.file_size_mb && <span>{r.file_size_mb.toFixed(1)} MB</span>}
                 </div>
+                {r.created_date && (
+                  <p className="text-xs text-muted-foreground">{format(new Date(r.created_date), 'MMM d, yyyy')}</p>
+                )}
 
-                <div className="flex items-center gap-2 mt-auto">
-                  {rec.file_url && (
-                    <a href={rec.file_url} download target="_blank" rel="noreferrer" className="flex-1">
-                      <Button size="sm" variant="secondary" className="w-full gap-1.5">
-                        <Download className="w-3.5 h-3.5" /> Download
+                <div className="flex items-center gap-2 mt-auto pt-2">
+                  {r.file_url && (
+                    <a href={r.file_url} download target="_blank" rel="noopener noreferrer">
+                      <Button size="sm" variant="ghost" className="gap-1 text-xs px-2 h-7">
+                        <Download className="w-3.5 h-3.5" /> Save
                       </Button>
                     </a>
                   )}
                   <Button
                     size="sm"
-                    variant="outline"
-                    className={`gap-1.5 ${rec.is_shared_with_client ? 'text-green-400 border-green-500/30' : ''}`}
-                    onClick={() => shareMutation.mutate({ id: rec.id, val: !rec.is_shared_with_client })}
+                    variant="ghost"
+                    className={`gap-1 text-xs px-2 h-7 ${r.is_shared_with_client ? 'text-green-400' : ''}`}
+                    onClick={() => toggleShare.mutate(r)}
                   >
-                    <Share2 className="w-3.5 h-3.5" />
+                    {r.is_shared_with_client ? <EyeOff className="w-3.5 h-3.5" /> : <Share2 className="w-3.5 h-3.5" />}
+                    {r.is_shared_with_client ? 'Unshare' : 'Share'}
                   </Button>
                   <Button
                     size="sm"
                     variant="ghost"
-                    className="text-red-400 hover:text-red-300 hover:bg-red-500/10"
-                    onClick={() => { if (confirm('Delete this recording?')) deleteMutation.mutate(rec.id); }}
+                    className="gap-1 text-xs px-2 h-7 text-red-400 hover:text-red-300 ml-auto"
+                    onClick={() => deleteRec.mutate(r.id)}
                   >
                     <Trash2 className="w-3.5 h-3.5" />
                   </Button>
@@ -174,6 +149,21 @@ export default function RecordingLibrary() {
               </div>
             </GlassCard>
           ))}
+        </div>
+      )}
+
+      {/* Video preview modal */}
+      {preview && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4" onClick={() => setPreview(null)}>
+          <div className="max-w-3xl w-full" onClick={e => e.stopPropagation()}>
+            <video
+              src={preview.file_url}
+              controls
+              autoPlay
+              className="w-full rounded-xl"
+            />
+            <p className="text-center text-sm text-white/70 mt-3">{preview.title} — click outside to close</p>
+          </div>
         </div>
       )}
     </AppShell>
