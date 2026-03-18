@@ -129,7 +129,7 @@ export default function Explore() {
         {/* Map View */}
         {viewMode === 'map' && !isLoading && (
           <div className="mb-6">
-            <GlobeMap avatars={filtered} />
+            <GlobeMap avatars={filtered} focusCity={focusCity} />
           </div>
         )}
 
