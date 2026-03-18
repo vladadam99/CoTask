@@ -30,6 +30,9 @@ const navItems = [
 export default function AvatarDashboard() {
   const { user, loading: userLoading } = useCurrentUser();
   const queryClient = useQueryClient();
+  const [globeView, setGlobeView] = useState(false);
+  const [locationSearch, setLocationSearch] = useState('');
+  const [focusCity, setFocusCity] = useState('');
 
   const { data: profile } = useQuery({
     queryKey: ['avatar-profile', user?.email],
