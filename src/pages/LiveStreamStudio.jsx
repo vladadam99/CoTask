@@ -273,8 +273,8 @@ export default function LiveStreamStudio() {
             )}
           </div>
 
-          {/* RIGHT — Video Preview (2/3 width) */}
-          <div className="lg:col-span-2">
+          {/* RIGHT — Video Preview */}
+          <div className={chatOpen && isLive ? 'lg:col-span-2' : 'lg:col-span-2'}>
             <GlassCard className="p-0 overflow-hidden relative" style={{ height: '520px' }}>
               {!selectedSource ? (
                 <div className="w-full h-full flex flex-col items-center justify-center gap-4 text-center p-8">
