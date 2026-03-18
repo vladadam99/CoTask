@@ -7,9 +7,10 @@ import AppShell from '@/components/layout/AppShell';
 import GlassCard from '@/components/ui/GlassCard';
 import StatusBadge from '@/components/ui/StatusBadge';
 import { Button } from '@/components/ui/button';
+import CameraStudio from '@/components/live/CameraStudio';
 import {
   Home, Inbox, Calendar, Radio, MessageSquare, DollarSign,
-  Star, User, Settings, Play, Square, Clock, Eye
+  Star, User, Settings, Play, Square, Clock, ArrowLeft
 } from 'lucide-react';
 
 const navItems = [
@@ -27,6 +28,7 @@ const navItems = [
 export default function AvatarLive() {
   const { user, loading } = useCurrentUser();
   const queryClient = useQueryClient();
+  const [studioSession, setStudioSession] = useState(null); // the live session currently in studio
 
   const { data: sessions = [] } = useQuery({
     queryKey: ['avatar-live-sessions', user?.email],
@@ -52,7 +54,10 @@ export default function AvatarLive() {
       status: 'live',
       started_at: new Date().toISOString(),
     }),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['avatar-live-sessions'] }),
+    onSuccess: (session) => {
+      queryClient.invalidateQueries({ queryKey: ['avatar-live-sessions'] });
+      setStudioSession(session);
+    },
   });
 
   const endSession = useMutation({
@@ -60,43 +65,87 @@ export default function AvatarLive() {
       status: 'ended',
       ended_at: new Date().toISOString(),
     }),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['avatar-live-sessions'] }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['avatar-live-sessions'] });
+      setStudioSession(null);
+    },
   });
 
-  if (loading) return <div className="min-h-screen flex items-center justify-center"><div className="w-8 h-8 border-4 border-primary/20 border-t-primary rounded-full animate-spin" /></div>;
+  if (loading) return (
+    <div className="min-h-screen flex items-center justify-center">
+      <div className="w-8 h-8 border-4 border-primary/20 border-t-primary rounded-full animate-spin" />
+    </div>
+  );
 
-  const liveSession = sessions.find(s => s.status === 'live');
+  const liveSession = studioSession || sessions.find(s => s.status === 'live');
   const pastSessions = sessions.filter(s => s.status === 'ended');
 
+  // ── Studio view ────────────────────────────────────────────────────────────
+  if (studioSession) {
+    return (
+      <AppShell navItems={navItems} user={user}>
+        <div className="flex items-center gap-3 mb-6">
+          <button
+            onClick={() => setStudioSession(null)}
+            className="glass rounded-lg p-2 text-muted-foreground hover:text-foreground transition-colors"
+          >
+            <ArrowLeft className="w-4 h-4" />
+          </button>
+          <div>
+            <h1 className="text-xl font-bold">{studioSession.title || 'Live Session'}</h1>
+            <p className="text-xs text-muted-foreground">Client: {studioSession.client_name}</p>
+          </div>
+        </div>
+
+        <CameraStudio
+          sessionTitle={studioSession.title}
+          onEnd={() => endSession.mutate(studioSession.id)}
+        />
+      </AppShell>
+    );
+  }
+
+  // ── Dashboard view ─────────────────────────────────────────────────────────
   return (
     <AppShell navItems={navItems} user={user}>
       <div className="mb-8">
         <h1 className="text-2xl lg:text-3xl font-bold mb-1">Live Sessions</h1>
-        <p className="text-muted-foreground text-sm">Manage and start your live avatar sessions</p>
+        <p className="text-muted-foreground text-sm">Manage and broadcast your live avatar sessions</p>
       </div>
 
-      {/* Active Session */}
-      {liveSession ? (
+      {/* Active session resumed from DB */}
+      {liveSession && !studioSession && (
         <GlassCard className="p-6 mb-8 border border-red-500/30 glow-primary">
           <div className="flex items-center gap-3 mb-4">
             <span className="w-3 h-3 bg-red-500 rounded-full animate-pulse" />
-            <span className="text-red-400 font-semibold text-sm uppercase tracking-wide">Live Now</span>
+            <span className="text-red-400 font-semibold text-sm uppercase tracking-wide">Session Active</span>
           </div>
           <h2 className="text-xl font-bold mb-1">{liveSession.title}</h2>
           <p className="text-muted-foreground text-sm mb-4">With {liveSession.client_name}</p>
-          <Button
-            variant="destructive"
-            onClick={() => endSession.mutate(liveSession.id)}
-            disabled={endSession.isPending}
-            className="gap-2"
-          >
-            <Square className="w-4 h-4" /> End Session
-          </Button>
+          <div className="flex gap-2">
+            <Button
+              className="gap-2 bg-green-600 hover:bg-green-700"
+              onClick={() => setStudioSession(liveSession)}
+            >
+              <Radio className="w-4 h-4" /> Open Studio
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={() => endSession.mutate(liveSession.id)}
+              disabled={endSession.isPending}
+              className="gap-2"
+            >
+              <Square className="w-4 h-4" /> End Session
+            </Button>
+          </div>
         </GlassCard>
-      ) : (
+      )}
+
+      {!liveSession && (
         <GlassCard className="p-6 mb-8 text-center border border-dashed border-white/10">
           <Radio className="w-10 h-10 text-muted-foreground mx-auto mb-3" />
           <p className="text-muted-foreground text-sm">No active session</p>
+          <p className="text-xs text-muted-foreground/60 mt-1">Start a session below to open the camera studio</p>
         </GlassCard>
       )}
 
