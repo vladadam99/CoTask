@@ -44,8 +44,9 @@ export default function Explore() {
   });
 
   const handleLocationSearch = () => {
-    setFocusCity(locationSearch);
-    if (viewMode !== 'map') setViewMode('map');
+    if (!locationSearch.trim()) return;
+    setFocusCity(locationSearch.trim());
+    setViewMode('map');
   };
 
   return (
