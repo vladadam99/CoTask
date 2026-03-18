@@ -675,7 +675,7 @@ export default function LiveStreamStudio() {
             </GlassCard>
 
             {/* Info bar below video */}
-            {selectedSource && !isLive && (
+            {selectedSource && !isLive && (wifiStreamActive || streamRef.current) && (
               <div className="mt-3 flex items-center gap-3 text-xs text-muted-foreground px-1">
                 <span className="w-2 h-2 rounded-full bg-yellow-500 animate-pulse" />
                 Camera preview active — not broadcasting yet. Select a booking above to go live.
