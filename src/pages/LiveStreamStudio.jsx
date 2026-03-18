@@ -736,6 +736,18 @@ export default function LiveStreamStudio() {
           )}
         </div>
 
+        {/* Feature panels — AI Highlights, Poll, Replay */}
+        <div className="grid gap-5 mt-6 lg:grid-cols-3">
+          <AIStreamHighlights
+            isLive={isLive}
+            elapsed={elapsed}
+            attachedBooking={attachedBooking}
+            streamMode={viewMode}
+          />
+          <StreamPoll isLive={isLive} />
+          <StreamReplay recordedChunks={recordedChunks} isRecording={isRecording} />
+        </div>
+
         {/* Notes */}
         <GlassCard className="p-5 mt-6 border-white/5">
           <h3 className="text-sm font-semibold mb-2">Device Connection Tips</h3>
