@@ -12,7 +12,7 @@ import { Input } from '@/components/ui/input';
 import GlobeMap from '@/components/explore/GlobeMap';
 import {
   Home, Inbox, Calendar, Radio, MessageSquare, DollarSign, Star, User, Settings,
-  ArrowRight, TrendingUp, Clock, CheckCircle, MapPin, Search, Map, LayoutGrid
+  ArrowRight, TrendingUp, Clock, CheckCircle, MapPin, Search, Globe
 } from 'lucide-react';
 
 const navItems = [
@@ -30,9 +30,6 @@ const navItems = [
 export default function AvatarDashboard() {
   const { user, loading: userLoading } = useCurrentUser();
   const queryClient = useQueryClient();
-  const [globeView, setGlobeView] = useState(false);
-  const [locationSearch, setLocationSearch] = useState('');
-  const [focusCity, setFocusCity] = useState('');
 
   const { data: profile } = useQuery({
     queryKey: ['avatar-profile', user?.email],
@@ -49,11 +46,15 @@ export default function AvatarDashboard() {
     enabled: !!user,
   });
 
-  // Load nearby avatar profiles to show on globe (other avatars in similar locations)
+  // For globe: load active avatars so avatar can see where jobs are coming from
   const { data: allAvatars = [] } = useQuery({
-    queryKey: ['globe-avatars'],
+    queryKey: ['all-avatars-globe'],
     queryFn: () => base44.entities.AvatarProfile.filter({ status: 'active' }, '-rating', 50),
   });
+
+  const [globeSearch, setGlobeSearch] = useState('');
+  const [focusCity, setFocusCity] = useState('');
+  const [showGlobe, setShowGlobe] = useState(false);
 
   const toggleAvailability = useMutation({
     mutationFn: () => base44.entities.AvatarProfile.update(profile.id, { is_available: !profile.is_available }),
