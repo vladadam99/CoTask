@@ -128,9 +128,9 @@ export default function Explore() {
         </div>
 
         {/* Map View */}
-        {viewMode === 'map' && !isLoading && (
+        {viewMode === 'map' && (
           <div className="mb-6">
-            <GlobeMap avatars={filtered} focusCity={focusCity} />
+            <GlobeMap avatars={filtered} focusCity={focusCity} mode="client" />
           </div>
         )}
 
