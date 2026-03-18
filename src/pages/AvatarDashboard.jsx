@@ -12,7 +12,7 @@ import { Input } from '@/components/ui/input';
 import GlobeMap from '@/components/explore/GlobeMap';
 import {
   Home, Inbox, Calendar, Radio, MessageSquare, DollarSign, Star, User, Settings,
-  ArrowRight, TrendingUp, Clock, CheckCircle, MapPin, Search, Globe
+  ArrowRight, TrendingUp, Clock, CheckCircle, MapPin, Search, Map, LayoutGrid
 } from 'lucide-react';
 
 const navItems = [
@@ -30,6 +30,9 @@ const navItems = [
 export default function AvatarDashboard() {
   const { user, loading: userLoading } = useCurrentUser();
   const queryClient = useQueryClient();
+  const [globeView, setGlobeView] = useState(false);
+  const [locationSearch, setLocationSearch] = useState('');
+  const [focusCity, setFocusCity] = useState('');
 
   const { data: profile } = useQuery({
     queryKey: ['avatar-profile', user?.email],
@@ -46,15 +49,11 @@ export default function AvatarDashboard() {
     enabled: !!user,
   });
 
-  // For globe: load active avatars so avatar can see where jobs are coming from
+  // Load nearby avatar profiles to show on globe (other avatars in similar locations)
   const { data: allAvatars = [] } = useQuery({
-    queryKey: ['all-avatars-globe'],
+    queryKey: ['globe-avatars'],
     queryFn: () => base44.entities.AvatarProfile.filter({ status: 'active' }, '-rating', 50),
   });
-
-  const [globeSearch, setGlobeSearch] = useState('');
-  const [focusCity, setFocusCity] = useState('');
-  const [showGlobe, setShowGlobe] = useState(false);
 
   const toggleAvailability = useMutation({
     mutationFn: () => base44.entities.AvatarProfile.update(profile.id, { is_available: !profile.is_available }),
@@ -156,6 +155,44 @@ export default function AvatarDashboard() {
             <p className="text-sm text-muted-foreground">No pending requests right now</p>
             <p className="text-xs text-muted-foreground mt-1">Make sure you're set to available to receive bookings</p>
           </GlassCard>
+        )}
+      </div>
+
+      {/* Job Discovery Globe */}
+      <div className="mb-8">
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-lg font-semibold">Discover Jobs Near You</h2>
+          <button
+            onClick={() => setGlobeView(v => !v)}
+            className={`flex items-center gap-1.5 text-sm px-3 py-1.5 rounded-lg transition-colors ${globeView ? 'bg-primary text-primary-foreground' : 'bg-muted/50 text-muted-foreground hover:bg-muted'}`}
+          >
+            <Map className="w-4 h-4" /> {globeView ? 'Hide Globe' : 'View Globe'}
+          </button>
+        </div>
+        {globeView && (
+          <div>
+            <div className="flex gap-2 mb-3">
+              <div className="relative flex-1 max-w-sm">
+                <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                <Input
+                  value={locationSearch}
+                  onChange={e => setLocationSearch(e.target.value)}
+                  onKeyDown={e => e.key === 'Enter' && setFocusCity(locationSearch)}
+                  placeholder="Search a city to explore..."
+                  className="pl-10 bg-muted/50 border-white/5 h-9 text-sm"
+                />
+              </div>
+              <Button size="sm" onClick={() => setFocusCity(locationSearch)} className="h-9">
+                <Search className="w-4 h-4 mr-1" /> Go
+              </Button>
+              {focusCity && (
+                <Button size="sm" variant="ghost" className="h-9 text-muted-foreground" onClick={() => { setFocusCity(''); setLocationSearch(''); }}>
+                  Clear
+                </Button>
+              )}
+            </div>
+            <GlobeMap avatars={allAvatars} focusCity={focusCity} mode="avatar" />
+          </div>
         )}
       </div>
 
