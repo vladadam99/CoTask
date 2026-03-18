@@ -59,7 +59,7 @@ export default function Explore() {
         </div>
 
         {/* Search Bar */}
-        <div className="flex gap-3 mb-4 flex-wrap">
+        <div className="flex gap-3 mb-3 flex-wrap">
           <div className="flex-1 relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
             <Input
@@ -80,6 +80,28 @@ export default function Explore() {
               <Map className="w-4 h-4" /> Globe
             </button>
           </div>
+        </div>
+
+        {/* Location Search */}
+        <div className="flex gap-2 mb-4">
+          <div className="relative flex-1 max-w-sm">
+            <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+            <Input
+              value={locationSearch}
+              onChange={e => setLocationSearch(e.target.value)}
+              onKeyDown={e => e.key === 'Enter' && handleLocationSearch()}
+              placeholder="Search by city or location..."
+              className="pl-10 bg-muted/50 border-white/5 h-9 text-sm"
+            />
+          </div>
+          <Button size="sm" onClick={handleLocationSearch} className="h-9">
+            <Search className="w-4 h-4 mr-1" /> Find on Globe
+          </Button>
+          {focusCity && (
+            <Button size="sm" variant="ghost" className="h-9 text-muted-foreground" onClick={() => { setFocusCity(''); setLocationSearch(''); }}>
+              Clear
+            </Button>
+          )}
         </div>
 
         {/* Filters */}
