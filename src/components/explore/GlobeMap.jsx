@@ -380,7 +380,7 @@ export default function GlobeMap({ avatars = [], focusCity = '' }) {
     let lastTouch = null;
     const onTouchStart = (e) => {
       isDragging = true;
-      autoRotate = false;
+      autoRotateRef.current = false;
       lastTouch = e.touches[0];
       rotationVelocity = { x: 0, y: 0 };
     };
