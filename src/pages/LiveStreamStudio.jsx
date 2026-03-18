@@ -348,12 +348,49 @@ export default function LiveStreamStudio() {
               </div>
             )}
             {isLive && (
-              <div className="mt-3 flex items-center gap-3 text-xs text-green-400 px-1">
-                <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
-                You are live. Your client can view this stream in real time.
+              <div className="mt-3 flex items-center justify-between px-1">
+                <div className="flex items-center gap-3 text-xs text-green-400">
+                  <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
+                  You are live. Your client can view this stream in real time.
+                </div>
+                <div className="flex items-center gap-2">
+                  {!isRecording ? (
+                    <button
+                      onClick={startRecording}
+                      className="flex items-center gap-1.5 text-xs bg-red-600/90 hover:bg-red-600 text-white px-3 py-1.5 rounded-lg transition-colors"
+                    >
+                      <Circle className="w-3 h-3 fill-white" /> Record
+                    </button>
+                  ) : (
+                    <button
+                      onClick={stopRecording}
+                      className="flex items-center gap-1.5 text-xs bg-red-700 text-white px-3 py-1.5 rounded-lg animate-pulse"
+                    >
+                      <StopIcon className="w-3 h-3 fill-white" /> Stop & Save
+                    </button>
+                  )}
+                  <button
+                    onClick={() => setChatOpen(v => !v)}
+                    className={`flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg transition-colors border ${chatOpen ? 'bg-primary/20 border-primary/30 text-primary' : 'bg-secondary border-white/10 text-muted-foreground hover:text-foreground'}`}
+                  >
+                    <MessageCircle className="w-3 h-3" /> Chat
+                  </button>
+                </div>
               </div>
             )}
           </div>
+
+          {/* CHAT PANEL */}
+          {chatOpen && isLive && (
+            <div className="lg:col-span-1" style={{ height: '560px' }}>
+              <StreamChatbox
+                clientName={attachedBooking?.client_name || 'Client'}
+                avatarName={user?.full_name || 'You'}
+                isOpen={chatOpen}
+                onClose={() => setChatOpen(false)}
+              />
+            </div>
+          )}
         </div>
 
         {/* Notes */}
