@@ -69,6 +69,12 @@ const AuthenticatedApp = () => {
       <Route path="/UserDashboard" element={<UserDashboard />} />
       <Route path="/AvatarDashboard" element={<AvatarDashboard />} />
       <Route path="/AvatarRequests" element={<AvatarRequests />} />
+      <Route path="/AvatarSchedule" element={<AvatarSchedule />} />
+      <Route path="/AvatarLive" element={<AvatarLive />} />
+      <Route path="/AvatarEarnings" element={<AvatarEarnings />} />
+      <Route path="/AvatarReviews" element={<AvatarReviews />} />
+      <Route path="/AvatarProfileEdit" element={<AvatarProfileEdit />} />
+      <Route path="/AvatarSettings" element={<AvatarSettings />} />
       <Route path="/EnterpriseDashboard" element={<EnterpriseDashboard />} />
       <Route path="/Explore" element={<Explore />} />
       <Route path="/AvatarView" element={<AvatarView />} />
