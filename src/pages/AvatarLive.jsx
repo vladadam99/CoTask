@@ -75,11 +75,18 @@ export default function AvatarLive() {
           <h1 className="text-2xl lg:text-3xl font-bold mb-1">Live Sessions</h1>
           <p className="text-muted-foreground text-sm">Manage and start your live avatar sessions</p>
         </div>
-        <Link to="/LiveStreamStudio">
-          <Button className="gap-2 glow-primary-sm">
-            <Clapperboard className="w-4 h-4" /> Launch Studio
-          </Button>
-        </Link>
+        <div className="flex items-center gap-2">
+          <Link to="/RecordingLibrary">
+            <Button variant="outline" className="gap-2">
+              <Film className="w-4 h-4" /> Recordings
+            </Button>
+          </Link>
+          <Link to="/LiveStreamStudio">
+            <Button className="gap-2 glow-primary-sm">
+              <Clapperboard className="w-4 h-4" /> Launch Studio
+            </Button>
+          </Link>
+        </div>
       </div>
 
       {/* Active Session */}
