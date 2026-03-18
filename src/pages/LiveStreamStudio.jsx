@@ -504,11 +504,12 @@ export default function LiveStreamStudio() {
         <GlassCard className="p-5 mt-6 border-white/5">
           <h3 className="text-sm font-semibold mb-2">Device Connection Tips</h3>
           <ul className="text-xs text-muted-foreground space-y-1.5 leading-relaxed list-disc list-inside">
-            <li><strong className="text-foreground">Phone cameras</strong> — detected automatically via browser media API. Grant camera permission when prompted.</li>
-            <li><strong className="text-foreground">Insta360</strong> — connect via USB or use the Insta360 virtual webcam driver. It will appear as a second video input.</li>
-            <li><strong className="text-foreground">Meta Glasses</strong> — connect via Bluetooth companion mode or USB tethering. It mirrors as a camera device.</li>
+            <li><strong className="text-foreground">Phone cameras</strong> — detected automatically. Grant camera permission when prompted.</li>
+            <li><strong className="text-foreground">Insta360 on Android</strong> — connect via USB-C. Open Chrome, allow camera access, then select Insta360 from the device picker that appears above. The camera name should include "Insta360" or "USB Video".</li>
+            <li><strong className="text-foreground">Insta360 tip</strong> — if the camera isn't detected, open the Insta360 app first to wake the device, then return here and re-select "Insta360" as the source.</li>
+            <li><strong className="text-foreground">USB permissions on Android</strong> — Chrome may ask to allow USB device access. Tap "Allow" and make sure "Use by default" is checked.</li>
             <li><strong className="text-foreground">360° view</strong> — available when Insta360 is selected. Client can drag to look in any direction.</li>
-            <li><strong className="text-foreground">FPV ↔ TPS switching</strong> — tap the view mode buttons mid-session to switch perspective without interrupting the stream.</li>
+            <li><strong className="text-foreground">Meta Glasses</strong> — connect via USB tethering. It mirrors as a camera device in the list.</li>
           </ul>
         </GlassCard>
 
