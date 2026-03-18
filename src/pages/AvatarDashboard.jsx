@@ -12,7 +12,7 @@ import { Input } from '@/components/ui/input';
 import GlobeMap from '@/components/explore/GlobeMap';
 import {
   Home, Inbox, Calendar, Radio, MessageSquare, DollarSign, Star, User, Settings,
-  ArrowRight, TrendingUp, Clock, CheckCircle, MapPin, Search, Map, LayoutGrid
+  ArrowRight, TrendingUp, Clock, CheckCircle, MapPin, Search, Globe
 } from 'lucide-react';
 
 const navItems = [
@@ -30,9 +30,6 @@ const navItems = [
 export default function AvatarDashboard() {
   const { user, loading: userLoading } = useCurrentUser();
   const queryClient = useQueryClient();
-  const [globeView, setGlobeView] = useState(false);
-  const [locationSearch, setLocationSearch] = useState('');
-  const [focusCity, setFocusCity] = useState('');
 
   const { data: profile } = useQuery({
     queryKey: ['avatar-profile', user?.email],
