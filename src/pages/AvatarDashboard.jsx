@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
@@ -8,9 +8,11 @@ import GlassCard from '@/components/ui/GlassCard';
 import StatusBadge from '@/components/ui/StatusBadge';
 import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
+import { Input } from '@/components/ui/input';
+import GlobeMap from '@/components/explore/GlobeMap';
 import {
   Home, Inbox, Calendar, Radio, MessageSquare, DollarSign, Star, User, Settings,
-  ArrowRight, TrendingUp, Clock, CheckCircle
+  ArrowRight, TrendingUp, Clock, CheckCircle, MapPin, Search, Map, LayoutGrid
 } from 'lucide-react';
 
 const navItems = [
