@@ -375,6 +375,61 @@ export default function LiveStreamStudio() {
               </GlassCard>
             )}
 
+            {/* Insta360 Wi-Fi Wireless Connect */}
+            {selectedSource?.id === 'insta360' && (
+              <GlassCard className="p-5">
+                <h2 className="text-sm font-semibold mb-1 flex items-center gap-2">
+                  <Wifi className="w-4 h-4 text-purple-400" /> Wi-Fi Wireless Connect
+                </h2>
+                <p className="text-xs text-muted-foreground mb-3">
+                  Connect your Android phone to the <strong className="text-foreground">Insta360 Wi-Fi hotspot</strong>, then tap Connect. No USB needed.
+                </p>
+                {!wifiStreamActive ? (
+                  <div className="space-y-2">
+                    <input
+                      type="text"
+                      value={wifiStreamUrl}
+                      onChange={e => setWifiStreamUrl(e.target.value)}
+                      placeholder="http://192.168.42.1:8080/stream"
+                      className="w-full text-xs bg-card/60 border border-white/10 rounded-lg px-3 py-2 text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-purple-500/50"
+                    />
+                    <p className="text-xs text-muted-foreground/60">Default: 192.168.42.1:8080 (X3 / ONE RS / ONE X2)</p>
+                    <Button
+                      size="sm"
+                      className="w-full bg-purple-600 hover:bg-purple-700 gap-2"
+                      onClick={() => connectWifiStream()}
+                      disabled={wifiConnecting}
+                    >
+                      {wifiConnecting ? (
+                        <><span className="w-3 h-3 border-2 border-white/30 border-t-white rounded-full animate-spin" /> Connecting…</>
+                      ) : (
+                        <><Wifi className="w-3 h-3" /> Connect via Wi-Fi</>
+                      )}
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      className="w-full gap-2 text-xs"
+                      onClick={() => connectWifiStream('http://192.168.42.1:8080/stream')}
+                    >
+                      Try default address
+                    </Button>
+                  </div>
+                ) : (
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-2 text-xs text-green-400">
+                      <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
+                      Connected wirelessly to Insta360
+                    </div>
+                    <p className="text-xs text-muted-foreground truncate">{wifiStreamUrl}</p>
+                    <Button size="sm" variant="outline" className="w-full gap-2 text-xs text-red-400 border-red-500/20 hover:bg-red-500/10" onClick={disconnectWifiStream}>
+                      <WifiOff className="w-3 h-3" /> Disconnect
+                    </Button>
+                  </div>
+                )}
+              </GlassCard>
+            )}
+
             {/* View mode */}
             {selectedSource && (
               <GlassCard className="p-5">
