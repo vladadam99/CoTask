@@ -136,16 +136,21 @@ export default function LiveStreamStudio() {
   const startRecording = () => {
     if (!streamRef.current) return;
     const chunks = [];
+    const startTime = Date.now();
     const mr = new MediaRecorder(streamRef.current, { mimeType: 'video/webm;codecs=vp9' });
     mr.ondataavailable = e => { if (e.data.size > 0) chunks.push(e.data); };
     mr.onstop = () => {
       const blob = new Blob(chunks, { type: 'video/webm' });
+      const durationSeconds = Math.round((Date.now() - startTime) / 1000);
+      // Download locally
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
       a.download = `stream-recording-${Date.now()}.webm`;
       a.click();
       URL.revokeObjectURL(url);
+      // Also save to Recording Library
+      saveRecordingToDB(blob, durationSeconds);
       setRecordedChunks([]);
     };
     mediaRecorderRef.current = mr;
