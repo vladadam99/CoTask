@@ -12,7 +12,7 @@ import { Input } from '@/components/ui/input';
 import GlobeMap from '@/components/explore/GlobeMap';
 import {
   Home, Inbox, Calendar, Radio, MessageSquare, DollarSign, Star, User, Settings,
-  ArrowRight, TrendingUp, Clock, CheckCircle, MapPin, Search, Globe
+  ArrowRight, TrendingUp, Clock, CheckCircle, MapPin, Search, Map, LayoutGrid
 } from 'lucide-react';
 
 const navItems = [
@@ -30,6 +30,9 @@ const navItems = [
 export default function AvatarDashboard() {
   const { user, loading: userLoading } = useCurrentUser();
   const queryClient = useQueryClient();
+  const [globeView, setGlobeView] = useState(false);
+  const [locationSearch, setLocationSearch] = useState('');
+  const [focusCity, setFocusCity] = useState('');
 
   const { data: profile } = useQuery({
     queryKey: ['avatar-profile', user?.email],
@@ -44,6 +47,12 @@ export default function AvatarDashboard() {
     queryKey: ['avatar-bookings', user?.email],
     queryFn: () => base44.entities.Booking.filter({ avatar_email: user.email }, '-created_date', 10),
     enabled: !!user,
+  });
+
+  // Load nearby avatar profiles to show on globe (other avatars in similar locations)
+  const { data: allAvatars = [] } = useQuery({
+    queryKey: ['globe-avatars'],
+    queryFn: () => base44.entities.AvatarProfile.filter({ status: 'active' }, '-rating', 50),
   });
 
   const toggleAvailability = useMutation({
