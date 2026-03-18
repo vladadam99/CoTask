@@ -12,6 +12,7 @@ import RoleSelect from './pages/RoleSelect';
 import Onboarding from './pages/Onboarding';
 import UserDashboard from './pages/UserDashboard';
 import AvatarDashboard from './pages/AvatarDashboard';
+import AvatarRequests from './pages/AvatarRequests';
 import EnterpriseDashboard from './pages/EnterpriseDashboard';
 import Explore from './pages/Explore';
 import AvatarView from './pages/AvatarView';
