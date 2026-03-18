@@ -9,7 +9,7 @@ import StatusBadge from '@/components/ui/StatusBadge';
 import { Button } from '@/components/ui/button';
 import {
   Home, Inbox, Calendar, Radio, MessageSquare, DollarSign,
-  Star, User, Settings, Play, Square, Clock, Eye, Clapperboard
+  Star, User, Settings, Play, Square, Clock, Clapperboard, Film
 } from 'lucide-react';
 
 const navItems = [
