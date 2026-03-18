@@ -39,8 +39,14 @@ export default function Explore() {
       (a.categories || []).some(c => c.toLowerCase().includes(search.toLowerCase()));
     const matchCat = category === 'All' || (a.categories || []).includes(category);
     const matchCity = !city || a.city?.toLowerCase().includes(city.toLowerCase());
-    return matchSearch && matchCat && matchCity;
+    const matchLocation = !focusCity || a.city?.toLowerCase().includes(focusCity.toLowerCase());
+    return matchSearch && matchCat && matchCity && matchLocation;
   });
+
+  const handleLocationSearch = () => {
+    setFocusCity(locationSearch);
+    if (viewMode !== 'map') setViewMode('map');
+  };
 
   return (
     <div className="min-h-screen">
