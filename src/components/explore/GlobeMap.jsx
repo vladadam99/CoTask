@@ -169,8 +169,8 @@ function getCityCoords(city) {
 export default function GlobeMap({ avatars = [], focusCity = '' }) {
   const mountRef = useRef(null);
   const sceneRef = useRef({});
+  const autoRotateRef = useRef(true);
   const [selectedAvatar, setSelectedAvatar] = useState(null);
-  const [tooltip, setTooltip] = useState(null); // {x, y, avatar}
 
   const handleMarkerClick = useCallback((avatar) => {
     setSelectedAvatar(avatar);
@@ -184,40 +184,49 @@ export default function GlobeMap({ avatars = [], focusCity = '' }) {
     const { globe, markerObjects } = sceneRef.current;
     if (!globe) return;
 
-    const [lat, lon] = coords;
-    // Target rotation: lon → Y axis, lat → X axis (inverted for Three.js)
-    const targetY = -(lon * Math.PI) / 180;
-    const targetX = (lat * Math.PI) / 180;
+    // Stop auto-rotation
+    autoRotateRef.current = false;
 
-    let startY = globe.rotation.y;
-    let startX = globe.rotation.x;
-    // Normalize Y delta to shortest path
+    const [lat, lon] = coords;
+    // In Three.js with our latLonToVec3 setup:
+    // Y rotation corresponds to longitude: targetY = lon * π/180 (negated due to cos(theta) sign)
+    // X rotation corresponds to latitude: targetX = -lat * π/180
+    const targetY = (-lon * Math.PI) / 180;
+    const targetX = (-lat * Math.PI) / 180 * 0.5; // mild tilt for latitude
+
+    const startY = globe.rotation.y;
+    const startX = globe.rotation.x;
+
+    // Shortest path for Y
     let dy = targetY - startY;
     while (dy > Math.PI) dy -= 2 * Math.PI;
     while (dy < -Math.PI) dy += 2 * Math.PI;
+    const dx = targetX - startX;
 
-    const duration = 1200; // ms
+    const duration = 1400;
     const start = performance.now();
+    let animId;
 
     const animateTo = (now) => {
       const t = Math.min((now - start) / duration, 1);
-      // Ease in-out
       const ease = t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
       globe.rotation.y = startY + dy * ease;
-      globe.rotation.x = startX + (targetX - startX) * ease;
+      globe.rotation.x = startX + dx * ease;
       if (markerObjects) {
         markerObjects.forEach(m => {
           m.rotation.y = globe.rotation.y;
           m.rotation.x = globe.rotation.x;
         });
       }
-      if (t < 1) requestAnimationFrame(animateTo);
+      if (t < 1) animId = requestAnimationFrame(animateTo);
     };
-    requestAnimationFrame(animateTo);
+    animId = requestAnimationFrame(animateTo);
 
-    // Also select first avatar in that city
+    // Show first matching avatar popup
     const match = avatars.find(a => a.city?.toLowerCase().includes(focusCity.toLowerCase()));
     if (match) setSelectedAvatar(match);
+
+    return () => cancelAnimationFrame(animId);
   }, [focusCity, avatars]);
 
   useEffect(() => {
