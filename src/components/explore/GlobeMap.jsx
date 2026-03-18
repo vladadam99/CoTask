@@ -57,7 +57,7 @@ function getCityCoords(city) {
   return key ? CITY_COORDS[key] : null;
 }
 
-export default function GlobeMap({ avatars = [] }) {
+export default function GlobeMap({ avatars = [], focusCity = '' }) {
   const mountRef = useRef(null);
   const sceneRef = useRef({});
   const [selectedAvatar, setSelectedAvatar] = useState(null);
