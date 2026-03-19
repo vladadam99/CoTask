@@ -33,7 +33,10 @@ export default function AppShell({ children, navItems = [], user }) {
           })}
         </nav>
         <div className="p-4 border-t border-white/5">
-          <div className="flex items-center gap-3 mb-3">
+          <div className="hidden lg:flex justify-end mb-2">
+          <NotificationBell userEmail={user?.email} />
+        </div>
+        <div className="flex items-center gap-3 mb-3">
             <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center text-sm font-medium text-primary">
               {user?.full_name?.[0] || 'U'}
             </div>
@@ -54,9 +57,7 @@ export default function AppShell({ children, navItems = [], user }) {
           <Menu className="w-5 h-5" />
         </button>
         <Link to="/Landing" className="text-lg font-bold">Co<span className="text-primary">Task</span></Link>
-        <Link to="/Notifications">
-          <Bell className="w-5 h-5 text-muted-foreground" />
-        </Link>
+        <NotificationBell userEmail={user?.email} />
       </div>
 
       {/* Mobile Sidebar Overlay */}
