@@ -15,6 +15,20 @@ const CATEGORIES = [
   { label: 'Training & Coaching', emoji: '💪' },
   { label: 'Travel Assistance', emoji: '✈️' },
   { label: 'Campus Help', emoji: '🎓' },
+  { label: 'Medical Escort', emoji: '🏥' },
+  { label: 'Legal Witnessing', emoji: '⚖️' },
+  { label: 'Restaurant Scouting', emoji: '🍽️' },
+  { label: 'Vehicle Inspection', emoji: '🚗' },
+  { label: 'Pet Care Check', emoji: '🐾' },
+  { label: 'Home Security Check', emoji: '🔒' },
+  { label: 'Art & Culture Tour', emoji: '🎨' },
+  { label: 'Sports & Fitness', emoji: '🏋️' },
+  { label: 'Nature & Hiking', emoji: '🏞️' },
+  { label: 'Nightlife Guide', emoji: '🎶' },
+  { label: 'Wedding & Events', emoji: '💍' },
+  { label: 'Childcare Support', emoji: '🧒' },
+  { label: 'Senior Care', emoji: '👴' },
+  { label: 'Luxury Concierge', emoji: '💎' },
 ];
 
 const SLIDES = [
