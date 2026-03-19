@@ -23,6 +23,7 @@ export default function CreateBooking() {
   const navigate = useNavigate();
   const [checkoutLoading, setCheckoutLoading] = useState(false);
   const [error, setError] = useState('');
+  const [freeTest, setFreeTest] = useState(false);
 
   const { data: avatar } = useQuery({
     queryKey: ['booking-avatar', avatarId],
