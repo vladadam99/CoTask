@@ -103,126 +103,32 @@ export default function AvatarDashboard() {
          ))}
        </div>
 
-      {/* Quick Actions */}
-      <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mb-8">
-        <Link to="/AvatarLive">
-          <GlassCard className="p-4 text-center border-primary/20" hover>
-            <Radio className="w-5 h-5 text-primary mx-auto mb-2" />
-            <span className="text-sm font-medium">Start Live Session</span>
-          </GlassCard>
-        </Link>
-        <Link to="/AvatarRequests">
-          <GlassCard className="p-4 text-center" hover>
-            <Inbox className="w-5 h-5 text-yellow-400 mx-auto mb-2" />
-            <span className="text-sm font-medium">View Requests</span>
-          </GlassCard>
-        </Link>
-        <Link to="/Messages">
-          <GlassCard className="p-4 text-center" hover>
-            <MessageSquare className="w-5 h-5 text-blue-400 mx-auto mb-2" />
-            <span className="text-sm font-medium">Messages</span>
-          </GlassCard>
-        </Link>
-      </div>
-
       {/* Pending Requests */}
-      <div className="mb-8">
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-lg font-semibold">Pending Requests</h2>
-          <Link to="/AvatarRequests" className="text-sm text-primary hover:underline flex items-center gap-1">
-            View all <ArrowRight className="w-3 h-3" />
-          </Link>
-        </div>
-        {pendingBookings.length > 0 ? (
+      {pendingBookings.length > 0 && (
+        <div className="mb-8">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-lg font-semibold">Pending Requests</h2>
+            <Link to="/AvatarRequests" className="text-sm text-primary hover:underline flex items-center gap-1">
+              See all <ArrowRight className="w-3 h-3" />
+            </Link>
+          </div>
           <div className="space-y-3">
-            {pendingBookings.map(b => (
+            {pendingBookings.slice(0, 3).map(b => (
               <Link key={b.id} to={`/BookingDetail?id=${b.id}`}>
                 <GlassCard className="p-4 flex items-center justify-between" hover>
                   <div>
                     <p className="font-medium text-sm">{b.category}</p>
-                    <p className="text-xs text-muted-foreground mt-1">
-                      {b.client_name} · {b.scheduled_date || 'ASAP'}
-                    </p>
+                    <p className="text-xs text-muted-foreground mt-1">{b.client_name}</p>
                   </div>
                   <div className="flex items-center gap-3">
                     <span className="text-sm font-medium text-primary">${b.total_amount || b.amount}</span>
-                    <StatusBadge status={b.status} />
                   </div>
                 </GlassCard>
               </Link>
             ))}
           </div>
-        ) : (
-          <GlassCard className="p-8 text-center">
-            <Inbox className="w-8 h-8 text-muted-foreground mx-auto mb-3" />
-            <p className="text-sm text-muted-foreground">No pending requests right now</p>
-            <p className="text-xs text-muted-foreground mt-1">Make sure you're set to available to receive bookings</p>
-          </GlassCard>
-        )}
-      </div>
-
-      {/* Jobs Globe */}
-      <div className="mb-8">
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-lg font-semibold flex items-center gap-2">
-            <Globe className="w-5 h-5 text-primary" /> Jobs Near You
-          </h2>
-          <Button size="sm" variant="ghost" onClick={() => setShowGlobe(!showGlobe)} className="text-muted-foreground">
-            {showGlobe ? 'Hide Map' : 'Show Map'}
-          </Button>
         </div>
-        {showGlobe && (
-          <>
-            <div className="flex gap-2 mb-3">
-              <div className="relative flex-1 max-w-sm">
-                <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-                <Input
-                  value={globeSearch}
-                  onChange={e => setGlobeSearch(e.target.value)}
-                  onKeyDown={e => e.key === 'Enter' && setFocusCity(globeSearch)}
-                  placeholder="Search a city..."
-                  className="pl-10 bg-muted/50 border-white/5 h-9 text-sm"
-                />
-              </div>
-              <Button size="sm" onClick={() => setFocusCity(globeSearch)} className="h-9">
-                <Search className="w-4 h-4 mr-1" /> Go
-              </Button>
-              {focusCity && (
-                <Button size="sm" variant="ghost" className="h-9 text-muted-foreground" onClick={() => { setFocusCity(''); setGlobeSearch(''); }}>
-                  Clear
-                </Button>
-              )}
-            </div>
-            <GlobeMap avatars={allAvatars} focusCity={focusCity} mode="avatar" />
-          </>
-        )}
-      </div>
-
-      {/* Recent Activity */}
-      <div>
-        <h2 className="text-lg font-semibold mb-4">Recent Activity</h2>
-        {bookings.length > 0 ? (
-          <div className="space-y-2">
-            {bookings.slice(0, 5).map(b => (
-              <Link key={b.id} to={`/BookingDetail?id=${b.id}`}>
-                <GlassCard className="p-3 flex items-center justify-between" hover>
-                  <div className="flex items-center gap-3">
-                    <Clock className="w-4 h-4 text-muted-foreground" />
-                    <div>
-                      <p className="text-sm">{b.category} — {b.client_name}</p>
-                    </div>
-                  </div>
-                  <StatusBadge status={b.status} />
-                </GlassCard>
-              </Link>
-            ))}
-          </div>
-        ) : (
-          <GlassCard className="p-6 text-center">
-            <p className="text-sm text-muted-foreground">No activity yet. Your bookings will appear here.</p>
-          </GlassCard>
-        )}
-      </div>
+      )}
     </AppShell>
   );
 }
