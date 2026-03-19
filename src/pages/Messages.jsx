@@ -5,7 +5,7 @@ import { useCurrentUser } from '@/lib/useCurrentUser';
 import GlassCard from '@/components/ui/GlassCard';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, Send, MessageSquare } from 'lucide-react';
+import { ArrowLeft, Send, MessageSquare, Camera, Loader2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 export default function Messages() {
@@ -13,6 +13,8 @@ export default function Messages() {
   const queryClient = useQueryClient();
   const [activeConvo, setActiveConvo] = useState(null);
   const [newMsg, setNewMsg] = useState('');
+  const [uploadingPhoto, setUploadingPhoto] = useState(false);
+  const photoInputRef = useRef(null);
   const scrollRef = useRef(null);
 
   const urlConvoId = new URLSearchParams(window.location.search).get('conversation') ||
@@ -64,6 +66,38 @@ export default function Messages() {
   useEffect(() => {
     if (scrollRef.current) scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
   }, [messages]);
+
+  const sendPhoto = async (file) => {
+    if (!file || !activeConvo) return;
+    setUploadingPhoto(true);
+    const { file_url } = await base44.integrations.Core.UploadFile({ file });
+    await base44.entities.Message.create({
+      conversation_id: activeConvo.id,
+      sender_email: user.email,
+      sender_name: user.full_name,
+      content: file_url,
+      message_type: 'photo',
+    });
+    await base44.entities.Conversation.update(activeConvo.id, {
+      last_message: '📷 Photo',
+      last_message_at: new Date().toISOString(),
+      last_message_by: user.email,
+    });
+    const otherEmail = (activeConvo.participant_emails || []).find(e => e !== user.email);
+    if (otherEmail) {
+      await base44.entities.Notification.create({
+        user_email: otherEmail,
+        title: `📷 Photo from ${user.full_name}`,
+        message: 'Sent a photo in your job conversation.',
+        type: 'message',
+        link: `/Messages?conversation=${activeConvo.id}`,
+        reference_id: activeConvo.id,
+      });
+    }
+    setUploadingPhoto(false);
+    queryClient.invalidateQueries({ queryKey: ['messages', activeConvo?.id] });
+    queryClient.invalidateQueries({ queryKey: ['conversations'] });
+  };
 
   const sendMessage = useMutation({
     mutationFn: async () => {
