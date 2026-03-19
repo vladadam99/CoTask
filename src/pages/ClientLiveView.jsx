@@ -153,34 +153,18 @@ export default function ClientLiveView() {
                   <p className="text-sm text-muted-foreground">This session has ended. Thank you for using CoTask!</p>
                   <Link to="/Bookings"><Button size="sm" className="bg-primary">View Bookings</Button></Link>
                 </div>
-              ) : isLive && viewMode === '360' ? (
-                /* 360 view — avatar is streaming 360, client sees interactive sphere */
-                <div className="w-full h-full flex flex-col items-center justify-center gap-3 bg-black/40">
-                  <Wifi className="w-10 h-10 text-purple-400" />
-                  <p className="text-sm font-semibold text-foreground">360° Stream Active</p>
-                  <p className="text-xs text-muted-foreground">Your avatar is broadcasting a 360° view from their location.</p>
-                  <div className="flex items-center gap-2 text-xs text-green-400">
-                    <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
-                    Live signal received
-                  </div>
-                </div>
+              ) : isLive && session.session_url ? (
+                /* Real WebRTC video via Daily.co */
+                <DailyVideoCall
+                  roomUrl={session.session_url}
+                  isHost={false}
+                  className="w-full h-full"
+                />
               ) : isLive ? (
-                /* Standard stream — show live indicator with avatar info */
-                <div className="w-full h-full flex flex-col items-center justify-center gap-4 bg-black/60">
-                  <div className="w-20 h-20 rounded-full bg-primary/20 flex items-center justify-center text-3xl font-bold text-primary">
-                    {session.avatar_name?.[0] || 'A'}
-                  </div>
-                  <div className="text-center">
-                    <p className="font-semibold text-lg">{session.avatar_name}</p>
-                    <p className="text-sm text-muted-foreground">{session.category}</p>
-                  </div>
-                  <div className="flex items-center gap-2 text-sm text-green-400 bg-green-500/10 border border-green-500/20 px-4 py-2 rounded-full">
-                    <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
-                    Stream is live
-                  </div>
-                  <p className="text-xs text-muted-foreground max-w-xs text-center">
-                    Your avatar is currently broadcasting. The live video feed will appear here once WebRTC peer connection is established.
-                  </p>
+                /* Live but room URL not yet available — waiting */
+                <div className="w-full h-full flex flex-col items-center justify-center gap-3 bg-black/60">
+                  <div className="w-8 h-8 border-4 border-primary/20 border-t-primary rounded-full animate-spin" />
+                  <p className="text-sm text-muted-foreground">Connecting to video stream…</p>
                 </div>
               ) : null}
 
