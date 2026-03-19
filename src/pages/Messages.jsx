@@ -79,6 +79,18 @@ export default function Messages() {
         last_message_at: new Date().toISOString(),
         last_message_by: user.email,
       });
+      // Notify the other participant
+      const otherEmail = (activeConvo.participant_emails || []).find(e => e !== user.email);
+      if (otherEmail) {
+        await base44.entities.Notification.create({
+          user_email: otherEmail,
+          title: `New message from ${user.full_name}`,
+          message: newMsg.length > 80 ? newMsg.slice(0, 80) + '…' : newMsg,
+          type: 'message',
+          link: `/Messages?conversation=${activeConvo.id}`,
+          reference_id: activeConvo.id,
+        });
+      }
     },
     onSuccess: () => {
       setNewMsg('');
