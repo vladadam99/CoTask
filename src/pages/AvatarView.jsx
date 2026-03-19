@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
+import { useCurrentUser } from '@/lib/useCurrentUser';
 import GlassCard from '@/components/ui/GlassCard';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -12,6 +13,8 @@ import {
 
 export default function AvatarView() {
   const navigate = useNavigate();
+  const { user } = useCurrentUser();
+  const queryClient = useQueryClient();
   const params = new URLSearchParams(window.location.search);
   const id = params.get('id');
   const [messaging, setMessaging] = useState(false);
