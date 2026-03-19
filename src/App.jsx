@@ -100,6 +100,7 @@ const AuthenticatedApp = () => {
       <Route path="/RecordingLibrary" element={<RecordingLibrary />} />
       <Route path="/ClientLiveView" element={<ClientLiveView />} />
       <Route path="/ExploreOnboarding" element={<ExploreOnboarding />} />
+      <Route path="/EnterpriseSettings" element={<EnterpriseSettings />} />
       <Route path="*" element={<PageNotFound />} />
     </Routes>
   );
