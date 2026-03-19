@@ -15,6 +15,8 @@ export default function Messages() {
   const [newMsg, setNewMsg] = useState('');
   const scrollRef = useRef(null);
 
+  const urlConvoId = new URLSearchParams(window.location.search).get('conversation');
+
   const { data: conversations = [] } = useQuery({
     queryKey: ['conversations', user?.email],
     queryFn: async () => {
@@ -23,6 +25,14 @@ export default function Messages() {
     },
     enabled: !!user,
   });
+
+  // Auto-select conversation from URL param
+  useEffect(() => {
+    if (urlConvoId && conversations.length > 0 && !activeConvo) {
+      const target = conversations.find(c => c.id === urlConvoId);
+      if (target) setActiveConvo(target);
+    }
+  }, [urlConvoId, conversations]);
 
   const { data: messages = [] } = useQuery({
     queryKey: ['messages', activeConvo?.id],
