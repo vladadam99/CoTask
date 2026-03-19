@@ -5,7 +5,7 @@ import { useCurrentUser } from '@/lib/useCurrentUser';
 import GlassCard from '@/components/ui/GlassCard';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, Send, MessageSquare, Camera, Loader2 } from 'lucide-react';
+import { ArrowLeft, Send, MessageSquare, Camera, Loader2, Video } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 export default function Messages() {
