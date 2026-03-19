@@ -108,6 +108,36 @@ export default function Profile() {
             </div>
           </GlassCard>
 
+          <GlassCard className="p-4">
+            <h3 className="font-semibold mb-3">Switch Role</h3>
+            <div className="space-y-2">
+              {user?.app_role !== 'user' && (
+                <button onClick={() => handleSwitchRole('user')} className="w-full text-left">
+                  <div className="p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors text-sm flex items-center gap-3">
+                    <ArrowRightLeft className="w-4 h-4 text-muted-foreground" />
+                    <span>Switch to User</span>
+                  </div>
+                </button>
+              )}
+              {user?.app_role !== 'avatar' && (
+                <button onClick={() => handleSwitchRole('avatar')} className="w-full text-left">
+                  <div className="p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors text-sm flex items-center gap-3">
+                    <ArrowRightLeft className="w-4 h-4 text-muted-foreground" />
+                    <span>Switch to Avatar</span>
+                  </div>
+                </button>
+              )}
+              {user?.app_role !== 'enterprise' && (
+                <button onClick={() => handleSwitchRole('enterprise')} className="w-full text-left">
+                  <div className="p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors text-sm flex items-center gap-3">
+                    <ArrowRightLeft className="w-4 h-4 text-muted-foreground" />
+                    <span>Switch to Enterprise</span>
+                  </div>
+                </button>
+              )}
+            </div>
+          </GlassCard>
+
           <button onClick={() => base44.auth.logout('/Landing')} className="w-full text-left">
             <GlassCard className="p-4 flex items-center gap-3" hover>
               <LogOut className="w-5 h-5 text-red-400" />
