@@ -74,14 +74,15 @@ export default function BookingDetail() {
     }
   };
 
-  // Check if client already left a review (must be before early returns)
+  // Check if client already left a review (must be before any early returns — Rules of Hooks)
+  const isClientReviewer = !!user && !!booking && user.email === booking?.client_email && booking?.status === 'completed';
   const { data: existingReview } = useQuery({
-    queryKey: ['booking-review', id],
+    queryKey: ['booking-review', id, user?.email],
     queryFn: async () => {
-      const list = await base44.entities.Review.filter({ booking_id: id, reviewer_email: user.email });
+      const list = await base44.entities.Review.filter({ booking_id: id, reviewer_email: user?.email });
       return list[0] || null;
     },
-    enabled: !!id && !!user && !!booking && user.email === booking.client_email && booking.status === 'completed',
+    enabled: !!id && isClientReviewer,
   });
 
   if (isLoading) return <div className="min-h-screen flex items-center justify-center"><div className="w-8 h-8 border-4 border-primary/20 border-t-primary rounded-full animate-spin" /></div>;
