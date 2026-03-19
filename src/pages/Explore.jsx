@@ -20,10 +20,11 @@ const CATEGORIES = [
 export default function Explore() {
   const urlParams = new URLSearchParams(window.location.search);
   const initialCat = urlParams.get('category') || 'All';
+  const initialCity = urlParams.get('city') || '';
 
   const [search, setSearch] = useState('');
   const [category, setCategory] = useState(initialCat);
-  const [city, setCity] = useState('');
+  const [city, setCity] = useState(initialCity);
   const [locationSearch, setLocationSearch] = useState('');
   const [focusCity, setFocusCity] = useState('');
   const [showFilters, setShowFilters] = useState(false);
