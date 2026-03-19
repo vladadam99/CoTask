@@ -22,6 +22,7 @@ export default function ClientLiveView() {
   const [messages, setMessages] = useState([{ from: 'system', text: 'You are now connected to the live stream.' }]);
   const [input, setInput] = useState('');
   const [viewMode, setViewMode] = useState('standard');
+  const [ending, setEnding] = useState(false);
   const timerRef = useRef(null);
   const chatEndRef = useRef(null);
 
