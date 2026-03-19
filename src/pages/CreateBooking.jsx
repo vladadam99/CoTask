@@ -198,20 +198,44 @@ export default function CreateBooking() {
             </div>
           </GlassCard>
 
+          {/* Free test mode toggle */}
+          <button
+            type="button"
+            onClick={() => setFreeTest(v => !v)}
+            className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl border transition-all text-sm ${
+              freeTest
+                ? 'bg-yellow-500/10 border-yellow-500/30 text-yellow-400'
+                : 'bg-card/40 border-white/5 text-muted-foreground hover:border-white/10'
+            }`}
+          >
+            <FlaskConical className="w-4 h-4 shrink-0" />
+            <div className="text-left flex-1">
+              <p className="font-medium">Free test booking ($0)</p>
+              <p className="text-xs opacity-70">Skip payment — book instantly for testing</p>
+            </div>
+            <div className={`w-9 h-5 rounded-full transition-colors flex items-center px-0.5 ${freeTest ? 'bg-yellow-500' : 'bg-muted'}`}>
+              <div className={`w-4 h-4 rounded-full bg-white shadow transition-transform ${freeTest ? 'translate-x-4' : 'translate-x-0'}`} />
+            </div>
+          </button>
+
           {error && <p className="text-sm text-red-400 bg-red-500/10 border border-red-500/20 rounded-xl px-4 py-3">{error}</p>}
 
           <Button
-            className="w-full bg-primary hover:bg-primary/90 py-5 text-base glow-primary-sm gap-2"
+            className={`w-full py-5 text-base gap-2 ${freeTest ? 'bg-yellow-600 hover:bg-yellow-700' : 'bg-primary hover:bg-primary/90 glow-primary-sm'}`}
             onClick={createAndPay}
             disabled={!form.category || checkoutLoading}
           >
             {checkoutLoading ? (
-              <><Loader2 className="w-4 h-4 animate-spin" /> Redirecting to payment…</>
+              <><Loader2 className="w-4 h-4 animate-spin" /> Creating booking…</>
+            ) : freeTest ? (
+              <><FlaskConical className="w-4 h-4" /> Book Free (Test) — $0.00</>
             ) : (
               <><CreditCard className="w-4 h-4" /> Pay & Confirm — ${total.toFixed(2)}</>
             )}
           </Button>
-          <p className="text-xs text-center text-muted-foreground">Secured by Stripe. You'll be redirected to complete payment.</p>
+          <p className="text-xs text-center text-muted-foreground">
+            {freeTest ? 'Test mode — booking will be instantly accepted, no payment needed.' : 'Secured by Stripe. You\'ll be redirected to complete payment.'}
+          </p>
         </div>
       </div>
     </div>
