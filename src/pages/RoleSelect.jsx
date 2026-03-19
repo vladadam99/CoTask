@@ -60,12 +60,12 @@ export default function RoleSelect() {
       
       <div className="relative z-10 max-w-4xl w-full">
         <div className="text-center mb-12">
-          <Link to="/Landing" className="text-2xl font-bold tracking-tight mb-6 inline-block">
-            Co<span className="text-primary">Task</span>
-          </Link>
-          <h1 className="text-3xl md:text-4xl font-bold mb-3">How will you use CoTask?</h1>
-          <p className="text-muted-foreground">Choose your experience to get started</p>
-        </div>
+           <Link to="/Landing" className="text-2xl font-bold tracking-tight mb-6 inline-block">
+             Co<span className="text-primary">Task</span>
+           </Link>
+           <h1 className="text-3xl md:text-4xl font-bold mb-3">Choose your role</h1>
+           <p className="text-muted-foreground">Switch between Client, Avatar, and Enterprise modes</p>
+         </div>
         
         <div className="grid md:grid-cols-3 gap-5">
           {roles.map((role, i) => (
