@@ -9,6 +9,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { ArrowLeft, Calendar, MapPin, CreditCard, Loader2, FlaskConical } from 'lucide-react';
+import CameraOptionPicker from '@/components/bookings/CameraOptionPicker';
 
 const CATEGORIES = [
   'City Guide', 'Property Walkthrough', 'Shopping Help', 'Event Attendance',
@@ -37,12 +38,15 @@ export default function CreateBooking() {
   const [form, setForm] = useState({
     category: '', booking_type: 'scheduled', scheduled_date: '', scheduled_time: '',
     duration_minutes: 60, location: '', notes: '', custom_request: '',
+    stream_mode: 'no_camera',
   });
 
   const update = (k, v) => setForm(prev => ({ ...prev, [k]: v }));
 
+  const LIVE_PREMIUM_PER_HOUR = 5;
   const rate = avatar?.hourly_rate || 30;
-  const amount = (rate * form.duration_minutes / 60);
+  const livePremium = form.stream_mode === 'live_camera' ? (LIVE_PREMIUM_PER_HOUR * form.duration_minutes / 60) : 0;
+  const amount = (rate * form.duration_minutes / 60) + livePremium;
   const serviceFee = Math.round(amount * 0.15 * 100) / 100;
   const total = amount + serviceFee;
 
@@ -69,6 +73,8 @@ export default function CreateBooking() {
         location: form.location,
         notes: form.notes,
         custom_request: form.custom_request,
+        stream_mode: form.stream_mode,
+        live_premium: freeTest ? 0 : livePremium,
         amount: freeTest ? 0 : amount,
         service_fee: freeTest ? 0 : serviceFee,
         total_amount: freeTest ? 0 : total,
@@ -124,6 +130,7 @@ export default function CreateBooking() {
         <div className="space-y-6">
           <GlassCard className="p-6 space-y-4">
             <h2 className="font-semibold">Service Details</h2>
+            <CameraOptionPicker value={form.stream_mode} onChange={v => update('stream_mode', v)} premiumRate={LIVE_PREMIUM_PER_HOUR} />
             <div>
               <label className="text-sm font-medium mb-1.5 block">Category</label>
               <Select value={form.category} onValueChange={v => update('category', v)}>
@@ -190,7 +197,8 @@ export default function CreateBooking() {
           <GlassCard className="p-6">
             <h2 className="font-semibold mb-4">Price Summary</h2>
             <div className="space-y-2 text-sm">
-              <div className="flex justify-between"><span className="text-muted-foreground">Service ({form.duration_minutes} min × ${rate}/hr)</span><span>${amount.toFixed(2)}</span></div>
+              <div className="flex justify-between"><span className="text-muted-foreground">Service ({form.duration_minutes} min × ${rate}/hr)</span><span>${(amount - livePremium).toFixed(2)}</span></div>
+              {livePremium > 0 && <div className="flex justify-between"><span className="text-muted-foreground">Live camera premium</span><span className="text-primary">+${livePremium.toFixed(2)}</span></div>}
               <div className="flex justify-between"><span className="text-muted-foreground">Platform fee (15%)</span><span>${serviceFee.toFixed(2)}</span></div>
               <div className="border-t border-white/5 pt-2 flex justify-between font-semibold text-base">
                 <span>Total</span><span className="text-primary">${total.toFixed(2)}</span>
