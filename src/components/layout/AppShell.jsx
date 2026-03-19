@@ -33,11 +33,11 @@ export default function AppShell({ children, navItems = [], user }) {
             );
           })}
         </nav>
-        <div className="p-4 border-t border-white/5">
+        <div className="p-4 border-t border-white/5 space-y-4">
           <div className="hidden lg:flex justify-end mb-2">
           <NotificationBell userEmail={user?.email} />
         </div>
-        <div className="flex items-center gap-3 mb-3">
+        <div className="flex items-center gap-3">
             <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center text-sm font-medium text-primary">
               {user?.full_name?.[0] || 'U'}
             </div>
@@ -46,6 +46,7 @@ export default function AppShell({ children, navItems = [], user }) {
               <p className="text-xs text-muted-foreground truncate">{user?.email}</p>
             </div>
           </div>
+          {user && <RoleSwitcher user={user} />}
           <Button variant="ghost" size="sm" className="w-full justify-start text-muted-foreground" onClick={() => base44.auth.logout('/Landing')}>
             <LogOut className="w-4 h-4 mr-2" /> Sign out
           </Button>
