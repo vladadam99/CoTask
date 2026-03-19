@@ -84,22 +84,24 @@ export default function AvatarDashboard() {
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-8">
-        {[
-          { label: 'Pending Requests', value: pendingBookings.length, icon: Inbox, color: 'text-yellow-400' },
-          { label: 'Upcoming', value: todayBookings.length, icon: Calendar, color: 'text-blue-400' },
-          { label: 'Completed', value: completedCount, icon: CheckCircle, color: 'text-green-400' },
-          { label: 'Earnings', value: `$${profile?.total_earnings || 0}`, icon: TrendingUp, color: 'text-primary' },
-        ].map(stat => (
-          <GlassCard key={stat.label} className="p-5">
-            <div className="flex items-center justify-between mb-3">
-              <stat.icon className={`w-5 h-5 ${stat.color}`} />
-            </div>
-            <p className="text-2xl font-bold">{stat.value}</p>
-            <p className="text-xs text-muted-foreground mt-1">{stat.label}</p>
-          </GlassCard>
-        ))}
-      </div>
+       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-8">
+         {[
+           { label: 'Pending Requests', value: pendingBookings.length, icon: Inbox, color: 'text-yellow-400', path: '/AvatarRequests' },
+           { label: 'Upcoming', value: todayBookings.length, icon: Calendar, color: 'text-blue-400', path: '/AvatarSchedule' },
+           { label: 'Completed', value: completedCount, icon: CheckCircle, color: 'text-green-400', path: '/Bookings' },
+           { label: 'Earnings', value: `$${profile?.total_earnings || 0}`, icon: TrendingUp, color: 'text-primary', path: '/AvatarEarnings' },
+         ].map(stat => (
+           <Link key={stat.label} to={stat.path}>
+             <GlassCard className="p-5" hover>
+               <div className="flex items-center justify-between mb-3">
+                 <stat.icon className={`w-5 h-5 ${stat.color}`} />
+               </div>
+               <p className="text-2xl font-bold">{stat.value}</p>
+               <p className="text-xs text-muted-foreground mt-1">{stat.label}</p>
+             </GlassCard>
+           </Link>
+         ))}
+       </div>
 
       {/* Quick Actions */}
       <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mb-8">
