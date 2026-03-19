@@ -19,7 +19,7 @@ const navItems = [
   { icon: Radio, label: 'Live', path: '/LiveSessions' },
   { icon: Heart, label: 'Saved', path: '/Saved' },
   { icon: User, label: 'Profile', path: '/Profile' },
-  { icon: Settings, label: 'Settings', path: '/UserSettings' },
+  { icon: Settings, label: 'Settings', path: '/Profile' },
 ];
 
 const CATEGORIES = [
