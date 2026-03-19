@@ -1,9 +1,10 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState, useRef } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { useCurrentUser } from '@/lib/useCurrentUser';
 import GlassCard from '@/components/ui/GlassCard';
 import { Badge } from '@/components/ui/badge';
-import { User, Mail, MapPin, Globe, Settings, LogOut, ArrowLeft } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { User, Mail, MapPin, Globe, Settings, LogOut, ArrowLeft, Upload, Loader2, ArrowRightLeft } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 
 export default function Profile() {
