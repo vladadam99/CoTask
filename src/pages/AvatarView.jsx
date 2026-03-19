@@ -65,6 +65,40 @@ export default function AvatarView() {
     enabled: !!avatar,
   });
 
+  const { data: isFavorited = false } = useQuery({
+    queryKey: ['is-favorited', user?.email, id],
+    queryFn: async () => {
+      const favs = await base44.entities.Favorite.filter({
+        user_email: user.email,
+        avatar_profile_id: id,
+      });
+      return favs.length > 0;
+    },
+    enabled: !!user && !!id,
+  });
+
+  const toggleFavorite = useMutation({
+    mutationFn: async () => {
+      if (isFavorited) {
+        const favs = await base44.entities.Favorite.filter({
+          user_email: user.email,
+          avatar_profile_id: id,
+        });
+        if (favs.length > 0) await base44.entities.Favorite.delete(favs[0].id);
+      } else {
+        await base44.entities.Favorite.create({
+          user_email: user.email,
+          avatar_profile_id: id,
+          avatar_name: avatar.display_name,
+        });
+      }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['is-favorited', user?.email, id] });
+      queryClient.invalidateQueries({ queryKey: ['favorites'] });
+    },
+  });
+
   if (isLoading) return (
     <div className="min-h-screen flex items-center justify-center">
       <div className="w-8 h-8 border-4 border-primary/20 border-t-primary rounded-full animate-spin" />
