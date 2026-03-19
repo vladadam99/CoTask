@@ -427,28 +427,45 @@ export default function LiveStreamStudio() {
               />
             </GlassCard>
 
-            {/* Insta360 device selector — shown when insta360 is selected and multiple devices exist */}
-            {selectedSource?.id === 'insta360' && videoDevices.length > 1 && (
+            {/* Insta360 USB Connect Panel */}
+            {selectedSource?.id === 'insta360' && (
               <GlassCard className="p-5">
                 <h2 className="text-sm font-semibold mb-3 flex items-center gap-2">
-                  <span className="w-2 h-2 rounded-full bg-purple-400" /> Select Insta360 Device
+                  <Usb className="w-4 h-4 text-purple-400" /> Insta360 USB Connect
                 </h2>
-                <p className="text-xs text-muted-foreground mb-3">Pick the device that corresponds to your Insta360 camera, or use the Wi-Fi panel below:</p>
-                <div className="space-y-2">
-                  {videoDevices.map((d, i) => (
-                    <button
-                      key={d.deviceId}
-                      onClick={() => { setInsta360DeviceId(d.deviceId); startCamera(selectedSource, d.deviceId); }}
-                      className={`w-full text-left text-xs px-3 py-2 rounded-lg border transition-colors ${
-                        insta360DeviceId === d.deviceId
-                          ? 'bg-purple-500/20 border-purple-500/40 text-purple-300'
-                          : 'bg-card/40 border-white/5 text-muted-foreground hover:border-white/20 hover:text-foreground'
-                      }`}
+                {insta360Status === 'connected' ? (
+                  <div className="space-y-3">
+                    <div className="flex items-center gap-2 text-xs text-green-400">
+                      <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
+                      Insta360 connected via USB
+                    </div>
+                    <Button size="sm" variant="outline" className="w-full text-xs text-red-400 border-red-500/20 hover:bg-red-500/10" onClick={disconnectInsta360}>
+                      Disconnect
+                    </Button>
+                  </div>
+                ) : (
+                  <div className="space-y-3">
+                    <p className="text-xs text-muted-foreground leading-relaxed">
+                      <strong className="text-foreground">Step 1:</strong> Plug the Insta360 into your phone via USB.<br/>
+                      <strong className="text-foreground">Step 2:</strong> In the Insta360 app → Settings → set USB mode to <span className="text-purple-300 font-medium">"UVC Camera"</span>.<br/>
+                      <strong className="text-foreground">Step 3:</strong> Tap Connect below.
+                    </p>
+                    {insta360Status === 'error' && (
+                      <p className="text-xs text-red-400 bg-red-500/10 border border-red-500/20 rounded-lg px-3 py-2">Camera not detected. Check USB mode setting.</p>
+                    )}
+                    <Button
+                      size="sm"
+                      className="w-full bg-purple-600 hover:bg-purple-700 gap-2"
+                      onClick={connectInsta360USB}
+                      disabled={insta360Status === 'detecting'}
                     >
-                      <span className="font-medium">{d.label || `Camera ${i + 1}`}</span>
-                    </button>
-                  ))}
-                </div>
+                      {insta360Status === 'detecting'
+                        ? <><span className="w-3 h-3 border-2 border-white/30 border-t-white rounded-full animate-spin" /> Detecting…</>
+                        : <><Usb className="w-3 h-3" /> Connect Insta360</>
+                      }
+                    </Button>
+                  </div>
+                )}
               </GlassCard>
             )}
 
