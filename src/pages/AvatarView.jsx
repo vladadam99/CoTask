@@ -129,7 +129,10 @@ export default function AvatarView() {
               <Calendar className="w-4 h-4 mr-2" /> Book Now — ${avatar.hourly_rate || 30}/hr
             </Button>
           </Link>
-          <Button variant="outline" className="border-white/10 py-5"><MessageSquare className="w-4 h-4" /></Button>
+          <Button variant="outline" className="border-white/10 py-5 gap-2" onClick={startMessage} disabled={messaging}>
+            {messaging ? <Loader2 className="w-4 h-4 animate-spin" /> : <MessageSquare className="w-4 h-4" />}
+            Message
+          </Button>
           <Button variant="outline" className="border-white/10 py-5"><Heart className="w-4 h-4" /></Button>
         </div>
 
