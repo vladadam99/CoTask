@@ -124,11 +124,20 @@ export default function AvatarProfileEdit() {
           <GlassCard className="p-5">
             <h2 className="font-semibold text-sm mb-4">Profile Photo</h2>
             <div className="flex items-center gap-4">
-              <div className="w-16 h-16 rounded-full bg-primary/20 flex items-center justify-center text-2xl font-bold text-primary">
-                {profile.display_name?.[0] || user?.full_name?.[0]}
+              <div className="relative w-16 h-16 rounded-full bg-primary/20 flex items-center justify-center text-2xl font-bold text-primary overflow-hidden group">
+                {form.photo_url ? (
+                  <img src={form.photo_url} alt="Profile" className="w-full h-full object-cover" />
+                ) : (
+                  profile.display_name?.[0] || user?.full_name?.[0]
+                )}
+                <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={e => { const f = e.target.files?.[0]; if (f) handlePhotoUpload(f); }} />
+                <button onClick={() => fileInputRef.current?.click()} disabled={uploading} className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                  {uploading ? <Loader2 className="w-4 h-4 animate-spin text-white" /> : <Upload className="w-4 h-4 text-white" />}
+                </button>
               </div>
               <div>
-                <p className="text-sm text-muted-foreground">Photo upload coming soon</p>
+                <p className="text-sm font-medium">Profile Photo</p>
+                <p className="text-xs text-muted-foreground">Hover to upload</p>
               </div>
             </div>
           </GlassCard>
