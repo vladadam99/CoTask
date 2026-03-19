@@ -197,46 +197,50 @@ export default function LiveStreamStudio() {
     }
   }, [videoDevices, insta360DeviceId]);
 
-  // Connect Insta360 via Wi-Fi (HTTP stream from camera's hotspot)
-  const connectWifiStream = useCallback(async (customUrl = null) => {
+  // Connect Insta360 via USB (appears as a webcam device)
+  const connectInsta360USB = useCallback(async () => {
     setError('');
-    setWifiConnecting(true);
-
-    // Insta360 cameras broadcast a preview stream over their Wi-Fi hotspot.
-    // Common endpoints: http://192.168.42.1:8080/stream (X3, ONE RS, ONE X2)
-    // User can also enter any MJPEG/HTTP stream URL.
-    const url = customUrl || wifiStreamUrl || 'http://192.168.42.1:8080/stream';
-
-    if (streamRef.current) {
-      streamRef.current.getTracks().forEach(t => t.stop());
-      streamRef.current = null;
-    }
-
+    setInsta360Status('detecting');
     try {
-      if (videoRef.current) {
-        videoRef.current.srcObject = null;
-        videoRef.current.src = url;
-        videoRef.current.crossOrigin = 'anonymous';
-        await videoRef.current.play();
-        setWifiStreamActive(true);
-        setWifiStreamUrl(url);
-        setSelectedSource(SOURCES.find(s => s.id === 'insta360'));
-        setViewMode('360');
+      // Re-enumerate devices to get fresh list with labels
+      const allDevices = await navigator.mediaDevices.enumerateDevices();
+      const cameras = allDevices.filter(d => d.kind === 'videoinput');
+
+      // Look for Insta360 by label first
+      let target = cameras.find(d => {
+        const l = d.label.toLowerCase();
+        return l.includes('insta360') || l.includes('360') || l.includes('insta');
+      });
+
+      // Fallback: if user has more than 2 cameras, use the last non-built-in one
+      if (!target && cameras.length > 2) {
+        target = cameras[cameras.length - 1];
       }
+
+      const constraints = target
+        ? { video: { deviceId: { exact: target.deviceId }, width: { ideal: 3840 }, height: { ideal: 1920 } }, audio: true }
+        : { video: { width: { ideal: 3840 }, height: { ideal: 1920 } }, audio: true };
+
+      const stream = await navigator.mediaDevices.getUserMedia(constraints);
+      streamRef.current = stream;
+      if (videoRef.current) {
+        videoRef.current.srcObject = stream;
+        videoRef.current.src = '';
+        videoRef.current.play().catch(() => {});
+      }
+      const src = SOURCES.find(s => s.id === 'insta360');
+      setSelectedSource(src);
+      setViewMode('360');
+      setActiveDeviceId(target?.deviceId || null);
+      setInsta360Status('connected');
+      stream.getVideoTracks().forEach(track => {
+        track.addEventListener('ended', () => handleStreamEnded(src));
+      });
     } catch (err) {
-      // MJPEG streams don't trigger play() correctly — set src and let browser handle it
-      if (videoRef.current) {
-        videoRef.current.src = url;
-        videoRef.current.load();
-        setWifiStreamActive(true);
-        setWifiStreamUrl(url);
-        setSelectedSource(SOURCES.find(s => s.id === 'insta360'));
-        setViewMode('360');
-      }
-    } finally {
-      setWifiConnecting(false);
+      setInsta360Status('error');
+      setError(`Insta360 not found: ${err.message}. Make sure it's connected via USB and set to "USB Camera" mode in the Insta360 app.`);
     }
-  }, [wifiStreamUrl]);
+  }, [videoDevices, handleStreamEnded]);
 
   // Auto-reconnection: called when a stream track ends unexpectedly
   const handleStreamEnded = useCallback((source) => {
