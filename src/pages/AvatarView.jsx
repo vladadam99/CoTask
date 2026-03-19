@@ -170,8 +170,15 @@ export default function AvatarView() {
             {messaging ? <Loader2 className="w-4 h-4 animate-spin" /> : <MessageSquare className="w-4 h-4" />}
             Message
           </Button>
-          <Button variant="outline" className="border-white/10 py-5"><Heart className="w-4 h-4" /></Button>
-        </div>
+          <Button
+            variant="outline"
+            className="border-white/10 py-5"
+            onClick={() => toggleFavorite.mutate()}
+            disabled={toggleFavorite.isPending || !user}
+          >
+            <Heart className={`w-4 h-4 ${isFavorited ? 'fill-primary text-primary' : ''}`} />
+          </Button>
+          </div>
 
         <div className="grid md:grid-cols-3 gap-6">
           <div className="md:col-span-2 space-y-6">
