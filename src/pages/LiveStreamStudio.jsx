@@ -551,36 +551,28 @@ export default function LiveStreamStudio() {
                   <p className="text-muted-foreground text-sm">Select a camera source to begin preview</p>
                   <p className="text-xs text-muted-foreground/60">Phone · Insta360 · Meta Glasses</p>
                 </div>
-              ) : selectedSource.id === 'insta360' && !wifiStreamActive && !streamRef.current ? (
-                /* Insta360 selected but not yet connected — show prompt */
+              ) : selectedSource.id === 'insta360' && insta360Status !== 'connected' ? (
+                /* Insta360 selected but not yet connected — show USB prompt */
                 <div className="w-full h-full flex flex-col items-center justify-center gap-4 text-center p-8">
                   <div className="w-16 h-16 rounded-2xl bg-purple-500/20 flex items-center justify-center">
-                    <Wifi className="w-8 h-8 text-purple-400" />
+                    <Usb className="w-8 h-8 text-purple-400" />
                   </div>
-                  <p className="text-foreground text-sm font-semibold">Connect your Insta360</p>
-                  <p className="text-xs text-muted-foreground leading-relaxed max-w-xs">
-                    Use the <strong className="text-purple-300">Wi-Fi Connect</strong> panel on the left to connect your camera wirelessly, or select a specific device from the list below.
-                  </p>
-                  <div className="flex flex-col gap-2 w-full max-w-xs">
-                    <button
-                      onClick={() => connectWifiStream()}
-                      disabled={wifiConnecting}
-                      className="flex items-center justify-center gap-2 text-sm bg-purple-600 hover:bg-purple-700 text-white px-4 py-2.5 rounded-xl transition-colors"
-                    >
-                      {wifiConnecting
-                        ? <><span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" /> Connecting…</>
-                        : <><Wifi className="w-4 h-4" /> Connect via Wi-Fi</>
-                      }
-                    </button>
-                    {videoDevices.length > 1 && (
-                      <button
-                        onClick={() => startCamera(selectedSource)}
-                        className="flex items-center justify-center gap-2 text-sm bg-card/60 border border-white/10 hover:border-white/20 text-muted-foreground hover:text-foreground px-4 py-2.5 rounded-xl transition-colors"
-                      >
-                        Try USB / detected device
-                      </button>
-                    )}
-                  </div>
+                  <p className="text-foreground text-sm font-semibold">Connect your Insta360 via USB</p>
+                  <ol className="text-xs text-muted-foreground text-left space-y-1.5 max-w-xs">
+                    <li><span className="text-foreground font-medium">1.</span> Plug Insta360 into your phone via USB</li>
+                    <li><span className="text-foreground font-medium">2.</span> Open the Insta360 app → Settings → USB Mode → <span className="text-purple-300">UVC Camera</span></li>
+                    <li><span className="text-foreground font-medium">3.</span> Tap the button below</li>
+                  </ol>
+                  <button
+                    onClick={connectInsta360USB}
+                    disabled={insta360Status === 'detecting'}
+                    className="flex items-center justify-center gap-2 text-sm bg-purple-600 hover:bg-purple-700 text-white px-5 py-2.5 rounded-xl transition-colors disabled:opacity-60"
+                  >
+                    {insta360Status === 'detecting'
+                      ? <><span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" /> Detecting…</>
+                      : <><Usb className="w-4 h-4" /> Connect Insta360</>
+                    }
+                  </button>
                 </div>
               ) : viewMode === '360' ? (
                 <StreamViewer360 videoRef={videoRef} />
