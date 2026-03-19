@@ -11,8 +11,10 @@ import {
 } from 'lucide-react';
 
 export default function AvatarView() {
+  const navigate = useNavigate();
   const params = new URLSearchParams(window.location.search);
   const id = params.get('id');
+  const [messaging, setMessaging] = useState(false);
 
   const { data: avatar, isLoading } = useQuery({
     queryKey: ['avatar', id],
