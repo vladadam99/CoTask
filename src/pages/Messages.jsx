@@ -67,6 +67,36 @@ export default function Messages() {
     if (scrollRef.current) scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
   }, [messages]);
 
+  const requestCamera = async () => {
+    if (!activeConvo) return;
+    const otherEmail = (activeConvo.participant_emails || []).find(e => e !== user.email);
+    const msgContent = `📹 Camera upgrade request: I'd like to add Live Camera to this job (+$5/hr). Please reply to confirm.`;
+    await base44.entities.Message.create({
+      conversation_id: activeConvo.id,
+      sender_email: user.email,
+      sender_name: user.full_name,
+      content: msgContent,
+      message_type: 'system',
+    });
+    await base44.entities.Conversation.update(activeConvo.id, {
+      last_message: '📹 Camera upgrade requested',
+      last_message_at: new Date().toISOString(),
+      last_message_by: user.email,
+    });
+    if (otherEmail) {
+      await base44.entities.Notification.create({
+        user_email: otherEmail,
+        title: `📹 Camera upgrade request from ${user.full_name}`,
+        message: 'They want to add Live Camera to your job.',
+        type: 'message',
+        link: `/Messages?conversation=${activeConvo.id}`,
+        reference_id: activeConvo.id,
+      });
+    }
+    queryClient.invalidateQueries({ queryKey: ['messages', activeConvo?.id] });
+    queryClient.invalidateQueries({ queryKey: ['conversations'] });
+  };
+
   const sendPhoto = async (file) => {
     if (!file || !activeConvo) return;
     setUploadingPhoto(true);
