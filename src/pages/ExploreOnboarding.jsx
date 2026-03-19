@@ -324,6 +324,8 @@ function IntroSlide2() {
 }
 
 function QuestionStep({ question, answers, setAnswers }) {
+  const [showCustomInput, setShowCustomInput] = useState(false);
+
   const toggleCategory = (cat) => {
     setAnswers(a => ({
       ...a,
@@ -341,28 +343,66 @@ function QuestionStep({ question, answers, setAnswers }) {
       </motion.div>
 
       {question.type === 'multi' && (
-        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.15 }} className="grid grid-cols-2 gap-2">
-          {CATEGORIES.map((cat, i) => {
-            const selected = answers.categories.includes(cat.label);
-            return (
-              <motion.button
-                key={cat.label}
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.1 + i * 0.04 }}
-                onClick={() => toggleCategory(cat.label)}
-                className={`relative flex items-center gap-3 p-3 rounded-xl border text-left transition-all duration-200
-                  ${selected
-                    ? 'bg-primary/10 border-primary/40 text-foreground'
-                    : 'bg-card/40 border-white/5 text-muted-foreground hover:border-white/10 hover:bg-card/60'
-                  }`}
-              >
-                <span className="text-lg">{cat.emoji}</span>
-                <span className="text-xs font-medium leading-snug">{cat.label}</span>
-                {selected && <CheckCircle2 className="absolute top-2 right-2 w-3.5 h-3.5 text-primary" />}
-              </motion.button>
-            );
-          })}
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.15 }} className="space-y-2">
+          <div className="grid grid-cols-2 gap-2 max-h-[340px] overflow-y-auto pr-1 pb-1">
+            {CATEGORIES.map((cat, i) => {
+              const selected = answers.categories.includes(cat.label);
+              return (
+                <motion.button
+                  key={cat.label}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.05 + i * 0.02 }}
+                  onClick={() => toggleCategory(cat.label)}
+                  className={`relative flex items-center gap-3 p-3 rounded-xl border text-left transition-all duration-200
+                    ${selected
+                      ? 'bg-primary/10 border-primary/40 text-foreground'
+                      : 'bg-card/40 border-white/5 text-muted-foreground hover:border-white/10 hover:bg-card/60'
+                    }`}
+                >
+                  <span className="text-lg">{cat.emoji}</span>
+                  <span className="text-xs font-medium leading-snug">{cat.label}</span>
+                  {selected && <CheckCircle2 className="absolute top-2 right-2 w-3.5 h-3.5 text-primary" />}
+                </motion.button>
+              );
+            })}
+
+            {/* Other tile */}
+            <motion.button
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.05 + CATEGORIES.length * 0.02 }}
+              onClick={() => setShowCustomInput(v => !v)}
+              className={`relative flex items-center gap-3 p-3 rounded-xl border text-left transition-all duration-200
+                ${showCustomInput || answers.customCategory
+                  ? 'bg-yellow-500/10 border-yellow-500/30 text-foreground'
+                  : 'bg-card/40 border-white/5 text-muted-foreground hover:border-white/10 hover:bg-card/60'
+                }`}
+            >
+              <span className="text-lg">✏️</span>
+              <span className="text-xs font-medium leading-snug">Other</span>
+              {answers.customCategory && <CheckCircle2 className="absolute top-2 right-2 w-3.5 h-3.5 text-yellow-400" />}
+            </motion.button>
+          </div>
+
+          {/* Custom category input */}
+          {showCustomInput && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: 'auto' }}
+              className="overflow-hidden"
+            >
+              <input
+                autoFocus
+                type="text"
+                value={answers.customCategory}
+                onChange={e => setAnswers(a => ({ ...a, customCategory: e.target.value }))}
+                placeholder="Describe what you need…"
+                className="w-full px-4 py-3 bg-card/60 border border-yellow-500/30 rounded-xl text-foreground placeholder:text-muted-foreground text-sm focus:outline-none focus:border-yellow-400/60 focus:ring-1 focus:ring-yellow-400/20"
+              />
+              <p className="text-xs text-muted-foreground mt-1.5">We'll remember this and suggest it in your feed 💡</p>
+            </motion.div>
+          )}
         </motion.div>
       )}
 
