@@ -196,7 +196,7 @@ export default function LiveStreamStudio() {
 
       // Listen for stream ending (e.g. cable unplugged) → trigger auto-reconnect
       stream.getVideoTracks().forEach(track => {
-        track.addEventListener('ended', () => handleStreamEnded(source));
+        track.addEventListener('ended', () => handleStreamEndedRef.current?.(source));
       });
     } catch (err) {
       setError(`Could not access camera: ${err.message}. Check browser permissions and that the camera is connected.`);
