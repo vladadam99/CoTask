@@ -17,6 +17,7 @@ import MultiCameraSwitcher from '@/components/live/MultiCameraSwitcher';
 import AIStreamHighlights from '@/components/live/AIStreamHighlights';
 import StreamPoll from '@/components/live/StreamPoll';
 import StreamReplay from '@/components/live/StreamReplay';
+import DailyVideoCall from '@/components/live/DailyVideoCall';
 
 export default function LiveStreamStudio() {
   const { user, loading } = useCurrentUser();
@@ -38,6 +39,7 @@ export default function LiveStreamStudio() {
   const [recordedChunks, setRecordedChunks] = useState([]);
   const [attachedBooking, setAttachedBooking] = useState(null);
   const [annotationsOn, setAnnotationsOn] = useState(false);
+  const [dailyRoomUrl, setDailyRoomUrl] = useState(null);
 
   const videoRef = useRef(null);
   const streamRef = useRef(null);
@@ -352,9 +354,22 @@ export default function LiveStreamStudio() {
   };
 
   // Go live
-  const goLive = (booking) => {
+  const goLive = async (booking) => {
     if (!selectedSource) { setError('Select a camera source first.'); return; }
     setAttachedBooking(booking);
+
+    // Create a Daily room first
+    try {
+      const tempId = `${booking.id}-${Date.now()}`;
+      const res = await base44.functions.invoke('createDailyRoom', { sessionId: tempId });
+      setDailyRoomUrl(res.data.url);
+      // Store the room URL on the booking temporarily for the session record
+      booking._dailyRoomUrl = res.data.url;
+    } catch (e) {
+      setError('Failed to create video room: ' + e.message);
+      return;
+    }
+
     setIsLive(true);
     setElapsed(0);
     setChatOpen(true);
