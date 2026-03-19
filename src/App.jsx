@@ -39,6 +39,7 @@ import LiveStreamStudio from './pages/LiveStreamStudio';
 import ExploreOnboarding from './pages/ExploreOnboarding';
 import RecordingLibrary from './pages/RecordingLibrary';
 import ClientLiveView from './pages/ClientLiveView';
+import EnterpriseSettings from './pages/EnterpriseSettings';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
