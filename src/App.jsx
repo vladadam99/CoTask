@@ -36,6 +36,7 @@ import FAQ from './pages/FAQ';
 import Contact from './pages/Contact';
 import Safety from './pages/Safety';
 import LiveStreamStudio from './pages/LiveStreamStudio';
+import ExploreOnboarding from './pages/ExploreOnboarding';
 import RecordingLibrary from './pages/RecordingLibrary';
 import ClientLiveView from './pages/ClientLiveView';
 
@@ -97,6 +98,7 @@ const AuthenticatedApp = () => {
       <Route path="/LiveStreamStudio" element={<LiveStreamStudio />} />
       <Route path="/RecordingLibrary" element={<RecordingLibrary />} />
       <Route path="/ClientLiveView" element={<ClientLiveView />} />
+      <Route path="/ExploreOnboarding" element={<ExploreOnboarding />} />
       <Route path="*" element={<PageNotFound />} />
     </Routes>
   );

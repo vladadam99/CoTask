@@ -16,7 +16,7 @@ export default function PublicNav() {
         {/* Desktop */}
         <div className="hidden md:flex items-center gap-8">
           <Link to="/HowItWorks" className="text-sm text-muted-foreground hover:text-foreground transition-colors">How it works</Link>
-          <Link to="/Explore" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Explore</Link>
+          <Link to="/ExploreOnboarding" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Explore</Link>
           <Link to="/Pricing" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Pricing</Link>
           <Link to="/FAQ" className="text-sm text-muted-foreground hover:text-foreground transition-colors">FAQ</Link>
         </div>
@@ -43,7 +43,7 @@ export default function PublicNav() {
       {open && (
         <div className="md:hidden glass-strong border-t border-white/5 px-6 py-4 space-y-3">
           <Link to="/HowItWorks" className="block py-2 text-sm text-muted-foreground" onClick={() => setOpen(false)}>How it works</Link>
-          <Link to="/Explore" className="block py-2 text-sm text-muted-foreground" onClick={() => setOpen(false)}>Explore</Link>
+          <Link to="/ExploreOnboarding" className="block py-2 text-sm text-muted-foreground" onClick={() => setOpen(false)}>Explore</Link>
           <Link to="/Pricing" className="block py-2 text-sm text-muted-foreground" onClick={() => setOpen(false)}>Pricing</Link>
           <Link to="/FAQ" className="block py-2 text-sm text-muted-foreground" onClick={() => setOpen(false)}>FAQ</Link>
           <Link to="/RoleSelect" onClick={() => setOpen(false)}>

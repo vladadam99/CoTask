@@ -33,7 +33,7 @@ export default function HeroSection() {
           </p>
           
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <Link to="/Explore">
+            <Link to="/ExploreOnboarding">
               <Button size="lg" className="bg-primary hover:bg-primary/90 text-primary-foreground px-8 py-6 text-base glow-primary-sm">
                 Find an Avatar
                 <ArrowRight className="ml-2 w-5 h-5" />
