@@ -33,25 +33,25 @@ export default function HeroSection() {
           </p>
           
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <Link to="/ExploreOnboarding">
+            <button onClick={() => { localStorage.setItem('cotask_role', 'user'); window.location.href = '/Onboarding'; }}>
               <Button size="lg" className="bg-primary hover:bg-primary/90 text-primary-foreground px-8 py-6 text-base glow-primary-sm">
                 Find an Avatar
                 <ArrowRight className="ml-2 w-5 h-5" />
               </Button>
-            </Link>
-            <Link to="/RoleSelect">
+            </button>
+            <button onClick={() => { localStorage.setItem('cotask_role', 'avatar'); window.location.href = '/Onboarding'; }}>
               <Button size="lg" variant="outline" className="border-white/10 bg-white/5 hover:bg-white/10 px-8 py-6 text-base">
                 <Play className="mr-2 w-5 h-5" />
                 Become an Avatar
               </Button>
-            </Link>
+            </button>
           </div>
-          
+
           <p className="mt-6 text-sm text-muted-foreground">
             Or{' '}
-            <Link to="/RoleSelect" className="text-primary hover:underline">
+            <button onClick={() => { localStorage.setItem('cotask_role', 'enterprise'); window.location.href = '/Onboarding'; }} className="text-primary hover:underline">
               book for your business →
-            </Link>
+            </button>
           </p>
         </motion.div>
       </div>
