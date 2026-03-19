@@ -43,7 +43,7 @@ export default function BookingDetail() {
     queryKey: ['booking-live-session', id],
     queryFn: async () => {
       const list = await base44.entities.LiveSession.filter({ booking_id: id });
-      return list.find(s => s.status === 'live' || s.status === 'waiting') || null;
+      return list.find(s => ['live', 'waiting'].includes(s.status)) || null;
     },
     enabled: !!id,
     refetchInterval: 10000,
