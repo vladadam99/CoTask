@@ -59,11 +59,7 @@ export default function UserDashboard() {
         <p className="text-muted-foreground">Find real-time help, tours, and live experiences</p>
       </div>
 
-      {/* Latest Messages */}
-      <LatestMessages user={user} />
 
-      {/* Suggestions */}
-      <Suggestions user={user} />
 
       {/* Quick Actions */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-8">
