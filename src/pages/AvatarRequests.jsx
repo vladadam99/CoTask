@@ -44,9 +44,29 @@ export default function AvatarRequests() {
   const updateBooking = useMutation({
     mutationFn: async ({ id, status }) => {
       await base44.entities.Booking.update(id, { status });
-      // Auto-create conversation when accepting
+      const booking = bookings.find(b => b.id === id);
       if (status === 'accepted') {
         await base44.functions.invoke('createConversation', { bookingId: id });
+        // Notify client
+        if (booking?.client_email) {
+          await base44.entities.Notification.create({
+            user_email: booking.client_email,
+            title: 'Booking Accepted!',
+            message: `${user.full_name} accepted your ${booking.category} booking request.`,
+            type: 'booking_accepted',
+            link: `/BookingDetail?id=${id}`,
+            reference_id: id,
+          });
+        }
+      } else if (status === 'declined' && booking?.client_email) {
+        await base44.entities.Notification.create({
+          user_email: booking.client_email,
+          title: 'Booking Declined',
+          message: `${user.full_name} declined your ${booking.category} booking request.`,
+          type: 'booking_declined',
+          link: `/BookingDetail?id=${id}`,
+          reference_id: id,
+        });
       }
     },
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['avatar-all-bookings'] }),
