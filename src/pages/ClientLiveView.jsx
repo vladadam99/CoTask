@@ -42,17 +42,15 @@ export default function ClientLiveView() {
     refetchInterval: 5000,
   });
 
-  // Subscribe to session changes in real time
+  // Subscribe to session changes in real time — just invalidate, don't auto-navigate
   useEffect(() => {
     const unsub = base44.entities.LiveSession.subscribe((event) => {
       if (event.id === session?.id && event.type === 'update') {
-        if (event.data?.status === 'ended') {
-          navigate('/LiveSessions');
-        }
+        // Let the query refetch so isEnded becomes true and shows the review screen
       }
     });
     return unsub;
-  }, [session?.id, navigate]);
+  }, [session?.id]);
 
   // Timer
   useEffect(() => {

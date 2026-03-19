@@ -141,7 +141,7 @@ export default function AvatarLive() {
           <p className="text-muted-foreground text-sm mb-4">With {liveSession.client_name}</p>
           <Button
             variant="destructive"
-            onClick={() => endSession.mutate(liveSession.id)}
+            onClick={() => endSession.mutate(liveSession)}
             disabled={endSession.isPending}
             className="gap-2"
           >
