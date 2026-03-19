@@ -193,7 +193,7 @@ export default function BookingDetail() {
           <div className="flex flex-wrap gap-3">
             {canAccept && <Button className="bg-green-600 hover:bg-green-700 flex-1" onClick={() => updateStatus.mutate('accepted')}>Accept</Button>}
             {canDecline && <Button variant="outline" className="border-red-500/20 text-red-400 flex-1" onClick={() => updateStatus.mutate('declined')}>Decline</Button>}
-            {canStart && <Button className="bg-primary hover:bg-primary/90 flex-1" onClick={() => navigate('/LiveStreamStudio')}>Start Stream</Button>}
+            {canStart && <Button className="bg-primary hover:bg-primary/90 flex-1" onClick={() => navigate(`/LiveStreamStudio?booking=${booking.id}`)}>Start Stream</Button>}
             {canComplete && <Button className="bg-green-600 hover:bg-green-700 flex-1" onClick={() => updateStatus.mutate('completed')}>Mark Complete</Button>}
             {canCancel && <Button variant="outline" className="border-white/10 flex-1" onClick={() => updateStatus.mutate('cancelled')}>Cancel Booking</Button>}
 
