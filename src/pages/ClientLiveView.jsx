@@ -69,6 +69,25 @@ export default function ClientLiveView() {
     chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
+  const handleEndSession = async () => {
+    if (!session) return;
+    setEnding(true);
+    await base44.entities.LiveSession.update(session.id, {
+      status: 'ended',
+      ended_at: new Date().toISOString(),
+      duration_minutes: Math.round(elapsed / 60),
+    });
+    // Notify the avatar
+    await base44.entities.Notification.create({
+      user_email: session.avatar_email,
+      title: 'Client ended the session',
+      message: `${user?.full_name || 'The client'} has ended the session early.`,
+      type: 'system',
+      reference_id: session.booking_id,
+    });
+    setEnding(false);
+  };
+
   const sendMessage = () => {
     if (!input.trim()) return;
     setMessages(m => [...m, { from: 'you', text: input.trim() }]);
