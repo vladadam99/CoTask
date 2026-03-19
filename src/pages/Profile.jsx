@@ -9,7 +9,53 @@ import { base44 } from '@/api/base44Client';
 
 export default function Profile() {
   const { user } = useCurrentUser();
+  const navigate = useNavigate();
+  const [uploading, setUploading] = useState(false);
+  const [profilePicUrl, setProfilePicUrl] = useState(user?.profile_picture_url || '');
+  const fileInputRef = useRef(null);
+
   const dashPath = user?.app_role === 'avatar' ? '/AvatarDashboard' : user?.app_role === 'enterprise' ? '/EnterpriseDashboard' : '/UserDashboard';
+
+  const handleProfilePictureUpload = async (file) => {
+    if (!file) return;
+    setUploading(true);
+    try {
+      const { file_url } = await base44.integrations.Core.UploadFile({ file });
+      await base44.auth.updateMe({ profile_picture_url: file_url });
+      setProfilePicUrl(file_url);
+    } catch (error) {
+      console.error('Failed to upload profile picture:', error);
+    }
+    setUploading(false);
+  };
+
+  const handleSwitchRole = async (targetRole) => {
+    if (targetRole === user?.app_role) return;
+
+    // Check if user has an account with this role
+    if (targetRole === 'avatar') {
+      const avatarProfile = await base44.entities.AvatarProfile.filter({ user_email: user.email }, '', 1);
+      if (avatarProfile.length > 0) {
+        await base44.auth.updateMe({ app_role: 'avatar' });
+        navigate('/AvatarDashboard');
+      } else {
+        await base44.auth.updateMe({ app_role: 'avatar' });
+        navigate('/Onboarding');
+      }
+    } else if (targetRole === 'enterprise') {
+      const enterpriseProfile = await base44.entities.EnterpriseProfile.filter({ user_email: user.email }, '', 1);
+      if (enterpriseProfile.length > 0) {
+        await base44.auth.updateMe({ app_role: 'enterprise' });
+        navigate('/EnterpriseDashboard');
+      } else {
+        await base44.auth.updateMe({ app_role: 'enterprise' });
+        navigate('/Onboarding');
+      }
+    } else {
+      await base44.auth.updateMe({ app_role: 'user' });
+      navigate('/UserDashboard');
+    }
+  };
 
   return (
     <div className="min-h-screen pb-12 px-4">
