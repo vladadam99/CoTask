@@ -351,11 +351,10 @@ export default function LiveStreamStudio() {
 
     // Create a Daily room first
     try {
-      const tempId = `${booking.id}-${Date.now()}`;
+      const tempId = `${booking?.id || 'quick'}-${Date.now()}`;
       const res = await base44.functions.invoke('createDailyRoom', { sessionId: tempId });
       setDailyRoomUrl(res.data.url);
-      // Store the room URL on the booking temporarily for the session record
-      booking._dailyRoomUrl = res.data.url;
+      if (booking) booking._dailyRoomUrl = res.data.url;
     } catch (e) {
       setError('Failed to create video room: ' + e.message);
       return;
@@ -365,7 +364,7 @@ export default function LiveStreamStudio() {
     setElapsed(0);
     setChatOpen(true);
     timerRef.current = setInterval(() => setElapsed(e => e + 1), 1000);
-    startSessionMutation.mutate({ booking, streamMode: viewMode });
+    if (booking) startSessionMutation.mutate({ booking, streamMode: viewMode });
   };
 
   // End session
