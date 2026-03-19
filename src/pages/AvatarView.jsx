@@ -1,5 +1,5 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import GlassCard from '@/components/ui/GlassCard';
@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import {
   ArrowLeft, MapPin, Star, Shield, Clock, Globe, Radio, Smartphone,
-  Wifi, Headphones, Car, Calendar, MessageSquare, Heart
+  Wifi, Headphones, Car, Calendar, MessageSquare, Heart, Loader2
 } from 'lucide-react';
 
 export default function AvatarView() {
