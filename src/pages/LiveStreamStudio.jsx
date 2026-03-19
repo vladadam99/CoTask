@@ -140,6 +140,36 @@ export default function LiveStreamStudio() {
   // Insta360 USB connection state
   const [insta360Status, setInsta360Status] = useState('idle'); // idle | detecting | connected | error
 
+  // Auto-reconnection: called when a stream track ends unexpectedly
+  const handleStreamEnded = useCallback((source) => {
+    if (!isLive) return;
+    setReconnecting(true);
+    setError('');
+
+    let attempts = 0;
+    const MAX_ATTEMPTS = 5;
+    const RETRY_DELAY = 3000;
+
+    const tryReconnect = async () => {
+      if (attempts >= MAX_ATTEMPTS) {
+        setReconnecting(false);
+        setError('Auto-reconnect failed after 5 attempts. Please re-select your camera manually.');
+        return;
+      }
+      attempts++;
+      setReconnectAttempts(attempts);
+      try {
+        await startCamera(source, lastSourceRef.current?.deviceId || null);
+        setReconnecting(false);
+        setReconnectAttempts(0);
+      } catch (_) {
+        reconnectTimerRef.current = setTimeout(tryReconnect, RETRY_DELAY);
+      }
+    };
+
+    reconnectTimerRef.current = setTimeout(tryReconnect, RETRY_DELAY);
+  }, [isLive, startCamera]);
+
   // Start camera stream
   const startCamera = useCallback(async (source, overrideDeviceId = null) => {
     setError('');
