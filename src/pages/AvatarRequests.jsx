@@ -42,7 +42,13 @@ export default function AvatarRequests() {
   });
 
   const updateBooking = useMutation({
-    mutationFn: ({ id, status }) => base44.entities.Booking.update(id, { status }),
+    mutationFn: async ({ id, status }) => {
+      await base44.entities.Booking.update(id, { status });
+      // Auto-create conversation when accepting
+      if (status === 'accepted') {
+        await base44.functions.invoke('createConversation', { bookingId: id });
+      }
+    },
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['avatar-all-bookings'] }),
   });
 
