@@ -31,6 +31,16 @@ Deno.serve(async (req) => {
       unread_by: [booking.avatar_email],
     });
 
+    // Notify avatar of new booking request
+    await base44.asServiceRole.entities.Notification.create({
+      user_email: booking.avatar_email,
+      title: `New booking request from ${booking.client_name}`,
+      message: `${booking.category} · ${booking.duration_minutes || 60} min · $${booking.total_amount || booking.amount || 0}`,
+      type: 'booking_request',
+      link: `/BookingDetail?id=${bookingId}`,
+      reference_id: bookingId,
+    });
+
     console.log(`Conversation created for booking ${bookingId}`);
     return Response.json({ conversation });
   } catch (err) {
