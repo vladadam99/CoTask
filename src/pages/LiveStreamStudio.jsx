@@ -246,7 +246,40 @@ export default function LiveStreamStudio() {
       setInsta360Status('error');
       setError(`Insta360 not found: ${err.message}. Make sure it's connected via USB and set to "USB Camera" mode in the Insta360 app.`);
     }
-  }, [videoDevices, handleStreamEnded]);
+  }, [videoDevices]);
+
+  // Auto-reconnection: called when a stream track ends unexpectedly
+  const handleStreamEnded = useCallback((source) => {
+    if (!isLive) return;
+    setReconnecting(true);
+    setError('');
+
+    let attempts = 0;
+    const MAX_ATTEMPTS = 5;
+    const RETRY_DELAY = 3000;
+
+    const tryReconnect = async () => {
+      if (attempts >= MAX_ATTEMPTS) {
+        setReconnecting(false);
+        setError('Auto-reconnect failed after 5 attempts. Please re-select your camera manually.');
+        return;
+      }
+      attempts++;
+      setReconnectAttempts(attempts);
+      try {
+        await startCamera(source, lastSourceRef.current?.deviceId || null);
+        setReconnecting(false);
+        setReconnectAttempts(0);
+      } catch (_) {
+        reconnectTimerRef.current = setTimeout(tryReconnect, RETRY_DELAY);
+      }
+    };
+
+    reconnectTimerRef.current = setTimeout(tryReconnect, RETRY_DELAY);
+  }, [isLive, startCamera]);
+
+  // Keep the ref in sync
+  handleStreamEndedRef.current = handleStreamEnded;
 
   // Multi-camera hot-switch: switch active device without stopping the session
   const switchCamera = useCallback(async (deviceId) => {
