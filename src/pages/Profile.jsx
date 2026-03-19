@@ -65,8 +65,16 @@ export default function Profile() {
         </Link>
 
         <div className="text-center mb-8">
-          <div className="w-20 h-20 rounded-2xl bg-primary/10 flex items-center justify-center text-3xl font-bold text-primary mx-auto mb-4">
-            {user?.full_name?.[0] || 'U'}
+          <div className="relative w-20 h-20 rounded-2xl bg-primary/10 flex items-center justify-center text-3xl font-bold text-primary mx-auto mb-4 overflow-hidden group">
+            {profilePicUrl ? (
+              <img src={profilePicUrl} alt="Profile" className="w-full h-full object-cover" />
+            ) : (
+              user?.full_name?.[0] || 'U'
+            )}
+            <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={e => { const f = e.target.files?.[0]; if (f) handleProfilePictureUpload(f); }} />
+            <button onClick={() => fileInputRef.current?.click()} disabled={uploading} className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+              {uploading ? <Loader2 className="w-5 h-5 animate-spin text-white" /> : <Upload className="w-5 h-5 text-white" />}
+            </button>
           </div>
           <h1 className="text-2xl font-bold">{user?.full_name || 'User'}</h1>
           <p className="text-muted-foreground text-sm">{user?.email}</p>
