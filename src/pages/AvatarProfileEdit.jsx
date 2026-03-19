@@ -29,6 +29,8 @@ export default function AvatarProfileEdit() {
   const { user, loading } = useCurrentUser();
   const queryClient = useQueryClient();
   const { toast } = useToast();
+  const fileInputRef = useRef(null);
+  const [uploading, setUploading] = useState(false);
 
   const { data: profile } = useQuery({
     queryKey: ['avatar-profile-edit', user?.email],
@@ -42,7 +44,7 @@ export default function AvatarProfileEdit() {
   const [form, setForm] = useState({
     display_name: '', bio: '', city: '', country: '',
     hourly_rate: '', per_session_rate: '', currency: 'USD',
-    languages: '', skills: '', categories: '',
+    languages: '', skills: '', categories: '', photo_url: '',
   });
 
   useEffect(() => {
