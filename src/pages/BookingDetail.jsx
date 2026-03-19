@@ -7,6 +7,7 @@ import GlassCard from '@/components/ui/GlassCard';
 import StatusBadge from '@/components/ui/StatusBadge';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft, Calendar, Clock, MapPin, User, DollarSign, MessageSquare, Video, CreditCard, CheckCircle, Loader2 } from 'lucide-react';
+import LeaveReview from '@/components/reviews/LeaveReview';
 
 export default function BookingDetail() {
   const params = new URLSearchParams(window.location.search);

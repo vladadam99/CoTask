@@ -11,6 +11,7 @@ import {
   Star, User, Settings, ChevronLeft, ChevronRight, Clock, MapPin
 } from 'lucide-react';
 import { format, startOfMonth, endOfMonth, eachDayOfInterval, getDay, isSameDay, isToday, addMonths, subMonths } from 'date-fns';
+import AvailabilityManager from '@/components/schedule/AvailabilityManager';
 
 const navItems = [
   { icon: Home, label: 'Home', path: '/AvatarDashboard' },

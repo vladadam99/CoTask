@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { Menu, X, Bell, LogOut } from 'lucide-react';
+import { Menu, X, LogOut } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
+import NotificationBell from '@/components/notifications/NotificationBell';
 
 export default function AppShell({ children, navItems = [], user }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
