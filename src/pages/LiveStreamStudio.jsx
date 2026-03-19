@@ -13,7 +13,6 @@ import StreamChatbox from '@/components/live/StreamChatbox';
 import { ArrowLeft, Radio, AlertTriangle, Wifi, MessageCircle, Circle, Square as StopIcon, Pen, Usb } from 'lucide-react';
 import AnnotationCanvas from '@/components/live/AnnotationCanvas';
 import StreamQualityMonitor from '@/components/live/StreamQualityMonitor';
-import MultiCameraSwitcher from '@/components/live/MultiCameraSwitcher';
 import AIStreamHighlights from '@/components/live/AIStreamHighlights';
 import StreamPoll from '@/components/live/StreamPoll';
 import StreamReplay from '@/components/live/StreamReplay';
@@ -128,9 +127,6 @@ export default function LiveStreamStudio() {
   // Selected Insta360 device override
   const [insta360DeviceId, setInsta360DeviceId] = useState(null);
 
-  // Active device ID for multi-camera switcher
-  const [activeDeviceId, setActiveDeviceId] = useState(null);
-
   // Auto-reconnection state
   const [reconnecting, setReconnecting] = useState(false);
   const [reconnectAttempts, setReconnectAttempts] = useState(0);
@@ -189,9 +185,6 @@ export default function LiveStreamStudio() {
       setViewMode(source.mode);
       setReconnectAttempts(0);
       setReconnecting(false);
-      // Track active device for multi-camera switcher
-      const deviceId = videoConstraints.deviceId?.exact || null;
-      setActiveDeviceId(deviceId);
       lastSourceRef.current = { source, deviceId: overrideDeviceId || insta360DeviceId };
 
       // Listen for stream ending (e.g. cable unplugged) → trigger auto-reconnect
@@ -237,7 +230,6 @@ export default function LiveStreamStudio() {
       const src = SOURCES.find(s => s.id === 'insta360');
       setSelectedSource(src);
       setViewMode('360');
-      setActiveDeviceId(target?.deviceId || null);
       setInsta360Status('connected');
       stream.getVideoTracks().forEach(track => {
         track.addEventListener('ended', () => handleStreamEndedRef.current?.(src));
@@ -280,14 +272,6 @@ export default function LiveStreamStudio() {
 
   // Keep the ref in sync
   handleStreamEndedRef.current = handleStreamEnded;
-
-  // Multi-camera hot-switch: switch active device without stopping the session
-  const switchCamera = useCallback(async (deviceId) => {
-    if (!selectedSource) return;
-    setActiveDeviceId(deviceId);
-    setInsta360DeviceId(deviceId);
-    await startCamera(selectedSource, deviceId);
-  }, [selectedSource, startCamera]);
 
   const disconnectInsta360 = () => {
     streamRef.current?.getTracks().forEach(t => t.stop());
