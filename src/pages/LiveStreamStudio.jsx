@@ -10,7 +10,7 @@ import ViewModeToggle from '@/components/live/ViewModeToggle';
 import StreamHUD from '@/components/live/StreamHUD';
 import StreamViewer360 from '@/components/live/StreamViewer360';
 import StreamChatbox from '@/components/live/StreamChatbox';
-import { ArrowLeft, Radio, AlertTriangle, Wifi, MessageCircle, Circle, Square as StopIcon, Pen, WifiOff } from 'lucide-react';
+import { ArrowLeft, Radio, AlertTriangle, Wifi, MessageCircle, Circle, Square as StopIcon, Pen, Usb } from 'lucide-react';
 import AnnotationCanvas from '@/components/live/AnnotationCanvas';
 import StreamQualityMonitor from '@/components/live/StreamQualityMonitor';
 import MultiCameraSwitcher from '@/components/live/MultiCameraSwitcher';
