@@ -79,6 +79,16 @@ export default function BookingDetail() {
 
   const isAvatar = user?.email === booking.avatar_email;
   const isClient = user?.email === booking.client_email;
+
+  // Check if client already left a review
+  const { data: existingReview } = useQuery({
+    queryKey: ['booking-review', id],
+    queryFn: async () => {
+      const list = await base44.entities.Review.filter({ booking_id: id, reviewer_email: user.email });
+      return list[0] || null;
+    },
+    enabled: !!id && !!user && isClient && booking?.status === 'completed',
+  });
   const canAccept = isAvatar && booking.status === 'pending';
   const canDecline = isAvatar && booking.status === 'pending';
   const canStart = isAvatar && ['accepted', 'scheduled'].includes(booking.status);
@@ -204,6 +214,22 @@ export default function BookingDetail() {
             </Link>
           </div>
         </div>
+
+          {/* Leave Review — client, completed booking, no existing review */}
+          {isClient && booking.status === 'completed' && !existingReview && (
+            <LeaveReview booking={booking} user={user} />
+          )}
+          {isClient && booking.status === 'completed' && existingReview && (
+            <GlassCard className="p-5 border-yellow-500/20">
+              <div className="flex items-center gap-2 mb-2">
+                {[1,2,3,4,5].map(i => (
+                  <svg key={i} className={`w-4 h-4 ${i <= existingReview.rating ? 'text-yellow-400 fill-yellow-400' : 'text-muted-foreground'}`} viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                ))}
+                <span className="text-xs text-muted-foreground ml-1">Your review</span>
+              </div>
+              {existingReview.comment && <p className="text-sm text-muted-foreground">"{existingReview.comment}"</p>}
+            </GlassCard>
+          )}
       </div>
     </div>
   );
