@@ -240,7 +240,7 @@ export default function LiveStreamStudio() {
       setActiveDeviceId(target?.deviceId || null);
       setInsta360Status('connected');
       stream.getVideoTracks().forEach(track => {
-        track.addEventListener('ended', () => handleStreamEnded(src));
+        track.addEventListener('ended', () => handleStreamEndedRef.current?.(src));
       });
     } catch (err) {
       setInsta360Status('error');
