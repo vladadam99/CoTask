@@ -74,21 +74,21 @@ export default function BookingDetail() {
     }
   };
 
-  if (isLoading) return <div className="min-h-screen flex items-center justify-center"><div className="w-8 h-8 border-4 border-primary/20 border-t-primary rounded-full animate-spin" /></div>;
-  if (!booking) return <div className="min-h-screen flex items-center justify-center"><GlassCard className="p-8 text-center"><p className="text-muted-foreground">Booking not found</p></GlassCard></div>;
-
-  const isAvatar = user?.email === booking.avatar_email;
-  const isClient = user?.email === booking.client_email;
-
-  // Check if client already left a review
+  // Check if client already left a review (must be before early returns)
   const { data: existingReview } = useQuery({
     queryKey: ['booking-review', id],
     queryFn: async () => {
       const list = await base44.entities.Review.filter({ booking_id: id, reviewer_email: user.email });
       return list[0] || null;
     },
-    enabled: !!id && !!user && isClient && booking?.status === 'completed',
+    enabled: !!id && !!user && !!booking && user.email === booking.client_email && booking.status === 'completed',
   });
+
+  if (isLoading) return <div className="min-h-screen flex items-center justify-center"><div className="w-8 h-8 border-4 border-primary/20 border-t-primary rounded-full animate-spin" /></div>;
+  if (!booking) return <div className="min-h-screen flex items-center justify-center"><GlassCard className="p-8 text-center"><p className="text-muted-foreground">Booking not found</p></GlassCard></div>;
+
+  const isAvatar = user?.email === booking.avatar_email;
+  const isClient = user?.email === booking.client_email;
   const canAccept = isAvatar && booking.status === 'pending';
   const canDecline = isAvatar && booking.status === 'pending';
   const canStart = isAvatar && ['accepted', 'scheduled'].includes(booking.status);
