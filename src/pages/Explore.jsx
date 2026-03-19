@@ -192,9 +192,16 @@ export default function Explore() {
           </div>
         ) : viewMode === 'grid' && filtered.length > 0 ? (
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {filtered.map(avatar => (
-              <Link key={avatar.id} to={`/AvatarView?id=${avatar.id}`}>
-                <GlassCard className="p-5 h-full" hover>
+            {filtered.map(avatar => {
+              const AvatarCard = ({ isFavorited, onToggleFavorite }) => (
+                <GlassCard className="p-5 h-full relative" hover>
+                  <button
+                    onClick={e => { e.preventDefault(); onToggleFavorite(); }}
+                    disabled={!user}
+                    className="absolute top-3 right-3 p-2 rounded-lg bg-muted/50 hover:bg-muted transition-colors"
+                  >
+                    <Heart className={`w-4 h-4 ${isFavorited ? 'fill-primary text-primary' : 'text-muted-foreground'}`} />
+                  </button>
                   <div className="flex items-start gap-4">
                     <div className="w-14 h-14 rounded-xl bg-primary/10 flex items-center justify-center text-xl font-bold text-primary flex-shrink-0">
                       {avatar.display_name?.[0] || 'A'}
@@ -225,8 +232,18 @@ export default function Explore() {
                     </div>
                   </div>
                 </GlassCard>
-              </Link>
-            ))}
+              );
+
+              return (
+                <AvatarCardContainer key={avatar.id} avatar={avatar} user={user} queryClient={queryClient}>
+                  {({ isFavorited, onToggleFavorite }) => (
+                    <Link to={`/AvatarView?id=${avatar.id}`}>
+                      <AvatarCard isFavorited={isFavorited} onToggleFavorite={onToggleFavorite} />
+                    </Link>
+                  )}
+                </AvatarCardContainer>
+              );
+            })}
           </div>
         ) : viewMode === 'grid' ? (
           <GlassCard className="p-12 text-center">
