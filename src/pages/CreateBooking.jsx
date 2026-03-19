@@ -51,13 +51,6 @@ export default function CreateBooking() {
     setError('');
     setCheckoutLoading(true);
 
-    // Check if inside iframe (editor preview)
-    if (window.self !== window.top) {
-      alert('Payment checkout only works on the published app. Please open the published link to complete payment.');
-      setCheckoutLoading(false);
-      return;
-    }
-
     try {
       // 1. Create booking
       const booking = await base44.entities.Booking.create({
@@ -76,17 +69,30 @@ export default function CreateBooking() {
         location: form.location,
         notes: form.notes,
         custom_request: form.custom_request,
-        amount,
-        service_fee: serviceFee,
-        total_amount: total,
-        status: 'pending',
-        payment_status: 'pending',
+        amount: freeTest ? 0 : amount,
+        service_fee: freeTest ? 0 : serviceFee,
+        total_amount: freeTest ? 0 : total,
+        status: freeTest ? 'accepted' : 'pending',
+        payment_status: freeTest ? 'paid' : 'pending',
       });
 
       // 2. Auto-create conversation
       await base44.functions.invoke('createConversation', { bookingId: booking.id });
 
-      // 3. Create Stripe checkout
+      // 3. Free test — skip payment, go straight to booking detail
+      if (freeTest) {
+        navigate(`/BookingDetail?id=${booking.id}`);
+        return;
+      }
+
+      // Check if inside iframe (editor preview)
+      if (window.self !== window.top) {
+        alert('Payment checkout only works on the published app. Please open the published link to complete payment.');
+        setCheckoutLoading(false);
+        return;
+      }
+
+      // 4. Create Stripe checkout
       const res = await base44.functions.invoke('createCheckout', {
         bookingId: booking.id,
         amount: total,
