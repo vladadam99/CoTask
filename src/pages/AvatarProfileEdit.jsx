@@ -60,9 +60,24 @@ export default function AvatarProfileEdit() {
         languages: (profile.languages || []).join(', '),
         skills: (profile.skills || []).join(', '),
         categories: (profile.categories || []).join(', '),
+        photo_url: profile.photo_url || '',
       });
     }
   }, [profile]);
+
+  const handlePhotoUpload = async (file) => {
+    if (!file) return;
+    setUploading(true);
+    try {
+      const { file_url } = await base44.integrations.Core.UploadFile({ file });
+      setForm(f => ({ ...f, photo_url: file_url }));
+      updateProfile.mutate({ ...form, photo_url: file_url });
+    } catch (error) {
+      console.error('Failed to upload photo:', error);
+      toast({ title: 'Upload failed', description: 'Could not upload photo' });
+    }
+    setUploading(false);
+  };
 
   const updateProfile = useMutation({
     mutationFn: (data) => base44.entities.AvatarProfile.update(profile.id, data),
