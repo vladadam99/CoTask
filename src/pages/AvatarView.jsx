@@ -25,6 +25,37 @@ export default function AvatarView() {
     enabled: !!id,
   });
 
+  const startMessage = async () => {
+    setMessaging(true);
+    try {
+      const user = await base44.auth.me();
+      const senderName = user.full_name || user.email;
+
+      // Check if a direct conversation already exists between these two users
+      const existing = await base44.entities.Conversation.filter({ booking_id: `direct_${user.email}_${avatar.user_email}` });
+      if (existing.length > 0) {
+        navigate(`/Messages?conversation=${existing[0].id}`);
+        return;
+      }
+
+      // Create a new pre-booking direct conversation
+      const convo = await base44.entities.Conversation.create({
+        participant_emails: [user.email, avatar.user_email],
+        participant_names: [senderName, avatar.display_name],
+        booking_id: `direct_${user.email}_${avatar.user_email}`,
+        last_message: 'Conversation started.',
+        last_message_at: new Date().toISOString(),
+        last_message_by: 'system',
+        unread_by: [avatar.user_email],
+      });
+      navigate(`/Messages?conversation=${convo.id}`);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setMessaging(false);
+    }
+  };
+
   const { data: reviews = [] } = useQuery({
     queryKey: ['avatar-reviews', avatar?.user_email],
     queryFn: () => base44.entities.Review.filter({ avatar_email: avatar.user_email }, '-created_date', 10),
