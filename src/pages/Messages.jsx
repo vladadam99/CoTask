@@ -219,7 +219,14 @@ export default function Messages() {
               <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-sm font-bold text-primary">
                 {getOtherName(activeConvo)[0]}
               </div>
-              <span className="font-medium">{getOtherName(activeConvo)}</span>
+              <span className="font-medium flex-1">{getOtherName(activeConvo)}</span>
+              <button
+                onClick={requestCamera}
+                title="Request live camera upgrade"
+                className="flex items-center gap-1.5 text-xs bg-primary/10 text-primary border border-primary/20 px-3 py-1.5 rounded-full hover:bg-primary/20 transition-colors"
+              >
+                <Video className="w-3 h-3" /> Request Camera
+              </button>
             </div>
             <div ref={scrollRef} className="flex-1 overflow-y-auto p-4 space-y-3">
               {messages.map(m => (
