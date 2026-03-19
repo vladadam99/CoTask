@@ -92,7 +92,7 @@ const TOTAL_STEPS = SLIDES.length + QUESTION_STEPS.length;
 export default function ExploreOnboarding() {
   const navigate = useNavigate();
   const [step, setStep] = useState(0);
-  const [answers, setAnswers] = useState({ categories: [], location: '', preference: '' });
+  const [answers, setAnswers] = useState({ categories: [], location: '', preference: '', customCategory: '' });
   const [direction, setDirection] = useState(1);
 
   const isIntroStep = step < SLIDES.length;
@@ -116,9 +116,23 @@ export default function ExploreOnboarding() {
   };
 
   const finish = () => {
+    // Merge custom category into the list
+    const allCategories = answers.customCategory.trim()
+      ? [...answers.categories, answers.customCategory.trim()]
+      : answers.categories;
+
+    // Save preferences to localStorage so Explore can use them as suggested filters
+    const prefs = {
+      categories: allCategories,
+      location: answers.location,
+      preference: answers.preference,
+      savedAt: Date.now(),
+    };
+    localStorage.setItem('cotask_user_prefs', JSON.stringify(prefs));
+
     const params = new URLSearchParams();
     if (answers.location) params.set('city', answers.location);
-    if (answers.categories.length) params.set('category', answers.categories[0]);
+    if (allCategories.length) params.set('category', allCategories[0]);
     if (answers.preference) params.set('sort', answers.preference);
     navigate(`/Explore?${params.toString()}`);
   };
