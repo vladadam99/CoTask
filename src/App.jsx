@@ -37,6 +37,7 @@ import Contact from './pages/Contact';
 import Safety from './pages/Safety';
 import LiveStreamStudio from './pages/LiveStreamStudio';
 import RecordingLibrary from './pages/RecordingLibrary';
+import ClientLiveView from './pages/ClientLiveView';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
