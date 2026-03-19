@@ -59,10 +59,42 @@ export default function Explore() {
       <PublicNav />
       <div className="pt-20 pb-12 px-4 md:px-6 max-w-6xl mx-auto">
         {/* Search Header */}
-        <div className="mb-8">
+        <div className="mb-6">
           <h1 className="text-3xl font-bold mb-2">Explore Avatars</h1>
           <p className="text-muted-foreground">Find the perfect avatar for your real-time needs</p>
         </div>
+
+        {/* Saved Preferences Banner */}
+        {showPrefsBanner && savedPrefs && (
+          <div className="mb-6 glass rounded-xl p-4 border border-primary/20 flex items-start gap-3">
+            <Sparkles className="w-4 h-4 text-primary mt-0.5 shrink-0" />
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-medium mb-1.5">Based on your preferences</p>
+              <div className="flex flex-wrap gap-1.5">
+                {savedPrefs.categories.map(cat => (
+                  <button
+                    key={cat}
+                    onClick={() => setCategory(cat)}
+                    className="text-xs px-2.5 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary hover:bg-primary/20 transition-colors"
+                  >
+                    {cat}
+                  </button>
+                ))}
+                {savedPrefs.location && (
+                  <button
+                    onClick={() => setCity(savedPrefs.location)}
+                    className="text-xs px-2.5 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 hover:bg-blue-500/20 transition-colors flex items-center gap-1"
+                  >
+                    <MapPin className="w-3 h-3" /> {savedPrefs.location}
+                  </button>
+                )}
+              </div>
+            </div>
+            <button onClick={() => setShowPrefsBanner(false)} className="text-muted-foreground hover:text-foreground shrink-0">
+              <X className="w-4 h-4" />
+            </button>
+          </div>
+        )}
 
         {/* Search Bar */}
         <div className="flex gap-3 mb-3 flex-wrap">
