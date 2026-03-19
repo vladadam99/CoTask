@@ -561,7 +561,14 @@ export default function LiveStreamStudio() {
           {/* RIGHT — Video Preview */}
           <div className={chatOpen && isLive ? 'lg:col-span-2' : 'lg:col-span-2'}>
             <GlassCard className="p-0 overflow-hidden relative" style={{ height: '520px' }}>
-              {!selectedSource ? (
+              {isLive && dailyRoomUrl ? (
+                /* Live WebRTC call via Daily.co */
+                <DailyVideoCall
+                  roomUrl={dailyRoomUrl}
+                  isHost={true}
+                  className="w-full h-full"
+                />
+              ) : !selectedSource ? (
                 <div className="w-full h-full flex flex-col items-center justify-center gap-4 text-center p-8">
                   <Wifi className="w-12 h-12 text-muted-foreground/40" />
                   <p className="text-muted-foreground text-sm">Select a camera source to begin preview</p>
