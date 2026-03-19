@@ -22,9 +22,13 @@ export default function Explore() {
   const initialCat = urlParams.get('category') || 'All';
   const initialCity = urlParams.get('city') || '';
 
+  // Load saved preferences
+  const savedPrefs = (() => { try { return JSON.parse(localStorage.getItem('cotask_user_prefs') || 'null'); } catch { return null; } })();
+
   const [search, setSearch] = useState('');
   const [category, setCategory] = useState(initialCat);
   const [city, setCity] = useState(initialCity);
+  const [showPrefsBanner, setShowPrefsBanner] = useState(!!savedPrefs && savedPrefs.categories?.length > 0);
   const [locationSearch, setLocationSearch] = useState('');
   const [focusCity, setFocusCity] = useState('');
   const [showFilters, setShowFilters] = useState(false);
