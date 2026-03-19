@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import StreamViewer360 from '@/components/live/StreamViewer360';
 import { ArrowLeft, Wifi, Video, MessageCircle, Clock, AlertTriangle } from 'lucide-react';
 import DailyVideoCall from '@/components/live/DailyVideoCall';
+import SessionEndedScreen from '@/components/live/SessionEndedScreen';
 
 export default function ClientLiveView() {
   const params = new URLSearchParams(window.location.search);
