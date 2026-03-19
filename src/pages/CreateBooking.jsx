@@ -76,8 +76,8 @@ export default function CreateBooking() {
         payment_status: freeTest ? 'paid' : 'pending',
       });
 
-      // 2. Auto-create conversation
-      await base44.functions.invoke('createConversation', { bookingId: booking.id });
+      // 2. Auto-create conversation (don't await — fire and forget to speed things up)
+      base44.functions.invoke('createConversation', { bookingId: booking.id }).catch(() => {});
 
       // 3. Free test — skip payment, go straight to booking detail
       if (freeTest) {
