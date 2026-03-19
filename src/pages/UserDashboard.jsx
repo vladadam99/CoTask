@@ -62,12 +62,11 @@ export default function UserDashboard() {
 
 
       {/* Quick Actions */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-8">
+      <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mb-8">
         {[
-          { label: 'Book now', path: '/Explore', icon: Calendar },
-          { label: 'Message', path: '/Messages', icon: MessageSquare },
-          { label: 'Join live', path: '/LiveSessions', icon: Radio },
-          { label: 'Schedule', path: '/Explore', icon: Clock },
+          { label: 'Browse Avatars', path: '/Explore', icon: Search },
+          { label: 'Book Now', path: '/Explore', icon: Calendar },
+          { label: 'Saved', path: '/Saved', icon: Heart },
         ].map(action => (
           <Link key={action.label} to={action.path}>
             <GlassCard className="p-4 text-center" hover>
