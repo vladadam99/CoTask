@@ -146,12 +146,7 @@ export default function ClientLiveView() {
                   </div>
                 </div>
               ) : isEnded ? (
-                <div className="w-full h-full flex flex-col items-center justify-center gap-4 text-center p-8">
-                  <Video className="w-12 h-12 text-muted-foreground/40" />
-                  <h3 className="font-semibold">Session Ended</h3>
-                  <p className="text-sm text-muted-foreground">This session has ended. Thank you for using CoTask!</p>
-                  <Link to="/Bookings"><Button size="sm" className="bg-primary">View Bookings</Button></Link>
-                </div>
+                <SessionEndedScreen session={session} user={user} />
               ) : isLive && session.session_url ? (
                 /* Real WebRTC video via Daily.co */
                 <DailyVideoCall
