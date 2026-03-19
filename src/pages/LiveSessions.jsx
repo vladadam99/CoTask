@@ -6,7 +6,7 @@ import { useCurrentUser } from '@/lib/useCurrentUser';
 import GlassCard from '@/components/ui/GlassCard';
 import StatusBadge from '@/components/ui/StatusBadge';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, Radio, Video, Clock, Users } from 'lucide-react';
+import { ArrowLeft, Radio, Video, Clock } from 'lucide-react';
 
 export default function LiveSessions() {
   const { user } = useCurrentUser();
@@ -14,15 +14,17 @@ export default function LiveSessions() {
   const { data: sessions = [], isLoading } = useQuery({
     queryKey: ['live-sessions', user?.email],
     queryFn: async () => {
-      const all = await base44.entities.LiveSession.list('-created_date', 20);
+      const all = await base44.entities.LiveSession.list('-created_date', 30);
       return all.filter(s => s.avatar_email === user?.email || s.client_email === user?.email);
     },
     enabled: !!user,
+    refetchInterval: 10000,
   });
 
   const dashPath = user?.app_role === 'avatar' ? '/AvatarDashboard' : user?.app_role === 'enterprise' ? '/EnterpriseDashboard' : '/UserDashboard';
   const activeSessions = sessions.filter(s => s.status === 'live' || s.status === 'waiting');
   const pastSessions = sessions.filter(s => s.status === 'ended');
+  const isAvatar = user?.app_role === 'avatar';
 
   return (
     <div className="min-h-screen pb-12 px-4">
@@ -33,10 +35,12 @@ export default function LiveSessions() {
 
         <div className="flex items-center justify-between mb-8">
           <h1 className="text-2xl font-bold">Live Sessions</h1>
-          {user?.app_role === 'avatar' && (
-            <Button className="bg-primary hover:bg-primary/90 glow-primary-sm">
-              <Radio className="w-4 h-4 mr-2" /> Start New Session
-            </Button>
+          {isAvatar && (
+            <Link to="/LiveStreamStudio">
+              <Button className="bg-primary hover:bg-primary/90 glow-primary-sm gap-2">
+                <Radio className="w-4 h-4" /> Go to Studio
+              </Button>
+            </Link>
           )}
         </div>
 
@@ -46,22 +50,43 @@ export default function LiveSessions() {
             <span className="w-2 h-2 rounded-full bg-primary animate-pulse" />
             Active Sessions
           </h2>
-          {activeSessions.length > 0 ? (
+          {isLoading ? (
+            <div className="space-y-3">
+              {[1, 2].map(i => <GlassCard key={i} className="p-5 animate-pulse h-20" />)}
+            </div>
+          ) : activeSessions.length > 0 ? (
             <div className="space-y-3">
               {activeSessions.map(s => (
-                <GlassCard key={s.id} className="p-5 border-primary/20" hover>
+                <GlassCard key={s.id} className="p-5 border-primary/20">
                   <div className="flex items-center justify-between">
                     <div>
                       <p className="font-medium">{s.title || s.category || 'Live Session'}</p>
-                      <p className="text-sm text-muted-foreground mt-1">
-                        {user?.email === s.avatar_email ? s.client_name : s.avatar_name}
+                      <p className="text-sm text-muted-foreground mt-0.5">
+                        with {user?.email === s.avatar_email ? s.client_name : s.avatar_name}
                       </p>
+                      <div className="flex items-center gap-2 mt-1.5">
+                        <StatusBadge status={s.status} />
+                        {s.stream_mode && s.stream_mode !== 'standard' && (
+                          <span className="text-xs bg-purple-500/10 text-purple-400 border border-purple-500/20 px-2 py-0.5 rounded-full">
+                            {s.stream_mode.toUpperCase()}
+                          </span>
+                        )}
+                      </div>
                     </div>
-                    <div className="flex items-center gap-3">
-                      <StatusBadge status={s.status} />
-                      <Button size="sm" className="bg-primary hover:bg-primary/90">
-                        <Video className="w-4 h-4 mr-1" /> Join
-                      </Button>
+                    <div>
+                      {isAvatar ? (
+                        <Link to="/LiveStreamStudio">
+                          <Button size="sm" className="bg-primary gap-1.5">
+                            <Radio className="w-3.5 h-3.5" /> Studio
+                          </Button>
+                        </Link>
+                      ) : (
+                        <Link to={`/ClientLiveView?session=${s.id}`}>
+                          <Button size="sm" className="bg-primary gap-1.5">
+                            <Video className="w-3.5 h-3.5" /> Join Stream
+                          </Button>
+                        </Link>
+                      )}
                     </div>
                   </div>
                 </GlassCard>
@@ -71,7 +96,7 @@ export default function LiveSessions() {
             <GlassCard className="p-8 text-center">
               <Radio className="w-8 h-8 text-muted-foreground mx-auto mb-3" />
               <p className="text-sm text-muted-foreground">No active sessions right now</p>
-              <p className="text-xs text-muted-foreground mt-1">Live sessions will appear here when they start</p>
+              <p className="text-xs text-muted-foreground mt-1">Sessions appear here when they start</p>
             </GlassCard>
           )}
         </div>
@@ -84,14 +109,21 @@ export default function LiveSessions() {
           {pastSessions.length > 0 ? (
             <div className="space-y-2">
               {pastSessions.map(s => (
-                <GlassCard key={s.id} className="p-4 flex items-center justify-between" hover>
+                <GlassCard key={s.id} className="p-4 flex items-center justify-between">
                   <div>
                     <p className="text-sm font-medium">{s.title || s.category || 'Session'}</p>
                     <p className="text-xs text-muted-foreground">
                       {s.duration_minutes ? `${s.duration_minutes} min` : ''} · {user?.email === s.avatar_email ? s.client_name : s.avatar_name}
                     </p>
                   </div>
-                  <StatusBadge status={s.status} />
+                  <div className="flex items-center gap-2">
+                    <StatusBadge status={s.status} />
+                    {s.booking_id && (
+                      <Link to={`/BookingDetail?id=${s.booking_id}`}>
+                        <Button size="sm" variant="outline" className="text-xs h-7">Details</Button>
+                      </Link>
+                    )}
+                  </div>
                 </GlassCard>
               ))}
             </div>
@@ -101,20 +133,6 @@ export default function LiveSessions() {
             </GlassCard>
           )}
         </div>
-
-        {/* Future Integration Note */}
-        <GlassCard className="p-6 mt-8 border-primary/10">
-          <div className="flex items-start gap-4">
-            <Video className="w-6 h-6 text-primary flex-shrink-0 mt-0.5" />
-            <div>
-              <h3 className="font-semibold text-sm mb-1">Live Video Coming Soon</h3>
-              <p className="text-xs text-muted-foreground leading-relaxed">
-                We're integrating real-time video, audio, and 360° streaming capabilities. 
-                Sessions currently use text-based coordination. Full live streaming will be available in the next update.
-              </p>
-            </div>
-          </div>
-        </GlassCard>
       </div>
     </div>
   );

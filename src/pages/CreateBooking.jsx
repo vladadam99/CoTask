@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { useCurrentUser } from '@/lib/useCurrentUser';
@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { ArrowLeft, Calendar, Clock, MapPin, Check } from 'lucide-react';
+import { ArrowLeft, Calendar, MapPin, CreditCard, Loader2 } from 'lucide-react';
 
 const CATEGORIES = [
   'City Guide', 'Property Walkthrough', 'Shopping Help', 'Event Attendance',
@@ -20,7 +20,9 @@ export default function CreateBooking() {
   const params = new URLSearchParams(window.location.search);
   const avatarId = params.get('avatar');
   const { user } = useCurrentUser();
-  const [submitted, setSubmitted] = useState(false);
+  const navigate = useNavigate();
+  const [checkoutLoading, setCheckoutLoading] = useState(false);
+  const [error, setError] = useState('');
 
   const { data: avatar } = useQuery({
     queryKey: ['booking-avatar', avatarId],
@@ -43,8 +45,20 @@ export default function CreateBooking() {
   const serviceFee = Math.round(amount * 0.15 * 100) / 100;
   const total = amount + serviceFee;
 
-  const createBooking = useMutation({
-    mutationFn: async () => {
+  const createAndPay = async () => {
+    if (!form.category) { setError('Please select a category.'); return; }
+    setError('');
+    setCheckoutLoading(true);
+
+    // Check if inside iframe (editor preview)
+    if (window.self !== window.top) {
+      alert('Payment checkout only works on the published app. Please open the published link to complete payment.');
+      setCheckoutLoading(false);
+      return;
+    }
+
+    try {
+      // 1. Create booking
       const booking = await base44.entities.Booking.create({
         client_email: user.email,
         client_name: user.full_name,
@@ -67,30 +81,28 @@ export default function CreateBooking() {
         status: 'pending',
         payment_status: 'pending',
       });
-      return booking;
-    },
-    onSuccess: () => setSubmitted(true),
-  });
 
-  if (submitted) {
-    return (
-      <div className="min-h-screen flex items-center justify-center px-6">
-        <GlassCard className="p-10 text-center max-w-md">
-          <div className="w-16 h-16 rounded-full bg-green-500/10 flex items-center justify-center mx-auto mb-6">
-            <Check className="w-8 h-8 text-green-400" />
-          </div>
-          <h2 className="text-2xl font-bold mb-2">Booking Submitted!</h2>
-          <p className="text-muted-foreground text-sm mb-6">
-            Your booking request has been sent to {avatar?.display_name || 'the avatar'}. You'll be notified when they respond.
-          </p>
-          <div className="flex gap-3 justify-center">
-            <Link to="/Bookings"><Button className="bg-primary hover:bg-primary/90">View Bookings</Button></Link>
-            <Link to="/Explore"><Button variant="outline" className="border-white/10">Explore More</Button></Link>
-          </div>
-        </GlassCard>
-      </div>
-    );
-  }
+      // 2. Auto-create conversation
+      await base44.functions.invoke('createConversation', { bookingId: booking.id });
+
+      // 3. Create Stripe checkout
+      const res = await base44.functions.invoke('createCheckout', {
+        bookingId: booking.id,
+        amount: total,
+        avatarName: avatar?.display_name,
+        category: form.category,
+      });
+
+      if (res.data?.url) {
+        window.location.href = res.data.url;
+      } else {
+        throw new Error(res.data?.error || 'Failed to create checkout');
+      }
+    } catch (err) {
+      setError(err.message || 'Something went wrong. Please try again.');
+      setCheckoutLoading(false);
+    }
+  };
 
   return (
     <div className="min-h-screen pb-12 px-4">
@@ -179,13 +191,20 @@ export default function CreateBooking() {
             </div>
           </GlassCard>
 
+          {error && <p className="text-sm text-red-400 bg-red-500/10 border border-red-500/20 rounded-xl px-4 py-3">{error}</p>}
+
           <Button
-            className="w-full bg-primary hover:bg-primary/90 py-5 text-base glow-primary-sm"
-            onClick={() => createBooking.mutate()}
-            disabled={!form.category || createBooking.isPending}
+            className="w-full bg-primary hover:bg-primary/90 py-5 text-base glow-primary-sm gap-2"
+            onClick={createAndPay}
+            disabled={!form.category || checkoutLoading}
           >
-            {createBooking.isPending ? 'Submitting...' : `Confirm Booking — $${total.toFixed(2)}`}
+            {checkoutLoading ? (
+              <><Loader2 className="w-4 h-4 animate-spin" /> Redirecting to payment…</>
+            ) : (
+              <><CreditCard className="w-4 h-4" /> Pay & Confirm — ${total.toFixed(2)}</>
+            )}
           </Button>
+          <p className="text-xs text-center text-muted-foreground">Secured by Stripe. You'll be redirected to complete payment.</p>
         </div>
       </div>
     </div>
