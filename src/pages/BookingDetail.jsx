@@ -204,6 +204,23 @@ export default function BookingDetail() {
             </GlassCard>
           )}
 
+          {/* Proof of completion */}
+          {booking.proof_url && (
+            <GlassCard className="p-5">
+              <h3 className="font-semibold text-sm mb-3 flex items-center gap-2"><Camera className="w-4 h-4 text-primary" /> Job Completion Proof</h3>
+              <img src={booking.proof_url} alt="Job proof" className="w-full max-h-64 object-cover rounded-xl border border-white/10 mb-2" />
+              {booking.proof_note && <p className="text-xs text-muted-foreground">"{booking.proof_note}"</p>}
+            </GlassCard>
+          )}
+
+          {/* Avatar: upload proof */}
+          {canUploadProof && (
+            <ProofUpload booking={booking} onUpload={() => queryClient.invalidateQueries({ queryKey: ['booking', id] })} />
+          )}
+
+          {/* Client: approval flow */}
+          <JobApprovalFlow booking={booking} user={user} onUpdate={() => queryClient.invalidateQueries({ queryKey: ['booking', id] })} />
+
           {/* Actions */}
           <div className="flex flex-wrap gap-3">
             {canAccept && <Button className="bg-green-600 hover:bg-green-700 flex-1" onClick={() => updateStatus.mutate('accepted')}>Accept</Button>}
