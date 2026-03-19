@@ -106,6 +106,7 @@ export default function LiveStreamStudio() {
       status: 'live',
       stream_mode: streamMode === '360' ? '360' : 'standard',
       started_at: new Date().toISOString(),
+      session_url: booking._dailyRoomUrl || '',
     }),
     onSuccess: (s) => {
       setCurrentSessionId(s.id);
