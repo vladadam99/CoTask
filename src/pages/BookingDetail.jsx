@@ -6,8 +6,10 @@ import { useCurrentUser } from '@/lib/useCurrentUser';
 import GlassCard from '@/components/ui/GlassCard';
 import StatusBadge from '@/components/ui/StatusBadge';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, Calendar, Clock, MapPin, User, DollarSign, MessageSquare, Video, CreditCard, CheckCircle, Loader2 } from 'lucide-react';
+import { ArrowLeft, Calendar, Clock, MapPin, User, DollarSign, MessageSquare, Video, VideoOff, CreditCard, CheckCircle, Loader2, Camera } from 'lucide-react';
 import LeaveReview from '@/components/reviews/LeaveReview';
+import ProofUpload from '@/components/bookings/ProofUpload';
+import JobApprovalFlow from '@/components/bookings/JobApprovalFlow';
 
 export default function BookingDetail() {
   const params = new URLSearchParams(window.location.search);
@@ -93,7 +95,8 @@ export default function BookingDetail() {
   const canAccept = isAvatar && booking.status === 'pending';
   const canDecline = isAvatar && booking.status === 'pending';
   const canStart = isAvatar && ['accepted', 'scheduled'].includes(booking.status);
-  const canComplete = isAvatar && booking.status === 'in_progress';
+  const canComplete = isAvatar && booking.status === 'in_progress' && !booking.proof_url;
+  const canUploadProof = isAvatar && booking.status === 'in_progress' && !booking.proof_url;
   const canCancel = isClient && ['pending', 'accepted', 'scheduled'].includes(booking.status);
   const needsPayment = isClient && booking.payment_status === 'pending' && ['pending', 'accepted'].includes(booking.status);
 
@@ -118,7 +121,18 @@ export default function BookingDetail() {
 
         <div className="space-y-4">
           <GlassCard className="p-6">
-            <h2 className="font-semibold text-lg mb-4">{booking.category}</h2>
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="font-semibold text-lg">{booking.category}</h2>
+              {booking.stream_mode === 'live_camera' ? (
+                <span className="flex items-center gap-1.5 text-xs bg-primary/10 text-primary border border-primary/20 px-2.5 py-1 rounded-full">
+                  <Video className="w-3 h-3" /> Live Camera
+                </span>
+              ) : (
+                <span className="flex items-center gap-1.5 text-xs bg-muted text-muted-foreground border border-white/10 px-2.5 py-1 rounded-full">
+                  <VideoOff className="w-3 h-3" /> No Camera
+                </span>
+              )}
+            </div>
             <div className="grid grid-cols-2 gap-4 text-sm">
               <div className="flex items-center gap-2 text-muted-foreground">
                 <User className="w-4 h-4" />
