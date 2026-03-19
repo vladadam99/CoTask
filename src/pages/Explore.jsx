@@ -19,6 +19,8 @@ const CATEGORIES = [
 ];
 
 export default function Explore() {
+  const { user } = useCurrentUser();
+  const queryClient = useQueryClient();
   const urlParams = new URLSearchParams(window.location.search);
   const initialCat = urlParams.get('category') || 'All';
   const initialCity = urlParams.get('city') || '';
