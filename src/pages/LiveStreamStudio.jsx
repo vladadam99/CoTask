@@ -280,12 +280,11 @@ export default function LiveStreamStudio() {
     await startCamera(selectedSource, deviceId);
   }, [selectedSource, startCamera]);
 
-  const disconnectWifiStream = () => {
-    if (videoRef.current) {
-      videoRef.current.src = '';
-      videoRef.current.srcObject = null;
-    }
-    setWifiStreamActive(false);
+  const disconnectInsta360 = () => {
+    streamRef.current?.getTracks().forEach(t => t.stop());
+    streamRef.current = null;
+    if (videoRef.current) { videoRef.current.srcObject = null; videoRef.current.src = ''; }
+    setInsta360Status('idle');
     setSelectedSource(null);
   };
 
