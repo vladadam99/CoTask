@@ -475,15 +475,6 @@ export default function LiveStreamStudio() {
               </GlassCard>
             )}
 
-            {/* Multi-Camera Switcher */}
-            {videoDevices.length > 1 && (
-              <MultiCameraSwitcher
-                videoDevices={videoDevices}
-                activeDeviceId={activeDeviceId}
-                onSwitch={switchCamera}
-              />
-            )}
-
             {/* Auto-reconnect status */}
             {reconnecting && (
               <div className="flex items-center gap-2 bg-yellow-500/10 border border-yellow-500/20 rounded-xl p-3 text-xs text-yellow-400">
@@ -510,32 +501,48 @@ export default function LiveStreamStudio() {
               </GlassCard>
             )}
 
-            {/* Booking to attach */}
+            {/* Booking to attach / Go Live */}
             {!isLive && (
               <GlassCard className="p-5">
-                <h2 className="text-sm font-semibold mb-3">Attach Booking</h2>
-                {readyBookings.length === 0 ? (
-                  <p className="text-xs text-muted-foreground">No accepted bookings. Accept a request first.</p>
-                ) : (
-                  <div className="space-y-2">
-                    {readyBookings.map(b => (
-                      <div key={b.id} className="flex items-center justify-between gap-3">
-                        <div className="min-w-0">
-                          <p className="text-sm font-medium truncate">{b.category}</p>
-                          <p className="text-xs text-muted-foreground">{b.client_name}</p>
+                <h2 className="text-sm font-semibold mb-3">Go Live</h2>
+                <div className="space-y-3">
+                  {readyBookings.length > 0 && (
+                    <div className="space-y-2">
+                      <p className="text-xs text-muted-foreground">With a booking:</p>
+                      {readyBookings.map(b => (
+                        <div key={b.id} className="flex items-center justify-between gap-3">
+                          <div className="min-w-0">
+                            <p className="text-sm font-medium truncate">{b.category}</p>
+                            <p className="text-xs text-muted-foreground">{b.client_name}</p>
+                          </div>
+                          <Button
+                            size="sm"
+                            className="bg-green-600 hover:bg-green-700 shrink-0 gap-1"
+                            onClick={() => goLive(b)}
+                            disabled={!selectedSource || startSessionMutation.isPending}
+                          >
+                            <Radio className="w-3 h-3" /> Go Live
+                          </Button>
                         </div>
-                        <Button
-                          size="sm"
-                          className="bg-green-600 hover:bg-green-700 shrink-0 gap-1"
-                          onClick={() => goLive(b)}
-                          disabled={!selectedSource || startSessionMutation.isPending}
-                        >
-                          <Radio className="w-3 h-3" /> Go Live
-                        </Button>
-                      </div>
-                    ))}
+                      ))}
+                      <div className="border-t border-white/5 pt-2" />
+                    </div>
+                  )}
+                  <div className="flex items-center justify-between gap-3">
+                    <div>
+                      <p className="text-sm font-medium">Quick Stream</p>
+                      <p className="text-xs text-muted-foreground">Go live without a booking</p>
+                    </div>
+                    <Button
+                      size="sm"
+                      className="bg-primary hover:bg-primary/90 shrink-0 gap-1"
+                      onClick={() => goLive(null)}
+                      disabled={!selectedSource || startSessionMutation.isPending}
+                    >
+                      <Radio className="w-3 h-3" /> Go Live
+                    </Button>
                   </div>
-                )}
+                </div>
               </GlassCard>
             )}
 
