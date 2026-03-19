@@ -31,6 +31,8 @@ export default function Onboarding() {
       const r = user.app_role || stored || 'user';
       setRole(r);
       setFormData(prev => ({ ...prev, display_name: user.full_name || '' }));
+      // Clear the localStorage role once we've set it
+      localStorage.removeItem('cotask_role');
     }
   }, [user]);
 
