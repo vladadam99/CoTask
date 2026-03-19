@@ -134,10 +134,8 @@ export default function LiveStreamStudio() {
   const reconnectTimerRef = useRef(null);
   const lastSourceRef = useRef(null);
 
-  // Wireless / Wi-Fi stream state
-  const [wifiStreamUrl, setWifiStreamUrl] = useState('');
-  const [wifiStreamActive, setWifiStreamActive] = useState(false);
-  const [wifiConnecting, setWifiConnecting] = useState(false);
+  // Insta360 USB connection state
+  const [insta360Status, setInsta360Status] = useState('idle'); // idle | detecting | connected | error
 
   // Start camera stream
   const startCamera = useCallback(async (source, overrideDeviceId = null) => {
