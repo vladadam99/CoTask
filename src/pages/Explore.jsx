@@ -193,56 +193,85 @@ export default function Explore() {
         ) : viewMode === 'grid' && filtered.length > 0 ? (
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {filtered.map(avatar => {
-              const AvatarCard = ({ isFavorited, onToggleFavorite }) => (
-                <GlassCard className="p-5 h-full relative" hover>
-                  <button
-                    onClick={e => { e.preventDefault(); onToggleFavorite(); }}
-                    disabled={!user}
-                    className="absolute top-3 right-3 p-2 rounded-lg bg-muted/50 hover:bg-muted transition-colors"
-                  >
-                    <Heart className={`w-4 h-4 ${isFavorited ? 'fill-primary text-primary' : 'text-muted-foreground'}`} />
-                  </button>
-                  <div className="flex items-start gap-4">
-                    <div className="w-14 h-14 rounded-xl bg-primary/10 flex items-center justify-center text-xl font-bold text-primary flex-shrink-0">
-                      {avatar.display_name?.[0] || 'A'}
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2">
-                        <h3 className="font-semibold truncate">{avatar.display_name}</h3>
-                        {avatar.is_verified && <Shield className="w-4 h-4 text-blue-400" />}
-                        {avatar.is_available && <span className="w-2 h-2 rounded-full bg-green-400" />}
-                      </div>
-                      <div className="flex items-center gap-2 text-xs text-muted-foreground mt-1">
-                        <MapPin className="w-3 h-3" /> {avatar.city || 'Remote'}
-                        {avatar.rating > 0 && <>
-                          <Star className="w-3 h-3 text-yellow-400 ml-1" />
-                          <span>{avatar.rating.toFixed(1)} ({avatar.review_count})</span>
-                        </>}
-                      </div>
-                      <p className="text-xs text-muted-foreground mt-2 line-clamp-2">{avatar.bio || 'Available for bookings'}</p>
-                      <div className="flex flex-wrap gap-1 mt-2">
-                        {(avatar.categories || []).slice(0, 3).map(c => (
-                          <span key={c} className="text-xs bg-muted/50 rounded px-2 py-0.5">{c}</span>
-                        ))}
-                      </div>
-                      <div className="flex items-center justify-between mt-3">
-                        <p className="text-sm font-semibold text-primary">${avatar.hourly_rate || 30}/hr</p>
-                        {avatar.has_360_camera && <span className="text-xs text-muted-foreground flex items-center gap-1"><Radio className="w-3 h-3" /> 360°</span>}
-                      </div>
-                    </div>
-                  </div>
-                </GlassCard>
-              );
+              const FavoritableAvatarCard = () => {
+                const { data: isFavorited = false } = useQuery({
+                  queryKey: ['is-favorited-explore', user?.email, avatar.id],
+                  queryFn: async () => {
+                    const favs = await base44.entities.Favorite.filter({
+                      user_email: user.email,
+                      avatar_profile_id: avatar.id,
+                    });
+                    return favs.length > 0;
+                  },
+                  enabled: !!user,
+                });
 
-              return (
-                <AvatarCardContainer key={avatar.id} avatar={avatar} user={user} queryClient={queryClient}>
-                  {({ isFavorited, onToggleFavorite }) => (
-                    <Link to={`/AvatarView?id=${avatar.id}`}>
-                      <AvatarCard isFavorited={isFavorited} onToggleFavorite={onToggleFavorite} />
-                    </Link>
-                  )}
-                </AvatarCardContainer>
-              );
+                const toggleFavorite = useMutation({
+                  mutationFn: async () => {
+                    if (isFavorited) {
+                      const favs = await base44.entities.Favorite.filter({
+                        user_email: user.email,
+                        avatar_profile_id: avatar.id,
+                      });
+                      if (favs.length > 0) await base44.entities.Favorite.delete(favs[0].id);
+                    } else {
+                      await base44.entities.Favorite.create({
+                        user_email: user.email,
+                        avatar_profile_id: avatar.id,
+                        avatar_name: avatar.display_name,
+                      });
+                    }
+                  },
+                  onSuccess: () => {
+                    queryClient.invalidateQueries({ queryKey: ['is-favorited-explore', user?.email, avatar.id] });
+                    queryClient.invalidateQueries({ queryKey: ['favorites'] });
+                  },
+                });
+
+                return (
+                  <Link to={`/AvatarView?id=${avatar.id}`}>
+                    <GlassCard className="p-5 h-full" hover>
+                      <div className="flex items-start gap-4">
+                        <div className="w-14 h-14 rounded-xl bg-primary/10 flex items-center justify-center text-xl font-bold text-primary flex-shrink-0">
+                          {avatar.display_name?.[0] || 'A'}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2">
+                            <h3 className="font-semibold truncate">{avatar.display_name}</h3>
+                            {avatar.is_verified && <Shield className="w-4 h-4 text-blue-400" />}
+                            {avatar.is_available && <span className="w-2 h-2 rounded-full bg-green-400" />}
+                          </div>
+                          <div className="flex items-center gap-2 text-xs text-muted-foreground mt-1">
+                            <MapPin className="w-3 h-3" /> {avatar.city || 'Remote'}
+                            {avatar.rating > 0 && <>
+                              <Star className="w-3 h-3 text-yellow-400 ml-1" />
+                              <span>{avatar.rating.toFixed(1)} ({avatar.review_count})</span>
+                            </>}
+                          </div>
+                          <p className="text-xs text-muted-foreground mt-2 line-clamp-2">{avatar.bio || 'Available for bookings'}</p>
+                          <div className="flex flex-wrap gap-1 mt-2">
+                            {(avatar.categories || []).slice(0, 3).map(c => (
+                              <span key={c} className="text-xs bg-muted/50 rounded px-2 py-0.5">{c}</span>
+                            ))}
+                          </div>
+                          <div className="flex items-center justify-between mt-3">
+                            <p className="text-sm font-semibold text-primary">${avatar.hourly_rate || 30}/hr</p>
+                            <button
+                              onClick={e => { e.preventDefault(); toggleFavorite.mutate(); }}
+                              disabled={toggleFavorite.isPending || !user}
+                              className="p-1.5 rounded-lg hover:bg-muted transition-colors"
+                            >
+                              <Heart className={`w-4 h-4 ${isFavorited ? 'fill-primary text-primary' : 'text-muted-foreground'}`} />
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </GlassCard>
+                  </Link>
+                );
+              };
+
+              return <FavoritableAvatarCard key={avatar.id} />;
             })}
           </div>
         ) : viewMode === 'grid' ? (
