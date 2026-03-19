@@ -36,6 +36,15 @@ export default function AvatarSchedule() {
     enabled: !!user,
   });
 
+  const { data: avatarProfile } = useQuery({
+    queryKey: ['avatar-profile-schedule', user?.email],
+    queryFn: async () => {
+      const list = await base44.entities.AvatarProfile.filter({ user_email: user.email });
+      return list[0] || null;
+    },
+    enabled: !!user,
+  });
+
   if (loading) return <div className="min-h-screen flex items-center justify-center"><div className="w-8 h-8 border-4 border-primary/20 border-t-primary rounded-full animate-spin" /></div>;
 
   const scheduledBookings = bookings.filter(b => ['accepted', 'scheduled', 'in_progress'].includes(b.status) && b.scheduled_date);
@@ -164,6 +173,12 @@ export default function AvatarSchedule() {
               ))}
           </div>
         </div>
+      </div>
+
+      {/* Availability Manager */}
+      <div className="mt-8">
+        <h2 className="text-lg font-semibold mb-4">Set Your Availability</h2>
+        <AvailabilityManager avatarProfile={avatarProfile} />
       </div>
     </AppShell>
   );
