@@ -44,14 +44,18 @@ export default function Onboarding() {
   };
 
   const finish = async () => {
-    await updateUser({
-      app_role: role,
-      onboarding_complete: true,
-      city: formData.city,
-      country: formData.country,
-      interests: formData.interests,
-      preferred_language: formData.preferred_language,
-    });
+    try {
+      await updateUser({
+        app_role: role,
+        onboarding_complete: true,
+        city: formData.city,
+        country: formData.country,
+        interests: formData.interests,
+        preferred_language: formData.preferred_language,
+      });
+    } catch (err) {
+      // User not authenticated yet, skip auth update
+    }
 
     if (role === 'avatar') {
       await base44.entities.AvatarProfile.create({
