@@ -94,22 +94,41 @@ export default function LiveStreamStudio() {
   });
 
   const startSessionMutation = useMutation({
-    mutationFn: ({ booking, streamMode }) => base44.entities.LiveSession.create({
-      booking_id: booking.id,
-      avatar_email: user.email,
-      avatar_name: user.full_name,
-      client_email: booking.client_email,
-      client_name: booking.client_name,
-      category: booking.category,
-      title: `${booking.category} — ${streamMode.toUpperCase()} session`,
-      status: 'live',
-      stream_mode: streamMode === '360' ? '360' : 'standard',
-      started_at: new Date().toISOString(),
-      session_url: booking._dailyRoomUrl || '',
-    }),
+    mutationFn: async ({ booking, streamMode }) => {
+      const session = await base44.entities.LiveSession.create({
+        booking_id: booking?.id || '',
+        avatar_email: user.email,
+        avatar_name: user.full_name,
+        client_email: booking?.client_email || '',
+        client_name: booking?.client_name || '',
+        category: booking?.category || 'Quick Stream',
+        title: `${booking?.category || 'Quick Stream'} — ${streamMode.toUpperCase()} session`,
+        status: 'live',
+        stream_mode: streamMode === '360' ? '360' : 'standard',
+        started_at: new Date().toISOString(),
+        session_url: booking?._dailyRoomUrl || '',
+      });
+      // Notify client that avatar is live
+      if (booking?.client_email) {
+        await base44.entities.Notification.create({
+          user_email: booking.client_email,
+          title: `${user.full_name} is now LIVE!`,
+          message: `Your ${booking.category} session has started. Tap to join.`,
+          type: 'session_live',
+          link: `/ClientLiveView?session=${session.id}`,
+          reference_id: session.id,
+        });
+        // Also update the booking status to in_progress
+        if (booking.id) {
+          await base44.entities.Booking.update(booking.id, { status: 'in_progress', session_id: session.id });
+        }
+      }
+      return session;
+    },
     onSuccess: (s) => {
       setCurrentSessionId(s.id);
       queryClient.invalidateQueries({ queryKey: ['avatar-live-sessions'] });
+      queryClient.invalidateQueries({ queryKey: ['stream-studio-bookings'] });
     },
   });
 
