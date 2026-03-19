@@ -141,12 +141,25 @@ export default function ClientLiveView() {
               <div className="text-xs bg-muted/50 text-muted-foreground px-3 py-1.5 rounded-full">Session ended</div>
             )}
           </div>
-          <button
-            onClick={() => setChatOpen(v => !v)}
-            className={`flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg border transition-colors ${chatOpen ? 'bg-primary/20 border-primary/30 text-primary' : 'bg-muted/50 border-white/10 text-muted-foreground'}`}
-          >
-            <MessageCircle className="w-3.5 h-3.5" /> Chat
-          </button>
+          <div className="flex items-center gap-2">
+            {isLive && (
+              <Button
+                size="sm"
+                variant="destructive"
+                onClick={handleEndSession}
+                disabled={ending}
+                className="gap-1.5 text-xs"
+              >
+                <Square className="w-3 h-3" /> {ending ? 'Ending…' : 'End Session'}
+              </Button>
+            )}
+            <button
+              onClick={() => setChatOpen(v => !v)}
+              className={`flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg border transition-colors ${chatOpen ? 'bg-primary/20 border-primary/30 text-primary' : 'bg-muted/50 border-white/10 text-muted-foreground'}`}
+            >
+              <MessageCircle className="w-3.5 h-3.5" /> Chat
+            </button>
+          </div>
         </div>
 
         <div className={`grid gap-6 ${chatOpen ? 'lg:grid-cols-3' : 'lg:grid-cols-1'}`}>
