@@ -15,7 +15,8 @@ export default function Messages() {
   const [newMsg, setNewMsg] = useState('');
   const scrollRef = useRef(null);
 
-  const urlConvoId = new URLSearchParams(window.location.search).get('conversation');
+  const urlConvoId = new URLSearchParams(window.location.search).get('conversation') ||
+    new URLSearchParams(window.location.search).get('conv');
 
   const { data: conversations = [] } = useQuery({
     queryKey: ['conversations', user?.email],
