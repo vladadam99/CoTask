@@ -1,5 +1,4 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { User, Radio, Building2, ArrowRight } from 'lucide-react';
 import GlassCard from '@/components/ui/GlassCard';
@@ -11,10 +10,9 @@ const roles = [
     key: 'user',
     icon: User,
     title: 'I need help',
-    subtitle: 'User / Client',
+    subtitle: 'Client',
     desc: 'Find and book avatars for live tours, errands, walkthroughs, and real-time assistance.',
-    cta: 'Continue as User',
-    path: '/UserDashboard',
+    cta: 'Explore Avatars',
   },
   {
     key: 'avatar',
@@ -22,35 +20,52 @@ const roles = [
     title: 'I want to earn',
     subtitle: 'Avatar / Helper',
     desc: 'Offer your local presence. Help people remotely by being their eyes, hands, and guide.',
-    cta: 'Continue as Avatar',
-    path: '/AvatarDashboard',
+    cta: 'Become an Avatar',
   },
   {
     key: 'enterprise',
     icon: Building2,
     title: 'I need business solutions',
-    subtitle: 'Enterprise / Company',
+    subtitle: 'Enterprise',
     desc: 'Book avatars for site inspections, field support, training, demos, and more.',
-    cta: 'Continue as Enterprise',
-    path: '/EnterpriseDashboard',
+    cta: 'Set up Business',
   },
 ];
 
 export default function RoleSelect() {
-  const { user, loading } = useCurrentUser();
+  const { user } = useCurrentUser();
 
   const handleRoleSelect = async (role) => {
+    if (role === 'user') {
+      // Users go straight to Explore — no forced onboarding
+      if (user) {
+        window.location.href = '/Explore';
+      } else {
+        window.location.href = '/Explore';
+      }
+      return;
+    }
+
     if (user) {
-      await base44.auth.updateMe({ app_role: role });
-      window.location.href = role === 'user' ? '/UserDashboard' :
-                             role === 'avatar' ? '/AvatarDashboard' : '/EnterpriseDashboard';
+      // Already logged in — check if they already have a profile for this role
+      if (role === 'avatar') {
+        const profiles = await base44.entities.AvatarProfile.filter({ user_email: user.email });
+        if (profiles.length > 0) {
+          window.location.href = '/AvatarDashboard';
+          return;
+        }
+      } else if (role === 'enterprise') {
+        const profiles = await base44.entities.EnterpriseProfile.filter({ user_email: user.email });
+        if (profiles.length > 0) {
+          window.location.href = '/EnterpriseDashboard';
+          return;
+        }
+      }
+      window.location.href = `/Onboarding?role=${role}`;
     } else {
-      // Store selection and redirect to login
+      // Not logged in — store role and redirect to login → then onboarding
       localStorage.setItem('cotask_role', role);
-      base44.auth.redirectToLogin(
-        role === 'user' ? '/Onboarding' :
-        role === 'avatar' ? '/Onboarding' : '/Onboarding'
-      );
+      base44.auth.redirectToLogin(`/Onboarding?role=${role}`);
     }
   };
 
@@ -60,12 +75,12 @@ export default function RoleSelect() {
       
       <div className="relative z-10 max-w-4xl w-full">
         <div className="text-center mb-12">
-           <Link to="/Landing" className="text-2xl font-bold tracking-tight mb-6 inline-block">
-             Co<span className="text-primary">Task</span>
-           </Link>
-           <h1 className="text-3xl md:text-4xl font-bold mb-3">Choose your role</h1>
-           <p className="text-muted-foreground">Switch between Client, Avatar, and Enterprise modes</p>
-         </div>
+          <a href="/Landing" className="text-2xl font-bold tracking-tight mb-6 inline-block">
+            Co<span className="text-primary">Task</span>
+          </a>
+          <h1 className="text-3xl md:text-4xl font-bold mb-3">What brings you here?</h1>
+          <p className="text-muted-foreground">Choose how you want to use CoTask</p>
+        </div>
         
         <div className="grid md:grid-cols-3 gap-5">
           {roles.map((role, i) => (
@@ -93,7 +108,7 @@ export default function RoleSelect() {
             </motion.div>
           ))}
         </div>
-        
+
         <p className="text-center mt-8 text-sm text-muted-foreground">
           Already have an account?{' '}
           <button onClick={() => base44.auth.redirectToLogin('/UserDashboard')} className="text-primary hover:underline">
