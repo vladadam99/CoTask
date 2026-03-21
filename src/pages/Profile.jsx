@@ -14,7 +14,7 @@ export default function Profile() {
   const [profilePicUrl, setProfilePicUrl] = useState(user?.profile_picture_url || '');
   const fileInputRef = useRef(null);
 
-  const dashPath = user?.app_role === 'avatar' ? '/AvatarDashboard' : user?.app_role === 'enterprise' ? '/EnterpriseDashboard' : '/UserDashboard';
+  const dashPath = user?.role === 'avatar' ? '/AvatarDashboard' : user?.role === 'enterprise' ? '/EnterpriseDashboard' : '/UserDashboard';
 
   const handleProfilePictureUpload = async (file) => {
     if (!file) return;
