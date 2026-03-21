@@ -23,18 +23,12 @@ export default function LiveSessions() {
     refetchInterval: 10000,
   });
 
-  const dashPath = user?.app_role === 'avatar' ? '/AvatarDashboard' : user?.app_role === 'enterprise' ? '/EnterpriseDashboard' : '/UserDashboard';
   const activeSessions = sessions.filter(s => s.status === 'live' || s.status === 'waiting');
   const pastSessions = sessions.filter(s => s.status === 'ended');
-  const isAvatar = user?.app_role === 'avatar';
+  const isAvatar = user?.role === 'avatar';
 
   return (
-    <div className="min-h-screen pb-12 px-4">
-      <div className="max-w-3xl mx-auto pt-8">
-        <Link to={dashPath} className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground mb-6">
-          <ArrowLeft className="w-4 h-4" /> Dashboard
-        </Link>
-
+    <AppShell navItems={getNavItems(user?.role)} user={user}>
         <div className="flex items-center justify-between mb-8">
           <h1 className="text-2xl font-bold">Live Sessions</h1>
           {isAvatar && (
@@ -135,7 +129,6 @@ export default function LiveSessions() {
             </GlassCard>
           )}
         </div>
-      </div>
-    </div>
+    </AppShell>
   );
 }
