@@ -44,7 +44,7 @@ export default function PublicNav() {
       {open && (
         <div className="md:hidden glass-strong border-t border-white/5 px-6 py-4 space-y-3">
           <Link to="/HowItWorks" className="block py-2 text-sm text-muted-foreground" onClick={() => setOpen(false)}>How it works</Link>
-          <Link to="/ExploreOnboarding" className="block py-2 text-sm text-muted-foreground" onClick={() => setOpen(false)}>Explore</Link>
+          <Link to="/Explore" className="block py-2 text-sm text-muted-foreground" onClick={() => setOpen(false)}>Explore</Link>
           <Link to="/Pricing" className="block py-2 text-sm text-muted-foreground" onClick={() => setOpen(false)}>Pricing</Link>
           <Link to="/FAQ" className="block py-2 text-sm text-muted-foreground" onClick={() => setOpen(false)}>FAQ</Link>
           <button onClick={() => { localStorage.setItem('cotask_role', 'user'); window.location.href = '/Onboarding'; setOpen(false); }} className="w-full">
