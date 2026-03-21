@@ -102,18 +102,22 @@ export default function AvatarView() {
   });
 
   if (isLoading) return (
-    <div className="min-h-screen flex items-center justify-center">
-      <div className="w-8 h-8 border-4 border-primary/20 border-t-primary rounded-full animate-spin" />
-    </div>
+    <AppShell navItems={getNavItems(user?.role)} user={user}>
+      <div className="flex items-center justify-center h-64">
+        <div className="w-8 h-8 border-4 border-primary/20 border-t-primary rounded-full animate-spin" />
+      </div>
+    </AppShell>
   );
 
   if (!avatar) return (
-    <div className="min-h-screen flex items-center justify-center px-6">
-      <GlassCard className="p-8 text-center max-w-md">
-        <p className="text-muted-foreground mb-4">Avatar not found</p>
-        <Link to="/Explore"><Button variant="outline">Back to Explore</Button></Link>
-      </GlassCard>
-    </div>
+    <AppShell navItems={getNavItems(user?.role)} user={user}>
+      <div className="flex items-center justify-center h-64">
+        <GlassCard className="p-8 text-center max-w-md">
+          <p className="text-muted-foreground mb-4">Avatar not found</p>
+          <Link to="/Explore"><Button variant="outline">Back to Explore</Button></Link>
+        </GlassCard>
+      </div>
+    </AppShell>
   );
 
   const equipment = [
@@ -125,10 +129,10 @@ export default function AvatarView() {
   ].filter(e => avatar[e.key]);
 
   return (
-    <div className="min-h-screen pb-12">
-      {/* Header */}
-      <div className="bg-gradient-to-b from-primary/10 to-background pt-6 pb-12 px-4">
-        <div className="max-w-3xl mx-auto">
+    <AppShell navItems={getNavItems(user?.role)} user={user}>
+      <div className="max-w-3xl mx-auto">
+        {/* Header */}
+        <div className="bg-gradient-to-b from-primary/10 to-transparent rounded-2xl pt-6 pb-12 px-6 mb-0">
           <Link to="/Explore" className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground mb-6">
             <ArrowLeft className="w-4 h-4" /> Back to Explore
           </Link>
@@ -158,9 +162,9 @@ export default function AvatarView() {
             </div>
           </div>
         </div>
-      </div>
+        </div>
 
-      <div className="max-w-3xl mx-auto px-4 -mt-4">
+        <div className="-mt-4">
         {/* Action Buttons */}
         <div className="flex gap-3 mb-8">
           <Link to={`/CreateBooking?avatar=${id}`} className="flex-1">
@@ -264,7 +268,8 @@ export default function AvatarView() {
             )}
           </div>
         </div>
+        </div>
       </div>
-    </div>
+    </AppShell>
   );
 }
