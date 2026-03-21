@@ -103,7 +103,6 @@ export default function Bookings() {
             <p className="text-muted-foreground">No bookings match your filter</p>
           </GlassCard>
         )}
-      </div>
-    </div>
+    </AppShell>
   );
 }
