@@ -1,65 +1,64 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Button } from '@/components/ui/button';
 import { motion } from 'framer-motion';
 import { DollarSign, Clock, Shield, TrendingUp, ArrowRight } from 'lucide-react';
 
 const perks = [
-  { icon: DollarSign, title: 'Set your own rates', desc: 'Hourly or per-session. You decide what your time is worth.' },
-  { icon: Clock, title: 'Flexible hours', desc: 'Work when you want. Accept only the bookings that fit you.' },
-  { icon: Shield, title: 'Verified & trusted', desc: 'Get a verified badge and grow your reputation with reviews.' },
-  { icon: TrendingUp, title: 'Grow your income', desc: 'Get featured, earn top-rated status, attract premium clients.' },
+  { icon: DollarSign, title: 'Set your own rates', desc: 'Hourly or per-session. Your time, your price.' },
+  { icon: Clock, title: 'Flexible schedule', desc: 'Accept bookings that fit your life. No minimum hours.' },
+  { icon: Shield, title: 'Verified & safe', desc: 'Get a verified badge and grow your reputation with real reviews.' },
+  { icon: TrendingUp, title: 'Grow your income', desc: 'Get featured and earn top-rated status to attract premium clients.' },
 ];
 
 export default function AvatarEarnings() {
   return (
-    <section className="py-28 px-6 border-t border-white/5">
-      <div className="max-w-6xl mx-auto">
-        <div className="grid lg:grid-cols-2 gap-16 items-center">
+    <section className="py-32 px-6 lg:px-12 border-t border-white/5 bg-white/[0.02]">
+      <div className="max-w-7xl mx-auto">
+        <div className="grid lg:grid-cols-2 gap-24 items-center">
+
           {/* Left */}
-          <motion.div
-            initial={{ opacity: 0, x: -20 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-          >
-            <p className="text-primary text-sm font-semibold uppercase tracking-widest mb-4">Earn with CoTask</p>
-            <h2 className="text-4xl md:text-5xl font-black tracking-tight leading-tight mb-6">
-              Turn your<br />location into<br />income.
+          <motion.div initial={{ opacity: 0, x: -24 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }}>
+            <p className="text-primary text-xs font-bold uppercase tracking-[0.2em] mb-5">Earn with CoTask</p>
+            <h2 className="text-5xl md:text-6xl font-black tracking-tighter text-white leading-tight mb-8">
+              Turn your city<br />into income.
             </h2>
-            <p className="text-muted-foreground mb-8 leading-relaxed max-w-sm">
-              Help people remotely by being their eyes, hands, and guide. All you need is a smartphone and a willingness to help.
+            <p className="text-white/40 text-lg leading-relaxed mb-10 max-w-sm">
+              All you need is a smartphone. Help people remotely by being their eyes, hands, and guide.
             </p>
 
-            {/* Earning highlight */}
-            <div className="glass rounded-2xl p-6 mb-8 border border-white/10">
-              <p className="text-xs text-muted-foreground mb-1">Avg. avatar earns</p>
-              <p className="text-4xl font-black text-foreground">$800<span className="text-muted-foreground text-xl font-normal">/mo</span></p>
-              <p className="text-xs text-green-400 mt-1">↑ 24% vs last quarter</p>
+            {/* Earnings stat block */}
+            <div className="border border-white/10 rounded-3xl p-8 mb-10 bg-white/3">
+              <p className="text-white/40 text-sm mb-2">Top avatars earn</p>
+              <div className="flex items-end gap-2 mb-1">
+                <span className="text-6xl font-black text-white">$1,200</span>
+                <span className="text-white/30 text-xl mb-2">/mo</span>
+              </div>
+              <div className="flex items-center gap-2 mt-3">
+                <div className="flex-1 h-1.5 bg-white/5 rounded-full overflow-hidden">
+                  <div className="h-full bg-primary rounded-full" style={{ width: '78%' }} />
+                </div>
+                <span className="text-green-400 text-xs font-semibold">↑ 24% this quarter</span>
+              </div>
             </div>
 
             <Link to="/Onboarding?role=avatar">
-              <Button className="bg-primary hover:bg-primary/90 glow-primary-sm h-12 px-8 font-semibold">
-                Start earning today <ArrowRight className="ml-2 w-4 h-4" />
-              </Button>
+              <button className="group flex items-center gap-3 bg-primary text-white font-bold px-8 py-4 rounded-full hover:bg-primary/90 transition-all">
+                Start earning today
+                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+              </button>
             </Link>
           </motion.div>
 
-          {/* Right: perks grid */}
+          {/* Right: perks */}
           <div className="grid grid-cols-2 gap-4">
             {perks.map((perk, i) => (
-              <motion.div
-                key={perk.title}
-                initial={{ opacity: 0, y: 16 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.1 }}
-                className="glass rounded-2xl p-6 border border-white/5 hover:border-white/10 transition-colors"
-              >
-                <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center mb-4">
+              <motion.div key={perk.title} initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }}
+                className="rounded-3xl border border-white/8 bg-white/3 p-6 hover:bg-white/6 transition-colors">
+                <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center mb-5">
                   <perk.icon className="w-5 h-5 text-primary" />
                 </div>
-                <h4 className="font-bold text-sm mb-1.5">{perk.title}</h4>
-                <p className="text-xs text-muted-foreground leading-relaxed">{perk.desc}</p>
+                <h4 className="font-bold text-white text-sm mb-2">{perk.title}</h4>
+                <p className="text-white/40 text-xs leading-relaxed">{perk.desc}</p>
               </motion.div>
             ))}
           </div>

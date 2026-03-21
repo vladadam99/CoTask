@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Button } from '@/components/ui/button';
 import { Menu, X } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 
@@ -9,60 +8,61 @@ export default function PublicNav() {
   const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 20);
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+    const fn = () => setScrolled(window.scrollY > 30);
+    window.addEventListener('scroll', fn);
+    return () => window.removeEventListener('scroll', fn);
   }, []);
 
   return (
-    <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-      scrolled ? 'bg-background/90 backdrop-blur-xl border-b border-white/5 shadow-md' : 'bg-transparent'
-    }`}>
-      <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
-        <Link to="/Landing" className="text-xl font-black tracking-tight">
+    <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${scrolled ? 'bg-background/95 backdrop-blur-xl border-b border-white/5' : 'bg-transparent'}`}>
+      <div className="max-w-7xl mx-auto px-6 lg:px-12 h-16 flex items-center justify-between">
+        <Link to="/Landing" className="text-xl font-black tracking-tighter text-white">
           Co<span className="text-primary">Task</span>
         </Link>
 
-        {/* Desktop nav */}
-        <div className="hidden md:flex items-center gap-8">
-          <Link to="/HowItWorks" className="text-sm text-muted-foreground hover:text-foreground transition-colors font-medium">How it works</Link>
-          <Link to="/Explore" className="text-sm text-muted-foreground hover:text-foreground transition-colors font-medium">Explore</Link>
-          <Link to="/Pricing" className="text-sm text-muted-foreground hover:text-foreground transition-colors font-medium">Pricing</Link>
-          <Link to="/FAQ" className="text-sm text-muted-foreground hover:text-foreground transition-colors font-medium">FAQ</Link>
+        {/* Desktop */}
+        <div className="hidden md:flex items-center gap-10">
+          <Link to="/HowItWorks" className="text-sm text-white/50 hover:text-white transition-colors font-medium">How it works</Link>
+          <Link to="/Explore" className="text-sm text-white/50 hover:text-white transition-colors font-medium">Explore</Link>
+          <Link to="/Pricing" className="text-sm text-white/50 hover:text-white transition-colors font-medium">Pricing</Link>
+          <Link to="/FAQ" className="text-sm text-white/50 hover:text-white transition-colors font-medium">FAQ</Link>
         </div>
 
-        <div className="hidden md:flex items-center gap-2">
-          <button onClick={() => base44.auth.redirectToLogin('/UserDashboard')}>
-            <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-foreground font-medium">
-              Sign in
-            </Button>
+        <div className="hidden md:flex items-center gap-3">
+          <button onClick={() => base44.auth.redirectToLogin('/UserDashboard')}
+            className="text-sm font-semibold text-white/60 hover:text-white transition-colors px-4 py-2 rounded-full hover:bg-white/5">
+            Sign in
           </button>
           <Link to="/RoleSelect">
-            <Button size="sm" className="bg-primary hover:bg-primary/90 font-semibold px-5">
+            <button className="bg-white text-black text-sm font-bold px-5 py-2 rounded-full hover:bg-white/90 transition-all">
               Get started
-            </Button>
+            </button>
           </Link>
         </div>
 
         {/* Mobile toggle */}
-        <button className="md:hidden p-2 rounded-lg hover:bg-white/5" onClick={() => setOpen(!open)}>
+        <button onClick={() => setOpen(!open)} className="md:hidden p-2 rounded-xl hover:bg-white/5 text-white">
           {open ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
         </button>
       </div>
 
-      {/* Mobile menu */}
+      {/* Mobile drawer */}
       {open && (
-        <div className="md:hidden bg-background border-t border-white/5 px-6 py-5 space-y-4">
-          <Link to="/HowItWorks" className="block py-2 text-sm font-medium text-muted-foreground" onClick={() => setOpen(false)}>How it works</Link>
-          <Link to="/Explore" className="block py-2 text-sm font-medium text-muted-foreground" onClick={() => setOpen(false)}>Explore</Link>
-          <Link to="/Pricing" className="block py-2 text-sm font-medium text-muted-foreground" onClick={() => setOpen(false)}>Pricing</Link>
-          <Link to="/FAQ" className="block py-2 text-sm font-medium text-muted-foreground" onClick={() => setOpen(false)}>FAQ</Link>
-          <div className="flex gap-3 pt-2">
-            <button onClick={() => { base44.auth.redirectToLogin('/UserDashboard'); setOpen(false); }} className="flex-1">
-              <Button variant="outline" className="w-full border-white/10">Sign in</Button>
+        <div className="md:hidden bg-background border-t border-white/5 px-6 py-6 space-y-4">
+          {[{label:'How it works', to:'/HowItWorks'},{label:'Explore',to:'/Explore'},{label:'Pricing',to:'/Pricing'},{label:'FAQ',to:'/FAQ'}].map(l => (
+            <Link key={l.to} to={l.to} onClick={() => setOpen(false)} className="block py-2 text-white/60 font-medium text-sm hover:text-white transition-colors">
+              {l.label}
+            </Link>
+          ))}
+          <div className="flex gap-3 pt-4 border-t border-white/5">
+            <button onClick={() => { base44.auth.redirectToLogin('/UserDashboard'); setOpen(false); }}
+              className="flex-1 border border-white/10 text-white font-semibold text-sm py-3 rounded-full hover:bg-white/5 transition-colors">
+              Sign in
             </button>
-            <Link to="/RoleSelect" className="flex-1" onClick={() => setOpen(false)}>
-              <Button className="w-full bg-primary hover:bg-primary/90">Get started</Button>
+            <Link to="/RoleSelect" onClick={() => setOpen(false)} className="flex-1">
+              <button className="w-full bg-white text-black font-bold text-sm py-3 rounded-full hover:bg-white/90 transition-colors">
+                Get started
+              </button>
             </Link>
           </div>
         </div>
