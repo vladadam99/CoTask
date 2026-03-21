@@ -42,14 +42,8 @@ export default function Bookings() {
   });
 
   return (
-    <div className="min-h-screen pb-12 px-4">
-      <div className="max-w-3xl mx-auto pt-8">
-        <Link to={isAvatar ? '/AvatarDashboard' : user?.app_role === 'enterprise' ? '/EnterpriseDashboard' : '/UserDashboard'}
-          className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground mb-6">
-          <ArrowLeft className="w-4 h-4" /> Back to Dashboard
-        </Link>
-
-        <div className="flex items-center justify-between mb-6">
+    <AppShell navItems={getNavItems(user?.role)} user={user}>
+      <div className="flex items-center justify-between mb-6">
           <h1 className="text-2xl font-bold">Bookings</h1>
           <div className="flex rounded-lg overflow-hidden border border-white/10">
             <button onClick={() => setViewMode('list')} className={`px-3 py-1.5 text-sm flex items-center gap-1.5 ${viewMode === 'list' ? 'bg-primary text-primary-foreground' : 'bg-muted/30 text-muted-foreground hover:bg-muted/50'}`}>
