@@ -19,7 +19,7 @@ export default function Bookings() {
   const [search, setSearch] = useState('');
   const [viewMode, setViewMode] = useState('list'); // 'list' | 'calendar'
 
-  const isAvatar = user?.app_role === 'avatar';
+  const isAvatar = user?.role === 'avatar';
 
   const { data: bookings = [], isLoading } = useQuery({
     queryKey: ['all-bookings', user?.email, isAvatar],
