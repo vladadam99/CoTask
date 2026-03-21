@@ -15,7 +15,11 @@ export default function AppShell({ children, navItems = [], user }) {
       {/* Desktop Sidebar */}
       <aside className="hidden lg:flex flex-col w-64 glass-strong border-r border-white/5 fixed inset-y-0 left-0 z-40">
         <div className="h-16 flex items-center px-6 border-b border-white/5">
-          <Link to="/Landing" className="text-xl font-bold tracking-tight">
+          <Link to={
+            user?.role === 'avatar' ? '/AvatarDashboard'
+            : user?.role === 'enterprise' ? '/EnterpriseDashboard'
+            : '/UserDashboard'
+          } className="text-xl font-bold tracking-tight">
             Co<span className="text-primary">Task</span>
           </Link>
         </div>
