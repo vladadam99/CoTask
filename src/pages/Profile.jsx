@@ -16,8 +16,6 @@ export default function Profile() {
   const [profilePicUrl, setProfilePicUrl] = useState(user?.profile_picture_url || '');
   const fileInputRef = useRef(null);
 
-  const dashPath = user?.role === 'avatar' ? '/AvatarDashboard' : user?.role === 'enterprise' ? '/EnterpriseDashboard' : '/UserDashboard';
-
   const handleProfilePictureUpload = async (file) => {
     if (!file) return;
     setUploading(true);
@@ -46,12 +44,8 @@ export default function Profile() {
   };
 
   return (
-    <div className="min-h-screen pb-12 px-4">
-      <div className="max-w-2xl mx-auto pt-8">
-        <Link to={dashPath} className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground mb-6">
-          <ArrowLeft className="w-4 h-4" /> Dashboard
-        </Link>
-
+    <AppShell navItems={getNavItems(user?.role)} user={user}>
+      <div className="max-w-2xl mx-auto">
         <div className="text-center mb-8">
           <div className="relative w-20 h-20 rounded-2xl bg-primary/10 flex items-center justify-center text-3xl font-bold text-primary mx-auto mb-4 overflow-hidden group">
             {profilePicUrl ? (
@@ -134,6 +128,6 @@ export default function Profile() {
           </button>
         </div>
       </div>
-    </div>
+    </AppShell>
   );
 }
