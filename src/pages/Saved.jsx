@@ -24,14 +24,8 @@ export default function Saved() {
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['favorites'] }),
   });
 
-  const dashPath = user?.app_role === 'avatar' ? '/AvatarDashboard' : user?.app_role === 'enterprise' ? '/EnterpriseDashboard' : '/UserDashboard';
-
   return (
-    <div className="min-h-screen pb-12 px-4">
-      <div className="max-w-3xl mx-auto pt-8">
-        <Link to={dashPath} className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground mb-6">
-          <ArrowLeft className="w-4 h-4" /> Dashboard
-        </Link>
+    <AppShell navItems={getNavItems(user?.role)} user={user}>
         <h1 className="text-2xl font-bold mb-6">Saved Avatars</h1>
 
         {favorites.length > 0 ? (
@@ -58,7 +52,6 @@ export default function Saved() {
             <Link to="/Explore"><Button className="bg-primary hover:bg-primary/90">Explore Avatars</Button></Link>
           </GlassCard>
         )}
-      </div>
-    </div>
+    </AppShell>
   );
 }
