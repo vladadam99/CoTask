@@ -4,14 +4,12 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { useCurrentUser } from '@/lib/useCurrentUser';
 import GlassCard from '@/components/ui/GlassCard';
-import AppShell from '@/components/layout/AppShell';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import {
   ArrowLeft, MapPin, Star, Shield, Clock, Globe, Radio, Smartphone,
   Wifi, Headphones, Car, Calendar, MessageSquare, Heart, Loader2
 } from 'lucide-react';
-import { getNavItems } from '@/lib/navItems';
 
 export default function AvatarView() {
   const navigate = useNavigate();
@@ -33,21 +31,19 @@ export default function AvatarView() {
   const startMessage = async () => {
     setMessaging(true);
     try {
-      const user = await base44.auth.me();
-      const senderName = user.full_name || user.email;
+      const me = await base44.auth.me();
+      const senderName = me.full_name || me.email;
 
-      // Check if a direct conversation already exists between these two users
-      const existing = await base44.entities.Conversation.filter({ booking_id: `direct_${user.email}_${avatar.user_email}` });
+      const existing = await base44.entities.Conversation.filter({ booking_id: `direct_${me.email}_${avatar.user_email}` });
       if (existing.length > 0) {
         navigate(`/Messages?conversation=${existing[0].id}`);
         return;
       }
 
-      // Create a new pre-booking direct conversation
       const convo = await base44.entities.Conversation.create({
-        participant_emails: [user.email, avatar.user_email],
+        participant_emails: [me.email, avatar.user_email],
         participant_names: [senderName, avatar.display_name],
-        booking_id: `direct_${user.email}_${avatar.user_email}`,
+        booking_id: `direct_${me.email}_${avatar.user_email}`,
         last_message: 'Conversation started.',
         last_message_at: new Date().toISOString(),
         last_message_by: 'system',
@@ -102,22 +98,18 @@ export default function AvatarView() {
   });
 
   if (isLoading) return (
-    <AppShell navItems={getNavItems(user?.role)} user={user}>
-      <div className="flex items-center justify-center h-64">
-        <div className="w-8 h-8 border-4 border-primary/20 border-t-primary rounded-full animate-spin" />
-      </div>
-    </AppShell>
+    <div className="min-h-screen flex items-center justify-center">
+      <div className="w-8 h-8 border-4 border-primary/20 border-t-primary rounded-full animate-spin" />
+    </div>
   );
 
   if (!avatar) return (
-    <AppShell navItems={getNavItems(user?.role)} user={user}>
-      <div className="flex items-center justify-center h-64">
-        <GlassCard className="p-8 text-center max-w-md">
-          <p className="text-muted-foreground mb-4">Avatar not found</p>
-          <Link to="/Explore"><Button variant="outline">Back to Explore</Button></Link>
-        </GlassCard>
-      </div>
-    </AppShell>
+    <div className="min-h-screen flex items-center justify-center p-6">
+      <GlassCard className="p-8 text-center max-w-md">
+        <p className="text-muted-foreground mb-4">Avatar not found</p>
+        <Link to="/Explore"><Button variant="outline">Back to Explore</Button></Link>
+      </GlassCard>
+    </div>
   );
 
   const equipment = [
@@ -129,7 +121,7 @@ export default function AvatarView() {
   ].filter(e => avatar[e.key]);
 
   return (
-    <AppShell navItems={getNavItems(user?.role)} user={user}>
+    <div className="min-h-screen bg-background p-4 lg:p-8">
       <div className="max-w-3xl mx-auto">
         {/* Header */}
         <div className="bg-gradient-to-b from-primary/10 to-transparent rounded-2xl pt-6 pb-12 px-6 mb-0">
@@ -182,7 +174,7 @@ export default function AvatarView() {
           >
             <Heart className={`w-4 h-4 ${isFavorited ? 'fill-primary text-primary' : ''}`} />
           </Button>
-          </div>
+        </div>
 
         <div className="grid md:grid-cols-3 gap-6">
           <div className="md:col-span-2 space-y-6">
@@ -267,6 +259,6 @@ export default function AvatarView() {
           </div>
         </div>
       </div>
-    </AppShell>
+    </div>
   );
 }

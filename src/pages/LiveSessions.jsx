@@ -5,10 +5,8 @@ import { base44 } from '@/api/base44Client';
 import { useCurrentUser } from '@/lib/useCurrentUser';
 import GlassCard from '@/components/ui/GlassCard';
 import StatusBadge from '@/components/ui/StatusBadge';
-import AppShell from '@/components/layout/AppShell';
 import { Button } from '@/components/ui/button';
-import { Radio, Video, Clock } from 'lucide-react';
-import { getNavItems } from '@/lib/navItems';
+import { Radio, Video, Clock, ArrowLeft } from 'lucide-react';
 
 export default function LiveSessions() {
   const { user } = useCurrentUser();
@@ -26,9 +24,15 @@ export default function LiveSessions() {
   const activeSessions = sessions.filter(s => s.status === 'live' || s.status === 'waiting');
   const pastSessions = sessions.filter(s => s.status === 'ended');
   const isAvatar = user?.role === 'avatar';
+  const dashPath = isAvatar ? '/AvatarDashboard' : user?.role === 'enterprise' ? '/EnterpriseDashboard' : '/UserDashboard';
 
   return (
-    <AppShell navItems={getNavItems(user?.role)} user={user}>
+    <div className="min-h-screen bg-background p-4 lg:p-8">
+      <div className="max-w-3xl mx-auto">
+        <Link to={dashPath} className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground mb-6">
+          <ArrowLeft className="w-4 h-4" /> Dashboard
+        </Link>
+
         <div className="flex items-center justify-between mb-8">
           <h1 className="text-2xl font-bold">Live Sessions</h1>
           {isAvatar && (
@@ -129,6 +133,7 @@ export default function LiveSessions() {
             </GlassCard>
           )}
         </div>
-    </AppShell>
+      </div>
+    </div>
   );
 }

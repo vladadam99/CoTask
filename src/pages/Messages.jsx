@@ -1,14 +1,11 @@
-import React, { useState, useRef, useEffect, useCallback } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { useCurrentUser } from '@/lib/useCurrentUser';
-import GlassCard from '@/components/ui/GlassCard';
-import AppShell from '@/components/layout/AppShell';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft, Send, MessageSquare, Camera, Loader2, Video } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { getNavItems } from '@/lib/navItems';
 
 export default function Messages() {
   const { user } = useCurrentUser();
@@ -31,7 +28,6 @@ export default function Messages() {
     enabled: !!user,
   });
 
-  // Auto-select conversation from URL param
   useEffect(() => {
     if (urlConvoId && conversations.length > 0 && !activeConvo) {
       const target = conversations.find(c => c.id === urlConvoId);
@@ -45,7 +41,6 @@ export default function Messages() {
     enabled: !!activeConvo,
   });
 
-  // Real-time message subscription
   useEffect(() => {
     if (!activeConvo) return;
     const unsub = base44.entities.Message.subscribe((event) => {
@@ -56,11 +51,9 @@ export default function Messages() {
     return unsub;
   }, [activeConvo?.id, queryClient]);
 
-  // Real-time conversation subscription
   useEffect(() => {
     const unsub = base44.entities.Conversation.subscribe(() => {
       queryClient.invalidateQueries({ queryKey: ['conversations'] });
-      queryClient.invalidateQueries({ queryKey: ['latest-conversations'] });
     });
     return unsub;
   }, [queryClient]);
@@ -72,12 +65,11 @@ export default function Messages() {
   const requestCamera = async () => {
     if (!activeConvo) return;
     const otherEmail = (activeConvo.participant_emails || []).find(e => e !== user.email);
-    const msgContent = `📹 Camera upgrade request: I'd like to add Live Camera to this job (+$5/hr). Please reply to confirm.`;
     await base44.entities.Message.create({
       conversation_id: activeConvo.id,
       sender_email: user.email,
       sender_name: user.full_name,
-      content: msgContent,
+      content: `📹 Camera upgrade request: I'd like to add Live Camera to this job (+$5/hr). Please reply to confirm.`,
       message_type: 'system',
     });
     await base44.entities.Conversation.update(activeConvo.id, {
@@ -145,7 +137,6 @@ export default function Messages() {
         last_message_at: new Date().toISOString(),
         last_message_by: user.email,
       });
-      // Notify the other participant
       const otherEmail = (activeConvo.participant_emails || []).find(e => e !== user.email);
       if (otherEmail) {
         await base44.entities.Notification.create({
@@ -173,8 +164,7 @@ export default function Messages() {
   };
 
   return (
-    <AppShell navItems={getNavItems(user?.role)} user={user} noPadding>
-    <div className="flex flex-col md:flex-row h-screen lg:h-auto">
+    <div className="flex h-screen bg-background overflow-hidden">
       {/* Conversation List */}
       <div className={`w-full md:w-80 lg:w-96 border-r border-white/5 flex-shrink-0 ${activeConvo ? 'hidden md:flex' : 'flex'} flex-col`}>
         <div className="p-4 border-b border-white/5">
@@ -273,6 +263,5 @@ export default function Messages() {
         )}
       </div>
     </div>
-    </AppShell>
   );
 }

@@ -4,10 +4,8 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { useCurrentUser } from '@/lib/useCurrentUser';
 import GlassCard from '@/components/ui/GlassCard';
-import AppShell from '@/components/layout/AppShell';
 import { Button } from '@/components/ui/button';
-import { Heart, Trash2 } from 'lucide-react';
-import { getNavItems } from '@/lib/navItems';
+import { Heart, Trash2, ArrowLeft } from 'lucide-react';
 
 export default function Saved() {
   const { user } = useCurrentUser();
@@ -25,7 +23,12 @@ export default function Saved() {
   });
 
   return (
-    <AppShell navItems={getNavItems(user?.role)} user={user}>
+    <div className="min-h-screen bg-background p-4 lg:p-8">
+      <div className="max-w-3xl mx-auto">
+        <Link to="/UserDashboard" className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground mb-6">
+          <ArrowLeft className="w-4 h-4" /> Dashboard
+        </Link>
+
         <h1 className="text-2xl font-bold mb-6">Saved Avatars</h1>
 
         {favorites.length > 0 ? (
@@ -52,6 +55,7 @@ export default function Saved() {
             <Link to="/Explore"><Button className="bg-primary hover:bg-primary/90">Explore Avatars</Button></Link>
           </GlassCard>
         )}
-    </AppShell>
+      </div>
+    </div>
   );
 }

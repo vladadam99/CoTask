@@ -4,14 +4,12 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { useCurrentUser } from '@/lib/useCurrentUser';
 import GlassCard from '@/components/ui/GlassCard';
-import AppShell from '@/components/layout/AppShell';
 import StatusBadge from '@/components/ui/StatusBadge';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft, Calendar, Clock, MapPin, User, DollarSign, MessageSquare, Video, VideoOff, CreditCard, CheckCircle, Loader2, Camera } from 'lucide-react';
 import LeaveReview from '@/components/reviews/LeaveReview';
 import ProofUpload from '@/components/bookings/ProofUpload';
 import JobApprovalFlow from '@/components/bookings/JobApprovalFlow';
-import { getNavItems } from '@/lib/navItems';
 
 export default function BookingDetail() {
   const params = new URLSearchParams(window.location.search);
@@ -32,7 +30,6 @@ export default function BookingDetail() {
     enabled: !!id,
   });
 
-  // Find or create conversation for this booking
   useEffect(() => {
     if (!booking) return;
     const ensureConv = async () => {
@@ -42,7 +39,6 @@ export default function BookingDetail() {
     ensureConv();
   }, [booking?.id]);
 
-  // Find live session for this booking
   const { data: liveSession } = useQuery({
     queryKey: ['booking-live-session', id],
     queryFn: async () => {
@@ -78,7 +74,6 @@ export default function BookingDetail() {
     }
   };
 
-  // Check if client already left a review (must be before any early returns — Rules of Hooks)
   const isClientReviewer = !!user && !!booking && user.email === booking?.client_email && booking?.status === 'completed';
   const { data: existingReview } = useQuery({
     queryKey: ['booking-review', id, user?.email],
@@ -89,8 +84,19 @@ export default function BookingDetail() {
     enabled: !!id && isClientReviewer,
   });
 
-  if (isLoading) return <AppShell navItems={getNavItems(user?.role)} user={user}><div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-primary/20 border-t-primary rounded-full animate-spin" /></div></AppShell>;
-  if (!booking) return <AppShell navItems={getNavItems(user?.role)} user={user}><div className="flex items-center justify-center h-64"><GlassCard className="p-8 text-center"><p className="text-muted-foreground">Booking not found</p></GlassCard></div></AppShell>;
+  if (isLoading) return (
+    <div className="min-h-screen flex items-center justify-center">
+      <div className="w-8 h-8 border-4 border-primary/20 border-t-primary rounded-full animate-spin" />
+    </div>
+  );
+
+  if (!booking) return (
+    <div className="min-h-screen flex items-center justify-center p-6">
+      <GlassCard className="p-8 text-center">
+        <p className="text-muted-foreground">Booking not found</p>
+      </GlassCard>
+    </div>
+  );
 
   const isAvatar = user?.email === booking.avatar_email;
   const isClient = user?.email === booking.client_email;
@@ -103,7 +109,7 @@ export default function BookingDetail() {
   const needsPayment = isClient && booking.payment_status === 'pending' && ['pending', 'accepted'].includes(booking.status);
 
   return (
-    <AppShell navItems={getNavItems(user?.role)} user={user}>
+    <div className="min-h-screen bg-background p-4 lg:p-8">
       <div className="max-w-2xl mx-auto">
         <Link to="/Bookings" className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground mb-6">
           <ArrowLeft className="w-4 h-4" /> Back to Bookings
@@ -186,7 +192,6 @@ export default function BookingDetail() {
             </div>
           </GlassCard>
 
-          {/* Live Session Join — only when there's an active session */}
           {liveSession && (
             <GlassCard className="p-5 border-primary/20">
               <div className="flex items-center justify-between">
@@ -206,7 +211,6 @@ export default function BookingDetail() {
             </GlassCard>
           )}
 
-          {/* Proof of completion */}
           {booking.proof_url && (
             <GlassCard className="p-5">
               <h3 className="font-semibold text-sm mb-3 flex items-center gap-2"><Camera className="w-4 h-4 text-primary" /> Job Completion Proof</h3>
@@ -215,15 +219,12 @@ export default function BookingDetail() {
             </GlassCard>
           )}
 
-          {/* Avatar: upload proof */}
           {canUploadProof && (
             <ProofUpload booking={booking} onUpload={() => queryClient.invalidateQueries({ queryKey: ['booking', id] })} />
           )}
 
-          {/* Client: approval flow */}
           <JobApprovalFlow booking={booking} user={user} onUpdate={() => queryClient.invalidateQueries({ queryKey: ['booking', id] })} />
 
-          {/* Actions */}
           <div className="flex flex-wrap gap-3">
             {canAccept && <Button className="bg-green-600 hover:bg-green-700 flex-1" onClick={() => updateStatus.mutate('accepted')}>Accept</Button>}
             {canDecline && <Button variant="outline" className="border-red-500/20 text-red-400 flex-1" onClick={() => updateStatus.mutate('declined')}>Decline</Button>}
@@ -249,22 +250,21 @@ export default function BookingDetail() {
           </div>
         </div>
 
-          {/* Leave Review — client, completed booking, no existing review */}
-          {isClient && booking.status === 'completed' && !existingReview && (
-            <LeaveReview booking={booking} user={user} />
-          )}
-          {isClient && booking.status === 'completed' && existingReview && (
-            <GlassCard className="p-5 border-yellow-500/20">
-              <div className="flex items-center gap-2 mb-2">
-                {[1,2,3,4,5].map(i => (
-                  <svg key={i} className={`w-4 h-4 ${i <= existingReview.rating ? 'text-yellow-400 fill-yellow-400' : 'text-muted-foreground'}`} viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-                ))}
-                <span className="text-xs text-muted-foreground ml-1">Your review</span>
-              </div>
-              {existingReview.comment && <p className="text-sm text-muted-foreground">"{existingReview.comment}"</p>}
-            </GlassCard>
-          )}
+        {isClient && booking.status === 'completed' && !existingReview && (
+          <LeaveReview booking={booking} user={user} />
+        )}
+        {isClient && booking.status === 'completed' && existingReview && (
+          <GlassCard className="p-5 border-yellow-500/20 mt-4">
+            <div className="flex items-center gap-2 mb-2">
+              {[1,2,3,4,5].map(i => (
+                <svg key={i} className={`w-4 h-4 ${i <= existingReview.rating ? 'text-yellow-400 fill-yellow-400' : 'text-muted-foreground'}`} viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+              ))}
+              <span className="text-xs text-muted-foreground ml-1">Your review</span>
+            </div>
+            {existingReview.comment && <p className="text-sm text-muted-foreground">"{existingReview.comment}"</p>}
+          </GlassCard>
+        )}
       </div>
-    </AppShell>
+    </div>
   );
 }
