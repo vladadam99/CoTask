@@ -97,7 +97,7 @@ export default function Profile() {
           <GlassCard className="p-4">
             <h3 className="font-semibold mb-3">Switch Role</h3>
             <div className="space-y-2">
-              {user?.app_role !== 'user' && (
+              {user?.role !== 'user' && (
                 <button onClick={() => handleSwitchRole('user')} className="w-full text-left">
                   <div className="p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors text-sm flex items-center gap-3">
                     <ArrowRightLeft className="w-4 h-4 text-muted-foreground" />
