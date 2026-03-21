@@ -7,19 +7,18 @@ import AppShell from '@/components/layout/AppShell';
 import GlassCard from '@/components/ui/GlassCard';
 import StatusBadge from '@/components/ui/StatusBadge';
 import { Button } from '@/components/ui/button';
-import { Home, Search, Calendar, MessageSquare, Radio, Heart, User, Settings, ArrowRight, MapPin, Star, Clock } from 'lucide-react';
-import LatestMessages from '@/components/dashboard/LatestMessages';
-import Suggestions from '@/components/dashboard/Suggestions';
+import {
+  Search, Calendar, MessageSquare, Radio, Heart, User,
+  ArrowRight, MapPin, Star, Play
+} from 'lucide-react';
 
 const navItems = [
-  { icon: Home, label: 'Home', path: '/UserDashboard' },
   { icon: Search, label: 'Explore', path: '/Explore' },
+  { icon: Radio, label: 'Live', path: '/LiveSessions' },
   { icon: Calendar, label: 'Bookings', path: '/Bookings' },
   { icon: MessageSquare, label: 'Messages', path: '/Messages' },
-  { icon: Radio, label: 'Live', path: '/LiveSessions' },
   { icon: Heart, label: 'Saved', path: '/Saved' },
   { icon: User, label: 'Profile', path: '/Profile' },
-  { icon: Settings, label: 'Settings', path: '/Profile' },
 ];
 
 const CATEGORIES = [
@@ -28,16 +27,16 @@ const CATEGORIES = [
   { name: 'Shopping Help', icon: '🛍️' },
   { name: 'Event Attendance', icon: '🎫' },
   { name: 'Queue & Errands', icon: '📦' },
-  { name: 'Family Support', icon: '❤️' },
   { name: 'Business Inspection', icon: '🏢' },
   { name: 'Travel Assistance', icon: '✈️' },
+  { name: 'Training & Coaching', icon: '🎓' },
 ];
 
 export default function UserDashboard() {
   const { user, loading: userLoading } = useCurrentUser();
 
   const { data: bookings = [] } = useQuery({
-    queryKey: ['user-bookings'],
+    queryKey: ['user-bookings', user?.email],
     queryFn: () => base44.entities.Booking.filter({ client_email: user?.email }, '-created_date', 5),
     enabled: !!user,
   });
@@ -47,40 +46,33 @@ export default function UserDashboard() {
     queryFn: () => base44.entities.AvatarProfile.filter({ is_featured: true, status: 'active' }, '-rating', 6),
   });
 
-  if (userLoading) return <div className="min-h-screen flex items-center justify-center"><div className="w-8 h-8 border-4 border-primary/20 border-t-primary rounded-full animate-spin" /></div>;
+  if (userLoading) return (
+    <div className="min-h-screen flex items-center justify-center">
+      <div className="w-8 h-8 border-4 border-primary/20 border-t-primary rounded-full animate-spin" />
+    </div>
+  );
+
+  const firstName = user?.full_name?.split(' ')[0] || '';
 
   return (
     <AppShell navItems={navItems} user={user}>
-      {/* Hero */}
+      {/* Header + Primary CTA */}
       <div className="mb-8">
-        <h1 className="text-2xl lg:text-3xl font-bold mb-2">
-          What do you need today{user?.full_name ? `, ${user.full_name.split(' ')[0]}` : ''}?
+        <h1 className="text-2xl lg:text-3xl font-bold mb-1">
+          {firstName ? `Hey, ${firstName}` : 'Welcome back'} 👋
         </h1>
-        <p className="text-muted-foreground">Find real-time help, tours, and live experiences</p>
-      </div>
-
-
-
-      {/* Quick Actions */}
-      <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mb-8">
-        {[
-          { label: 'Browse Avatars', path: '/Explore', icon: Search },
-          { label: 'Book Now', path: '/Explore', icon: Calendar },
-          { label: 'Saved', path: '/Saved', icon: Heart },
-        ].map(action => (
-          <Link key={action.label} to={action.path}>
-            <GlassCard className="p-4 text-center" hover>
-              <action.icon className="w-5 h-5 text-primary mx-auto mb-2" />
-              <span className="text-sm font-medium">{action.label}</span>
-            </GlassCard>
-          </Link>
-        ))}
+        <p className="text-muted-foreground text-sm mb-5">What can we help you with today?</p>
+        <Link to="/LiveSessions">
+          <Button size="lg" className="bg-primary hover:bg-primary/90 glow-primary-sm text-base px-8">
+            <Play className="w-5 h-5 mr-2" /> Watch Live
+          </Button>
+        </Link>
       </div>
 
       {/* Categories */}
       <div className="mb-8">
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-lg font-semibold">Categories</h2>
+          <h2 className="text-base font-semibold">Browse by Category</h2>
           <Link to="/Explore" className="text-sm text-primary hover:underline flex items-center gap-1">
             See all <ArrowRight className="w-3 h-3" />
           </Link>
@@ -100,7 +92,9 @@ export default function UserDashboard() {
       {/* Featured Avatars */}
       <div className="mb-8">
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-lg font-semibold">Featured Avatars</h2>
+          <h2 className="text-base font-semibold">
+            {user?.interests?.length ? 'Recommended for You' : 'Featured Avatars'}
+          </h2>
           <Link to="/Explore" className="text-sm text-primary hover:underline flex items-center gap-1">
             Browse all <ArrowRight className="w-3 h-3" />
           </Link>
@@ -111,8 +105,10 @@ export default function UserDashboard() {
               <Link key={avatar.id} to={`/AvatarView?id=${avatar.id}`}>
                 <GlassCard className="p-5" hover>
                   <div className="flex items-start gap-4">
-                    <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center text-lg font-bold text-primary flex-shrink-0">
-                      {avatar.display_name?.[0] || 'A'}
+                    <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center text-lg font-bold text-primary flex-shrink-0 overflow-hidden">
+                      {avatar.photo_url
+                        ? <img src={avatar.photo_url} alt={avatar.display_name} className="w-full h-full object-cover" />
+                        : avatar.display_name?.[0] || 'A'}
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2">
@@ -121,7 +117,9 @@ export default function UserDashboard() {
                       </div>
                       <div className="flex items-center gap-2 text-xs text-muted-foreground mt-1">
                         <MapPin className="w-3 h-3" /> {avatar.city || 'Remote'}
-                        {avatar.rating > 0 && <><Star className="w-3 h-3 text-yellow-400 ml-2" /> {avatar.rating.toFixed(1)}</>}
+                        {avatar.rating > 0 && (
+                          <><Star className="w-3 h-3 text-yellow-400 ml-2" /> {avatar.rating.toFixed(1)}</>
+                        )}
                       </div>
                       <div className="flex flex-wrap gap-1 mt-2">
                         {(avatar.categories || []).slice(0, 2).map(c => (
@@ -137,16 +135,18 @@ export default function UserDashboard() {
           </div>
         ) : (
           <GlassCard className="p-8 text-center">
-            <p className="text-muted-foreground text-sm mb-4">No featured avatars yet. Be among the first to explore.</p>
-            <Link to="/Explore"><Button size="sm" className="bg-primary hover:bg-primary/90">Explore Avatars</Button></Link>
+            <p className="text-muted-foreground text-sm mb-4">No featured avatars yet.</p>
+            <Link to="/Explore">
+              <Button size="sm" className="bg-primary hover:bg-primary/90">Explore Avatars</Button>
+            </Link>
           </GlassCard>
         )}
       </div>
 
-      {/* Upcoming Bookings */}
+      {/* Recent Bookings */}
       <div>
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-lg font-semibold">Recent Bookings</h2>
+          <h2 className="text-base font-semibold">Recent Bookings</h2>
           <Link to="/Bookings" className="text-sm text-primary hover:underline flex items-center gap-1">
             View all <ArrowRight className="w-3 h-3" />
           </Link>
@@ -171,7 +171,9 @@ export default function UserDashboard() {
           <GlassCard className="p-8 text-center">
             <Calendar className="w-8 h-8 text-muted-foreground mx-auto mb-3" />
             <p className="text-sm text-muted-foreground mb-3">No bookings yet</p>
-            <Link to="/Explore"><Button size="sm" className="bg-primary hover:bg-primary/90">Book your first avatar</Button></Link>
+            <Link to="/Explore">
+              <Button size="sm" className="bg-primary hover:bg-primary/90">Book your first avatar</Button>
+            </Link>
           </GlassCard>
         )}
       </div>
