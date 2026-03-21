@@ -6,7 +6,7 @@ import { base44 } from '@/api/base44Client';
 import NotificationBell from '@/components/notifications/NotificationBell';
 import RoleSwitcher from '@/components/RoleSwitcher';
 
-export default function AppShell({ children, navItems = [], user, noPadding = false }) {
+export default function AppShell({ children, navItems = [], user }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const location = useLocation();
 
@@ -39,9 +39,9 @@ export default function AppShell({ children, navItems = [], user, noPadding = fa
         </nav>
         <div className="p-4 border-t border-white/5 space-y-4">
           <div className="hidden lg:flex justify-end mb-2">
-          <NotificationBell userEmail={user?.email} />
-        </div>
-        <div className="flex items-center gap-3">
+            <NotificationBell userEmail={user?.email} />
+          </div>
+          <div className="flex items-center gap-3">
             <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center text-sm font-medium text-primary">
               {user?.full_name?.[0] || 'U'}
             </div>
@@ -98,12 +98,10 @@ export default function AppShell({ children, navItems = [], user, noPadding = fa
       )}
 
       {/* Main Content */}
-      <main className="flex-1 lg:ml-64 pt-14 lg:pt-0 overflow-hidden">
-        {noPadding ? children : (
-          <div className="p-4 lg:p-8 max-w-7xl mx-auto">
-            {children}
-          </div>
-        )}
+      <main className="flex-1 lg:ml-64 pt-14 lg:pt-0">
+        <div className="p-4 lg:p-8 max-w-7xl mx-auto">
+          {children}
+        </div>
       </main>
     </div>
   );
