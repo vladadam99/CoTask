@@ -6,7 +6,7 @@ import { base44 } from '@/api/base44Client';
 import NotificationBell from '@/components/notifications/NotificationBell';
 import RoleSwitcher from '@/components/RoleSwitcher';
 
-export default function AppShell({ children, navItems = [], user }) {
+export default function AppShell({ children, navItems = [], user, noPadding = false }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const location = useLocation();
 
@@ -98,10 +98,12 @@ export default function AppShell({ children, navItems = [], user }) {
       )}
 
       {/* Main Content */}
-      <main className="flex-1 lg:ml-64 pt-14 lg:pt-0">
-        <div className="p-4 lg:p-8 max-w-7xl mx-auto">
-          {children}
-        </div>
+      <main className="flex-1 lg:ml-64 pt-14 lg:pt-0 overflow-hidden">
+        {noPadding ? children : (
+          <div className="p-4 lg:p-8 max-w-7xl mx-auto">
+            {children}
+          </div>
+        )}
       </main>
     </div>
   );
