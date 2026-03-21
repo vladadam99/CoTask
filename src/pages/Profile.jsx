@@ -64,7 +64,7 @@ export default function Profile() {
           </div>
           <h1 className="text-2xl font-bold">{user?.full_name || 'User'}</h1>
           <p className="text-muted-foreground text-sm">{user?.email}</p>
-          <Badge className="mt-2 bg-primary/10 text-primary border-primary/20 capitalize">{user?.app_role || 'user'}</Badge>
+          <Badge className="mt-2 bg-primary/10 text-primary border-primary/20 capitalize">{user?.role || 'user'}</Badge>
         </div>
 
         <div className="space-y-3">
