@@ -22,12 +22,12 @@ export default function PublicNav() {
         </div>
         
         <div className="hidden md:flex items-center gap-3">
-           <button onClick={() => window.location.href = '/Explore'}>
+           <button onClick={() => base44.auth.redirectToLogin('/UserDashboard')}>
              <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-foreground">
                Sign in
              </Button>
            </button>
-           <button onClick={() => { localStorage.setItem('cotask_role', 'user'); window.location.href = '/Onboarding'; }}>
+           <button onClick={() => window.location.href = '/RoleSelect'}>
              <Button size="sm" className="bg-primary hover:bg-primary/90">
                Get started
              </Button>
