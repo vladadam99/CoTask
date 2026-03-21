@@ -17,7 +17,7 @@ export default function PublicNav() {
         {/* Desktop */}
         <div className="hidden md:flex items-center gap-8">
           <Link to="/HowItWorks" className="text-sm text-muted-foreground hover:text-foreground transition-colors">How it works</Link>
-          <Link to="/ExploreOnboarding" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Explore</Link>
+          <Link to="/Explore" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Explore</Link>
           <Link to="/Pricing" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Pricing</Link>
           <Link to="/FAQ" className="text-sm text-muted-foreground hover:text-foreground transition-colors">FAQ</Link>
         </div>
