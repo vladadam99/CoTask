@@ -62,7 +62,11 @@ export default function AppShell({ children, navItems = [], user }) {
         <button onClick={() => setSidebarOpen(true)}>
           <Menu className="w-5 h-5" />
         </button>
-        <Link to="/Landing" className="text-lg font-bold">Co<span className="text-primary">Task</span></Link>
+        <Link to={
+          user?.role === 'avatar' ? '/AvatarDashboard'
+          : user?.role === 'enterprise' ? '/EnterpriseDashboard'
+          : '/UserDashboard'
+        } className="text-lg font-bold">Co<span className="text-primary">Task</span></Link>
         <NotificationBell userEmail={user?.email} />
       </div>
 
