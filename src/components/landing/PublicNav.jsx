@@ -47,7 +47,7 @@ export default function PublicNav() {
           <Link to="/Explore" className="block py-2 text-sm text-muted-foreground" onClick={() => setOpen(false)}>Explore</Link>
           <Link to="/Pricing" className="block py-2 text-sm text-muted-foreground" onClick={() => setOpen(false)}>Pricing</Link>
           <Link to="/FAQ" className="block py-2 text-sm text-muted-foreground" onClick={() => setOpen(false)}>FAQ</Link>
-          <button onClick={() => { localStorage.setItem('cotask_role', 'user'); window.location.href = '/Onboarding'; setOpen(false); }} className="w-full">
+          <button onClick={() => { window.location.href = '/RoleSelect'; setOpen(false); }} className="w-full">
             <Button className="w-full bg-primary hover:bg-primary/90 mt-2">Get started</Button>
           </button>
         </div>
