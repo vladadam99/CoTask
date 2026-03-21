@@ -173,8 +173,8 @@ export default function Messages() {
   };
 
   return (
-    <AppShell navItems={getNavItems(user?.role)} user={user}>
-    <div className="flex flex-col md:flex-row" style={{height: 'calc(100vh - 120px)'}}>
+    <AppShell navItems={getNavItems(user?.role)} user={user} noPadding>
+    <div className="flex flex-col md:flex-row h-screen lg:h-auto">
       {/* Conversation List */}
       <div className={`w-full md:w-80 lg:w-96 border-r border-white/5 flex-shrink-0 ${activeConvo ? 'hidden md:flex' : 'flex'} flex-col`}>
         <div className="p-4 border-b border-white/5">
