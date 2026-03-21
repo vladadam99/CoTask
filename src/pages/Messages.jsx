@@ -165,7 +165,7 @@ export default function Messages() {
     },
   });
 
-  const dashPath = user?.app_role === 'avatar' ? '/AvatarDashboard' : user?.app_role === 'enterprise' ? '/EnterpriseDashboard' : '/UserDashboard';
+  const dashPath = user?.role === 'avatar' ? '/AvatarDashboard' : user?.role === 'enterprise' ? '/EnterpriseDashboard' : '/UserDashboard';
 
   const getOtherName = (convo) => {
     const idx = (convo.participant_emails || []).findIndex(e => e !== user?.email);
@@ -173,7 +173,8 @@ export default function Messages() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col md:flex-row">
+    <AppShell navItems={getNavItems(user?.role)} user={user}>
+    <div className="flex flex-col md:flex-row" style={{height: 'calc(100vh - 120px)'}}>
       {/* Conversation List */}
       <div className={`w-full md:w-80 lg:w-96 border-r border-white/5 flex-shrink-0 ${activeConvo ? 'hidden md:flex' : 'flex'} flex-col`}>
         <div className="p-4 border-b border-white/5">
@@ -272,5 +273,6 @@ export default function Messages() {
         )}
       </div>
     </div>
+    </AppShell>
   );
 }
