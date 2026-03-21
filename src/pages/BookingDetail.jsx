@@ -89,8 +89,8 @@ export default function BookingDetail() {
     enabled: !!id && isClientReviewer,
   });
 
-  if (isLoading) return <div className="min-h-screen flex items-center justify-center"><div className="w-8 h-8 border-4 border-primary/20 border-t-primary rounded-full animate-spin" /></div>;
-  if (!booking) return <div className="min-h-screen flex items-center justify-center"><GlassCard className="p-8 text-center"><p className="text-muted-foreground">Booking not found</p></GlassCard></div>;
+  if (isLoading) return <AppShell navItems={getNavItems(user?.role)} user={user}><div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-primary/20 border-t-primary rounded-full animate-spin" /></div></AppShell>;
+  if (!booking) return <AppShell navItems={getNavItems(user?.role)} user={user}><div className="flex items-center justify-center h-64"><GlassCard className="p-8 text-center"><p className="text-muted-foreground">Booking not found</p></GlassCard></div></AppShell>;
 
   const isAvatar = user?.email === booking.avatar_email;
   const isClient = user?.email === booking.client_email;
@@ -103,8 +103,8 @@ export default function BookingDetail() {
   const needsPayment = isClient && booking.payment_status === 'pending' && ['pending', 'accepted'].includes(booking.status);
 
   return (
-    <div className="min-h-screen pb-12 px-4">
-      <div className="max-w-2xl mx-auto pt-8">
+    <AppShell navItems={getNavItems(user?.role)} user={user}>
+      <div className="max-w-2xl mx-auto">
         <Link to="/Bookings" className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground mb-6">
           <ArrowLeft className="w-4 h-4" /> Back to Bookings
         </Link>
@@ -265,6 +265,6 @@ export default function BookingDetail() {
             </GlassCard>
           )}
       </div>
-    </div>
+    </AppShell>
   );
 }
