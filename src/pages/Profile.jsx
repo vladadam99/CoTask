@@ -105,7 +105,7 @@ export default function Profile() {
                   </div>
                 </button>
               )}
-              {user?.app_role !== 'avatar' && (
+              {user?.role !== 'avatar' && (
                 <button onClick={() => handleSwitchRole('avatar')} className="w-full text-left">
                   <div className="p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors text-sm flex items-center gap-3">
                     <ArrowRightLeft className="w-4 h-4 text-muted-foreground" />
