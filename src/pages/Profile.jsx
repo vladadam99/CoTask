@@ -30,29 +30,15 @@ export default function Profile() {
   };
 
   const handleSwitchRole = async (targetRole) => {
-    if (targetRole === user?.app_role) return;
-
-    // Check if user has an account with this role
+    if (targetRole === user?.role) return;
+    await base44.auth.updateMe({ role: targetRole });
     if (targetRole === 'avatar') {
-      const avatarProfile = await base44.entities.AvatarProfile.filter({ user_email: user.email }, '', 1);
-      if (avatarProfile.length > 0) {
-        await base44.auth.updateMe({ app_role: 'avatar' });
-        navigate('/AvatarDashboard');
-      } else {
-        await base44.auth.updateMe({ app_role: 'avatar' });
-        navigate('/Onboarding');
-      }
+      const profiles = await base44.entities.AvatarProfile.filter({ user_email: user.email });
+      navigate(profiles.length > 0 ? '/AvatarDashboard' : '/Onboarding?role=avatar');
     } else if (targetRole === 'enterprise') {
-      const enterpriseProfile = await base44.entities.EnterpriseProfile.filter({ user_email: user.email }, '', 1);
-      if (enterpriseProfile.length > 0) {
-        await base44.auth.updateMe({ app_role: 'enterprise' });
-        navigate('/EnterpriseDashboard');
-      } else {
-        await base44.auth.updateMe({ app_role: 'enterprise' });
-        navigate('/Onboarding');
-      }
+      const profiles = await base44.entities.EnterpriseProfile.filter({ user_email: user.email });
+      navigate(profiles.length > 0 ? '/EnterpriseDashboard' : '/Onboarding?role=enterprise');
     } else {
-      await base44.auth.updateMe({ app_role: 'user' });
       navigate('/UserDashboard');
     }
   };
