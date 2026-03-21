@@ -5,8 +5,10 @@ import { base44 } from '@/api/base44Client';
 import { useCurrentUser } from '@/lib/useCurrentUser';
 import GlassCard from '@/components/ui/GlassCard';
 import StatusBadge from '@/components/ui/StatusBadge';
+import AppShell from '@/components/layout/AppShell';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, Radio, Video, Clock } from 'lucide-react';
+import { Radio, Video, Clock } from 'lucide-react';
+import { getNavItems } from '@/lib/navItems';
 
 export default function LiveSessions() {
   const { user } = useCurrentUser();

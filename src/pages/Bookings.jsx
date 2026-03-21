@@ -5,9 +5,11 @@ import { base44 } from '@/api/base44Client';
 import { useCurrentUser } from '@/lib/useCurrentUser';
 import GlassCard from '@/components/ui/GlassCard';
 import StatusBadge from '@/components/ui/StatusBadge';
-import { Calendar, ArrowLeft, Search, LayoutGrid, CalendarDays } from 'lucide-react';
+import AppShell from '@/components/layout/AppShell';
+import { Calendar, Search, LayoutGrid, CalendarDays } from 'lucide-react';
 import BookingCalendar from '@/components/bookings/BookingCalendar';
 import { Input } from '@/components/ui/input';
+import { getNavItems } from '@/lib/navItems';
 
 const TABS = ['All', 'Pending', 'Active', 'Completed', 'Cancelled'];
 

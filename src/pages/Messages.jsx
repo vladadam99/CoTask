@@ -3,10 +3,12 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { useCurrentUser } from '@/lib/useCurrentUser';
 import GlassCard from '@/components/ui/GlassCard';
+import AppShell from '@/components/layout/AppShell';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft, Send, MessageSquare, Camera, Loader2, Video } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { getNavItems } from '@/lib/navItems';
 
 export default function Messages() {
   const { user } = useCurrentUser();

@@ -2,10 +2,12 @@ import React, { useState, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useCurrentUser } from '@/lib/useCurrentUser';
 import GlassCard from '@/components/ui/GlassCard';
+import AppShell from '@/components/layout/AppShell';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { User, Mail, MapPin, Globe, Settings, LogOut, ArrowLeft, Upload, Loader2, ArrowRightLeft } from 'lucide-react';
+import { User, Mail, MapPin, Globe, LogOut, Upload, Loader2, ArrowRightLeft } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
+import { getNavItems } from '@/lib/navItems';
 
 export default function Profile() {
   const { user } = useCurrentUser();

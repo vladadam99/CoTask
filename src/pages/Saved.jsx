@@ -4,8 +4,10 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { useCurrentUser } from '@/lib/useCurrentUser';
 import GlassCard from '@/components/ui/GlassCard';
+import AppShell from '@/components/layout/AppShell';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, Heart, Trash2 } from 'lucide-react';
+import { Heart, Trash2 } from 'lucide-react';
+import { getNavItems } from '@/lib/navItems';
 
 export default function Saved() {
   const { user } = useCurrentUser();
