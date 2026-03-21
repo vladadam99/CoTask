@@ -162,11 +162,9 @@ export default function AvatarView() {
             </div>
           </div>
         </div>
-        </div>
 
-        <div className="-mt-4">
         {/* Action Buttons */}
-        <div className="flex gap-3 mb-8">
+        <div className="flex gap-3 mb-8 mt-4">
           <Link to={`/CreateBooking?avatar=${id}`} className="flex-1">
             <Button className="w-full bg-primary hover:bg-primary/90 glow-primary-sm py-5">
               <Calendar className="w-4 h-4 mr-2" /> Book Now — ${avatar.hourly_rate || 30}/hr
@@ -267,7 +265,6 @@ export default function AvatarView() {
               </GlassCard>
             )}
           </div>
-        </div>
         </div>
       </div>
     </AppShell>
