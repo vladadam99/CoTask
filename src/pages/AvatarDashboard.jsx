@@ -9,8 +9,8 @@ import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
 import { motion } from 'framer-motion';
 import {
-  Radio, Inbox, Calendar, DollarSign, User, Settings,
-  ArrowRight, TrendingUp, CheckCircle, Zap, Video, Star,
+  Radio, Inbox, Calendar, DollarSign, User,
+  ArrowRight, TrendingUp, CheckCircle, Zap,
   Clock, Play
 } from 'lucide-react';
 

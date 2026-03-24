@@ -8,7 +8,7 @@ import StatusBadge from '@/components/ui/StatusBadge';
 import { Button } from '@/components/ui/button';
 import {
   Search, Calendar, MessageSquare, Radio, Heart, User,
-  ArrowRight, MapPin, Star, Play, Zap, TrendingUp
+  ArrowRight, MapPin, Star, Play, Zap
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 
