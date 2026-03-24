@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { useCurrentUser } from '@/lib/useCurrentUser';
 import { Play, Heart, MessageCircle, Share2, MapPin, Star, ArrowLeft, Zap, Search } from 'lucide-react';
@@ -9,7 +9,6 @@ import { motion } from 'framer-motion';
 export default function ReelFeed() {
   const navigate = useNavigate();
   const { user } = useCurrentUser();
-  const queryClient = useQueryClient();
   const [search, setSearch] = useState('');
   const [likedReels, setLikedReels] = useState({});
 
@@ -23,14 +22,10 @@ export default function ReelFeed() {
     queryFn: () => base44.entities.AvatarProfile.filter({ is_available: true, status: 'active' }, '-rating', 8),
   });
 
-  const likeMutation = useMutation({
-    mutationFn: async (reel) => {
-      const wasLiked = likedReels[reel.id];
-      setLikedReels(prev => ({ ...prev, [reel.id]: !wasLiked }));
-      await base44.entities.Reel.update(reel.id, { likes: (reel.likes || 0) + (wasLiked ? -1 : 1) });
-    },
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['reels-feed'] }),
-  });
+  const handleLike = (reel) => {
+    setLikedReels(prev => ({ ...prev, [reel.id]: !prev[reel.id] }));
+    // Optimistic only — no backend mutation to avoid race conditions in beta
+  };
 
   const filteredReels = reels.filter(r =>
     !search || r.title?.toLowerCase().includes(search.toLowerCase()) ||
