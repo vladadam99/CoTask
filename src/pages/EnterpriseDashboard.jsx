@@ -16,7 +16,6 @@ const navItems = [
   { icon: Rocket, label: 'Deploy', path: '/CreateBooking' },
   { icon: Calendar, label: 'Sessions', path: '/Bookings' },
   { icon: MessageSquare, label: 'Messages', path: '/Messages' },
-  { icon: CreditCard, label: 'Billing', path: '/EnterpriseBilling' },
   { icon: Settings, label: 'Settings', path: '/EnterpriseSettings' },
 ];
 

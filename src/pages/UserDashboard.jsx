@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import React from 'react';
+import { Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { useCurrentUser } from '@/lib/useCurrentUser';
@@ -78,11 +78,6 @@ export default function UserDashboard() {
           <Link to="/LiveSessions">
             <Button size="lg" variant="outline" className="border-white/10 font-semibold">
               <Play className="w-4 h-4 mr-2" /> Watch Live
-            </Button>
-          </Link>
-          <Link to="/ReelFeed">
-            <Button size="lg" variant="outline" className="border-white/10 font-semibold">
-              <TrendingUp className="w-4 h-4 mr-2" /> Reels
             </Button>
           </Link>
         </div>

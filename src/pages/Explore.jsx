@@ -26,8 +26,8 @@ const CATEGORY_ICONS = {
 export default function Explore() {
   const { user } = useCurrentUser();
   const queryClient = useQueryClient();
-  const navigate = useNavigate();
   const urlParams = new URLSearchParams(window.location.search);
+  const dashPath = user?.role === 'avatar' ? '/AvatarDashboard' : user?.role === 'enterprise' ? '/EnterpriseDashboard' : '/UserDashboard';
   const initialCat = urlParams.get('category') || 'All';
 
   const savedPrefs = (() => { try { return JSON.parse(localStorage.getItem('cotask_user_prefs') || 'null'); } catch { return null; } })();
@@ -61,24 +61,7 @@ export default function Explore() {
       <div className="sticky top-0 z-40 glass-strong border-b border-white/5">
         <div className="max-w-6xl mx-auto px-4 py-3">
           <div className="flex items-center gap-3 mb-3">
-            <button onClick={() => navigate(-1)} className="w-9 h-9 rounded-full bg-white/5 border border-white/10 flex items-center justify-center flex-shrink-0">
-              <ArrowLeft className="w-4 h-4" />
-            </button>
-            <div className="flex-1 relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-              <Input
-                value={search}
-                onChange={e => setSearch(e.target.value)}
-                placeholder="Search avatars, categories, skills..."
-                className="pl-10 bg-white/5 border-white/10 h-10 rounded-xl"
-              />
-            </div>
-            <button
-              onClick={() => setShowFilters(!showFilters)}
-              className={`w-9 h-9 rounded-full border flex items-center justify-center flex-shrink-0 transition-colors ${showFilters ? 'bg-primary/10 border-primary/30' : 'bg-white/5 border-white/10'}`}
-            >
-              <Filter className="w-4 h-4" />
-            </button>
+            <Link to={dashPath} className="w-9 h-9 rounded-full bg-white/5 border border-white/10 flex items-center justify-center flex-shrink-0 hover:border-primary/30 transition-colors">
             <div className="flex rounded-xl overflow-hidden border border-white/10 flex-shrink-0">
               <button onClick={() => setViewMode('grid')} className={`px-3 py-2 text-xs flex items-center gap-1 ${viewMode === 'grid' ? 'bg-primary text-white' : 'bg-white/5 text-muted-foreground'}`}>
                 <LayoutGrid className="w-3.5 h-3.5" />

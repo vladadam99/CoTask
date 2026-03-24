@@ -147,39 +147,15 @@ export default function AvatarDashboard() {
         </div>
       )}
 
-      {/* Reels section */}
-      <div className="mb-8">
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-base font-bold">Your Reels</h2>
-          <Link to="/RecordingLibrary" className="text-sm text-primary hover:underline flex items-center gap-1">
-            Publish from recordings <ArrowRight className="w-3 h-3" />
-          </Link>
+      {/* Recording Library shortcut — compact */}
+      <div className="mb-8 flex items-center justify-between glass border border-white/5 rounded-2xl px-5 py-4">
+        <div className="flex items-center gap-3">
+          <Play className="w-4 h-4 text-muted-foreground" />
+          <span className="text-sm text-muted-foreground">Recordings &amp; Reels</span>
         </div>
-        {recentReels.length > 0 ? (
-          <div className="flex gap-3 overflow-x-auto pb-2">
-            {recentReels.map(reel => (
-              <div key={reel.id} className="flex-shrink-0 w-32 glass border border-white/5 rounded-xl overflow-hidden">
-                <div className="aspect-video bg-gradient-to-br from-primary/20 to-purple-900/30 flex items-center justify-center relative">
-                  {reel.thumbnail_url
-                    ? <img src={reel.thumbnail_url} className="w-full h-full object-cover" />
-                    : <Play className="w-6 h-6 text-white/40" />}
-                </div>
-                <div className="p-2">
-                  <p className="text-xs font-medium truncate">{reel.title}</p>
-                  <p className="text-xs text-muted-foreground">{(reel.views || 0)} views</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        ) : (
-          <div className="glass border border-white/5 rounded-2xl p-6 text-center">
-            <Video className="w-8 h-8 text-muted-foreground mx-auto mb-2" />
-            <p className="text-sm text-muted-foreground mb-2">No reels published yet</p>
-            <Link to="/RecordingLibrary">
-              <Button size="sm" variant="outline" className="text-xs">Publish from Recordings</Button>
-            </Link>
-          </div>
-        )}
+        <Link to="/RecordingLibrary" className="text-sm text-primary hover:underline flex items-center gap-1 font-medium">
+          Open Library <ArrowRight className="w-3 h-3" />
+        </Link>
       </div>
 
       {/* Pending Requests */}
