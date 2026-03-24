@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
-import { useCurrentUser } from '@/lib/useCurrentUser';
+import { useCurrentUser } from '@/lib/useCurrentUser'; // user used for future auth-gated features
 import { Play, Heart, MessageCircle, Share2, MapPin, Star, ArrowLeft, Zap, Search } from 'lucide-react';
 import { motion } from 'framer-motion';
 
