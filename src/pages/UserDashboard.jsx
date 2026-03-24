@@ -1,16 +1,16 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { useCurrentUser } from '@/lib/useCurrentUser';
 import AppShell from '@/components/layout/AppShell';
-import GlassCard from '@/components/ui/GlassCard';
 import StatusBadge from '@/components/ui/StatusBadge';
 import { Button } from '@/components/ui/button';
 import {
   Search, Calendar, MessageSquare, Radio, Heart, User,
-  ArrowRight, MapPin, Star, Play
+  ArrowRight, MapPin, Star, Play, Zap, TrendingUp
 } from 'lucide-react';
+import { motion } from 'framer-motion';
 
 const navItems = [
   { icon: Search, label: 'Explore', path: '/Explore' },
@@ -46,6 +46,11 @@ export default function UserDashboard() {
     queryFn: () => base44.entities.AvatarProfile.filter({ is_featured: true, status: 'active' }, '-rating', 6),
   });
 
+  const { data: liveAvatars = [] } = useQuery({
+    queryKey: ['live-avatars-dash'],
+    queryFn: () => base44.entities.AvatarProfile.filter({ is_available: true, status: 'active' }, '-rating', 4),
+  });
+
   if (userLoading) return (
     <div className="min-h-screen flex items-center justify-center">
       <div className="w-8 h-8 border-4 border-primary/20 border-t-primary rounded-full animate-spin" />
@@ -56,35 +61,89 @@ export default function UserDashboard() {
 
   return (
     <AppShell navItems={navItems} user={user}>
-      {/* Header + Primary CTA */}
-      <div className="mb-8">
-        <h1 className="text-2xl lg:text-3xl font-bold mb-1">
-          {firstName ? `Hey, ${firstName}` : 'Welcome back'} 👋
+      {/* Header */}
+      <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="mb-8">
+        <h1 className="text-2xl lg:text-3xl font-black mb-1">
+          {firstName ? `Hey, ${firstName} 👋` : 'Welcome back 👋'}
         </h1>
-        <p className="text-muted-foreground text-sm mb-5">What can we help you with today?</p>
-        <Link to="/LiveSessions">
-          <Button size="lg" className="bg-primary hover:bg-primary/90 glow-primary-sm text-base px-8">
-            <Play className="w-5 h-5 mr-2" /> Watch Live
-          </Button>
-        </Link>
-      </div>
+        <p className="text-muted-foreground text-sm mb-5">What do you need help with today?</p>
+
+        {/* Primary CTAs */}
+        <div className="flex flex-wrap gap-3">
+          <Link to="/Explore">
+            <Button size="lg" className="bg-primary hover:bg-primary/90 glow-primary-sm font-bold">
+              <Zap className="w-4 h-4 mr-2" /> Book an Avatar
+            </Button>
+          </Link>
+          <Link to="/LiveSessions">
+            <Button size="lg" variant="outline" className="border-white/10 font-semibold">
+              <Play className="w-4 h-4 mr-2" /> Watch Live
+            </Button>
+          </Link>
+          <Link to="/ReelFeed">
+            <Button size="lg" variant="outline" className="border-white/10 font-semibold">
+              <TrendingUp className="w-4 h-4 mr-2" /> Reels
+            </Button>
+          </Link>
+        </div>
+      </motion.div>
+
+      {/* Live Now Strip */}
+      {liveAvatars.length > 0 && (
+        <div className="mb-8">
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-primary animate-pulse" />
+              <h2 className="text-base font-bold">Live Now</h2>
+            </div>
+            <Link to="/LiveSessions" className="text-sm text-primary flex items-center gap-1 hover:underline">
+              See all <ArrowRight className="w-3 h-3" />
+            </Link>
+          </div>
+          <div className="flex gap-3 overflow-x-auto pb-2">
+            {liveAvatars.map(avatar => (
+              <Link key={avatar.id} to={`/AvatarView?id=${avatar.id}`} className="flex-shrink-0">
+                <div className="glass border border-white/5 rounded-2xl p-4 w-44 hover:border-primary/30 transition-all">
+                  <div className="relative mb-3">
+                    <div className="w-14 h-14 rounded-xl bg-primary/10 flex items-center justify-center text-xl font-bold text-primary mx-auto overflow-hidden">
+                      {avatar.photo_url
+                        ? <img src={avatar.photo_url} alt={avatar.display_name} className="w-full h-full object-cover" />
+                        : avatar.display_name?.[0] || 'A'}
+                    </div>
+                    <span className="absolute -top-1 -right-1 bg-primary text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full">LIVE</span>
+                  </div>
+                  <p className="text-xs font-semibold text-center truncate">{avatar.display_name}</p>
+                  <p className="text-xs text-muted-foreground text-center truncate">{avatar.city || 'Remote'}</p>
+                  {avatar.rating > 0 && (
+                    <div className="flex items-center justify-center gap-1 mt-1">
+                      <Star className="w-3 h-3 text-yellow-400" />
+                      <span className="text-xs">{avatar.rating.toFixed(1)}</span>
+                    </div>
+                  )}
+                </div>
+              </Link>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Categories */}
       <div className="mb-8">
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-base font-semibold">Browse by Category</h2>
+          <h2 className="text-base font-bold">Browse by Category</h2>
           <Link to="/Explore" className="text-sm text-primary hover:underline flex items-center gap-1">
             See all <ArrowRight className="w-3 h-3" />
           </Link>
         </div>
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-          {CATEGORIES.map(cat => (
-            <Link key={cat.name} to={`/Explore?category=${encodeURIComponent(cat.name)}`}>
-              <GlassCard className="p-4 text-center" hover>
-                <span className="text-2xl mb-2 block">{cat.icon}</span>
-                <span className="text-xs font-medium">{cat.name}</span>
-              </GlassCard>
-            </Link>
+        <div className="grid grid-cols-4 sm:grid-cols-4 lg:grid-cols-8 gap-3">
+          {CATEGORIES.map((cat, i) => (
+            <motion.div key={cat.name} initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: i * 0.04 }}>
+              <Link to={`/Explore?category=${encodeURIComponent(cat.name)}`}
+                className="glass border border-white/5 hover:border-primary/30 rounded-2xl p-3 text-center block transition-all hover:scale-105">
+                <span className="text-2xl mb-1.5 block">{cat.icon}</span>
+                <span className="text-[10px] font-medium leading-tight text-muted-foreground">{cat.name}</span>
+              </Link>
+            </motion.div>
           ))}
         </div>
       </div>
@@ -92,9 +151,7 @@ export default function UserDashboard() {
       {/* Featured Avatars */}
       <div className="mb-8">
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-base font-semibold">
-            {user?.interests?.length ? 'Recommended for You' : 'Featured Avatars'}
-          </h2>
+          <h2 className="text-base font-bold">Featured Avatars</h2>
           <Link to="/Explore" className="text-sm text-primary hover:underline flex items-center gap-1">
             Browse all <ArrowRight className="w-3 h-3" />
           </Link>
@@ -103,50 +160,51 @@ export default function UserDashboard() {
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {avatars.map(avatar => (
               <Link key={avatar.id} to={`/AvatarView?id=${avatar.id}`}>
-                <GlassCard className="p-5" hover>
+                <div className="glass border border-white/5 hover:border-primary/30 rounded-2xl p-5 transition-all hover:scale-[1.01] group">
                   <div className="flex items-start gap-4">
-                    <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center text-lg font-bold text-primary flex-shrink-0 overflow-hidden">
+                    <div className="w-14 h-14 rounded-xl bg-primary/10 flex items-center justify-center text-xl font-bold text-primary flex-shrink-0 overflow-hidden">
                       {avatar.photo_url
                         ? <img src={avatar.photo_url} alt={avatar.display_name} className="w-full h-full object-cover" />
                         : avatar.display_name?.[0] || 'A'}
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2">
-                        <h3 className="font-semibold text-sm truncate">{avatar.display_name}</h3>
+                        <h3 className="font-bold text-sm truncate">{avatar.display_name}</h3>
                         {avatar.is_verified && <span className="text-blue-400 text-xs">✓</span>}
+                        {avatar.is_available && <span className="w-2 h-2 rounded-full bg-green-400 flex-shrink-0" />}
                       </div>
                       <div className="flex items-center gap-2 text-xs text-muted-foreground mt-1">
                         <MapPin className="w-3 h-3" /> {avatar.city || 'Remote'}
                         {avatar.rating > 0 && (
-                          <><Star className="w-3 h-3 text-yellow-400 ml-2" /> {avatar.rating.toFixed(1)}</>
+                          <><Star className="w-3 h-3 text-yellow-400 ml-1" /> {avatar.rating.toFixed(1)}</>
                         )}
                       </div>
                       <div className="flex flex-wrap gap-1 mt-2">
                         {(avatar.categories || []).slice(0, 2).map(c => (
-                          <span key={c} className="text-xs bg-muted/50 rounded-md px-2 py-0.5">{c}</span>
+                          <span key={c} className="text-xs bg-white/5 border border-white/5 rounded px-2 py-0.5">{c}</span>
                         ))}
                       </div>
-                      <p className="text-xs text-primary font-medium mt-2">${avatar.hourly_rate || 30}/hr</p>
+                      <p className="text-sm font-bold text-primary mt-2">${avatar.hourly_rate || 30}/hr</p>
                     </div>
                   </div>
-                </GlassCard>
+                </div>
               </Link>
             ))}
           </div>
         ) : (
-          <GlassCard className="p-8 text-center">
+          <div className="glass rounded-2xl p-8 text-center border border-white/5">
             <p className="text-muted-foreground text-sm mb-4">No featured avatars yet.</p>
             <Link to="/Explore">
               <Button size="sm" className="bg-primary hover:bg-primary/90">Explore Avatars</Button>
             </Link>
-          </GlassCard>
+          </div>
         )}
       </div>
 
       {/* Recent Bookings */}
       <div>
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-base font-semibold">Recent Bookings</h2>
+          <h2 className="text-base font-bold">Recent Bookings</h2>
           <Link to="/Bookings" className="text-sm text-primary hover:underline flex items-center gap-1">
             View all <ArrowRight className="w-3 h-3" />
           </Link>
@@ -155,26 +213,26 @@ export default function UserDashboard() {
           <div className="space-y-3">
             {bookings.map(b => (
               <Link key={b.id} to={`/BookingDetail?id=${b.id}`}>
-                <GlassCard className="p-4 flex items-center justify-between" hover>
+                <div className="glass border border-white/5 hover:border-primary/30 rounded-2xl p-4 flex items-center justify-between transition-all">
                   <div>
-                    <p className="font-medium text-sm">{b.category}</p>
+                    <p className="font-semibold text-sm">{b.category}</p>
                     <p className="text-xs text-muted-foreground mt-1">
                       {b.avatar_name} · {b.scheduled_date || 'Pending'}
                     </p>
                   </div>
                   <StatusBadge status={b.status} />
-                </GlassCard>
+                </div>
               </Link>
             ))}
           </div>
         ) : (
-          <GlassCard className="p-8 text-center">
+          <div className="glass rounded-2xl p-8 text-center border border-white/5">
             <Calendar className="w-8 h-8 text-muted-foreground mx-auto mb-3" />
             <p className="text-sm text-muted-foreground mb-3">No bookings yet</p>
             <Link to="/Explore">
               <Button size="sm" className="bg-primary hover:bg-primary/90">Book your first avatar</Button>
             </Link>
-          </GlassCard>
+          </div>
         )}
       </div>
     </AppShell>

@@ -4,13 +4,14 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { useCurrentUser } from '@/lib/useCurrentUser';
 import AppShell from '@/components/layout/AppShell';
-import GlassCard from '@/components/ui/GlassCard';
 import StatusBadge from '@/components/ui/StatusBadge';
 import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
+import { motion } from 'framer-motion';
 import {
   Radio, Inbox, Calendar, DollarSign, User, Settings,
-  ArrowRight, TrendingUp, CheckCircle, Zap
+  ArrowRight, TrendingUp, CheckCircle, Zap, Video, Star,
+  Clock, Play
 } from 'lucide-react';
 
 const navItems = [
@@ -39,6 +40,12 @@ export default function AvatarDashboard() {
     enabled: !!user,
   });
 
+  const { data: recentReels = [] } = useQuery({
+    queryKey: ['avatar-reels', user?.email],
+    queryFn: () => base44.entities.Reel.filter({ avatar_email: user.email }, '-created_date', 3),
+    enabled: !!user,
+  });
+
   const toggleAvailability = useMutation({
     mutationFn: () => base44.entities.AvatarProfile.update(profile.id, { is_available: !profile.is_available }),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['avatar-profile'] }),
@@ -53,23 +60,25 @@ export default function AvatarDashboard() {
   const pendingBookings = bookings.filter(b => b.status === 'pending');
   const upcomingBookings = bookings.filter(b => ['accepted', 'scheduled'].includes(b.status));
   const completedCount = bookings.filter(b => b.status === 'completed').length;
+  const firstName = user?.full_name?.split(' ')[0] || 'Avatar';
 
   return (
     <AppShell navItems={navItems} user={user}>
       {/* Header */}
-      <div className="flex items-center justify-between mb-8">
+      <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="flex items-center justify-between mb-8">
         <div>
-          <h1 className="text-2xl lg:text-3xl font-bold mb-1">
-            Hey, {user?.full_name?.split(' ')[0] || 'Avatar'} 👋
-          </h1>
-          <p className="text-muted-foreground text-sm">
-            {profile?.is_available ? '🟢 You\'re available for jobs' : '⚫ You\'re currently offline'}
-          </p>
+          <h1 className="text-2xl lg:text-3xl font-black mb-1">Hey, {firstName} 👋</h1>
+          <div className="flex items-center gap-2 text-sm">
+            <span className={`w-2 h-2 rounded-full ${profile?.is_available ? 'bg-green-400 animate-pulse' : 'bg-muted-foreground'}`} />
+            <span className="text-muted-foreground">
+              {profile?.is_available ? 'Available for jobs' : 'Currently offline'}
+            </span>
+          </div>
         </div>
         {profile && (
           <div className="flex items-center gap-3">
             <span className="text-sm text-muted-foreground hidden sm:block">
-              {profile.is_available ? 'Available' : 'Offline'}
+              {profile.is_available ? 'Online' : 'Offline'}
             </span>
             <Switch
               checked={profile.is_available || false}
@@ -77,61 +86,107 @@ export default function AvatarDashboard() {
             />
           </div>
         )}
-      </div>
+      </motion.div>
 
-      {/* Primary CTA */}
-      <GlassCard className="p-6 mb-8 border border-primary/20 glow-primary">
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+      {/* Go Live Hero Card */}
+      <div className="relative overflow-hidden rounded-2xl border border-primary/20 p-6 mb-8"
+        style={{ background: 'linear-gradient(135deg, rgba(220,38,38,0.15) 0%, rgba(153,27,27,0.08) 100%)' }}>
+        <div className="absolute top-0 right-0 w-40 h-40 bg-primary/10 rounded-full -translate-y-1/2 translate-x-1/2 blur-2xl" />
+        <div className="relative z-10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div>
-            <h2 className="text-lg font-bold flex items-center gap-2">
-              <Radio className="w-5 h-5 text-primary" /> Ready to go live?
-            </h2>
-            <p className="text-sm text-muted-foreground mt-1">
-              Start a live stream session and connect with clients in real time.
+            <div className="flex items-center gap-2 mb-2">
+              <Radio className="w-5 h-5 text-primary animate-pulse" />
+              <span className="text-sm font-semibold text-primary">Ready to stream?</span>
+            </div>
+            <h2 className="text-xl font-black mb-1">Go Live Now</h2>
+            <p className="text-sm text-muted-foreground">
+              Start a session and connect with clients worldwide.
             </p>
           </div>
           <Link to="/AvatarLive">
-            <Button size="lg" className="bg-primary hover:bg-primary/90 glow-primary-sm shrink-0">
+            <Button size="lg" className="bg-primary hover:bg-primary/90 glow-primary font-bold shrink-0">
               <Zap className="w-5 h-5 mr-2" /> Go Live
             </Button>
           </Link>
         </div>
-      </GlassCard>
+      </div>
 
-      {/* Stats */}
+      {/* Stats Grid */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-8">
         {[
-          { label: 'Pending', value: pendingBookings.length, icon: Inbox, color: 'text-yellow-400', path: '/AvatarRequests' },
-          { label: 'Upcoming', value: upcomingBookings.length, icon: Calendar, color: 'text-blue-400', path: '/AvatarRequests' },
-          { label: 'Completed', value: completedCount, icon: CheckCircle, color: 'text-green-400', path: '/AvatarRequests' },
-          { label: 'Earnings', value: `$${profile?.total_earnings || 0}`, icon: TrendingUp, color: 'text-primary', path: '/AvatarEarnings' },
-        ].map(stat => (
+          { label: 'Pending', value: pendingBookings.length, icon: Clock, color: 'text-yellow-400', bg: 'bg-yellow-500/10', path: '/AvatarRequests' },
+          { label: 'Upcoming', value: upcomingBookings.length, icon: Calendar, color: 'text-blue-400', bg: 'bg-blue-500/10', path: '/AvatarRequests' },
+          { label: 'Completed', value: completedCount, icon: CheckCircle, color: 'text-green-400', bg: 'bg-green-500/10', path: '/AvatarRequests' },
+          { label: 'Earnings', value: `$${profile?.total_earnings || 0}`, icon: TrendingUp, color: 'text-primary', bg: 'bg-primary/10', path: '/AvatarEarnings' },
+        ].map((stat, i) => (
           <Link key={stat.label} to={stat.path}>
-            <GlassCard className="p-5" hover>
-              <stat.icon className={`w-5 h-5 ${stat.color} mb-3`} />
-              <p className="text-2xl font-bold">{stat.value}</p>
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: i * 0.05 }}
+              className="glass border border-white/5 hover:border-primary/20 rounded-2xl p-5 transition-all hover:scale-[1.02]"
+            >
+              <div className={`w-9 h-9 rounded-xl ${stat.bg} flex items-center justify-center mb-3`}>
+                <stat.icon className={`w-4.5 h-4.5 ${stat.color}`} />
+              </div>
+              <p className="text-2xl font-black">{stat.value}</p>
               <p className="text-xs text-muted-foreground mt-1">{stat.label}</p>
-            </GlassCard>
+            </motion.div>
           </Link>
         ))}
       </div>
 
-      {/* No profile setup prompt */}
+      {/* No profile prompt */}
       {!profile && (
-        <GlassCard className="p-6 mb-8 border border-yellow-500/20 bg-yellow-500/5">
-          <p className="text-sm font-medium mb-1">Complete your profile to start accepting jobs</p>
+        <div className="glass border border-yellow-500/20 bg-yellow-500/5 rounded-2xl p-6 mb-8">
+          <p className="text-sm font-bold mb-1">Complete your profile to start accepting jobs</p>
           <p className="text-xs text-muted-foreground mb-3">Add your bio, services, and pricing to appear in search results.</p>
           <Link to="/AvatarProfileEdit">
-            <Button size="sm" variant="outline">Set up profile →</Button>
+            <Button size="sm" variant="outline" className="border-yellow-500/30 text-yellow-400">Set up profile →</Button>
           </Link>
-        </GlassCard>
+        </div>
       )}
+
+      {/* Reels section */}
+      <div className="mb-8">
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-base font-bold">Your Reels</h2>
+          <Link to="/RecordingLibrary" className="text-sm text-primary hover:underline flex items-center gap-1">
+            Publish from recordings <ArrowRight className="w-3 h-3" />
+          </Link>
+        </div>
+        {recentReels.length > 0 ? (
+          <div className="flex gap-3 overflow-x-auto pb-2">
+            {recentReels.map(reel => (
+              <div key={reel.id} className="flex-shrink-0 w-32 glass border border-white/5 rounded-xl overflow-hidden">
+                <div className="aspect-video bg-gradient-to-br from-primary/20 to-purple-900/30 flex items-center justify-center relative">
+                  {reel.thumbnail_url
+                    ? <img src={reel.thumbnail_url} className="w-full h-full object-cover" />
+                    : <Play className="w-6 h-6 text-white/40" />}
+                </div>
+                <div className="p-2">
+                  <p className="text-xs font-medium truncate">{reel.title}</p>
+                  <p className="text-xs text-muted-foreground">{(reel.views || 0)} views</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div className="glass border border-white/5 rounded-2xl p-6 text-center">
+            <Video className="w-8 h-8 text-muted-foreground mx-auto mb-2" />
+            <p className="text-sm text-muted-foreground mb-2">No reels published yet</p>
+            <Link to="/RecordingLibrary">
+              <Button size="sm" variant="outline" className="text-xs">Publish from Recordings</Button>
+            </Link>
+          </div>
+        )}
+      </div>
 
       {/* Pending Requests */}
       {pendingBookings.length > 0 && (
         <div className="mb-8">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-base font-semibold">Pending Requests</h2>
+            <h2 className="text-base font-bold">Pending Requests</h2>
             <Link to="/AvatarRequests" className="text-sm text-primary hover:underline flex items-center gap-1">
               See all <ArrowRight className="w-3 h-3" />
             </Link>
@@ -139,27 +194,27 @@ export default function AvatarDashboard() {
           <div className="space-y-3">
             {pendingBookings.slice(0, 3).map(b => (
               <Link key={b.id} to={`/BookingDetail?id=${b.id}`}>
-                <GlassCard className="p-4 flex items-center justify-between" hover>
+                <div className="glass border border-white/5 hover:border-primary/30 rounded-2xl p-4 flex items-center justify-between transition-all">
                   <div>
-                    <p className="font-medium text-sm">{b.category}</p>
+                    <p className="font-semibold text-sm">{b.category}</p>
                     <p className="text-xs text-muted-foreground mt-1">{b.client_name}</p>
                   </div>
                   <div className="flex items-center gap-3">
-                    <span className="text-sm font-medium text-primary">${b.total_amount || b.amount || 0}</span>
+                    <span className="text-sm font-bold text-primary">${b.total_amount || b.amount || 0}</span>
                     <StatusBadge status={b.status} />
                   </div>
-                </GlassCard>
+                </div>
               </Link>
             ))}
           </div>
         </div>
       )}
 
-      {/* Upcoming */}
+      {/* Upcoming Jobs */}
       {upcomingBookings.length > 0 && (
         <div>
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-base font-semibold">Upcoming Jobs</h2>
+            <h2 className="text-base font-bold">Upcoming Jobs</h2>
             <Link to="/AvatarRequests" className="text-sm text-primary hover:underline flex items-center gap-1">
               See all <ArrowRight className="w-3 h-3" />
             </Link>
@@ -167,15 +222,15 @@ export default function AvatarDashboard() {
           <div className="space-y-3">
             {upcomingBookings.slice(0, 3).map(b => (
               <Link key={b.id} to={`/BookingDetail?id=${b.id}`}>
-                <GlassCard className="p-4 flex items-center justify-between" hover>
+                <div className="glass border border-white/5 hover:border-primary/30 rounded-2xl p-4 flex items-center justify-between transition-all">
                   <div>
-                    <p className="font-medium text-sm">{b.category}</p>
+                    <p className="font-semibold text-sm">{b.category}</p>
                     <p className="text-xs text-muted-foreground mt-1">
                       {b.client_name} · {b.scheduled_date || 'TBD'}
                     </p>
                   </div>
                   <StatusBadge status={b.status} />
-                </GlassCard>
+                </div>
               </Link>
             ))}
           </div>
