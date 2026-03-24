@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button';
 import {
   Home, Inbox, Calendar, Radio, MessageSquare, DollarSign,
   Star, User, Settings, Film, Play, Share2, Trash2, Clock,
-  Download, Eye, EyeOff
+  Download, Eye, EyeOff, Zap, TrendingUp
 } from 'lucide-react';
 import { format } from 'date-fns';
 
@@ -50,6 +50,28 @@ export default function RecordingLibrary() {
   const deleteRec = useMutation({
     mutationFn: (id) => base44.entities.Recording.delete(id),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['recordings', user?.email] }),
+  });
+
+  const publishAsReel = useMutation({
+    mutationFn: async (r) => {
+      const profile = await base44.entities.AvatarProfile.filter({ user_email: user.email });
+      await base44.entities.Reel.create({
+        avatar_email: user.email,
+        avatar_name: user.full_name,
+        avatar_photo_url: profile[0]?.photo_url || '',
+        title: r.title,
+        category: r.category || '',
+        video_url: r.file_url,
+        thumbnail_url: r.thumbnail_url || '',
+        duration_seconds: r.duration_seconds,
+        recording_id: r.id,
+        booking_id: r.booking_id || '',
+        is_published: true,
+        views: 0,
+        likes: 0,
+      });
+    },
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['avatar-reels'] }),
   });
 
   if (loading) return (
@@ -120,7 +142,7 @@ export default function RecordingLibrary() {
                   <p className="text-xs text-muted-foreground">{format(new Date(r.created_date), 'MMM d, yyyy')}</p>
                 )}
 
-                <div className="flex items-center gap-2 mt-auto pt-2">
+                <div className="flex items-center gap-2 mt-auto pt-2 flex-wrap">
                   {r.file_url && (
                     <a href={r.file_url} download target="_blank" rel="noopener noreferrer">
                       <Button size="sm" variant="ghost" className="gap-1 text-xs px-2 h-7">
@@ -136,6 +158,14 @@ export default function RecordingLibrary() {
                   >
                     {r.is_shared_with_client ? <EyeOff className="w-3.5 h-3.5" /> : <Share2 className="w-3.5 h-3.5" />}
                     {r.is_shared_with_client ? 'Unshare' : 'Share'}
+                  </Button>
+                  <Button
+                    size="sm"
+                    className="gap-1 text-xs px-2 h-7 bg-primary/10 hover:bg-primary/20 text-primary border-0"
+                    onClick={() => publishAsReel.mutate(r)}
+                    disabled={publishAsReel.isPending}
+                  >
+                    <TrendingUp className="w-3.5 h-3.5" /> Publish Reel
                   </Button>
                   <Button
                     size="sm"

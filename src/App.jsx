@@ -40,6 +40,7 @@ import ExploreOnboarding from './pages/ExploreOnboarding';
 import RecordingLibrary from './pages/RecordingLibrary';
 import ClientLiveView from './pages/ClientLiveView';
 import EnterpriseSettings from './pages/EnterpriseSettings';
+import ReelFeed from './pages/ReelFeed';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -101,6 +102,7 @@ const AuthenticatedApp = () => {
       <Route path="/ClientLiveView" element={<ClientLiveView />} />
       <Route path="/ExploreOnboarding" element={<ExploreOnboarding />} />
       <Route path="/EnterpriseSettings" element={<EnterpriseSettings />} />
+      <Route path="/ReelFeed" element={<ReelFeed />} />
       <Route path="*" element={<PageNotFound />} />
     </Routes>
   );
