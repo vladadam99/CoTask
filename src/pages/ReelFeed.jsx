@@ -137,7 +137,7 @@ export default function ReelFeed() {
                   <div className="flex items-center justify-between">
                     <span className="text-white/50 text-[10px]">{(reel.views || 0).toLocaleString()} views</span>
                     <button
-                      onClick={e => { e.stopPropagation(); likeMutation.mutate(reel); }}
+                      onClick={e => { e.stopPropagation(); handleLike(reel); }}
                       className="flex items-center gap-1 text-[10px]"
                     >
                       <Heart className={`w-3.5 h-3.5 ${likedReels[reel.id] ? 'fill-primary text-primary' : 'text-white/60'}`} />
