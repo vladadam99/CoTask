@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
@@ -10,6 +10,34 @@ import {
   ArrowLeft, MapPin, Star, Shield, Clock, Globe, Radio, Smartphone,
   Wifi, Headphones, Car, Calendar, MessageSquare, Heart, Loader2
 } from 'lucide-react';
+
+function PostItem({ post }) {
+  const videoRef = useRef(null);
+  const [playing, setPlaying] = useState(false);
+
+  const togglePlay = () => {
+    if (!videoRef.current) return;
+    if (playing) { videoRef.current.pause(); setPlaying(false); }
+    else { videoRef.current.play(); setPlaying(true); }
+  };
+
+  return (
+    <div className="aspect-square rounded-xl overflow-hidden bg-white/5 relative cursor-pointer" onClick={post.type === 'video' ? togglePlay : undefined}>
+      {post.type === 'video' ? (
+        <>
+          <video ref={videoRef} src={post.media_url} className="w-full h-full object-cover" playsInline loop />
+          <div className={`absolute inset-0 flex items-center justify-center transition-opacity ${playing ? 'opacity-0 hover:opacity-100' : 'opacity-100'}`}>
+            <div className="w-8 h-8 rounded-full bg-black/60 flex items-center justify-center">
+              <span className="text-white text-xs">{playing ? '⏸' : '▶'}</span>
+            </div>
+          </div>
+        </>
+      ) : (
+        <img src={post.media_url} alt={post.caption} className="w-full h-full object-cover" />
+      )}
+    </div>
+  );
+}
 
 export default function AvatarView() {
   const navigate = useNavigate();
