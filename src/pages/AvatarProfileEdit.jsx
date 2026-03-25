@@ -8,7 +8,6 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/components/ui/use-toast';
-import { useQuery } from '@tanstack/react-query';
 import PostCard from '@/components/explore/PostCard';
 import PostUpload from '@/components/explore/PostUpload';
 import { AnimatePresence } from 'framer-motion';
