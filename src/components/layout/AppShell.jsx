@@ -147,15 +147,8 @@ export default function AppShell({ children, navItems = [], user }) {
 
       {/* Main Content */}
       <main className="flex-1 lg:ml-64 pt-14 lg:pt-0 pb-20 lg:pb-0">
-        <div className="lg:p-8 lg:max-w-7xl lg:mx-auto">
-          {/* Mobile: phone-width centered container */}
-          <div className="lg:hidden w-full max-w-[430px] mx-auto px-4 py-4">
-            {children}
-          </div>
-          {/* Desktop: full layout */}
-          <div className="hidden lg:block">
-            {children}
-          </div>
+        <div className="px-4 py-4 lg:p-8 lg:max-w-7xl lg:mx-auto">
+          {children}
         </div>
       </main>
     </div>
