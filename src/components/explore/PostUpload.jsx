@@ -102,7 +102,7 @@ export default function PostUpload({ user, profile, onClose }) {
               <p className="text-sm text-muted-foreground">Tap to select</p>
             </button>
           ) : (
-            <div className="relative rounded-xl overflow-hidden aspect-square bg-black">
+            <div className="relative rounded-xl overflow-hidden bg-black" style={{maxHeight: '200px'}}>
               {fileType === 'video'
                 ? <video src={preview} className="w-full h-full object-cover" muted loop autoPlay playsInline />
                 : <img src={preview} alt="preview" className="w-full h-full object-cover" />}
