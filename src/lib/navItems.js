@@ -1,7 +1,8 @@
-import { Search, Calendar, MessageSquare, Radio, Heart, User, Zap, Inbox, DollarSign, Settings, Building2 } from 'lucide-react';
+import { Search, Calendar, MessageSquare, Radio, Heart, User, Zap, Inbox, DollarSign, Settings, Building2, Briefcase } from 'lucide-react';
 
 export const userNavItems = [
   { icon: Search, label: 'Explore', path: '/Explore' },
+  { icon: Briefcase, label: 'Jobs', path: '/JobMarketplace' },
   { icon: Radio, label: 'Live', path: '/LiveSessions' },
   { icon: Calendar, label: 'Bookings', path: '/Bookings' },
   { icon: MessageSquare, label: 'Messages', path: '/Messages' },
@@ -11,6 +12,7 @@ export const userNavItems = [
 
 export const avatarNavItems = [
   { icon: Zap, label: 'Go Live', path: '/AvatarLive' },
+  { icon: Briefcase, label: 'Jobs', path: '/JobMarketplace' },
   { icon: Inbox, label: 'Bookings', path: '/AvatarRequests' },
   { icon: DollarSign, label: 'Earnings', path: '/AvatarEarnings' },
   { icon: User, label: 'Setup', path: '/AvatarProfileEdit' },
@@ -18,6 +20,7 @@ export const avatarNavItems = [
 
 export const enterpriseNavItems = [
   { icon: Search, label: 'Deploy Avatar', path: '/Explore' },
+  { icon: Briefcase, label: 'Jobs', path: '/JobMarketplace' },
   { icon: Calendar, label: 'Sessions', path: '/Bookings' },
   { icon: MessageSquare, label: 'Messages', path: '/Messages' },
   { icon: Building2, label: 'Dashboard', path: '/EnterpriseDashboard' },
