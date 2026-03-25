@@ -57,6 +57,12 @@ export default function AvatarView() {
     }
   };
 
+  const { data: posts = [] } = useQuery({
+    queryKey: ['avatar-view-posts', avatar?.user_email],
+    queryFn: () => base44.entities.Post.filter({ avatar_email: avatar.user_email, is_published: true }, '-created_date', 30),
+    enabled: !!avatar,
+  });
+
   const { data: reviews = [] } = useQuery({
     queryKey: ['avatar-reviews', avatar?.user_email],
     queryFn: () => base44.entities.Review.filter({ avatar_email: avatar.user_email }, '-created_date', 10),
@@ -195,6 +201,18 @@ export default function AvatarView() {
                 ))}
               </div>
             </GlassCard>
+
+            {/* Posts */}
+            {posts.length > 0 && (
+              <GlassCard className="p-6">
+                <h2 className="font-semibold mb-4">Posts ({posts.length})</h2>
+                <div className="grid grid-cols-3 gap-2">
+                  {posts.map(post => (
+                    <PostItem key={post.id} post={post} />
+                  ))}
+                </div>
+              </GlassCard>
+            )}
 
             {/* Reviews */}
             <GlassCard className="p-6">
