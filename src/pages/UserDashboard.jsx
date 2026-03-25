@@ -63,19 +63,19 @@ export default function UserDashboard() {
         <p className="text-muted-foreground text-sm mb-5">What do you need help with today?</p>
 
         {/* Primary CTAs */}
-        <div className="flex flex-wrap gap-3">
-          <Link to="/FindAvatars">
-            <Button size="lg" className="bg-primary hover:bg-primary/90 glow-primary-sm font-bold">
+        <div className="flex flex-col sm:flex-row flex-wrap gap-3">
+          <Link to="/FindAvatars" className="sm:flex-none">
+            <Button size="lg" className="w-full sm:w-auto bg-primary hover:bg-primary/90 glow-primary-sm font-bold">
               <Zap className="w-4 h-4 mr-2" /> Book an Avatar
             </Button>
           </Link>
-          <Link to="/JobMarketplace">
-            <Button size="lg" variant="outline" className="border-white/10 font-semibold">
+          <Link to="/JobMarketplace" className="sm:flex-none">
+            <Button size="lg" variant="outline" className="w-full sm:w-auto border-white/10 font-semibold">
               <Briefcase className="w-4 h-4 mr-2" /> Browse Jobs
             </Button>
           </Link>
-          <Link to="/PostJob">
-            <Button size="lg" variant="outline" className="border-primary/30 text-primary font-semibold">
+          <Link to="/PostJob" className="sm:flex-none">
+            <Button size="lg" variant="outline" className="w-full sm:w-auto border-primary/30 text-primary font-semibold">
               <Briefcase className="w-4 h-4 mr-2" /> Post a Job
             </Button>
           </Link>
@@ -129,7 +129,7 @@ export default function UserDashboard() {
             See all <ArrowRight className="w-3 h-3" />
           </Link>
         </div>
-        <div className="grid grid-cols-4 sm:grid-cols-4 lg:grid-cols-8 gap-3">
+        <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-3">
           {CATEGORIES.map((cat, i) => (
             <motion.div key={cat.name} initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: i * 0.04 }}>
               <Link to={`/Explore?category=${encodeURIComponent(cat.name)}`}
