@@ -6,20 +6,14 @@ import { useCurrentUser } from '@/lib/useCurrentUser';
 import AppShell from '@/components/layout/AppShell';
 import StatusBadge from '@/components/ui/StatusBadge';
 import { Button } from '@/components/ui/button';
+import { getNavItems } from '@/lib/navItems';
 import {
   Search, Calendar, MessageSquare, Radio, Heart, User,
-  ArrowRight, MapPin, Star, Play, Zap
+  ArrowRight, MapPin, Star, Play, Zap, Briefcase
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 
-const navItems = [
-  { icon: Search, label: 'Explore', path: '/Explore' },
-  { icon: Radio, label: 'Live', path: '/LiveSessions' },
-  { icon: Calendar, label: 'Bookings', path: '/Bookings' },
-  { icon: MessageSquare, label: 'Messages', path: '/Messages' },
-  { icon: Heart, label: 'Saved', path: '/Saved' },
-  { icon: User, label: 'Profile', path: '/Profile' },
-];
+
 
 const CATEGORIES = [
   { name: 'City Guide', icon: '🌆' },
@@ -60,7 +54,7 @@ export default function UserDashboard() {
   const firstName = user?.full_name?.split(' ')[0] || '';
 
   return (
-    <AppShell navItems={navItems} user={user}>
+    <AppShell navItems={getNavItems(user?.role)} user={user}>
       {/* Header */}
       <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="mb-8">
         <h1 className="text-2xl lg:text-3xl font-black mb-1">
@@ -75,9 +69,14 @@ export default function UserDashboard() {
               <Zap className="w-4 h-4 mr-2" /> Book an Avatar
             </Button>
           </Link>
-          <Link to="/LiveSessions">
+          <Link to="/JobMarketplace">
             <Button size="lg" variant="outline" className="border-white/10 font-semibold">
-              <Play className="w-4 h-4 mr-2" /> Watch Live
+              <Briefcase className="w-4 h-4 mr-2" /> Browse Jobs
+            </Button>
+          </Link>
+          <Link to="/PostJob">
+            <Button size="lg" variant="outline" className="border-primary/30 text-primary font-semibold">
+              <Briefcase className="w-4 h-4 mr-2" /> Post a Job
             </Button>
           </Link>
         </div>
