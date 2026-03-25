@@ -41,6 +41,9 @@ import RecordingLibrary from './pages/RecordingLibrary';
 import ClientLiveView from './pages/ClientLiveView';
 import EnterpriseSettings from './pages/EnterpriseSettings';
 import ReelFeed from './pages/ReelFeed';
+import JobMarketplace from './pages/JobMarketplace';
+import PostJob from './pages/PostJob';
+import JobDetail from './pages/JobDetail';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -103,6 +106,9 @@ const AuthenticatedApp = () => {
       <Route path="/ExploreOnboarding" element={<ExploreOnboarding />} />
       <Route path="/EnterpriseSettings" element={<EnterpriseSettings />} />
       <Route path="/ReelFeed" element={<ReelFeed />} />
+      <Route path="/JobMarketplace" element={<JobMarketplace />} />
+      <Route path="/PostJob" element={<PostJob />} />
+      <Route path="/JobDetail" element={<JobDetail />} />
       <Route path="*" element={<PageNotFound />} />
     </Routes>
   );
