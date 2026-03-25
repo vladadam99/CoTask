@@ -48,7 +48,7 @@ export default function Explore() {
 
   return (
     <AppShell navItems={getNavItems(user?.role)} user={user}>
-      <div className="max-w-lg mx-auto">
+      <div className="max-w-sm mx-auto">
         {/* Header */}
         <div className="mb-6">
           <div className="flex items-center gap-3 mb-1">
