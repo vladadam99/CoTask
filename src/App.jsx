@@ -44,6 +44,8 @@ import ReelFeed from './pages/ReelFeed';
 import JobMarketplace from './pages/JobMarketplace';
 import PostJob from './pages/PostJob';
 import JobDetail from './pages/JobDetail';
+import FindAvatars from './pages/FindAvatars';
+import AvatarExplore from './pages/AvatarExplore';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -109,6 +111,8 @@ const AuthenticatedApp = () => {
       <Route path="/JobMarketplace" element={<JobMarketplace />} />
       <Route path="/PostJob" element={<PostJob />} />
       <Route path="/JobDetail" element={<JobDetail />} />
+      <Route path="/FindAvatars" element={<FindAvatars />} />
+      <Route path="/AvatarExplore" element={<AvatarExplore />} />
       <Route path="*" element={<PageNotFound />} />
     </Routes>
   );
