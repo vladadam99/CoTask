@@ -95,13 +95,13 @@ export default function AvatarProfileEdit() {
 
   const set = (key) => (e) => setForm(f => ({ ...f, [key]: e.target.value }));
 
-  if (loading) return <div className="min-h-screen flex items-center justify-center"><div className="w-8 h-8 border-4 border-primary/20 border-t-primary rounded-full animate-spin" /></div>;
-
   const { data: myPosts = [] } = useQuery({
     queryKey: ['avatar-posts', user?.email],
     queryFn: () => base44.entities.Post.filter({ avatar_email: user.email }, '-created_date', 30),
     enabled: !!user,
   });
+
+  if (loading) return <div className="min-h-screen flex items-center justify-center"><div className="w-8 h-8 border-4 border-primary/20 border-t-primary rounded-full animate-spin" /></div>;
 
   return (
     <AppShell navItems={getNavItems(user?.role)} user={user}>
