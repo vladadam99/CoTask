@@ -1,13 +1,17 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { LogOut } from 'lucide-react';
+import { LogOut, Menu, X, HelpCircle, Settings, User, ChevronRight } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import NotificationBell from '@/components/notifications/NotificationBell';
 import RoleSwitcher from '@/components/RoleSwitcher';
 
 export default function AppShell({ children, navItems = [], user }) {
   const location = useLocation();
+  const [drawerOpen, setDrawerOpen] = useState(false);
+
+  const homePath = user?.role === 'avatar' ? '/AvatarDashboard' : user?.role === 'enterprise' ? '/EnterpriseDashboard' : '/UserDashboard';
+  const settingsPath = user?.role === 'avatar' ? '/AvatarSettings' : user?.role === 'enterprise' ? '/EnterpriseSettings' : '/Profile';
 
   return (
     <div className="min-h-screen flex">
@@ -58,13 +62,72 @@ export default function AppShell({ children, navItems = [], user }) {
 
       {/* Mobile Top Bar */}
       <div className="lg:hidden fixed top-0 left-0 right-0 z-50 h-14 glass-strong border-b border-white/5 flex items-center justify-between px-4">
-        <Link to={
-          user?.role === 'avatar' ? '/AvatarDashboard'
-          : user?.role === 'enterprise' ? '/EnterpriseDashboard'
-          : '/UserDashboard'
-        } className="text-lg font-bold">Co<span className="text-primary">Task</span></Link>
-        <NotificationBell userEmail={user?.email} />
+        <Link to={homePath} className="text-lg font-bold">Co<span className="text-primary">Task</span></Link>
+        <div className="flex items-center gap-2">
+          <NotificationBell userEmail={user?.email} />
+          <button onClick={() => setDrawerOpen(true)} className="p-1.5 rounded-lg hover:bg-white/10 transition-colors">
+            <Menu className="w-5 h-5" />
+          </button>
+        </div>
       </div>
+
+      {/* Mobile Drawer */}
+      {drawerOpen && (
+        <div className="lg:hidden fixed inset-0 z-[60]">
+          <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setDrawerOpen(false)} />
+          <aside className="absolute right-0 inset-y-0 w-72 glass-strong border-l border-white/10 flex flex-col">
+            {/* Drawer Header */}
+            <div className="h-14 flex items-center justify-between px-4 border-b border-white/5">
+              <span className="font-bold text-sm">Menu</span>
+              <button onClick={() => setDrawerOpen(false)} className="p-1.5 rounded-lg hover:bg-white/10">
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            {/* User Info */}
+            <div className="p-4 border-b border-white/5">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center text-base font-bold text-primary">
+                  {user?.full_name?.[0] || 'U'}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="font-semibold text-sm truncate">{user?.full_name || 'User'}</p>
+                  <p className="text-xs text-muted-foreground truncate">{user?.email}</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Drawer Links */}
+            <nav className="flex-1 py-3 px-3 space-y-1 overflow-y-auto">
+              <Link to="/Profile" onClick={() => setDrawerOpen(false)}
+                className="flex items-center gap-3 px-3 py-3 rounded-xl hover:bg-white/5 transition-colors text-sm">
+                <User className="w-4 h-4 text-muted-foreground" />
+                <span>Profile</span>
+                <ChevronRight className="w-4 h-4 text-muted-foreground ml-auto" />
+              </Link>
+              <Link to={settingsPath} onClick={() => setDrawerOpen(false)}
+                className="flex items-center gap-3 px-3 py-3 rounded-xl hover:bg-white/5 transition-colors text-sm">
+                <Settings className="w-4 h-4 text-muted-foreground" />
+                <span>Settings</span>
+                <ChevronRight className="w-4 h-4 text-muted-foreground ml-auto" />
+              </Link>
+              <Link to="/FAQ" onClick={() => setDrawerOpen(false)}
+                className="flex items-center gap-3 px-3 py-3 rounded-xl hover:bg-white/5 transition-colors text-sm">
+                <HelpCircle className="w-4 h-4 text-muted-foreground" />
+                <span>Help & FAQ</span>
+                <ChevronRight className="w-4 h-4 text-muted-foreground ml-auto" />
+              </Link>
+            </nav>
+
+            {/* Sign Out */}
+            <div className="p-4 border-t border-white/5">
+              <Button variant="ghost" className="w-full justify-start text-muted-foreground" onClick={() => base44.auth.logout('/Landing')}>
+                <LogOut className="w-4 h-4 mr-2" /> Sign out
+              </Button>
+            </div>
+          </aside>
+        </div>
+      )}
 
       {/* Mobile Bottom Nav */}
       <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-50 glass-strong border-t border-white/5 flex items-center justify-around px-2 py-2 pb-safe">
