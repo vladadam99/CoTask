@@ -63,20 +63,20 @@ export default function UserDashboard() {
         <p className="text-muted-foreground text-sm mb-5">What do you need help with today?</p>
 
         {/* Primary CTAs */}
-        <div className="flex flex-col sm:flex-row flex-wrap gap-3">
-          <Link to="/FindAvatars" className="sm:flex-none">
-            <Button size="lg" className="w-full sm:w-auto bg-primary hover:bg-primary/90 glow-primary-sm font-bold">
-              <Zap className="w-4 h-4 mr-2" /> Book an Avatar
+        <div className="flex flex-row flex-wrap gap-2">
+          <Link to="/FindAvatars">
+            <Button className="bg-primary hover:bg-primary/90 glow-primary-sm font-bold text-sm px-4">
+              <Zap className="w-3.5 h-3.5 mr-1.5" /> Book an Avatar
             </Button>
           </Link>
-          <Link to="/JobMarketplace" className="sm:flex-none">
-            <Button size="lg" variant="outline" className="w-full sm:w-auto border-white/10 font-semibold">
-              <Briefcase className="w-4 h-4 mr-2" /> Browse Jobs
+          <Link to="/JobMarketplace">
+            <Button variant="outline" className="border-white/10 font-semibold text-sm px-4">
+              <Briefcase className="w-3.5 h-3.5 mr-1.5" /> Browse Jobs
             </Button>
           </Link>
-          <Link to="/PostJob" className="sm:flex-none">
-            <Button size="lg" variant="outline" className="w-full sm:w-auto border-primary/30 text-primary font-semibold">
-              <Briefcase className="w-4 h-4 mr-2" /> Post a Job
+          <Link to="/PostJob">
+            <Button variant="outline" className="border-primary/30 text-primary font-semibold text-sm px-4">
+              <Briefcase className="w-3.5 h-3.5 mr-1.5" /> Post a Job
             </Button>
           </Link>
         </div>
