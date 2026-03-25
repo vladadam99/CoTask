@@ -69,7 +69,7 @@ export default function Explore() {
         </div>
 
         {/* Category pills */}
-        <div className="flex gap-2 overflow-x-auto pb-3 scrollbar-hide mb-6">
+        <div className="flex gap-2 overflow-x-auto mb-6 pb-1" style={{scrollbarWidth:'none', msOverflowStyle:'none'}}>
           {CATEGORIES.map(cat => (
             <button key={cat} onClick={() => setCategory(cat)}
               className={`flex-shrink-0 px-4 py-2 rounded-full text-xs font-semibold transition-all ${
