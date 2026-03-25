@@ -64,7 +64,7 @@ export default function UserDashboard() {
 
         {/* Primary CTAs */}
         <div className="flex flex-wrap gap-3">
-          <Link to="/Explore">
+          <Link to="/FindAvatars">
             <Button size="lg" className="bg-primary hover:bg-primary/90 glow-primary-sm font-bold">
               <Zap className="w-4 h-4 mr-2" /> Book an Avatar
             </Button>

@@ -8,22 +8,17 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/components/ui/use-toast';
+import { useQuery } from '@tanstack/react-query';
+import PostCard from '@/components/explore/PostCard';
+import PostUpload from '@/components/explore/PostUpload';
+import { AnimatePresence } from 'framer-motion';
+import { getNavItems } from '@/lib/navItems';
 import {
   Home, Inbox, Calendar, Radio, MessageSquare, DollarSign,
-  Star, User, Settings, Save, Camera, Upload, Loader2
+  Star, User, Settings, Save, Camera, Upload, Loader2, Plus, Grid
 } from 'lucide-react';
 
-const navItems = [
-  { icon: Home, label: 'Home', path: '/AvatarDashboard' },
-  { icon: Inbox, label: 'Requests', path: '/AvatarRequests' },
-  { icon: Calendar, label: 'Schedule', path: '/AvatarSchedule' },
-  { icon: Radio, label: 'Live', path: '/AvatarLive' },
-  { icon: MessageSquare, label: 'Messages', path: '/Messages' },
-  { icon: DollarSign, label: 'Earnings', path: '/AvatarEarnings' },
-  { icon: Star, label: 'Reviews', path: '/AvatarReviews' },
-  { icon: User, label: 'Profile', path: '/AvatarProfileEdit' },
-  { icon: Settings, label: 'Settings', path: '/AvatarSettings' },
-];
+
 
 export default function AvatarProfileEdit() {
   const { user, loading } = useCurrentUser();
@@ -31,6 +26,7 @@ export default function AvatarProfileEdit() {
   const { toast } = useToast();
   const fileInputRef = useRef(null);
   const [uploading, setUploading] = useState(false);
+  const [showUpload, setShowUpload] = useState(false);
 
   const { data: profile } = useQuery({
     queryKey: ['avatar-profile-edit', user?.email],
@@ -102,8 +98,14 @@ export default function AvatarProfileEdit() {
 
   if (loading) return <div className="min-h-screen flex items-center justify-center"><div className="w-8 h-8 border-4 border-primary/20 border-t-primary rounded-full animate-spin" /></div>;
 
+  const { data: myPosts = [] } = useQuery({
+    queryKey: ['avatar-posts', user?.email],
+    queryFn: () => base44.entities.Post.filter({ avatar_email: user.email }, '-created_date', 30),
+    enabled: !!user,
+  });
+
   return (
-    <AppShell navItems={navItems} user={user}>
+    <AppShell navItems={getNavItems(user?.role)} user={user}>
       <div className="flex items-center justify-between mb-8">
         <div>
           <h1 className="text-2xl lg:text-3xl font-bold mb-1">Edit Profile</h1>
@@ -196,8 +198,46 @@ export default function AvatarProfileEdit() {
               <Input value={form.languages} onChange={set('languages')} className="bg-muted/30 border-white/5" placeholder="e.g. English, Spanish, French" />
             </div>
           </GlassCard>
+
+          {/* My Posts */}
+          <GlassCard className="p-5">
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-2">
+                <Grid className="w-4 h-4 text-primary" />
+                <h2 className="font-semibold text-sm">My Posts</h2>
+                <span className="text-xs text-muted-foreground">({myPosts.length})</span>
+              </div>
+              <Button size="sm" onClick={() => setShowUpload(true)} className="gap-1.5 h-8">
+                <Plus className="w-3.5 h-3.5" /> New Post
+              </Button>
+            </div>
+            {myPosts.length === 0 ? (
+              <div className="text-center py-8 space-y-2">
+                <p className="text-3xl">📸</p>
+                <p className="text-sm text-muted-foreground">No posts yet. Share your work!</p>
+                <Button size="sm" variant="outline" className="border-white/10" onClick={() => setShowUpload(true)}>Upload first post</Button>
+              </div>
+            ) : (
+              <div className="grid grid-cols-3 gap-2">
+                {myPosts.map(post => (
+                  <div key={post.id} className="aspect-square rounded-xl overflow-hidden bg-white/5 relative">
+                    {post.type === 'video'
+                      ? <video src={post.media_url} className="w-full h-full object-cover" muted />
+                      : <img src={post.media_url} alt={post.caption} className="w-full h-full object-cover" />}
+                    {post.type === 'video' && (
+                      <div className="absolute top-1.5 right-1.5 bg-black/60 text-white text-[9px] px-1.5 py-0.5 rounded-full">▶</div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
+          </GlassCard>
         </div>
       )}
+
+      <AnimatePresence>
+        {showUpload && <PostUpload user={user} profile={profile} onClose={() => setShowUpload(false)} />}
+      </AnimatePresence>
     </AppShell>
   );
 }
