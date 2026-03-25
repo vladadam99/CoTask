@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import PostUpload from '@/components/explore/PostUpload';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { useCurrentUser } from '@/lib/useCurrentUser';
@@ -11,7 +12,7 @@ import { motion } from 'framer-motion';
 import {
   Radio, Inbox, Calendar, DollarSign, User,
   ArrowRight, TrendingUp, CheckCircle, Zap,
-  Clock, Play
+  Clock, Play, PlusCircle
 } from 'lucide-react';
 
 const navItems = [
@@ -24,6 +25,7 @@ const navItems = [
 export default function AvatarDashboard() {
   const { user, loading: userLoading } = useCurrentUser();
   const queryClient = useQueryClient();
+  const [showPostUpload, setShowPostUpload] = useState(false);
 
   const { data: profile } = useQuery({
     queryKey: ['avatar-profile', user?.email],
@@ -147,14 +149,20 @@ export default function AvatarDashboard() {
         </div>
       )}
 
-      {/* Recording Library shortcut — compact */}
-      <div className="mb-8 flex items-center justify-between glass border border-white/5 rounded-2xl px-5 py-4">
-        <div className="flex items-center gap-3">
-          <Play className="w-4 h-4 text-muted-foreground" />
-          <span className="text-sm text-muted-foreground">Recordings &amp; Reels</span>
-        </div>
-        <Link to="/RecordingLibrary" className="text-sm text-primary hover:underline flex items-center gap-1 font-medium">
-          Open Library <ArrowRight className="w-3 h-3" />
+      {/* Post & Recording row */}
+      <div className="mb-8 grid grid-cols-2 gap-3">
+        <button
+          onClick={() => setShowPostUpload(true)}
+          className="flex items-center gap-3 glass border border-primary/20 hover:border-primary/40 rounded-2xl px-4 py-4 transition-all text-left"
+        >
+          <PlusCircle className="w-4 h-4 text-primary flex-shrink-0" />
+          <span className="text-sm font-semibold text-primary">New Post</span>
+        </button>
+        <Link to="/RecordingLibrary"
+          className="flex items-center gap-3 glass border border-white/5 hover:border-white/15 rounded-2xl px-4 py-4 transition-all"
+        >
+          <Play className="w-4 h-4 text-muted-foreground flex-shrink-0" />
+          <span className="text-sm text-muted-foreground">Recordings</span>
         </Link>
       </div>
 
@@ -211,6 +219,13 @@ export default function AvatarDashboard() {
             ))}
           </div>
         </div>
+      )}
+      {showPostUpload && (
+        <PostUpload
+          user={user}
+          profile={profile}
+          onClose={() => setShowPostUpload(false)}
+        />
       )}
     </AppShell>
   );
