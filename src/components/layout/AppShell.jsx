@@ -6,7 +6,7 @@ import { base44 } from '@/api/base44Client';
 import NotificationBell from '@/components/notifications/NotificationBell';
 import RoleSwitcher from '@/components/RoleSwitcher';
 
-export default function AppShell({ children, navItems = [], user, fullBleed = false }) {
+export default function AppShell({ children, navItems = [], user }) {
   const location = useLocation();
   const [drawerOpen, setDrawerOpen] = useState(false);
 
@@ -146,12 +146,10 @@ export default function AppShell({ children, navItems = [], user, fullBleed = fa
       </nav>
 
       {/* Main Content */}
-      <main className="flex-1 min-w-0 lg:ml-64 pt-14 lg:pt-0 pb-20 lg:pb-0">
-        {fullBleed ? children : (
-          <div className="w-full min-w-0 px-4 py-4 lg:p-8 lg:max-w-7xl lg:mx-auto">
-            {children}
-          </div>
-        )}
+      <main className="flex-1 min-w-0 overflow-x-hidden lg:ml-64 pt-14 lg:pt-0 pb-20 lg:pb-0">
+        <div className="w-full min-w-0 px-4 py-4 lg:p-8 lg:max-w-7xl lg:mx-auto">
+          {children}
+        </div>
       </main>
     </div>
   );

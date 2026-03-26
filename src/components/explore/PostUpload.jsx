@@ -59,25 +59,22 @@ export default function PostUpload({ user, profile, onClose }) {
     mutationFn: async () => {
       setUploading(true);
       setProgress(0);
-      const mediaItems = [];
       for (let i = 0; i < items.length; i++) {
         const { file, fileType } = items[i];
         const { file_url } = await base44.integrations.Core.UploadFile({ file });
-        mediaItems.push({ url: file_url, type: fileType });
+        await base44.entities.Post.create({
+          avatar_email: user.email,
+          avatar_name: profile?.display_name || user.full_name,
+          avatar_photo_url: profile?.photo_url || '',
+          avatar_profile_id: profile?.id || '',
+          type: fileType,
+          media_url: file_url,
+          caption: caption.trim(),
+          category: category.trim(),
+          is_published: true,
+        });
         setProgress(Math.round(((i + 1) / items.length) * 100));
       }
-      await base44.entities.Post.create({
-        avatar_email: user.email,
-        avatar_name: profile?.display_name || user.full_name,
-        avatar_photo_url: profile?.photo_url || '',
-        avatar_profile_id: profile?.id || '',
-        type: mediaItems[0].type,
-        media_url: mediaItems[0].url,
-        media_items: mediaItems,
-        caption: caption.trim(),
-        category: category.trim(),
-        is_published: true,
-      });
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['explore-posts'] });
@@ -104,51 +101,33 @@ export default function PostUpload({ user, profile, onClose }) {
         <div className="p-5 space-y-4">
           {/* Preview grid */}
           {items.length > 0 ? (
-            <div>
-              <p className="text-xs text-muted-foreground mb-2">Tap any item to set it as the cover (shown first)</p>
-              <div className="grid grid-cols-3 gap-2">
-                {items.map((item, idx) => (
-                  <div
-                    key={idx}
-                    className={`relative rounded-xl overflow-hidden bg-black aspect-square cursor-pointer ring-2 transition-all ${idx === 0 ? 'ring-primary' : 'ring-transparent'}`}
-                    onClick={() => {
-                      if (idx === 0) return;
-                      setItems(prev => {
-                        const next = [...prev];
-                        const [picked] = next.splice(idx, 1);
-                        next.unshift(picked);
-                        return next;
-                      });
-                    }}
+            <div className="grid grid-cols-3 gap-2">
+              {items.map((item, idx) => (
+                <div key={idx} className="relative rounded-xl overflow-hidden bg-black aspect-square">
+                  {item.fileType === 'video'
+                    ? <video src={item.preview} className="w-full h-full object-cover" muted loop autoPlay playsInline />
+                    : <img src={item.preview} alt="preview" className="w-full h-full object-cover" />}
+                  <button
+                    onClick={() => removeItem(idx)}
+                    className="absolute top-1 right-1 w-6 h-6 rounded-full bg-black/70 flex items-center justify-center"
                   >
-                    {item.fileType === 'video'
-                      ? <video src={item.preview} className="w-full h-full object-cover" muted loop autoPlay playsInline />
-                      : <img src={item.preview} alt="preview" className="w-full h-full object-cover" />}
-                    {idx === 0 && (
-                      <div className="absolute top-1 left-1 bg-primary text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full">COVER</div>
-                    )}
-                    <button
-                      onClick={e => { e.stopPropagation(); removeItem(idx); }}
-                      className="absolute top-1 right-1 w-6 h-6 rounded-full bg-black/70 flex items-center justify-center"
-                    >
-                      <X className="w-3 h-3 text-white" />
-                    </button>
-                    {item.fileType === 'video' && (
-                      <div className="absolute bottom-1 left-1">
-                        <Video className="w-3.5 h-3.5 text-white drop-shadow" />
-                      </div>
-                    )}
-                  </div>
-                ))}
-                {/* Add more button */}
-                <button
-                  onClick={() => inputRef.current?.click()}
-                  className="aspect-square rounded-xl border-2 border-dashed border-white/10 flex flex-col items-center justify-center gap-1 hover:border-primary/30 transition-colors"
-                >
-                  <Plus className="w-5 h-5 text-muted-foreground" />
-                  <span className="text-[10px] text-muted-foreground">Add</span>
-                </button>
-              </div>
+                    <X className="w-3 h-3 text-white" />
+                  </button>
+                  {item.fileType === 'video' && (
+                    <div className="absolute bottom-1 left-1">
+                      <Video className="w-3.5 h-3.5 text-white drop-shadow" />
+                    </div>
+                  )}
+                </div>
+              ))}
+              {/* Add more button */}
+              <button
+                onClick={() => inputRef.current?.click()}
+                className="aspect-square rounded-xl border-2 border-dashed border-white/10 flex flex-col items-center justify-center gap-1 hover:border-primary/30 transition-colors"
+              >
+                <Plus className="w-5 h-5 text-muted-foreground" />
+                <span className="text-[10px] text-muted-foreground">Add</span>
+              </button>
             </div>
           ) : (
             <button

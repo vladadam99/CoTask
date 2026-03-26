@@ -63,14 +63,17 @@ const AuthenticatedApp = () => {
   if (authError) {
     if (authError.type === 'user_not_registered') {
       return <UserNotRegisteredError />;
+    } else if (authError.type === 'auth_required') {
+      // Redirect to login automatically
+      navigateToLogin();
+      return null;
     }
-    // For auth_required, still render routes so public pages like Landing work
   }
 
   // Render the main app
   return (
     <Routes>
-      <Route path="/" element={<Landing />} />
+      <Route path="/" element={<Navigate to="/Landing" replace />} />
       <Route path="/Landing" element={<Landing />} />
       <Route path="/RoleSelect" element={<RoleSelect />} />
       <Route path="/Onboarding" element={<Onboarding />} />

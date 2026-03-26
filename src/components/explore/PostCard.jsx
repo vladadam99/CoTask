@@ -1,200 +1,19 @@
-import React, { useState, useRef, useEffect, useCallback } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
-import { Heart, MessageCircle, Send, Bookmark, ChevronLeft, ChevronRight, Volume2, VolumeX } from 'lucide-react';
+import { Heart, MessageCircle, Send, X, Play, Pause, Volume2, VolumeX } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { formatDistanceToNow } from 'date-fns';
 
-// Global sound unlock — once user taps anywhere, videos can play with sound
-let globalSoundUnlocked = false;
-const soundUnlockListeners = new Set();
-function unlockSound() {
-  if (globalSoundUnlocked) return;
-  globalSoundUnlocked = true;
-  soundUnlockListeners.forEach(fn => fn());
-  soundUnlockListeners.clear();
-}
-if (typeof window !== 'undefined') {
-  window.addEventListener('click', unlockSound, { once: true });
-  window.addEventListener('touchend', unlockSound, { once: true });
-}
-
-function VideoSlide({ src, active }) {
+// Fullscreen modal for a single post
+function MediaModal({ post, user, onClose }) {
   const videoRef = useRef(null);
-  const playPromiseRef = useRef(null);
-  const [muted, setMuted] = useState(true);
-  const [showSoundHint, setShowSoundHint] = useState(false);
-
-  const tryUnmute = useCallback(() => {
-    if (!videoRef.current) return;
-    videoRef.current.muted = false;
-    setMuted(false);
-    setShowSoundHint(false);
-  }, []);
-
-  useEffect(() => {
-    const video = videoRef.current;
-    if (!video) return;
-
-    if (active) {
-      video.muted = true;
-      setMuted(true);
-      playPromiseRef.current = video.play();
-      playPromiseRef.current?.then(() => {
-        // Try to unmute if already unlocked
-        if (globalSoundUnlocked) {
-          tryUnmute();
-        } else {
-          setShowSoundHint(true);
-          soundUnlockListeners.add(() => {
-            tryUnmute();
-            setShowSoundHint(false);
-          });
-        }
-      }).catch(() => {});
-    } else {
-      if (playPromiseRef.current) {
-        playPromiseRef.current.then(() => {
-          video.pause();
-          video.currentTime = 0;
-        }).catch(() => {});
-      } else {
-        video.pause();
-        video.currentTime = 0;
-      }
-      playPromiseRef.current = null;
-      setShowSoundHint(false);
-    }
-  }, [active, src]);
-
-  const toggleMute = (e) => {
-    e.stopPropagation();
-    unlockSound();
-    const newMuted = !muted;
-    if (videoRef.current) videoRef.current.muted = newMuted;
-    setMuted(newMuted);
-    setShowSoundHint(false);
-  };
-
-  return (
-    <div className="relative w-full h-full">
-      <video
-        ref={videoRef}
-        src={src}
-        className="w-full h-full object-cover"
-        loop playsInline muted
-      />
-      {/* Sound button */}
-      <button
-        onClick={toggleMute}
-        className="absolute bottom-3 right-3 z-10 flex items-center gap-1.5 bg-black/60 backdrop-blur-sm rounded-full px-3 py-1.5 border border-white/20"
-      >
-        {muted
-          ? <><VolumeX className="w-4 h-4 text-white" /><span className="text-white text-xs font-medium">Tap for sound</span></>
-          : <Volume2 className="w-4 h-4 text-white" />}
-      </button>
-      {/* "Tap for sound" hint overlay on first load */}
-      {showSoundHint && muted && (
-        <div
-          className="absolute inset-0 flex items-center justify-center z-10 pointer-events-none"
-          style={{ background: 'linear-gradient(to top, rgba(0,0,0,0.3) 0%, transparent 50%)' }}
-        >
-          <div className="absolute bottom-14 right-3 animate-bounce pointer-events-none">
-            <div className="bg-black/70 text-white text-xs px-3 py-1.5 rounded-full flex items-center gap-1.5">
-              <VolumeX className="w-3.5 h-3.5" /> Tap for sound
-            </div>
-          </div>
-        </div>
-      )}
-    </div>
-  );
-}
-
-function MediaCarousel({ items, activeIndex, setActiveIndex, inView }) {
-  const isMulti = items.length > 1;
-  const touchStartX = useRef(null);
-
-  const prev = (e) => { e.stopPropagation(); setActiveIndex(i => Math.max(0, i - 1)); };
-  const next = (e) => { e.stopPropagation(); setActiveIndex(i => Math.min(items.length - 1, i + 1)); };
-
-  const handleTouchStart = (e) => { touchStartX.current = e.touches[0].clientX; };
-  const handleTouchEnd = (e) => {
-    if (touchStartX.current === null) return;
-    const diff = touchStartX.current - e.changedTouches[0].clientX;
-    if (diff > 40) setActiveIndex(i => Math.min(items.length - 1, i + 1));
-    else if (diff < -40) setActiveIndex(i => Math.max(0, i - 1));
-    touchStartX.current = null;
-  };
-
-  return (
-    <div
-      className="relative w-full overflow-hidden"
-      style={{ aspectRatio: '4/5' }}
-      onTouchStart={handleTouchStart}
-      onTouchEnd={handleTouchEnd}
-    >
-      {/* Slider */}
-      <div
-        className="flex h-full transition-transform duration-300 ease-in-out"
-        style={{ transform: `translateX(-${activeIndex * 100}%)`, width: `${items.length * 100}%` }}
-      >
-        {items.map((item, i) => (
-          <div key={i} className="h-full flex-shrink-0" style={{ width: `${100 / items.length}%` }}>
-            {item.type === 'video'
-              ? <VideoSlide src={item.url} active={inView && i === activeIndex} />
-              : <img src={item.url} alt="" className="w-full h-full object-cover" draggable={false} />}
-          </div>
-        ))}
-      </div>
-
-      {/* Multi-item controls */}
-      {isMulti && (
-        <>
-          {/* Counter badge */}
-          <div className="absolute top-3 right-3 bg-black/60 text-white text-xs font-semibold px-2.5 py-1 rounded-full z-10 pointer-events-none">
-            {activeIndex + 1}/{items.length}
-          </div>
-
-          {/* Arrows */}
-          {activeIndex > 0 && (
-            <button onClick={prev} className="absolute left-2 top-1/2 -translate-y-1/2 w-7 h-7 rounded-full bg-white/90 shadow-md flex items-center justify-center z-10">
-              <ChevronLeft className="w-4 h-4 text-black" />
-            </button>
-          )}
-          {activeIndex < items.length - 1 && (
-            <button onClick={next} className="absolute right-2 top-1/2 -translate-y-1/2 w-7 h-7 rounded-full bg-white/90 shadow-md flex items-center justify-center z-10">
-              <ChevronRight className="w-4 h-4 text-black" />
-            </button>
-          )}
-        </>
-      )}
-    </div>
-  );
-}
-
-export default function PostCard({ post, user }) {
+  const [playing, setPlaying] = useState(true);
+  const [muted, setMuted] = useState(false);
   const queryClient = useQueryClient();
   const navigate = useNavigate();
-  const [activeIndex, setActiveIndex] = useState(0);
-  const [inView, setInView] = useState(false);
-  const [showComments, setShowComments] = useState(false);
   const [commentText, setCommentText] = useState('');
-  const cardRef = useRef(null);
-
-  const items = post.media_items?.length
-    ? post.media_items
-    : [{ url: post.media_url, type: post.type || 'photo' }];
-  const isMulti = items.length > 1;
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => setInView(entry.isIntersecting && entry.intersectionRatio >= 0.5),
-      { threshold: 0.5 }
-    );
-    if (cardRef.current) observer.observe(cardRef.current);
-    return () => observer.disconnect();
-  }, []);
+  const [showComments, setShowComments] = useState(false);
 
   const { data: liked = false } = useQuery({
     queryKey: ['post-liked', user?.email, post.id],
@@ -245,158 +64,367 @@ export default function PostCard({ post, user }) {
     },
   });
 
-  const goToProfile = () => navigate(`/AvatarView?id=${post.avatar_profile_id}`);
+  useEffect(() => {
+    if (post.type === 'video' && videoRef.current) {
+      videoRef.current.play().catch(() => {});
+    }
+  }, [post.type]);
 
-  const timeAgo = post.created_date
-    ? formatDistanceToNow(new Date(post.created_date), { addSuffix: true })
-    : '';
+  const togglePlay = () => {
+    if (!videoRef.current) return;
+    if (playing) { videoRef.current.pause(); setPlaying(false); }
+    else { videoRef.current.play(); setPlaying(true); }
+  };
 
   return (
-    <div ref={cardRef} className="w-full" style={{ borderBottom: '1px solid rgba(255,255,255,0.08)' }}>
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="fixed inset-0 z-[100] bg-black flex flex-col"
+      onClick={onClose}
+    >
+      <div className="flex flex-col h-full" onClick={e => e.stopPropagation()}>
+        {/* Top bar */}
+        <div className="flex items-center gap-3 px-4 py-3 absolute top-0 left-0 right-0 z-10 bg-gradient-to-b from-black/70 to-transparent">
+          <button
+            onClick={() => { onClose(); navigate(`/AvatarView?id=${post.avatar_profile_id}`); }}
+            className="flex items-center gap-2 flex-1"
+          >
+            <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center text-sm font-bold text-primary overflow-hidden">
+              {post.avatar_photo_url
+                ? <img src={post.avatar_photo_url} alt={post.avatar_name} className="w-full h-full object-cover" />
+                : post.avatar_name?.[0] || 'A'}
+            </div>
+            <span className="text-sm font-semibold text-white">{post.avatar_name || 'Avatar'}</span>
+          </button>
+          <button onClick={onClose} className="p-1.5 rounded-full bg-black/40">
+            <X className="w-5 h-5 text-white" />
+          </button>
+        </div>
 
-      {/* ── HEADER ── */}
-      <div className="flex items-center gap-2.5 px-3 py-2">
-        <button onClick={goToProfile} className="flex-shrink-0">
-          <div className="w-8 h-8 rounded-full overflow-hidden ring-2 ring-primary/50 ring-offset-1 ring-offset-background">
+        {/* Media */}
+        <div className="flex-1 flex items-center justify-center bg-black relative" onClick={post.type === 'video' ? togglePlay : undefined}>
+          {post.type === 'video' ? (
+            <>
+              <video
+                ref={videoRef}
+                src={post.media_url}
+                className="w-full h-full object-contain"
+                loop
+                playsInline
+                muted={muted}
+                onEnded={() => setPlaying(false)}
+              />
+              <div className="absolute bottom-4 right-4 flex gap-2">
+                <button onClick={e => { e.stopPropagation(); setMuted(m => !m); }} className="p-2 rounded-full bg-black/50">
+                  {muted ? <VolumeX className="w-4 h-4 text-white" /> : <Volume2 className="w-4 h-4 text-white" />}
+                </button>
+              </div>
+              {!playing && (
+                <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                  <div className="w-16 h-16 rounded-full bg-black/50 flex items-center justify-center">
+                    <Play className="w-7 h-7 text-white fill-white ml-1" />
+                  </div>
+                </div>
+              )}
+            </>
+          ) : (
+            <img src={post.media_url} alt={post.caption || 'Post'} className="w-full h-full object-contain" />
+          )}
+        </div>
+
+        {/* Bottom bar */}
+        <div className="bg-black/90 px-4 py-3">
+          {post.caption && (
+            <p className="text-sm text-white mb-2">
+              <span className="font-semibold mr-1">{post.avatar_name}</span>
+              {post.caption}
+            </p>
+          )}
+          <div className="flex items-center gap-4 mb-2">
+            <motion.button whileTap={{ scale: 0.8 }} onClick={() => user && toggleLike.mutate()} disabled={!user} className="flex items-center gap-1.5">
+              <Heart className={`w-6 h-6 ${liked ? 'fill-primary text-primary' : 'text-white'}`} />
+              <span className="text-sm text-white">{post.likes_count || 0}</span>
+            </motion.button>
+            <button onClick={() => setShowComments(v => !v)} className="flex items-center gap-1.5 text-white">
+              <MessageCircle className="w-6 h-6" />
+              <span className="text-sm">{post.comments_count || 0}</span>
+            </button>
+          </div>
+          <AnimatePresence>
+            {showComments && (
+              <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} className="overflow-hidden border-t border-white/10 pt-2">
+                <div className="space-y-2 max-h-36 overflow-y-auto mb-2">
+                  {comments.length === 0 && <p className="text-xs text-white/50">No comments yet.</p>}
+                  {comments.map(c => (
+                    <div key={c.id} className="flex gap-2">
+                      <div className="w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center text-xs font-bold text-primary flex-shrink-0">
+                        {c.commenter_name?.[0] || 'U'}
+                      </div>
+                      <div>
+                        <span className="text-xs font-semibold text-white mr-1">{c.commenter_name}</span>
+                        <span className="text-xs text-white/70">{c.content}</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                {user && (
+                  <div className="flex gap-2">
+                    <input
+                      value={commentText}
+                      onChange={e => setCommentText(e.target.value)}
+                      onKeyDown={e => { if (e.key === 'Enter' && commentText.trim()) addComment.mutate(); }}
+                      placeholder="Add a comment..."
+                      className="flex-1 bg-white/10 border border-white/20 rounded-xl px-3 py-2 text-sm text-white placeholder:text-white/40 focus:outline-none"
+                    />
+                    <button onClick={() => commentText.trim() && addComment.mutate()} disabled={!commentText.trim()} className="w-9 h-9 rounded-xl bg-primary/20 flex items-center justify-center">
+                      <Send className="w-4 h-4 text-primary" />
+                    </button>
+                  </div>
+                )}
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+      </div>
+    </motion.div>
+  );
+}
+
+export default function PostCard({ post, user }) {
+  const queryClient = useQueryClient();
+  const navigate = useNavigate();
+  const [showComments, setShowComments] = useState(false);
+  const [commentText, setCommentText] = useState('');
+  const [playing, setPlaying] = useState(false);
+  const [muted, setMuted] = useState(true);
+  const [modalOpen, setModalOpen] = useState(false);
+  const videoRef = useRef(null);
+  const cardRef = useRef(null);
+
+  // Autoplay on scroll into view
+  useEffect(() => {
+    if (post.type !== 'video') return;
+    let playPromise = null;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (!videoRef.current) return;
+        if (entry.isIntersecting && entry.intersectionRatio >= 0.6) {
+          videoRef.current.muted = false;
+          setMuted(false);
+          playPromise = videoRef.current.play();
+          if (playPromise) playPromise.then(() => setPlaying(true)).catch(() => {});
+        } else {
+          videoRef.current.muted = true;
+          setMuted(true);
+          if (playPromise) {
+            playPromise.then(() => { videoRef.current?.pause(); setPlaying(false); }).catch(() => {});
+          } else {
+            videoRef.current.pause();
+            setPlaying(false);
+          }
+          playPromise = null;
+        }
+      },
+      { threshold: 0.6 }
+    );
+    if (cardRef.current) observer.observe(cardRef.current);
+    return () => observer.disconnect();
+  }, [post.type]);
+
+  const { data: liked = false } = useQuery({
+    queryKey: ['post-liked', user?.email, post.id],
+    queryFn: async () => {
+      const likes = await base44.entities.PostLike.filter({ post_id: post.id, user_email: user.email });
+      return likes.length > 0;
+    },
+    enabled: !!user,
+  });
+
+  const { data: comments = [] } = useQuery({
+    queryKey: ['post-comments', post.id],
+    queryFn: () => base44.entities.PostComment.filter({ post_id: post.id }, '-created_date', 20),
+    enabled: showComments,
+  });
+
+  const toggleLike = useMutation({
+    mutationFn: async () => {
+      if (liked) {
+        const likes = await base44.entities.PostLike.filter({ post_id: post.id, user_email: user.email });
+        if (likes[0]) await base44.entities.PostLike.delete(likes[0].id);
+        await base44.entities.Post.update(post.id, { likes_count: Math.max(0, (post.likes_count || 0) - 1) });
+      } else {
+        await base44.entities.PostLike.create({ post_id: post.id, user_email: user.email });
+        await base44.entities.Post.update(post.id, { likes_count: (post.likes_count || 0) + 1 });
+      }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['post-liked', user?.email, post.id] });
+      queryClient.invalidateQueries({ queryKey: ['explore-posts'] });
+    },
+  });
+
+  const addComment = useMutation({
+    mutationFn: async () => {
+      await base44.entities.PostComment.create({
+        post_id: post.id,
+        commenter_email: user.email,
+        commenter_name: user.full_name || user.email,
+        content: commentText.trim(),
+      });
+      await base44.entities.Post.update(post.id, { comments_count: (post.comments_count || 0) + 1 });
+    },
+    onSuccess: () => {
+      setCommentText('');
+      queryClient.invalidateQueries({ queryKey: ['post-comments', post.id] });
+      queryClient.invalidateQueries({ queryKey: ['explore-posts'] });
+    },
+  });
+
+  const goToProfile = (e) => {
+    e.stopPropagation();
+    navigate(`/AvatarView?id=${post.avatar_profile_id}`);
+  };
+
+  return (
+    <>
+      <AnimatePresence>
+        {modalOpen && <MediaModal post={post} user={user} onClose={() => setModalOpen(false)} />}
+      </AnimatePresence>
+
+      <div ref={cardRef} className="bg-card/50 border border-white/5 rounded-2xl overflow-hidden">
+        {/* Header — only this navigates to profile */}
+        <div className="flex items-center gap-3 px-4 py-3 cursor-pointer" onClick={goToProfile}>
+          <div className="w-9 h-9 rounded-full bg-primary/20 flex items-center justify-center text-sm font-bold text-primary overflow-hidden flex-shrink-0">
             {post.avatar_photo_url
               ? <img src={post.avatar_photo_url} alt={post.avatar_name} className="w-full h-full object-cover" />
-              : <div className="w-full h-full bg-primary/20 flex items-center justify-center text-sm font-bold text-primary">{post.avatar_name?.[0] || 'A'}</div>}
+              : post.avatar_name?.[0] || 'A'}
           </div>
-        </button>
-        <div className="flex-1 min-w-0" onClick={goToProfile}>
-          <p className="text-[13px] font-bold leading-tight truncate">{post.avatar_name || 'Avatar'}</p>
-          {post.category && <p className="text-[11px] text-muted-foreground leading-tight truncate">{post.category}</p>}
+          <div className="flex-1 min-w-0">
+            <p className="text-sm font-semibold hover:text-primary transition-colors truncate">{post.avatar_name || 'Avatar'}</p>
+            {post.category && <p className="text-xs text-muted-foreground">{post.category}</p>}
+          </div>
         </div>
-        <button className="p-1 text-foreground/70">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-            <circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/>
-          </svg>
-        </button>
-      </div>
 
-      {/* ── MEDIA ── */}
-      <MediaCarousel
-        items={items}
-        activeIndex={activeIndex}
-        setActiveIndex={setActiveIndex}
-        inView={inView}
-      />
-
-      {/* ── CAROUSEL DOTS ── */}
-      {isMulti && (
-        <div className="flex justify-center gap-1.5 pt-2">
-          {items.map((_, i) => (
-            <div
-              key={i}
-              className={`rounded-full transition-all duration-200 ${
-                i === activeIndex
-                  ? 'w-2 h-2 bg-primary'
-                  : 'w-1.5 h-1.5 bg-white/30'
-              }`}
-            />
-          ))}
-        </div>
-      )}
-
-      {/* ── ACTIONS ── */}
-      <div className="flex items-center px-3 pt-2 pb-1 gap-3">
-        {/* Like */}
-        <motion.button
-          whileTap={{ scale: 0.75 }}
-          onClick={() => user && toggleLike.mutate()}
-          disabled={!user || toggleLike.isPending}
-          className="flex items-center gap-1"
+        {/* Media — full width, taller */}
+        <div
+          className="relative bg-black w-full overflow-hidden"
+          style={{ aspectRatio: post.type === 'video' ? '9/16' : '4/5', maxHeight: '75vh' }}
         >
-          <Heart className={`w-6 h-6 ${liked ? 'fill-red-500 text-red-500' : 'text-foreground'}`} />
-        </motion.button>
-        {/* Comment */}
-        <button onClick={() => setShowComments(v => !v)} className="flex items-center gap-1">
-          <MessageCircle className="w-6 h-6 text-foreground" />
-        </button>
-        {/* Share */}
-        <button className="flex items-center gap-1">
-          <Send className="w-5 h-5 text-foreground" />
-        </button>
-        {/* Bookmark far right */}
-        <button className="ml-auto">
-          <Bookmark className="w-6 h-6 text-foreground" />
-        </button>
-      </div>
-
-      {/* ── LIKES COUNT ── */}
-      <div className="px-3 pb-1">
-        {(post.likes_count || 0) > 0 && (
-          <p className="text-[13px] font-bold">{post.likes_count.toLocaleString()} {post.likes_count === 1 ? 'like' : 'likes'}</p>
-        )}
-
-        {/* ── CAPTION ── */}
-        {post.caption && (
-          <p className="text-[13px] leading-snug mt-0.5">
-            <button onClick={goToProfile} className="font-bold mr-1">{post.avatar_name}</button>
-            <span>{post.caption}</span>
-          </p>
-        )}
-
-        {/* ── VIEW COMMENTS ── */}
-        {(post.comments_count || 0) > 0 && (
-          <button
-            onClick={() => setShowComments(v => !v)}
-            className="text-[13px] text-muted-foreground mt-0.5 block"
-          >
-            View all {post.comments_count} comments
-          </button>
-        )}
-
-        {/* ── TIMESTAMP ── */}
-        {timeAgo && (
-          <p className="text-[11px] text-muted-foreground mt-0.5 uppercase tracking-wide">{timeAgo}</p>
-        )}
-      </div>
-
-      {/* ── COMMENTS ── */}
-      <AnimatePresence>
-        {showComments && (
-          <motion.div
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: 'auto', opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            className="overflow-hidden"
-          >
-            <div className="px-3 pb-1 space-y-1 max-h-36 overflow-y-auto">
-              {comments.length === 0 && <p className="text-xs text-muted-foreground">No comments yet.</p>}
-              {comments.map(c => (
-                <p key={c.id} className="text-[13px]">
-                  <span className="font-bold mr-1">{c.commenter_name}</span>
-                  <span>{c.content}</span>
-                </p>
-              ))}
-            </div>
-            {user && (
-              <div className="flex items-center gap-2 px-3 pb-3 pt-1 border-t border-white/5">
-                <div className="w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center text-[10px] font-bold text-primary flex-shrink-0">
-                  {user.full_name?.[0] || 'U'}
+          {post.type === 'video' ? (
+            <>
+              <video
+                ref={videoRef}
+                src={post.media_url}
+                className="w-full h-full object-cover cursor-pointer"
+                loop
+                playsInline
+                muted={muted}
+                autoPlay
+                onPlay={() => setPlaying(true)}
+                onPause={() => setPlaying(false)}
+                onEnded={() => setPlaying(false)}
+                onClick={() => {
+                  if (!videoRef.current) return;
+                  if (playing) { videoRef.current.pause(); } else { videoRef.current.play().catch(() => {}); }
+                }}
+              />
+              {!playing && (
+                <div
+                  className="absolute inset-0 flex items-center justify-center bg-black/30 pointer-events-none"
+                >
+                  <div className="w-14 h-14 rounded-full bg-black/60 backdrop-blur flex items-center justify-center">
+                    <Play className="w-6 h-6 text-white fill-white ml-1" />
+                  </div>
                 </div>
-                <input
-                  value={commentText}
-                  onChange={e => setCommentText(e.target.value)}
-                  onKeyDown={e => { if (e.key === 'Enter' && commentText.trim()) addComment.mutate(); }}
-                  placeholder="Add a comment..."
-                  className="flex-1 bg-transparent text-[13px] text-foreground placeholder:text-muted-foreground focus:outline-none"
-                />
-                {commentText.trim() && (
-                  <button
-                    onClick={() => addComment.mutate()}
-                    disabled={addComment.isPending}
-                    className="text-primary text-[13px] font-semibold"
-                  >
-                    Post
-                  </button>
+              )}
+              {/* Mute/Unmute button */}
+              <button
+                onClick={() => setMuted(v => !v)}
+                className="absolute bottom-2 right-2 p-1.5 rounded-full bg-black/60 text-white z-10"
+              >
+                {muted ? (
+                  <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707A1 1 0 0112 5v14a1 1 0 01-1.707.707L5.586 15z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2" /></svg>
+                ) : (
+                  <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.536 8.464a5 5 0 010 7.072M12 6v12m0 0l-4-4H4V10h4l4-4z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18.364 5.636a9 9 0 010 12.728" /></svg>
                 )}
+              </button>
+              {/* Fullscreen button */}
+              <button
+                onClick={() => setModalOpen(true)}
+                className="absolute top-2 right-2 p-1.5 rounded-full bg-black/50 text-white"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5v-4m0 4h-4m4 0l-5-5" /></svg>
+              </button>
+            </>
+          ) : (
+            <img src={post.media_url} alt={post.caption || 'Post'} className="w-full h-full object-cover cursor-pointer" onClick={() => setModalOpen(true)} />
+          )}
+        </div>
+
+        {/* Actions */}
+        <div className="px-4 py-3">
+          <div className="flex items-center gap-4 mb-2">
+            <motion.button whileTap={{ scale: 0.8 }} onClick={() => user && toggleLike.mutate()} disabled={!user || toggleLike.isPending} className="flex items-center gap-1.5">
+              <Heart className={`w-5 h-5 transition-colors ${liked ? 'fill-primary text-primary' : 'text-muted-foreground'}`} />
+              <span className="text-sm font-medium">{post.likes_count || 0}</span>
+            </motion.button>
+            <button onClick={() => setShowComments(v => !v)} className="flex items-center gap-1.5 text-muted-foreground hover:text-foreground transition-colors">
+              <MessageCircle className="w-5 h-5" />
+              <span className="text-sm font-medium">{post.comments_count || 0}</span>
+            </button>
+          </div>
+
+          {post.caption && (
+            <p className="text-sm mb-1">
+              <span className="font-semibold mr-1 cursor-pointer hover:text-primary" onClick={goToProfile}>{post.avatar_name}</span>
+              {post.caption}
+            </p>
+          )}
+        </div>
+
+        {/* Comments drawer */}
+        <AnimatePresence>
+          {showComments && (
+            <motion.div
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: 'auto', opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              className="overflow-hidden border-t border-white/5"
+            >
+              <div className="px-4 py-3 space-y-3 max-h-48 overflow-y-auto">
+                {comments.length === 0 && <p className="text-xs text-muted-foreground">No comments yet. Be first!</p>}
+                {comments.map(c => (
+                  <div key={c.id} className="flex gap-2">
+                    <div className="w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center text-xs font-bold text-primary flex-shrink-0">
+                      {c.commenter_name?.[0] || 'U'}
+                    </div>
+                    <div>
+                      <span className="text-xs font-semibold mr-1">{c.commenter_name}</span>
+                      <span className="text-xs text-muted-foreground">{c.content}</span>
+                    </div>
+                  </div>
+                ))}
               </div>
-            )}
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </div>
+              {user && (
+                <div className="px-4 pb-3 flex gap-2">
+                  <input
+                    value={commentText}
+                    onChange={e => setCommentText(e.target.value)}
+                    onKeyDown={e => { if (e.key === 'Enter' && commentText.trim()) addComment.mutate(); }}
+                    placeholder="Add a comment..."
+                    className="flex-1 bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-primary/40 text-foreground placeholder:text-muted-foreground"
+                  />
+                  <button onClick={() => commentText.trim() && addComment.mutate()} disabled={!commentText.trim() || addComment.isPending} className="w-9 h-9 rounded-xl bg-primary/10 flex items-center justify-center hover:bg-primary/20 transition-colors disabled:opacity-40">
+                    <Send className="w-4 h-4 text-primary" />
+                  </button>
+                </div>
+              )}
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
+    </>
   );
 }
