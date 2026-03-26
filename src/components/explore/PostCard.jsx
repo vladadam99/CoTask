@@ -11,22 +11,32 @@ function MediaItem({ item, autoPlay, onPlay, onPause }) {
   const [playing, setPlaying] = useState(false);
   const [muted, setMuted] = useState(true);
 
+  const playPromiseRef = useRef(null);
+
   useEffect(() => {
     if (item.type !== 'video' || !videoRef.current) return;
     const video = videoRef.current;
     if (autoPlay) {
       video.muted = false;
       setMuted(false);
-      const p = video.play();
-      if (p) p.then(() => { setPlaying(true); onPlay?.(); }).catch(err => {
-        if (err.name !== 'AbortError') console.warn(err);
-      });
+      playPromiseRef.current = video.play();
+      if (playPromiseRef.current) {
+        playPromiseRef.current
+          .then(() => { setPlaying(true); onPlay?.(); })
+          .catch(() => {}); // swallow AbortError and any other play errors
+      }
     } else {
       video.muted = true;
       setMuted(true);
-      // Delay pause to avoid interrupting an in-flight play() promise
-      const t = setTimeout(() => { video.pause(); setPlaying(false); onPause?.(); }, 50);
-      return () => clearTimeout(t);
+      // Always resolve any pending play promise before pausing
+      if (playPromiseRef.current) {
+        playPromiseRef.current.then(() => { video.pause(); }).catch(() => {});
+      } else {
+        video.pause();
+      }
+      playPromiseRef.current = null;
+      setPlaying(false);
+      onPause?.();
     }
   }, [autoPlay, item.url]);
 
