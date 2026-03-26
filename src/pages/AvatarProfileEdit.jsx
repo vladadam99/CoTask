@@ -165,12 +165,32 @@ export default function AvatarProfileEdit() {
           <GlassCard className="p-5">
             <h2 className="font-semibold text-sm mb-4">Profile Photo & Cover</h2>
             {/* Cover */}
-            <div className="relative w-full h-28 rounded-xl overflow-hidden bg-gradient-to-br from-primary/10 via-card to-card mb-6 group cursor-pointer" onClick={() => coverInputRef.current?.click()}>
-              {form.cover_url && <img src={form.cover_url} alt="Cover" className="w-full h-full object-cover" />}
-              <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
-                {uploadingCover ? <Loader2 className="w-5 h-5 animate-spin text-white" /> : <><Upload className="w-4 h-4 text-white" /><span className="text-white text-xs font-medium">Upload Cover</span></>}
-              </div>
-              {!form.cover_url && <div className="absolute inset-0 flex items-center justify-center"><span className="text-xs text-muted-foreground">Click to add cover photo</span></div>}
+            <div className="relative w-full h-32 rounded-xl overflow-hidden bg-gradient-to-br from-primary/20 via-primary/10 to-card mb-6 group cursor-pointer border-2 border-dashed border-white/10 hover:border-primary/40 transition-all" onClick={() => coverInputRef.current?.click()}>
+              {form.cover_url ? (
+                <>
+                  <img src={form.cover_url} alt="Cover" className="w-full h-full object-cover" />
+                  <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2 backdrop-blur-sm">
+                    {uploadingCover ? (
+                      <Loader2 className="w-5 h-5 animate-spin text-white" />
+                    ) : (
+                      <div className="flex items-center gap-2 bg-white/20 backdrop-blur px-3 py-1.5 rounded-full">
+                        <Upload className="w-4 h-4 text-white" />
+                        <span className="text-white text-xs font-semibold">Change Cover</span>
+                      </div>
+                    )}
+                  </div>
+                </>
+              ) : (
+                <div className="absolute inset-0 flex flex-col items-center justify-center gap-2">
+                  <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center">
+                    <Upload className="w-5 h-5 text-primary" />
+                  </div>
+                  <div className="text-center">
+                    <p className="text-sm font-semibold text-foreground">Add Cover Photo</p>
+                    <p className="text-xs text-muted-foreground">Click to upload</p>
+                  </div>
+                </div>
+              )}
               <input ref={coverInputRef} type="file" accept="image/*" className="hidden" onChange={e => { const f = e.target.files?.[0]; if (f) handleCoverUpload(f); }} />
             </div>
             {/* Profile photo */}
