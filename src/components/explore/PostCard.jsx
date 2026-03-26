@@ -86,8 +86,23 @@ function MediaItem({ item, autoPlay, onPlay, onPause }) {
 // Carousel used in both card and modal
 function MediaCarousel({ items, activeIndex, setActiveIndex, autoPlayIndex }) {
   const isMulti = items.length > 1;
+  const touchStartX = useRef(null);
+
+  const handleTouchStart = (e) => { touchStartX.current = e.touches[0].clientX; };
+  const handleTouchEnd = (e) => {
+    if (touchStartX.current === null) return;
+    const diff = touchStartX.current - e.changedTouches[0].clientX;
+    if (diff > 40 && activeIndex < items.length - 1) setActiveIndex(i => i + 1);
+    else if (diff < -40 && activeIndex > 0) setActiveIndex(i => i - 1);
+    touchStartX.current = null;
+  };
+
   return (
-    <div className="relative w-full h-full overflow-hidden">
+    <div
+      className="relative w-full h-full overflow-hidden"
+      onTouchStart={handleTouchStart}
+      onTouchEnd={handleTouchEnd}
+    >
       <div
         className="flex h-full transition-transform duration-300"
         style={{ transform: `translateX(-${activeIndex * 100}%)`, width: `${items.length * 100}%` }}
@@ -101,19 +116,23 @@ function MediaCarousel({ items, activeIndex, setActiveIndex, autoPlayIndex }) {
       {isMulti && (
         <>
           {activeIndex > 0 && (
-            <button onClick={() => setActiveIndex(i => i - 1)} className="absolute left-2 top-1/2 -translate-y-1/2 p-1.5 rounded-full bg-black/60 text-white z-10">
+            <button onClick={() => setActiveIndex(i => i - 1)} className="absolute left-2 top-1/2 -translate-y-1/2 p-1.5 rounded-full bg-black/50 backdrop-blur text-white z-10">
               <ChevronLeft className="w-4 h-4" />
             </button>
           )}
           {activeIndex < items.length - 1 && (
-            <button onClick={() => setActiveIndex(i => i + 1)} className="absolute right-2 top-1/2 -translate-y-1/2 p-1.5 rounded-full bg-black/60 text-white z-10">
+            <button onClick={() => setActiveIndex(i => i + 1)} className="absolute right-2 top-1/2 -translate-y-1/2 p-1.5 rounded-full bg-black/50 backdrop-blur text-white z-10">
               <ChevronRight className="w-4 h-4" />
             </button>
           )}
+          {/* Instagram-style counter top-right */}
+          <div className="absolute top-2 right-2 bg-black/50 backdrop-blur text-white text-xs font-semibold px-2 py-0.5 rounded-full z-10">
+            {activeIndex + 1}/{items.length}
+          </div>
           {/* Dots */}
           <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-1 z-10">
             {items.map((_, i) => (
-              <button key={i} onClick={() => setActiveIndex(i)} className={`w-1.5 h-1.5 rounded-full transition-all ${i === activeIndex ? 'bg-white w-3' : 'bg-white/50'}`} />
+              <div key={i} className={`h-1.5 rounded-full transition-all duration-300 ${i === activeIndex ? 'bg-white w-4' : 'bg-white/40 w-1.5'}`} />
             ))}
           </div>
         </>
@@ -335,9 +354,7 @@ export default function PostCard({ post, user }) {
             <p className="text-sm font-semibold hover:text-primary transition-colors truncate">{post.avatar_name || 'Avatar'}</p>
             {post.category && <p className="text-xs text-muted-foreground">{post.category}</p>}
           </div>
-          {items.length > 1 && (
-            <span className="text-xs text-muted-foreground bg-white/5 px-2 py-0.5 rounded-full">{activeIndex + 1}/{items.length}</span>
-          )}
+
         </div>
 
         {/* Media carousel */}
