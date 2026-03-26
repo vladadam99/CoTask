@@ -12,15 +12,17 @@ import PostCard from '@/components/explore/PostCard';
 import PostUpload from '@/components/explore/PostUpload';
 import { AnimatePresence } from 'framer-motion';
 import { getNavItems } from '@/lib/navItems';
+import { useNavigate } from 'react-router-dom';
 import {
   Home, Inbox, Calendar, Radio, MessageSquare, DollarSign,
-  Star, User, Settings, Save, Camera, Upload, Loader2, Plus, Grid
+  Star, User, Settings, Save, Camera, Upload, Loader2, Plus, Grid, Eye
 } from 'lucide-react';
 
 
 
 export default function AvatarProfileEdit() {
   const { user, loading } = useCurrentUser();
+  const navigate = useNavigate();
   const queryClient = useQueryClient();
   const { toast } = useToast();
   const fileInputRef = useRef(null);
@@ -110,9 +112,16 @@ export default function AvatarProfileEdit() {
           <h1 className="text-2xl lg:text-3xl font-bold mb-1">Edit Profile</h1>
           <p className="text-muted-foreground text-sm">Update your public avatar profile</p>
         </div>
-        <Button onClick={handleSave} disabled={updateProfile.isPending || !profile} className="gap-2">
-          <Save className="w-4 h-4" /> {updateProfile.isPending ? 'Saving…' : 'Save Changes'}
-        </Button>
+        <div className="flex gap-2">
+          {profile && (
+            <Button variant="outline" className="gap-2 border-white/10" onClick={() => navigate(`/AvatarView?id=${profile.id}`)}>            
+              <Eye className="w-4 h-4" /> View Profile
+            </Button>
+          )}
+          <Button onClick={handleSave} disabled={updateProfile.isPending || !profile} className="gap-2">
+            <Save className="w-4 h-4" /> {updateProfile.isPending ? 'Saving…' : 'Save Changes'}
+          </Button>
+        </div>
       </div>
 
       {!profile ? (
