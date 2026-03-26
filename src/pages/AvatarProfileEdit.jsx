@@ -8,7 +8,6 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/components/ui/use-toast';
-import PostCard from '@/components/explore/PostCard';
 import PostUpload from '@/components/explore/PostUpload';
 import EditPostModal from '@/components/posts/EditPostModal';
 import { AnimatePresence } from 'framer-motion';
@@ -16,7 +15,7 @@ import { getNavItems } from '@/lib/navItems';
 import { useNavigate } from 'react-router-dom';
 import {
   Home, Inbox, Calendar, Radio, MessageSquare, DollarSign,
-  Star, User, Settings, Save, Camera, Upload, Loader2, Plus, Grid, Eye, MapPin, Pencil, Trash2, X
+  Star, User, Settings, Camera, Upload, Loader2, Plus, Grid, MapPin, Pencil, Trash2, X
 } from 'lucide-react';
 
 
@@ -33,6 +32,8 @@ export default function AvatarProfileEdit() {
   const [showUpload, setShowUpload] = useState(false);
   const [editingPost, setEditingPost] = useState(null);
   const [deleteConfirm, setDeleteConfirm] = useState(null);
+  const [isSaving, setIsSaving] = useState(false);
+  const [lastSaved, setLastSaved] = useState(null);
 
   const { data: profile } = useQuery({
     queryKey: ['avatar-profile-edit', user?.email],
@@ -90,9 +91,7 @@ export default function AvatarProfileEdit() {
     try {
       const { file_url } = await base44.integrations.Core.UploadFile({ file });
       setForm(f => ({ ...f, photo_url: file_url }));
-      // Update profile
       await base44.entities.AvatarProfile.update(profile.id, { photo_url: file_url });
-      // Sync photo to all existing posts
       const posts = await base44.entities.Post.filter({ avatar_email: user.email });
       await Promise.all(posts.map(p => base44.entities.Post.update(p.id, { avatar_photo_url: file_url })));
       queryClient.invalidateQueries({ queryKey: ['avatar-profile-edit'] });
@@ -114,20 +113,34 @@ export default function AvatarProfileEdit() {
       queryClient.invalidateQueries({ queryKey: ['explore-avatars'] });
       queryClient.invalidateQueries({ queryKey: ['avatar-posts'] });
       queryClient.invalidateQueries({ queryKey: ['explore-posts'] });
-      toast({ title: 'Profile updated', description: 'Your changes have been saved.' });
     },
   });
 
-  const handleSave = () => {
-    updateProfile.mutate({
-      ...form,
-      hourly_rate: parseFloat(form.hourly_rate) || 0,
-      per_session_rate: parseFloat(form.per_session_rate) || 0,
-      languages: form.languages.split(',').map(s => s.trim()).filter(Boolean),
-      skills: form.skills.split(',').map(s => s.trim()).filter(Boolean),
-      categories: form.categories.split(',').map(s => s.trim()).filter(Boolean),
-    });
-  };
+  // Auto-save profile changes
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (profile && !updateProfile.isPending && !isSaving) {
+        setIsSaving(true);
+        updateProfile.mutate({
+          ...form,
+          hourly_rate: parseFloat(form.hourly_rate) || 0,
+          per_session_rate: parseFloat(form.per_session_rate) || 0,
+          languages: form.languages.split(',').map(s => s.trim()).filter(Boolean),
+          skills: form.skills.split(',').map(s => s.trim()).filter(Boolean),
+          categories: form.categories.split(',').map(s => s.trim()).filter(Boolean),
+        }, {
+          onSuccess: () => {
+            setIsSaving(false);
+            setLastSaved(new Date());
+          },
+          onError: () => {
+            setIsSaving(false);
+          }
+        });
+      }
+    }, 1500);
+    return () => clearTimeout(timer);
+  }, [form.display_name, form.bio, form.city, form.country, form.hourly_rate, form.per_session_rate, form.categories, form.skills, form.languages]);
 
   const deletePost = useMutation({
     mutationFn: (postId) => base44.entities.Post.delete(postId),
@@ -218,7 +231,7 @@ export default function AvatarProfileEdit() {
               <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={e => { const f = e.target.files?.[0]; if (f) handlePhotoUpload(f); }} />
             </div>
 
-            {/* Name & Actions */}
+            {/* Name & Save Status */}
             <div className="flex-1 pt-2 md:pb-2">
               <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
                 <div>
@@ -228,13 +241,18 @@ export default function AvatarProfileEdit() {
                     {form.city || 'City'}, {form.country || 'Country'}
                   </p>
                 </div>
-                <div className="flex gap-2">
-                  <Button variant="outline" className="gap-2 border-white/10" onClick={() => navigate(`/AvatarView?id=${profile.id}`)}>
-                    <Eye className="w-4 h-4" /> View
-                  </Button>
-                  <Button onClick={handleSave} disabled={updateProfile.isPending} className="gap-2">
-                    <Save className="w-4 h-4" /> {updateProfile.isPending ? 'Saving…' : 'Save'}
-                  </Button>
+                <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                  {isSaving ? (
+                    <>
+                      <Loader2 className="w-3 h-3 animate-spin" />
+                      <span>Saving...</span>
+                    </>
+                  ) : lastSaved ? (
+                    <>
+                      <span className="w-1.5 h-1.5 rounded-full bg-green-500" />
+                      <span>Saved {lastSaved.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+                    </>
+                  ) : null}
                 </div>
               </div>
             </div>
@@ -412,9 +430,6 @@ export default function AvatarProfileEdit() {
                       >
                         <Trash2 className="w-3.5 h-3.5 text-white" />
                       </button>
-                    </div>
-                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center pointer-events-none">
-                      <Button size="sm" variant="outline" className="border-white/20 text-white pointer-events-auto">View</Button>
                     </div>
                   </div>
                 ))}
