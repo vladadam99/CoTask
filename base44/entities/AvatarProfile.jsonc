@@ -1,0 +1,165 @@
+{
+  "name": "AvatarProfile",
+  "type": "object",
+  "properties": {
+    "user_email": {
+      "type": "string",
+      "description": "Email of the linked user"
+    },
+    "display_name": {
+      "type": "string"
+    },
+    "bio": {
+      "type": "string"
+    },
+    "photo_url": {
+      "type": "string"
+    },
+    "cover_url": {
+      "type": "string",
+      "description": "Cover/banner photo for profile card"
+    },
+    "city": {
+      "type": "string"
+    },
+    "country": {
+      "type": "string"
+    },
+    "categories": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "languages": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "skills": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "hourly_rate": {
+      "type": "number"
+    },
+    "per_session_rate": {
+      "type": "number"
+    },
+    "currency": {
+      "type": "string",
+      "default": "USD"
+    },
+    "rating": {
+      "type": "number",
+      "default": 0
+    },
+    "review_count": {
+      "type": "number",
+      "default": 0
+    },
+    "completed_jobs": {
+      "type": "number",
+      "default": 0
+    },
+    "response_time_minutes": {
+      "type": "number"
+    },
+    "is_available": {
+      "type": "boolean",
+      "default": false
+    },
+    "is_verified": {
+      "type": "boolean",
+      "default": false
+    },
+    "is_featured": {
+      "type": "boolean",
+      "default": false
+    },
+    "is_enterprise_ready": {
+      "type": "boolean",
+      "default": false
+    },
+    "has_360_camera": {
+      "type": "boolean",
+      "default": false
+    },
+    "has_smartphone": {
+      "type": "boolean",
+      "default": true
+    },
+    "has_data_connection": {
+      "type": "boolean",
+      "default": true
+    },
+    "has_headset": {
+      "type": "boolean",
+      "default": false
+    },
+    "has_vehicle": {
+      "type": "boolean",
+      "default": false
+    },
+    "verification_status": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "submitted",
+        "verified",
+        "rejected"
+      ],
+      "default": "pending"
+    },
+    "payout_status": {
+      "type": "string",
+      "enum": [
+        "not_connected",
+        "pending",
+        "active"
+      ],
+      "default": "not_connected"
+    },
+    "total_earnings": {
+      "type": "number",
+      "default": 0
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "active",
+        "inactive",
+        "suspended"
+      ],
+      "default": "active"
+    },
+    "availability_slots": {
+      "type": "array",
+      "description": "Weekly availability schedule",
+      "items": {
+        "type": "object",
+        "properties": {
+          "day": {
+            "type": "string"
+          },
+          "enabled": {
+            "type": "boolean"
+          },
+          "from": {
+            "type": "string"
+          },
+          "to": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  },
+  "required": [
+    "user_email",
+    "display_name"
+  ]
+}

@@ -26,7 +26,9 @@ export default function AvatarProfileEdit() {
   const queryClient = useQueryClient();
   const { toast } = useToast();
   const fileInputRef = useRef(null);
+  const coverInputRef = useRef(null);
   const [uploading, setUploading] = useState(false);
+  const [uploadingCover, setUploadingCover] = useState(false);
   const [showUpload, setShowUpload] = useState(false);
 
   const { data: profile } = useQuery({
@@ -41,7 +43,7 @@ export default function AvatarProfileEdit() {
   const [form, setForm] = useState({
     display_name: '', bio: '', city: '', country: '',
     hourly_rate: '', per_session_rate: '', currency: 'USD',
-    languages: '', skills: '', categories: '', photo_url: '',
+    languages: '', skills: '', categories: '', photo_url: '', cover_url: '',
   });
 
   useEffect(() => {
@@ -58,9 +60,26 @@ export default function AvatarProfileEdit() {
         skills: (profile.skills || []).join(', '),
         categories: (profile.categories || []).join(', '),
         photo_url: profile.photo_url || '',
+        cover_url: profile.cover_url || '',
       });
     }
   }, [profile]);
+
+  const handleCoverUpload = async (file) => {
+    if (!file) return;
+    setUploadingCover(true);
+    try {
+      const { file_url } = await base44.integrations.Core.UploadFile({ file });
+      setForm(f => ({ ...f, cover_url: file_url }));
+      await base44.entities.AvatarProfile.update(profile.id, { cover_url: file_url });
+      queryClient.invalidateQueries({ queryKey: ['avatar-profile-edit'] });
+      queryClient.invalidateQueries({ queryKey: ['explore-avatars'] });
+      toast({ title: 'Cover updated', description: 'Your cover photo has been saved.' });
+    } catch (error) {
+      toast({ title: 'Upload failed', description: 'Could not upload cover photo' });
+    }
+    setUploadingCover(false);
+  };
 
   const handlePhotoUpload = async (file) => {
     if (!file) return;
@@ -142,9 +161,19 @@ export default function AvatarProfileEdit() {
         </GlassCard>
       ) : (
         <div className="space-y-6 max-w-2xl">
-          {/* Photo */}
+          {/* Photo & Cover */}
           <GlassCard className="p-5">
-            <h2 className="font-semibold text-sm mb-4">Profile Photo</h2>
+            <h2 className="font-semibold text-sm mb-4">Profile Photo & Cover</h2>
+            {/* Cover */}
+            <div className="relative w-full h-28 rounded-xl overflow-hidden bg-gradient-to-br from-primary/10 via-card to-card mb-6 group cursor-pointer" onClick={() => coverInputRef.current?.click()}>
+              {form.cover_url && <img src={form.cover_url} alt="Cover" className="w-full h-full object-cover" />}
+              <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
+                {uploadingCover ? <Loader2 className="w-5 h-5 animate-spin text-white" /> : <><Upload className="w-4 h-4 text-white" /><span className="text-white text-xs font-medium">Upload Cover</span></>}
+              </div>
+              {!form.cover_url && <div className="absolute inset-0 flex items-center justify-center"><span className="text-xs text-muted-foreground">Click to add cover photo</span></div>}
+              <input ref={coverInputRef} type="file" accept="image/*" className="hidden" onChange={e => { const f = e.target.files?.[0]; if (f) handleCoverUpload(f); }} />
+            </div>
+            {/* Profile photo */}
             <div className="flex items-center gap-4">
               <div className="relative w-16 h-16 rounded-full bg-primary/20 flex items-center justify-center text-2xl font-bold text-primary overflow-hidden group">
                 {form.photo_url ? (
