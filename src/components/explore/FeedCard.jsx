@@ -33,32 +33,33 @@ export default function FeedCard({ post, user }) {
     const observer = new IntersectionObserver(([entry]) => {
       const video = videoRef.current;
       if (!video) return;
-      if (entry.isIntersecting && entry.intersectionRatio >= 0.7) {
+      if (entry.isIntersecting && entry.intersectionRatio >= 0.5) {
         cancelled = false;
-        video.muted = true;
-        const p = video.play();
-        if (p) {
-          p.then(() => {
-            if (!cancelled && videoRef.current) {
-              videoRef.current.muted = false;
-              setMuted(false);
-              setPlaying(true);
-            }
-          }).catch(() => {});
-        }
+        video.muted = false;
+        setMuted(false);
+        video.play().then(() => {
+          if (!cancelled) setPlaying(true);
+        }).catch(() => {
+          // Browser blocked unmuted autoplay, fall back to muted
+          if (!cancelled && videoRef.current) {
+            videoRef.current.muted = true;
+            setMuted(true);
+            videoRef.current.play().then(() => {
+              if (!cancelled) setPlaying(true);
+            }).catch(() => {});
+          }
+        });
       } else {
         cancelled = true;
-        video.muted = true;
-        setMuted(true);
         const p = video.play();
         if (p) p.then(() => { video.pause(); }).catch(() => {});
         else video.pause();
         setPlaying(false);
       }
-    }, { threshold: 0.7 });
+    }, { threshold: 0.5 });
     if (cardRef.current) observer.observe(cardRef.current);
     return () => { cancelled = true; observer.disconnect(); };
-  }, [currentMedia.type]);
+  }, [currentMedia.type, mediaIndex]);
 
   const { data: liked = false } = useQuery({
     queryKey: ['post-liked', user?.email, post.id],
@@ -132,10 +133,11 @@ export default function FeedCard({ post, user }) {
                   src={media.url}
                   className="w-full h-full object-cover"
                   loop playsInline muted={muted}
+                  preload="auto"
                   onClick={togglePlay}
                 />
               ) : (
-                <img src={media.url} alt={post.caption || 'Post'} className="w-full h-full object-cover" />
+                <img src={media.url} alt={post.caption || 'Post'} className="w-full h-full object-cover" loading="eager" decoding="async" />
               )}
             </div>
           ))}
