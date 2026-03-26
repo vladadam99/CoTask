@@ -164,9 +164,11 @@ function AvatarCard({ avatar, i, user, queryClient }) {
       <Link to={`/AvatarView?id=${avatar.id}`}>
         <div className="group bg-card/50 hover:bg-card/80 border border-white/5 hover:border-primary/20 rounded-2xl overflow-hidden transition-all duration-200">
           <div className="relative h-36 bg-gradient-to-br from-primary/10 via-card to-card flex items-center justify-center overflow-hidden">
-            {avatar.photo_url
-              ? <img src={avatar.photo_url} alt={avatar.display_name} className="w-full h-full object-cover" />
-              : <span className="text-5xl font-black text-primary/30">{avatar.display_name?.[0] || 'A'}</span>}
+            <div className="w-20 h-20 rounded-full overflow-hidden border-4 border-white/10 flex items-center justify-center bg-primary/20 flex-shrink-0">
+              {avatar.photo_url
+                ? <img src={avatar.photo_url} alt={avatar.display_name} className="w-full h-full object-cover" />
+                : <span className="text-3xl font-black text-primary/60">{avatar.display_name?.[0] || 'A'}</span>}
+            </div>
             {avatar.is_available && (
               <div className="absolute top-3 left-3 flex items-center gap-1 bg-green-500/90 text-white text-[10px] font-semibold px-2 py-0.5 rounded-full">
                 <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" /> Available
