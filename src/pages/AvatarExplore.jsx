@@ -21,10 +21,9 @@ export default function AvatarExplore() {
   });
 
   return (
-    <AppShell navItems={getNavItems(user?.role)} user={user}>
-      <div className="max-w-lg mx-auto">
+    <AppShell navItems={getNavItems(user?.role)} user={user} fullBleed>
+      <div className="max-w-lg mx-auto px-4 pt-4">
         <h1 className="text-xl font-black mb-5">Explore</h1>
-
         <div className="flex gap-2 overflow-x-auto pb-3 scrollbar-hide mb-5">
           {CATEGORIES.map(cat => (
             <button key={cat} onClick={() => setCategory(cat)}
@@ -47,7 +46,7 @@ export default function AvatarExplore() {
             <p className="text-sm text-muted-foreground mt-1">Be the first to post in this category!</p>
           </div>
         ) : (
-          <div className="-mx-4">
+          <div className="">
             {posts.map(post => <PostCard key={post.id} post={post} user={user} />)}
           </div>
         )}
