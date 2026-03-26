@@ -130,7 +130,7 @@ function MediaCarousel({ items, activeIndex, setActiveIndex, inView }) {
   return (
     <div
       className="relative w-full overflow-hidden"
-      style={{ aspectRatio: '1/1' }}
+      style={{ aspectRatio: '4/5' }}
       onTouchStart={handleTouchStart}
       onTouchEnd={handleTouchEnd}
     >
@@ -140,7 +140,7 @@ function MediaCarousel({ items, activeIndex, setActiveIndex, inView }) {
         style={{ transform: `translateX(-${activeIndex * 100}%)`, width: `${items.length * 100}%` }}
       >
         {items.map((item, i) => (
-          <div key={i} className="h-full flex-shrink-0 bg-black" style={{ width: `${100 / items.length}%` }}>
+          <div key={i} className="h-full flex-shrink-0" style={{ width: `${100 / items.length}%` }}>
             {item.type === 'video'
               ? <VideoSlide src={item.url} active={inView && i === activeIndex} />
               : <img src={item.url} alt="" className="w-full h-full object-cover" draggable={false} />}
