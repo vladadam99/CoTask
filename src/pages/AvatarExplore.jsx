@@ -37,8 +37,8 @@ export default function AvatarExplore() {
         </div>
 
         {isLoading ? (
-          <div className="space-y-4">
-            {[1,2,3].map(i => <div key={i} className="rounded-2xl bg-card/40 border border-white/5 aspect-square animate-pulse" />)}
+          <div className="-mx-4 space-y-2">
+            {[1,2,3].map(i => <div key={i} className="bg-card/40 border-y border-white/5" style={{aspectRatio:'4/5'}} />)}
           </div>
         ) : posts.length === 0 ? (
           <div className="text-center py-20">
@@ -47,7 +47,7 @@ export default function AvatarExplore() {
             <p className="text-sm text-muted-foreground mt-1">Be the first to post in this category!</p>
           </div>
         ) : (
-          <div className="space-y-4">
+          <div className="-mx-4">
             {posts.map(post => <PostCard key={post.id} post={post} user={user} />)}
           </div>
         )}
