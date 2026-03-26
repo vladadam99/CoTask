@@ -211,9 +211,13 @@ export default function PostCard({ post, user }) {
       ([entry]) => {
         if (!videoRef.current) return;
         if (entry.isIntersecting && entry.intersectionRatio >= 0.6) {
+          videoRef.current.muted = false;
+          setMuted(false);
           playPromise = videoRef.current.play();
           if (playPromise) playPromise.then(() => setPlaying(true)).catch(() => {});
         } else {
+          videoRef.current.muted = true;
+          setMuted(true);
           if (playPromise) {
             playPromise.then(() => { videoRef.current?.pause(); setPlaying(false); }).catch(() => {});
           } else {
