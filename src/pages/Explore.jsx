@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
@@ -115,6 +115,69 @@ export default function Explore() {
   );
 }
 
+function PostThumbnailCarousel({ thumbnails }) {
+  const [activeIndex, setActiveIndex] = useState(0);
+  const touchStartX = useRef(null);
+  const allItems = thumbnails.flatMap(post =>
+    (post.media_items?.length ? post.media_items : [{ url: post.media_url, type: post.type }])
+  );
+  const total = allItems.length;
+
+  const handleTouchStart = (e) => { touchStartX.current = e.touches[0].clientX; };
+  const handleTouchEnd = (e) => {
+    if (touchStartX.current === null) return;
+    const diff = touchStartX.current - e.changedTouches[0].clientX;
+    if (diff > 40 && activeIndex < total - 1) setActiveIndex(i => i + 1);
+    else if (diff < -40 && activeIndex > 0) setActiveIndex(i => i - 1);
+    touchStartX.current = null;
+  };
+
+  return (
+    <div className="mb-3 relative rounded-xl overflow-hidden" style={{ aspectRatio: '1/1' }}
+      onTouchStart={handleTouchStart} onTouchEnd={handleTouchEnd}>
+      <div className="flex h-full transition-transform duration-300"
+        style={{ transform: `translateX(-${activeIndex * 100}%)`, width: `${total * 100}%` }}>
+        {allItems.map((item, i) => (
+          <div key={i} className="h-full flex-shrink-0 bg-white/5 relative" style={{ width: `${100 / total}%` }}>
+            {item.type === 'video'
+              ? <video src={item.url} className="w-full h-full object-cover" muted playsInline />
+              : <img src={item.url} alt="" className="w-full h-full object-cover" />}
+            {item.type === 'video' && (
+              <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                <Play className="w-6 h-6 text-white fill-white opacity-80" />
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
+      {total > 1 && (
+        <>
+          {activeIndex > 0 && (
+            <button onClick={e => { e.stopPropagation(); setActiveIndex(i => i - 1); }}
+              className="absolute left-2 top-1/2 -translate-y-1/2 p-1 rounded-full bg-black/50 backdrop-blur text-white z-10">
+              <svg xmlns="http://www.w3.org/2000/svg" className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M15 19l-7-7 7-7" /></svg>
+            </button>
+          )}
+          {activeIndex < total - 1 && (
+            <button onClick={e => { e.stopPropagation(); setActiveIndex(i => i + 1); }}
+              className="absolute right-2 top-1/2 -translate-y-1/2 p-1 rounded-full bg-black/50 backdrop-blur text-white z-10">
+              <svg xmlns="http://www.w3.org/2000/svg" className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" /></svg>
+            </button>
+          )}
+          <div className="absolute top-2 right-2 bg-black/50 backdrop-blur text-white text-[10px] font-semibold px-1.5 py-0.5 rounded-full z-10">
+            {activeIndex + 1}/{total}
+          </div>
+          <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-1 z-10">
+            {allItems.map((_, i) => (
+              <div key={i} className={`h-1 rounded-full transition-all duration-300 ${i === activeIndex ? 'bg-white w-3' : 'bg-white/40 w-1'}`} />
+            ))}
+          </div>
+        </>
+      )}
+    </div>
+  );
+}
+
 function AvatarCard({ avatar, i, user, queryClient, thumbnails, navigate }) {
   const { data: isFavorited = false } = useQuery({
     queryKey: ['fav', user?.email, avatar.id],
@@ -220,22 +283,9 @@ function AvatarCard({ avatar, i, user, queryClient, thumbnails, navigate }) {
           <p className="text-xs text-muted-foreground mb-3 line-clamp-2 leading-relaxed">{avatar.bio}</p>
         )}
 
-        {/* Thumbnails — posts from this avatar */}
+        {/* Thumbnails — Instagram-style mini carousel */}
         {thumbnails.length > 0 && (
-          <div className="grid grid-cols-3 gap-1.5 mb-3 rounded-xl overflow-hidden">
-            {thumbnails.map((post, idx) => (
-              <div key={post.id} className="aspect-square bg-white/5 rounded-xl overflow-hidden relative">
-                {post.type === 'video'
-                  ? <video src={post.media_url} className="w-full h-full object-cover" muted />
-                  : <img src={post.media_url} alt="" className="w-full h-full object-cover" />}
-                {post.type === 'video' && (
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <Play className="w-4 h-4 text-white fill-white opacity-80" />
-                  </div>
-                )}
-              </div>
-            ))}
-          </div>
+          <PostThumbnailCarousel thumbnails={thumbnails} />
         )}
 
         {/* Action buttons */}
