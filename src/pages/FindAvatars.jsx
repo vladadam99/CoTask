@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
@@ -38,11 +38,16 @@ export default function FindAvatars() {
     queryFn: () => base44.entities.AvatarProfile.filter({ status: 'active' }, '-rating', 50),
   });
 
-  const POPULAR_SEARCHES = ['City Guide', 'Property Walkthrough', 'Shopping Help', 'Event Attendance', 'Queue & Errands', 'Travel Assistance'];
+  // Build suggestion pool from CATEGORIES + all unique categories on real avatars
+  const allCategories = React.useMemo(() => {
+    const fromCategories = CATEGORIES.filter(c => c.label !== 'All').map(c => c.label);
+    const fromAvatars = avatars.flatMap(a => a.categories || []);
+    return [...new Set([...fromCategories, ...fromAvatars])];
+  }, [avatars]);
 
   const suggestions = search.trim()
-    ? POPULAR_SEARCHES.filter(s => s.toLowerCase().includes(search.toLowerCase()))
-    : POPULAR_SEARCHES;
+    ? allCategories.filter(s => s.toLowerCase().includes(search.toLowerCase()))
+    : CATEGORIES.filter(c => c.label !== 'All').map(c => c.label);
 
   const applySuggestion = (val) => {
     setSearch(val);
