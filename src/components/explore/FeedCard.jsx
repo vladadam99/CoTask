@@ -11,54 +11,49 @@ export default function FeedCard({ post, user }) {
   const videoRef = useRef(null);
   const cardRef = useRef(null);
   const [playing, setPlaying] = useState(false);
-  const [muted, setMuted] = useState(true);
+  const [isMuted, setIsMuted] = useState(true);
   const [showComments, setShowComments] = useState(false);
   const [commentText, setCommentText] = useState('');
   const [mediaIndex, setMediaIndex] = useState(0);
 
-  // Build media list from multi-post or single post
   const mediaList = (post.media_urls && post.media_urls.length > 0)
     ? post.media_urls.map((url, i) => ({ url, type: post.media_types?.[i] || 'photo' }))
     : [{ url: post.media_url, type: post.type || 'photo' }];
   const currentMedia = mediaList[mediaIndex];
   const isMulti = mediaList.length > 1;
 
-  // Reset slide index when post changes
   useEffect(() => { setMediaIndex(0); }, [post.id]);
 
-  // Autoplay with sound when scrolled into view
+  // Autoplay muted, then try unmuting
   useEffect(() => {
     if (currentMedia.type !== 'video') return;
-    let cancelled = false;
+
     const observer = new IntersectionObserver(([entry]) => {
       const video = videoRef.current;
       if (!video) return;
+
       if (entry.isIntersecting && entry.intersectionRatio >= 0.5) {
-        cancelled = false;
-        video.muted = false;
-        setMuted(false);
+        video.muted = true;
+        setIsMuted(true);
         video.play().then(() => {
-          if (!cancelled) setPlaying(true);
+          setPlaying(true);
+          // Try to unmute after play starts
+          video.muted = false;
+          setIsMuted(false);
         }).catch(() => {
-          // Browser blocked unmuted autoplay, fall back to muted
-          if (!cancelled && videoRef.current) {
-            videoRef.current.muted = true;
-            setMuted(true);
-            videoRef.current.play().then(() => {
-              if (!cancelled) setPlaying(true);
-            }).catch(() => {});
-          }
+          // Muted autoplay fallback
+          video.muted = true;
+          video.play().catch(() => {});
+          setPlaying(true);
         });
       } else {
-        cancelled = true;
-        const p = video.play();
-        if (p) p.then(() => { video.pause(); }).catch(() => {});
-        else video.pause();
+        video.pause();
         setPlaying(false);
       }
     }, { threshold: 0.5 });
+
     if (cardRef.current) observer.observe(cardRef.current);
-    return () => { cancelled = true; observer.disconnect(); };
+    return () => observer.disconnect();
   }, [currentMedia.type, mediaIndex]);
 
   const { data: liked = false } = useQuery({
@@ -111,16 +106,24 @@ export default function FeedCard({ post, user }) {
   });
 
   const togglePlay = () => {
-    if (!videoRef.current) return;
-    if (playing) { videoRef.current.pause(); setPlaying(false); }
-    else { videoRef.current.play().catch(() => {}); setPlaying(true); }
+    const video = videoRef.current;
+    if (!video) return;
+    if (playing) { video.pause(); setPlaying(false); }
+    else { video.play().catch(() => {}); setPlaying(true); }
+  };
+
+  const toggleMute = () => {
+    const video = videoRef.current;
+    if (!video) return;
+    video.muted = !video.muted;
+    setIsMuted(video.muted);
   };
 
   return (
-    <div ref={cardRef} className="relative w-full h-full bg-black flex-shrink-0 snap-start overflow-hidden">
+    <div ref={cardRef} className="relative w-full h-full bg-black overflow-hidden">
 
       {/* Media carousel */}
-      <div className="w-full h-full overflow-hidden relative">
+      <div className="absolute inset-0">
         <div
           className="flex h-full transition-transform duration-300 ease-out"
           style={{ transform: `translateX(-${mediaIndex * 100}%)`, width: `${mediaList.length * 100}%` }}
@@ -132,12 +135,19 @@ export default function FeedCard({ post, user }) {
                   ref={i === mediaIndex ? videoRef : null}
                   src={media.url}
                   className="w-full h-full object-cover"
-                  loop playsInline muted={muted}
+                  loop
+                  playsInline
                   preload="auto"
                   onClick={togglePlay}
                 />
               ) : (
-                <img src={media.url} alt={post.caption || 'Post'} className="w-full h-full object-cover" loading="eager" decoding="async" />
+                <img
+                  src={media.url}
+                  alt={post.caption || 'Post'}
+                  className="w-full h-full object-cover"
+                  loading="eager"
+                  decoding="async"
+                />
               )}
             </div>
           ))}
@@ -181,7 +191,7 @@ export default function FeedCard({ post, user }) {
 
       {/* Play overlay */}
       {currentMedia.type === 'video' && !playing && (
-        <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+        <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
           <div className="w-16 h-16 rounded-full bg-black/50 flex items-center justify-center">
             <Play className="w-7 h-7 text-white fill-white ml-1" />
           </div>
@@ -189,10 +199,10 @@ export default function FeedCard({ post, user }) {
       )}
 
       {/* Gradient overlays */}
-      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/20 pointer-events-none" />
+      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/20 pointer-events-none z-10" />
 
       {/* Top: Avatar info */}
-      <div className="absolute top-0 left-0 right-0 px-4 pt-4 flex items-center gap-3 z-10">
+      <div className="absolute top-0 left-0 right-0 px-4 pt-4 flex items-center gap-3 z-20">
         <button
           onClick={() => navigate(`/AvatarView?id=${post.avatar_profile_id}`)}
           className="flex items-center gap-2"
@@ -210,7 +220,7 @@ export default function FeedCard({ post, user }) {
       </div>
 
       {/* Right side actions */}
-      <div className="absolute right-3 bottom-24 flex flex-col items-center gap-5 z-10">
+      <div className="absolute right-3 bottom-24 flex flex-col items-center gap-5 z-20">
         <div className="flex flex-col items-center gap-1">
           <motion.button
             whileTap={{ scale: 0.7 }}
@@ -235,19 +245,16 @@ export default function FeedCard({ post, user }) {
 
         {currentMedia.type === 'video' && (
           <button
-            onClick={() => {
-              if (videoRef.current) videoRef.current.muted = !muted;
-              setMuted(v => !v);
-            }}
+            onClick={toggleMute}
             className="w-11 h-11 rounded-full bg-black/40 backdrop-blur flex items-center justify-center"
           >
-            {muted ? <VolumeX className="w-5 h-5 text-white" /> : <Volume2 className="w-5 h-5 text-white" />}
+            {isMuted ? <VolumeX className="w-5 h-5 text-white" /> : <Volume2 className="w-5 h-5 text-white" />}
           </button>
         )}
       </div>
 
       {/* Bottom: Caption */}
-      <div className="absolute bottom-6 left-4 right-16 z-10">
+      <div className="absolute bottom-6 left-4 right-16 z-20">
         {post.caption && (
           <p className="text-sm text-white leading-relaxed">
             <span className="font-bold mr-1">{post.avatar_name}</span>
@@ -264,7 +271,7 @@ export default function FeedCard({ post, user }) {
             animate={{ y: 0 }}
             exit={{ y: '100%' }}
             transition={{ type: 'spring', damping: 30, stiffness: 300 }}
-            className="absolute inset-x-0 bottom-0 bg-card/95 backdrop-blur-xl rounded-t-3xl z-20 flex flex-col max-h-[60%]"
+            className="absolute inset-x-0 bottom-0 bg-card/95 backdrop-blur-xl rounded-t-3xl z-30 flex flex-col max-h-[60%]"
             onClick={e => e.stopPropagation()}
           >
             <div className="flex items-center justify-between px-5 py-4 border-b border-white/10">
