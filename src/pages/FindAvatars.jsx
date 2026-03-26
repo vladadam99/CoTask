@@ -33,6 +33,11 @@ export default function FindAvatars() {
   const [searchFocused, setSearchFocused] = useState(false);
   const searchRef = useRef(null);
 
+  const { data: avatars = [], isLoading } = useQuery({
+    queryKey: ['explore-avatars'],
+    queryFn: () => base44.entities.AvatarProfile.filter({ status: 'active' }, '-rating', 50),
+  });
+
   const POPULAR_SEARCHES = ['City Guide', 'Property Walkthrough', 'Shopping Help', 'Event Attendance', 'Queue & Errands', 'Travel Assistance'];
 
   const suggestions = search.trim()
@@ -44,11 +49,6 @@ export default function FindAvatars() {
     setSearchFocused(false);
     searchRef.current?.blur();
   };
-
-  const { data: avatars = [], isLoading } = useQuery({
-    queryKey: ['explore-avatars'],
-    queryFn: () => base44.entities.AvatarProfile.filter({ status: 'active' }, '-rating', 50),
-  });
 
   const filtered = avatars.filter(a => {
     const matchSearch = !search || a.display_name?.toLowerCase().includes(search.toLowerCase()) ||
