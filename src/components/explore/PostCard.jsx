@@ -302,33 +302,48 @@ export default function PostCard({ post, user }) {
           </div>
         </div>
 
-        {/* Media — full width, taller, click opens modal */}
+        {/* Media — full width, taller */}
         <div
-          className="relative bg-black w-full overflow-hidden cursor-pointer"
+          className="relative bg-black w-full overflow-hidden"
           style={{ aspectRatio: post.type === 'video' ? '9/16' : '4/5', maxHeight: '75vh' }}
-          onClick={() => setModalOpen(true)}
         >
           {post.type === 'video' ? (
             <>
               <video
                 ref={videoRef}
                 src={post.media_url}
-                className="w-full h-full object-cover"
+                className="w-full h-full object-cover cursor-pointer"
                 loop
                 playsInline
                 muted
+                autoPlay
+                onPlay={() => setPlaying(true)}
+                onPause={() => setPlaying(false)}
                 onEnded={() => setPlaying(false)}
+                onClick={() => {
+                  if (!videoRef.current) return;
+                  if (playing) { videoRef.current.pause(); } else { videoRef.current.play().catch(() => {}); }
+                }}
               />
               {!playing && (
-                <div className="absolute inset-0 flex items-center justify-center bg-black/20 pointer-events-none">
-                  <div className="w-14 h-14 rounded-full bg-black/50 backdrop-blur flex items-center justify-center">
+                <div
+                  className="absolute inset-0 flex items-center justify-center bg-black/30 pointer-events-none"
+                >
+                  <div className="w-14 h-14 rounded-full bg-black/60 backdrop-blur flex items-center justify-center">
                     <Play className="w-6 h-6 text-white fill-white ml-1" />
                   </div>
                 </div>
               )}
+              {/* Fullscreen button */}
+              <button
+                onClick={() => setModalOpen(true)}
+                className="absolute top-2 right-2 p-1.5 rounded-full bg-black/50 text-white"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5v-4m0 4h-4m4 0l-5-5" /></svg>
+              </button>
             </>
           ) : (
-            <img src={post.media_url} alt={post.caption || 'Post'} className="w-full h-full object-cover" />
+            <img src={post.media_url} alt={post.caption || 'Post'} className="w-full h-full object-cover cursor-pointer" onClick={() => setModalOpen(true)} />
           )}
         </div>
 
