@@ -68,7 +68,16 @@ export default function AvatarProfileEdit() {
     try {
       const { file_url } = await base44.integrations.Core.UploadFile({ file });
       setForm(f => ({ ...f, photo_url: file_url }));
-      updateProfile.mutate({ ...form, photo_url: file_url });
+      // Update profile
+      await base44.entities.AvatarProfile.update(profile.id, { photo_url: file_url });
+      // Sync photo to all existing posts
+      const posts = await base44.entities.Post.filter({ avatar_email: user.email });
+      await Promise.all(posts.map(p => base44.entities.Post.update(p.id, { avatar_photo_url: file_url })));
+      queryClient.invalidateQueries({ queryKey: ['avatar-profile-edit'] });
+      queryClient.invalidateQueries({ queryKey: ['explore-avatars'] });
+      queryClient.invalidateQueries({ queryKey: ['avatar-posts'] });
+      queryClient.invalidateQueries({ queryKey: ['explore-posts'] });
+      toast({ title: 'Photo updated', description: 'Your profile photo has been updated everywhere.' });
     } catch (error) {
       console.error('Failed to upload photo:', error);
       toast({ title: 'Upload failed', description: 'Could not upload photo' });
@@ -80,6 +89,9 @@ export default function AvatarProfileEdit() {
     mutationFn: (data) => base44.entities.AvatarProfile.update(profile.id, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['avatar-profile-edit'] });
+      queryClient.invalidateQueries({ queryKey: ['explore-avatars'] });
+      queryClient.invalidateQueries({ queryKey: ['avatar-posts'] });
+      queryClient.invalidateQueries({ queryKey: ['explore-posts'] });
       toast({ title: 'Profile updated', description: 'Your changes have been saved.' });
     },
   });
