@@ -15,7 +15,7 @@ import { getNavItems } from '@/lib/navItems';
 import { useNavigate } from 'react-router-dom';
 import {
   Home, Inbox, Calendar, Radio, MessageSquare, DollarSign,
-  Star, User, Settings, Save, Camera, Upload, Loader2, Plus, Grid, Eye
+  Star, User, Settings, Save, Camera, Upload, Loader2, Plus, Grid, Eye, MapPin
 } from 'lucide-react';
 
 
@@ -136,144 +136,220 @@ export default function AvatarProfileEdit() {
 
   if (loading) return <div className="min-h-screen flex items-center justify-center"><div className="w-8 h-8 border-4 border-primary/20 border-t-primary rounded-full animate-spin" /></div>;
 
-  return (
-    <AppShell navItems={getNavItems(user?.role)} user={user}>
-      <div className="flex items-center justify-between mb-8">
-        <div>
-          <h1 className="text-2xl lg:text-3xl font-bold mb-1">Edit Profile</h1>
-          <p className="text-muted-foreground text-sm">Update your public avatar profile</p>
-        </div>
-        <div className="flex gap-2">
-          {profile && (
-            <Button variant="outline" className="gap-2 border-white/10" onClick={() => navigate(`/AvatarView?id=${profile.id}`)}>            
-              <Eye className="w-4 h-4" /> View Profile
-            </Button>
-          )}
-          <Button onClick={handleSave} disabled={updateProfile.isPending || !profile} className="gap-2">
-            <Save className="w-4 h-4" /> {updateProfile.isPending ? 'Saving…' : 'Save Changes'}
-          </Button>
-        </div>
-      </div>
-
-      {!profile ? (
-        <GlassCard className="p-10 text-center">
+  if (!profile) {
+    return (
+      <AppShell navItems={getNavItems(user?.role)} user={user}>
+        <GlassCard className="p-10 text-center max-w-md mx-auto mt-20">
           <p className="text-muted-foreground text-sm">No avatar profile found. Complete onboarding first.</p>
         </GlassCard>
-      ) : (
-        <div className="space-y-6 max-w-2xl">
-          {/* Photo & Cover */}
-          <GlassCard className="p-5">
-            <h2 className="font-semibold text-sm mb-4">Profile Photo & Cover</h2>
-            {/* Cover */}
-            <div className="relative w-full h-32 rounded-xl overflow-hidden bg-gradient-to-br from-primary/20 via-primary/10 to-card mb-6 group cursor-pointer border-2 border-dashed border-white/10 hover:border-primary/40 transition-all" onClick={() => coverInputRef.current?.click()}>
-              {form.cover_url ? (
-                <>
-                  <img src={form.cover_url} alt="Cover" className="w-full h-full object-cover" />
-                  <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2 backdrop-blur-sm">
-                    {uploadingCover ? (
-                      <Loader2 className="w-5 h-5 animate-spin text-white" />
-                    ) : (
-                      <div className="flex items-center gap-2 bg-white/20 backdrop-blur px-3 py-1.5 rounded-full">
-                        <Upload className="w-4 h-4 text-white" />
-                        <span className="text-white text-xs font-semibold">Change Cover</span>
-                      </div>
-                    )}
+      </AppShell>
+    );
+  }
+
+  return (
+    <AppShell navItems={getNavItems(user?.role)} user={user}>
+      <div className="max-w-4xl mx-auto">
+        {/* Cover Photo */}
+        <div className="relative w-full h-48 md:h-64 rounded-2xl overflow-hidden mb-20 group cursor-pointer" onClick={() => coverInputRef.current?.click()}>
+          {form.cover_url ? (
+            <>
+              <img src={form.cover_url} alt="Cover" className="w-full h-full object-cover" />
+              <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2 backdrop-blur-sm">
+                {uploadingCover ? (
+                  <Loader2 className="w-6 h-6 animate-spin text-white" />
+                ) : (
+                  <div className="flex items-center gap-2 bg-white/20 backdrop-blur px-4 py-2 rounded-full">
+                    <Camera className="w-4 h-4 text-white" />
+                    <span className="text-white text-sm font-semibold">Change Cover</span>
                   </div>
-                </>
+                )}
+              </div>
+            </>
+          ) : (
+            <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-primary/10 to-card flex flex-col items-center justify-center gap-3" onClick={() => coverInputRef.current?.click()}>
+              <div className="w-14 h-14 rounded-full bg-primary/30 flex items-center justify-center">
+                <Camera className="w-7 h-7 text-primary" />
+              </div>
+              <p className="text-sm font-semibold text-foreground">Add Cover Photo</p>
+            </div>
+          )}
+          <input ref={coverInputRef} type="file" accept="image/*" className="hidden" onChange={e => { const f = e.target.files?.[0]; if (f) handleCoverUpload(f); }} />
+        </div>
+
+        {/* Profile Header Section */}
+        <div className="relative -mt-24 px-4 mb-6">
+          <div className="flex flex-col md:flex-row items-start md:items-end gap-4">
+            {/* Profile Picture */}
+            <div className="relative w-32 h-32 md:w-40 md:h-40 rounded-full bg-card border-4 border-card shadow-2xl flex-shrink-0 group cursor-pointer" onClick={() => fileInputRef.current?.click()}>
+              {form.photo_url ? (
+                <img src={form.photo_url} alt="Profile" className="w-full h-full object-cover rounded-full" />
               ) : (
-                <div className="absolute inset-0 flex flex-col items-center justify-center gap-2">
-                  <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center">
-                    <Upload className="w-5 h-5 text-primary" />
-                  </div>
-                  <div className="text-center">
-                    <p className="text-sm font-semibold text-foreground">Add Cover Photo</p>
-                    <p className="text-xs text-muted-foreground">Click to upload</p>
-                  </div>
+                <div className="w-full h-full rounded-full bg-primary/20 flex items-center justify-center text-4xl md:text-5xl font-black text-primary">
+                  {profile.display_name?.[0] || user?.full_name?.[0]}
                 </div>
               )}
-              <input ref={coverInputRef} type="file" accept="image/*" className="hidden" onChange={e => { const f = e.target.files?.[0]; if (f) handleCoverUpload(f); }} />
-            </div>
-            {/* Profile photo */}
-            <div className="flex items-center gap-4">
-              <div className="relative w-16 h-16 rounded-full bg-primary/20 flex items-center justify-center text-2xl font-bold text-primary overflow-hidden group">
-                {form.photo_url ? (
-                  <img src={form.photo_url} alt="Profile" className="w-full h-full object-cover" />
-                ) : (
-                  profile.display_name?.[0] || user?.full_name?.[0]
-                )}
-                <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={e => { const f = e.target.files?.[0]; if (f) handlePhotoUpload(f); }} />
-                <button onClick={() => fileInputRef.current?.click()} disabled={uploading} className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                  {uploading ? <Loader2 className="w-4 h-4 animate-spin text-white" /> : <Upload className="w-4 h-4 text-white" />}
-                </button>
+              <div className="absolute inset-0 rounded-full bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                {uploading ? <Loader2 className="w-6 h-6 animate-spin text-white" /> : <Camera className="w-6 h-6 text-white" />}
               </div>
-              <div>
-                <p className="text-sm font-medium">Profile Photo</p>
-                <p className="text-xs text-muted-foreground">Hover to upload</p>
+              <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={e => { const f = e.target.files?.[0]; if (f) handlePhotoUpload(f); }} />
+            </div>
+
+            {/* Name & Actions */}
+            <div className="flex-1 pt-2 md:pb-2">
+              <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
+                <div>
+                  <h1 className="text-2xl md:text-3xl font-bold">{form.display_name || 'Your Profile'}</h1>
+                  <p className="text-muted-foreground text-sm flex items-center gap-1 mt-1">
+                    <MapPin className="w-3.5 h-3.5" />
+                    {form.city || 'City'}, {form.country || 'Country'}
+                  </p>
+                </div>
+                <div className="flex gap-2">
+                  <Button variant="outline" className="gap-2 border-white/10" onClick={() => navigate(`/AvatarView?id=${profile.id}`)}>
+                    <Eye className="w-4 h-4" /> View
+                  </Button>
+                  <Button onClick={handleSave} disabled={updateProfile.isPending} className="gap-2">
+                    <Save className="w-4 h-4" /> {updateProfile.isPending ? 'Saving…' : 'Save'}
+                  </Button>
+                </div>
               </div>
             </div>
+          </div>
+        </div>
+
+        {/* Bio */}
+        <div className="px-4 mb-6">
+          <Textarea 
+            value={form.bio} 
+            onChange={set('bio')} 
+            rows={2}
+            className="bg-transparent border-none text-base resize-none focus-visible:ring-0 p-0"
+            placeholder="Write a bio..."
+          />
+        </div>
+
+        {/* Stats & Info Grid */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 px-4 mb-6">
+          <div className="bg-card/50 rounded-xl p-4 text-center border border-white/5">
+            <p className="text-2xl font-bold text-primary">${form.hourly_rate || 0}</p>
+            <p className="text-xs text-muted-foreground mt-1">Per Hour</p>
+          </div>
+          <div className="bg-card/50 rounded-xl p-4 text-center border border-white/5">
+            <p className="text-2xl font-bold text-primary">${form.per_session_rate || 0}</p>
+            <p className="text-xs text-muted-foreground mt-1">Per Session</p>
+          </div>
+          <div className="bg-card/50 rounded-xl p-4 text-center border border-white/5">
+            <p className="text-2xl font-bold text-primary">{(form.categories || '').split(',').filter(Boolean).length}</p>
+            <p className="text-xs text-muted-foreground mt-1">Categories</p>
+          </div>
+          <div className="bg-card/50 rounded-xl p-4 text-center border border-white/5">
+            <p className="text-2xl font-bold text-primary">{(form.skills || '').split(',').filter(Boolean).length}</p>
+            <p className="text-xs text-muted-foreground mt-1">Skills</p>
+          </div>
+        </div>
+
+        {/* Editable Sections */}
+        <div className="px-4 space-y-6 mb-6">
+          {/* Categories */}
+          <GlassCard className="p-5">
+            <div className="flex items-center gap-2 mb-3">
+              <Grid className="w-4 h-4 text-primary" />
+              <h3 className="font-semibold text-sm">Categories</h3>
+            </div>
+            <Input 
+              value={form.categories} 
+              onChange={set('categories')} 
+              className="bg-transparent border-white/10"
+              placeholder="e.g. Tourism, Real Estate, Events"
+            />
           </GlassCard>
 
-          {/* Basic Info */}
-          <GlassCard className="p-5 space-y-4">
-            <h2 className="font-semibold text-sm">Basic Information</h2>
-            <div>
-              <label className="text-xs text-muted-foreground mb-1 block">Display Name</label>
-              <Input value={form.display_name} onChange={set('display_name')} className="bg-muted/30 border-white/5" />
+          {/* Skills */}
+          <GlassCard className="p-5">
+            <div className="flex items-center gap-2 mb-3">
+              <Star className="w-4 h-4 text-primary" />
+              <h3 className="font-semibold text-sm">Skills</h3>
             </div>
-            <div>
-              <label className="text-xs text-muted-foreground mb-1 block">Bio</label>
-              <Textarea value={form.bio} onChange={set('bio')} rows={3} className="bg-muted/30 border-white/5 resize-none" placeholder="Tell clients about yourself..." />
+            <Input 
+              value={form.skills} 
+              onChange={set('skills')} 
+              className="bg-transparent border-white/10"
+              placeholder="e.g. Photography, Navigation, Hosting"
+            />
+          </GlassCard>
+
+          {/* Languages */}
+          <GlassCard className="p-5">
+            <div className="flex items-center gap-2 mb-3">
+              <MessageSquare className="w-4 h-4 text-primary" />
+              <h3 className="font-semibold text-sm">Languages</h3>
+            </div>
+            <Input 
+              value={form.languages} 
+              onChange={set('languages')} 
+              className="bg-transparent border-white/10"
+              placeholder="e.g. English, Spanish, French"
+            />
+          </GlassCard>
+
+          {/* Location */}
+          <GlassCard className="p-5">
+            <div className="flex items-center gap-2 mb-3">
+              <MapPin className="w-4 h-4 text-primary" />
+              <h3 className="font-semibold text-sm">Location</h3>
             </div>
             <div className="grid grid-cols-2 gap-3">
-              <div>
-                <label className="text-xs text-muted-foreground mb-1 block">City</label>
-                <Input value={form.city} onChange={set('city')} className="bg-muted/30 border-white/5" />
-              </div>
-              <div>
-                <label className="text-xs text-muted-foreground mb-1 block">Country</label>
-                <Input value={form.country} onChange={set('country')} className="bg-muted/30 border-white/5" />
-              </div>
+              <Input 
+                value={form.city} 
+                onChange={set('city')} 
+                className="bg-transparent border-white/10"
+                placeholder="City"
+              />
+              <Input 
+                value={form.country} 
+                onChange={set('country')} 
+                className="bg-transparent border-white/10"
+                placeholder="Country"
+              />
             </div>
           </GlassCard>
 
           {/* Rates */}
-          <GlassCard className="p-5 space-y-4">
-            <h2 className="font-semibold text-sm">Rates</h2>
+          <GlassCard className="p-5">
+            <div className="flex items-center gap-2 mb-3">
+              <DollarSign className="w-4 h-4 text-primary" />
+              <h3 className="font-semibold text-sm">Rates</h3>
+            </div>
             <div className="grid grid-cols-2 gap-3">
               <div>
                 <label className="text-xs text-muted-foreground mb-1 block">Hourly Rate ($)</label>
-                <Input type="number" value={form.hourly_rate} onChange={set('hourly_rate')} className="bg-muted/30 border-white/5" />
+                <Input 
+                  type="number" 
+                  value={form.hourly_rate} 
+                  onChange={set('hourly_rate')} 
+                  className="bg-transparent border-white/10"
+                />
               </div>
               <div>
-                <label className="text-xs text-muted-foreground mb-1 block">Per Session Rate ($)</label>
-                <Input type="number" value={form.per_session_rate} onChange={set('per_session_rate')} className="bg-muted/30 border-white/5" />
+                <label className="text-xs text-muted-foreground mb-1 block">Per Session ($)</label>
+                <Input 
+                  type="number" 
+                  value={form.per_session_rate} 
+                  onChange={set('per_session_rate')} 
+                  className="bg-transparent border-white/10"
+                />
               </div>
             </div>
           </GlassCard>
+        </div>
 
-          {/* Skills & Categories */}
-          <GlassCard className="p-5 space-y-4">
-            <h2 className="font-semibold text-sm">Skills & Categories</h2>
-            <div>
-              <label className="text-xs text-muted-foreground mb-1 block">Categories (comma-separated)</label>
-              <Input value={form.categories} onChange={set('categories')} className="bg-muted/30 border-white/5" placeholder="e.g. Tourism, Real Estate, Events" />
-            </div>
-            <div>
-              <label className="text-xs text-muted-foreground mb-1 block">Skills (comma-separated)</label>
-              <Input value={form.skills} onChange={set('skills')} className="bg-muted/30 border-white/5" placeholder="e.g. Photography, Navigation, Hosting" />
-            </div>
-            <div>
-              <label className="text-xs text-muted-foreground mb-1 block">Languages (comma-separated)</label>
-              <Input value={form.languages} onChange={set('languages')} className="bg-muted/30 border-white/5" placeholder="e.g. English, Spanish, French" />
-            </div>
-          </GlassCard>
-
-          {/* My Posts */}
+        {/* Posts Grid */}
+        <div className="px-4 pb-8">
           <GlassCard className="p-5">
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-2">
                 <Grid className="w-4 h-4 text-primary" />
-                <h2 className="font-semibold text-sm">My Posts</h2>
+                <h3 className="font-semibold text-sm">My Posts</h3>
                 <span className="text-xs text-muted-foreground">({myPosts.length})</span>
               </div>
               <Button size="sm" onClick={() => setShowUpload(true)} className="gap-1.5 h-8">
@@ -281,28 +357,33 @@ export default function AvatarProfileEdit() {
               </Button>
             </div>
             {myPosts.length === 0 ? (
-              <div className="text-center py-8 space-y-2">
-                <p className="text-3xl">📸</p>
+              <div className="text-center py-12 space-y-3">
+                <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mx-auto">
+                  <Camera className="w-8 h-8 text-primary" />
+                </div>
                 <p className="text-sm text-muted-foreground">No posts yet. Share your work!</p>
                 <Button size="sm" variant="outline" className="border-white/10" onClick={() => setShowUpload(true)}>Upload first post</Button>
               </div>
             ) : (
               <div className="grid grid-cols-3 gap-2">
                 {myPosts.map(post => (
-                  <div key={post.id} className="aspect-square rounded-xl overflow-hidden bg-white/5 relative">
+                  <div key={post.id} className="aspect-square rounded-xl overflow-hidden bg-white/5 relative group">
                     {post.type === 'video'
                       ? <video src={post.media_url} className="w-full h-full object-cover" muted />
                       : <img src={post.media_url} alt={post.caption} className="w-full h-full object-cover" />}
                     {post.type === 'video' && (
-                      <div className="absolute top-1.5 right-1.5 bg-black/60 text-white text-[9px] px-1.5 py-0.5 rounded-full">▶</div>
+                      <div className="absolute top-2 right-2 bg-black/60 text-white text-[9px] px-1.5 py-0.5 rounded-full">▶</div>
                     )}
+                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                      <Button size="sm" variant="outline" className="border-white/20 text-white">View</Button>
+                    </div>
                   </div>
                 ))}
               </div>
             )}
           </GlassCard>
         </div>
-      )}
+      </div>
 
       <AnimatePresence>
         {showUpload && <PostUpload user={user} profile={profile} onClose={() => setShowUpload(false)} />}
