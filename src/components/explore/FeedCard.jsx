@@ -126,7 +126,7 @@ export default function FeedCard({ post, user }) {
       <div className="absolute inset-0">
         <div
           className="flex h-full transition-transform duration-300 ease-out"
-          style={{ transform: `translateX(-${mediaIndex * 100}%)`, width: `${mediaList.length * 100}%` }}
+          style={{ transform: `translateX(-${(mediaIndex / mediaList.length) * 100}%)`, width: `${mediaList.length * 100}%` }}
         >
           {mediaList.map((media, i) => (
             <div key={i} className="h-full flex-shrink-0" style={{ width: `${100 / mediaList.length}%` }}>
