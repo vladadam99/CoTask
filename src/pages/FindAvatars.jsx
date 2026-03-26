@@ -70,18 +70,6 @@ export default function FindAvatars() {
           </div>
         )}
 
-        {/* Category pills */}
-        <div className="flex gap-2 overflow-x-auto pb-3 scrollbar-hide mb-5">
-          {CATEGORIES.map(cat => (
-            <button key={cat.label} onClick={() => setCategory(cat.label)}
-              className={`flex-shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-all ${
-                cat.label === category ? 'bg-primary text-white' : 'bg-white/5 border border-white/10 text-muted-foreground hover:border-primary/30'
-              }`}>
-              <span>{cat.icon}</span> {cat.label}
-            </button>
-          ))}
-        </div>
-
         <p className="text-xs text-muted-foreground mb-5">{isLoading ? 'Loading...' : `${filtered.length} avatars found`}</p>
 
         {isLoading ? (
