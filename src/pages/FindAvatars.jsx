@@ -41,7 +41,10 @@ export default function FindAvatars() {
   const POPULAR_SEARCHES = ['City Guide', 'Property Walkthrough', 'Shopping Help', 'Event Attendance', 'Queue & Errands', 'Travel Assistance'];
 
   const suggestions = search.trim()
-    ? avatars.filter(a => a.display_name?.toLowerCase().includes(search.toLowerCase())).slice(0, 5).map(a => a.display_name)
+    ? avatars.filter(a =>
+        a.display_name?.toLowerCase().includes(search.toLowerCase()) ||
+        (a.categories || []).some(c => c.toLowerCase().includes(search.toLowerCase()))
+      ).slice(0, 5).map(a => a.display_name)
     : POPULAR_SEARCHES;
 
   const applySuggestion = (val) => {
