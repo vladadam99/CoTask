@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
@@ -30,6 +30,20 @@ export default function FindAvatars() {
   const [category, setCategory] = useState('All');
   const [city, setCity] = useState('');
   const [showFilters, setShowFilters] = useState(false);
+  const [searchFocused, setSearchFocused] = useState(false);
+  const searchRef = useRef(null);
+
+  const POPULAR_SEARCHES = ['City Guide', 'Property Walkthrough', 'Shopping Help', 'Event Attendance', 'Queue & Errands', 'Travel Assistance'];
+
+  const suggestions = search.trim()
+    ? avatars.filter(a => a.display_name?.toLowerCase().includes(search.toLowerCase())).slice(0, 5).map(a => a.display_name)
+    : POPULAR_SEARCHES;
+
+  const applySuggestion = (val) => {
+    setSearch(val);
+    setSearchFocused(false);
+    searchRef.current?.blur();
+  };
 
   const { data: avatars = [], isLoading } = useQuery({
     queryKey: ['explore-avatars'],
@@ -55,7 +69,30 @@ export default function FindAvatars() {
         <div className="flex items-center gap-3 mb-4">
           <div className="flex-1 relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none" />
-            <Input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search avatars..." className="pl-9 bg-white/5 border-white/10 h-10 rounded-xl text-sm" />
+            <Input
+              ref={searchRef}
+              value={search}
+              onChange={e => setSearch(e.target.value)}
+              placeholder="Search avatars..."
+              className="pl-9 bg-white/5 border-white/10 h-10 rounded-xl text-sm"
+              onFocus={() => setSearchFocused(true)}
+              onBlur={() => setTimeout(() => setSearchFocused(false), 150)}
+            />
+            {searchFocused && suggestions.length > 0 && (
+              <div className="absolute top-full left-0 right-0 mt-1 bg-card border border-white/10 rounded-xl shadow-xl z-50 overflow-hidden">
+                <p className="text-[10px] text-muted-foreground px-3 pt-2 pb-1">{search.trim() ? 'Suggestions' : 'Popular searches'}</p>
+                {suggestions.map((s, i) => (
+                  <button
+                    key={i}
+                    onMouseDown={() => applySuggestion(s)}
+                    className="w-full text-left px-3 py-2 text-sm hover:bg-white/5 flex items-center gap-2 transition-colors"
+                  >
+                    <Search className="w-3 h-3 text-muted-foreground flex-shrink-0" />
+                    {s}
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
           <button onClick={() => setShowFilters(v => !v)} className={`w-10 h-10 rounded-xl border flex items-center justify-center transition-all flex-shrink-0 ${showFilters ? 'bg-primary text-white border-primary' : 'bg-white/5 border-white/10'}`}>
             <Filter className="w-4 h-4" />
