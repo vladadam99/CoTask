@@ -10,12 +10,13 @@ import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/components/ui/use-toast';
 import PostCard from '@/components/explore/PostCard';
 import PostUpload from '@/components/explore/PostUpload';
+import EditPostModal from '@/components/posts/EditPostModal';
 import { AnimatePresence } from 'framer-motion';
 import { getNavItems } from '@/lib/navItems';
 import { useNavigate } from 'react-router-dom';
 import {
   Home, Inbox, Calendar, Radio, MessageSquare, DollarSign,
-  Star, User, Settings, Save, Camera, Upload, Loader2, Plus, Grid, Eye, MapPin
+  Star, User, Settings, Save, Camera, Upload, Loader2, Plus, Grid, Eye, MapPin, Pencil, Trash2, X
 } from 'lucide-react';
 
 
@@ -30,6 +31,8 @@ export default function AvatarProfileEdit() {
   const [uploading, setUploading] = useState(false);
   const [uploadingCover, setUploadingCover] = useState(false);
   const [showUpload, setShowUpload] = useState(false);
+  const [editingPost, setEditingPost] = useState(null);
+  const [deleteConfirm, setDeleteConfirm] = useState(null);
 
   const { data: profile } = useQuery({
     queryKey: ['avatar-profile-edit', user?.email],
@@ -124,6 +127,27 @@ export default function AvatarProfileEdit() {
       skills: form.skills.split(',').map(s => s.trim()).filter(Boolean),
       categories: form.categories.split(',').map(s => s.trim()).filter(Boolean),
     });
+  };
+
+  const deletePost = useMutation({
+    mutationFn: (postId) => base44.entities.Post.delete(postId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['avatar-posts'] });
+      queryClient.invalidateQueries({ queryKey: ['explore-posts'] });
+      queryClient.invalidateQueries({ queryKey: ['avatar-profile-edit'] });
+      setDeleteConfirm(null);
+      toast({ title: 'Post deleted', description: 'Your post has been removed.' });
+    },
+  });
+
+  const handleDeletePost = (post) => {
+    setDeleteConfirm(post);
+  };
+
+  const confirmDelete = () => {
+    if (deleteConfirm) {
+      deletePost.mutate(deleteConfirm.id);
+    }
   };
 
   const set = (key) => (e) => setForm(f => ({ ...f, [key]: e.target.value }));
@@ -374,8 +398,23 @@ export default function AvatarProfileEdit() {
                     {post.type === 'video' && (
                       <div className="absolute top-2 right-2 bg-black/60 text-white text-[9px] px-1.5 py-0.5 rounded-full">▶</div>
                     )}
-                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                      <Button size="sm" variant="outline" className="border-white/20 text-white">View</Button>
+                    {/* Edit & Delete Buttons */}
+                    <div className="absolute top-2 left-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <button
+                        onClick={(e) => { e.preventDefault(); setEditingPost(post); }}
+                        className="w-7 h-7 rounded-full bg-blue-500/90 hover:bg-blue-600 flex items-center justify-center transition-colors"
+                      >
+                        <Pencil className="w-3.5 h-3.5 text-white" />
+                      </button>
+                      <button
+                        onClick={(e) => { e.preventDefault(); handleDeletePost(post); }}
+                        className="w-7 h-7 rounded-full bg-red-500/90 hover:bg-red-600 flex items-center justify-center transition-colors"
+                      >
+                        <Trash2 className="w-3.5 h-3.5 text-white" />
+                      </button>
+                    </div>
+                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center pointer-events-none">
+                      <Button size="sm" variant="outline" className="border-white/20 text-white pointer-events-auto">View</Button>
                     </div>
                   </div>
                 ))}
@@ -384,6 +423,38 @@ export default function AvatarProfileEdit() {
           </GlassCard>
         </div>
       </div>
+
+      {/* Edit Post Modal */}
+      {editingPost && (
+        <EditPostModal
+          post={editingPost}
+          onClose={() => setEditingPost(null)}
+          onSuccess={() => {
+            queryClient.invalidateQueries({ queryKey: ['avatar-posts'] });
+            queryClient.invalidateQueries({ queryKey: ['explore-posts'] });
+            setEditingPost(null);
+            toast({ title: 'Post updated', description: 'Your post has been edited.' });
+          }}
+        />
+      )}
+
+      {/* Delete Confirmation Modal */}
+      {deleteConfirm && (
+        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-card rounded-2xl p-6 max-w-sm w-full border border-white/10">
+            <h3 className="text-lg font-bold mb-2">Delete Post?</h3>
+            <p className="text-sm text-muted-foreground mb-6">Are you sure you want to delete this post? This action cannot be undone.</p>
+            <div className="flex gap-3">
+              <Button variant="outline" className="flex-1 border-white/10" onClick={() => setDeleteConfirm(null)}>
+                Cancel
+              </Button>
+              <Button variant="destructive" className="flex-1" onClick={confirmDelete} disabled={deletePost.isPending}>
+                {deletePost.isPending ? 'Deleting...' : 'Delete'}
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
 
       <AnimatePresence>
         {showUpload && <PostUpload user={user} profile={profile} onClose={() => setShowUpload(false)} />}
