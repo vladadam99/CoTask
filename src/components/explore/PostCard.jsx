@@ -205,14 +205,21 @@ export default function PostCard({ post, user }) {
   // Autoplay on scroll into view
   useEffect(() => {
     if (post.type !== 'video') return;
+    let playPromise = null;
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (!videoRef.current) return;
         if (entry.isIntersecting && entry.intersectionRatio >= 0.6) {
-          videoRef.current.play().then(() => setPlaying(true)).catch(() => {});
+          playPromise = videoRef.current.play();
+          if (playPromise) playPromise.then(() => setPlaying(true)).catch(() => {});
         } else {
-          videoRef.current.pause();
-          setPlaying(false);
+          if (playPromise) {
+            playPromise.then(() => { videoRef.current?.pause(); setPlaying(false); }).catch(() => {});
+          } else {
+            videoRef.current.pause();
+            setPlaying(false);
+          }
+          playPromise = null;
         }
       },
       { threshold: 0.6 }
