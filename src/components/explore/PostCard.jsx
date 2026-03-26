@@ -206,31 +206,44 @@ export default function PostCard({ post, user }) {
   // Autoplay on scroll into view
   useEffect(() => {
     if (post.type !== 'video') return;
-    let playPromise = null;
+    let cancelled = false;
     const observer = new IntersectionObserver(
       ([entry]) => {
-        if (!videoRef.current) return;
+        const video = videoRef.current;
+        if (!video) return;
         if (entry.isIntersecting && entry.intersectionRatio >= 0.6) {
-          videoRef.current.muted = false;
-          setMuted(false);
-          playPromise = videoRef.current.play();
-          if (playPromise) playPromise.then(() => setPlaying(true)).catch(() => {});
-        } else {
-          videoRef.current.muted = true;
+          cancelled = false;
+          // Start muted (browser requires it), then unmute after play starts
+          video.muted = true;
           setMuted(true);
-          if (playPromise) {
-            playPromise.then(() => { videoRef.current?.pause(); setPlaying(false); }).catch(() => {});
-          } else {
-            videoRef.current.pause();
-            setPlaying(false);
+          const p = video.play();
+          if (p) {
+            p.then(() => {
+              if (!cancelled && videoRef.current) {
+                videoRef.current.muted = false;
+                setMuted(false);
+                setPlaying(true);
+              }
+            }).catch(() => {});
           }
-          playPromise = null;
+        } else {
+          cancelled = true;
+          video.muted = true;
+          setMuted(true);
+          // Safely pause: wait for any pending play promise
+          const p = video.play();
+          if (p) {
+            p.then(() => { video.pause(); }).catch(() => {});
+          } else {
+            video.pause();
+          }
+          setPlaying(false);
         }
       },
       { threshold: 0.6 }
     );
     if (cardRef.current) observer.observe(cardRef.current);
-    return () => observer.disconnect();
+    return () => { cancelled = true; observer.disconnect(); };
   }, [post.type]);
 
   const { data: liked = false } = useQuery({
