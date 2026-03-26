@@ -13,16 +13,20 @@ function MediaItem({ item, autoPlay, onPlay, onPause }) {
 
   useEffect(() => {
     if (item.type !== 'video' || !videoRef.current) return;
+    const video = videoRef.current;
     if (autoPlay) {
-      videoRef.current.muted = false;
+      video.muted = false;
       setMuted(false);
-      videoRef.current.play().then(() => { setPlaying(true); onPlay?.(); }).catch(() => {});
+      const p = video.play();
+      if (p) p.then(() => { setPlaying(true); onPlay?.(); }).catch(err => {
+        if (err.name !== 'AbortError') console.warn(err);
+      });
     } else {
-      videoRef.current.muted = true;
+      video.muted = true;
       setMuted(true);
-      videoRef.current.pause();
-      setPlaying(false);
-      onPause?.();
+      // Delay pause to avoid interrupting an in-flight play() promise
+      const t = setTimeout(() => { video.pause(); setPlaying(false); onPause?.(); }, 50);
+      return () => clearTimeout(t);
     }
   }, [autoPlay, item.url]);
 
