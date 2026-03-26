@@ -2,89 +2,83 @@ import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
-import { Heart, MessageCircle, Send, X, Play, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Heart, MessageCircle, Send, X, Play, ChevronLeft, ChevronRight, Volume2, VolumeX } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
-// Single media item (video or photo) used in both card and modal
-function MediaItem({ item, autoPlay, onPlay, onPause }) {
+function VideoItem({ src, autoPlay }) {
   const videoRef = useRef(null);
-  const [playing, setPlaying] = useState(false);
-  const [muted, setMuted] = useState(true);
-
   const playPromiseRef = useRef(null);
+  const [muted, setMuted] = useState(true);
+  const [playing, setPlaying] = useState(false);
 
   useEffect(() => {
-    if (item.type !== 'video' || !videoRef.current) return;
     const video = videoRef.current;
+    if (!video) return;
     if (autoPlay) {
-      video.muted = false;
-      setMuted(false);
-      playPromiseRef.current = video.play();
-      if (playPromiseRef.current) {
-        playPromiseRef.current
-          .then(() => { setPlaying(true); onPlay?.(); })
-          .catch(() => {}); // swallow AbortError and any other play errors
-      }
-    } else {
-      video.muted = true;
+      video.muted = true; // always start muted (browser policy)
       setMuted(true);
-      // Always resolve any pending play promise before pausing
+      playPromiseRef.current = video.play();
+      playPromiseRef.current?.then(() => setPlaying(true)).catch(() => {});
+    } else {
       if (playPromiseRef.current) {
-        playPromiseRef.current.then(() => { video.pause(); }).catch(() => {});
+        playPromiseRef.current.then(() => { video.pause(); video.currentTime = 0; }).catch(() => {});
       } else {
         video.pause();
+        video.currentTime = 0;
       }
       playPromiseRef.current = null;
       setPlaying(false);
-      onPause?.();
     }
-  }, [autoPlay, item.url]);
+  }, [autoPlay, src]);
 
-  if (item.type === 'video') {
-    return (
-      <div className="relative w-full h-full">
-        <video
-          ref={videoRef}
-          src={item.url}
-          className="w-full h-full object-cover cursor-pointer"
-          loop playsInline muted={muted}
-          onPlay={() => { setPlaying(true); onPlay?.(); }}
-          onPause={() => { setPlaying(false); onPause?.(); }}
-          onEnded={() => { setPlaying(false); onPause?.(); }}
-          onClick={() => {
-            if (!videoRef.current) return;
-            if (playing) { videoRef.current.pause(); } else { videoRef.current.play().catch(() => {}); }
-          }}
-        />
-        {!playing && (
-          <div className="absolute inset-0 flex items-center justify-center bg-black/30 pointer-events-none">
-            <div className="w-14 h-14 rounded-full bg-black/60 backdrop-blur flex items-center justify-center">
-              <Play className="w-6 h-6 text-white fill-white ml-1" />
-            </div>
+  const toggleMute = (e) => {
+    e.stopPropagation();
+    const newMuted = !muted;
+    setMuted(newMuted);
+    if (videoRef.current) videoRef.current.muted = newMuted;
+  };
+
+  return (
+    <div className="relative w-full h-full">
+      <video
+        ref={videoRef}
+        src={src}
+        className="w-full h-full object-cover"
+        loop playsInline muted={muted}
+        onPlay={() => setPlaying(true)}
+        onPause={() => setPlaying(false)}
+        onClick={(e) => {
+          e.stopPropagation();
+          if (!videoRef.current) return;
+          playing ? videoRef.current.pause() : videoRef.current.play().catch(() => {});
+        }}
+      />
+      {!playing && (
+        <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+          <div className="w-16 h-16 rounded-full bg-black/50 backdrop-blur-sm flex items-center justify-center">
+            <Play className="w-7 h-7 text-white fill-white ml-1" />
           </div>
-        )}
-        <button
-          onClick={() => {
-            const newMuted = !muted;
-            setMuted(newMuted);
-            if (videoRef.current) videoRef.current.muted = newMuted;
-          }}
-          className="absolute bottom-2 right-2 p-1.5 rounded-full bg-black/60 text-white z-10"
-        >
-          {muted ? (
-            <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707A1 1 0 0112 5v14a1 1 0 01-1.707.707L5.586 15z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2" /></svg>
-          ) : (
-            <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.536 8.464a5 5 0 010 7.072M12 6v12m0 0l-4-4H4V10h4l4-4z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18.364 5.636a9 9 0 010 12.728" /></svg>
-          )}
-        </button>
-      </div>
-    );
+        </div>
+      )}
+      {/* Mute/unmute button - prominent bottom right */}
+      <button
+        onClick={toggleMute}
+        className="absolute bottom-3 right-3 w-9 h-9 rounded-full bg-black/60 backdrop-blur flex items-center justify-center z-10 border border-white/20"
+      >
+        {muted ? <VolumeX className="w-4 h-4 text-white" /> : <Volume2 className="w-4 h-4 text-white" />}
+      </button>
+    </div>
+  );
+}
+
+function MediaSlide({ item, autoPlay }) {
+  if (item.type === 'video') {
+    return <VideoItem src={item.url} autoPlay={autoPlay} />;
   }
   return <img src={item.url} alt="post" className="w-full h-full object-cover" />;
 }
 
-// Carousel used in both card and modal
-function MediaCarousel({ items, activeIndex, setActiveIndex, autoPlayIndex }) {
+function MediaCarousel({ items, activeIndex, setActiveIndex, autoPlayVideos }) {
   const isMulti = items.length > 1;
   const touchStartX = useRef(null);
 
@@ -99,40 +93,57 @@ function MediaCarousel({ items, activeIndex, setActiveIndex, autoPlayIndex }) {
 
   return (
     <div
-      className="relative w-full h-full overflow-hidden"
+      className="relative w-full h-full"
       onTouchStart={handleTouchStart}
       onTouchEnd={handleTouchEnd}
     >
+      {/* Slides */}
       <div
-        className="flex h-full transition-transform duration-300"
+        className="flex h-full transition-transform duration-300 ease-in-out"
         style={{ transform: `translateX(-${activeIndex * 100}%)`, width: `${items.length * 100}%` }}
       >
         {items.map((item, i) => (
-          <div key={i} className="h-full flex-shrink-0" style={{ width: `${100 / items.length}%` }}>
-            <MediaItem item={item} autoPlay={autoPlayIndex === i} />
+          <div key={i} className="h-full flex-shrink-0 overflow-hidden" style={{ width: `${100 / items.length}%` }}>
+            <MediaSlide item={item} autoPlay={autoPlayVideos && i === activeIndex} />
           </div>
         ))}
       </div>
+
+      {/* Multi-item UI */}
       {isMulti && (
         <>
+          {/* Counter badge - top right like Instagram */}
+          <div className="absolute top-3 right-3 bg-black/60 backdrop-blur text-white text-xs font-semibold px-2.5 py-1 rounded-full z-20 pointer-events-none">
+            {activeIndex + 1}/{items.length}
+          </div>
+
+          {/* Arrow buttons */}
           {activeIndex > 0 && (
-            <button onClick={() => setActiveIndex(i => i - 1)} className="absolute left-2 top-1/2 -translate-y-1/2 p-1.5 rounded-full bg-black/50 backdrop-blur text-white z-10">
-              <ChevronLeft className="w-4 h-4" />
+            <button
+              onClick={() => setActiveIndex(i => i - 1)}
+              className="absolute left-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-white/90 shadow flex items-center justify-center z-20"
+            >
+              <ChevronLeft className="w-4 h-4 text-black" />
             </button>
           )}
           {activeIndex < items.length - 1 && (
-            <button onClick={() => setActiveIndex(i => i + 1)} className="absolute right-2 top-1/2 -translate-y-1/2 p-1.5 rounded-full bg-black/50 backdrop-blur text-white z-10">
-              <ChevronRight className="w-4 h-4" />
+            <button
+              onClick={() => setActiveIndex(i => i + 1)}
+              className="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-white/90 shadow flex items-center justify-center z-20"
+            >
+              <ChevronRight className="w-4 h-4 text-black" />
             </button>
           )}
-          {/* Instagram-style counter top-right */}
-          <div className="absolute top-2 right-2 bg-black/50 backdrop-blur text-white text-xs font-semibold px-2 py-0.5 rounded-full z-10">
-            {activeIndex + 1}/{items.length}
-          </div>
-          {/* Dots */}
-          <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-1 z-10">
+
+          {/* Dots - bottom center like Instagram */}
+          <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5 z-20 pointer-events-none">
             {items.map((_, i) => (
-              <div key={i} className={`h-1.5 rounded-full transition-all duration-300 ${i === activeIndex ? 'bg-white w-4' : 'bg-white/40 w-1.5'}`} />
+              <div
+                key={i}
+                className={`rounded-full transition-all duration-200 ${
+                  i === activeIndex ? 'w-4 h-1.5 bg-white' : 'w-1.5 h-1.5 bg-white/50'
+                }`}
+              />
             ))}
           </div>
         </>
@@ -213,7 +224,7 @@ function MediaModal({ post, user, onClose }) {
           <button onClick={onClose} className="p-1.5 rounded-full bg-black/40"><X className="w-5 h-5 text-white" /></button>
         </div>
         <div className="flex-1 relative">
-          <MediaCarousel items={items} activeIndex={activeIndex} setActiveIndex={setActiveIndex} autoPlayIndex={activeIndex} />
+          <MediaCarousel items={items} activeIndex={activeIndex} setActiveIndex={setActiveIndex} autoPlayVideos={true} />
         </div>
         <div className="bg-black/90 px-4 py-3">
           {post.caption && <p className="text-sm text-white mb-2"><span className="font-semibold mr-1">{post.avatar_name}</span>{post.caption}</p>}
@@ -269,14 +280,14 @@ export default function PostCard({ post, user }) {
   const [inView, setInView] = useState(false);
   const cardRef = useRef(null);
 
-  const items = post.media_items?.length ? post.media_items : [{ url: post.media_url, type: post.type }];
-  const currentItem = items[activeIndex];
+  const items = post.media_items?.length
+    ? post.media_items
+    : [{ url: post.media_url, type: post.type || 'photo' }];
 
-  // Intersection observer — trigger autoplay
   useEffect(() => {
     const observer = new IntersectionObserver(
-      ([entry]) => setInView(entry.isIntersecting && entry.intersectionRatio >= 0.6),
-      { threshold: 0.6 }
+      ([entry]) => setInView(entry.isIntersecting && entry.intersectionRatio >= 0.5),
+      { threshold: 0.5 }
     );
     if (cardRef.current) observer.observe(cardRef.current);
     return () => observer.disconnect();
@@ -342,83 +353,90 @@ export default function PostCard({ post, user }) {
         {modalOpen && <MediaModal post={post} user={user} onClose={() => setModalOpen(false)} />}
       </AnimatePresence>
 
-      <div ref={cardRef} className="bg-card/50 border border-white/5 rounded-2xl overflow-hidden">
-        {/* Header */}
-        <div className="flex items-center gap-3 px-4 py-3 cursor-pointer" onClick={goToProfile}>
-          <div className="w-9 h-9 rounded-full bg-primary/20 flex items-center justify-center text-sm font-bold text-primary overflow-hidden flex-shrink-0">
+      <div ref={cardRef} className="bg-card border-y border-white/5">
+        {/* ── Instagram-style header ── */}
+        <div className="flex items-center gap-3 px-3 py-2.5">
+          <button onClick={goToProfile} className="w-9 h-9 rounded-full overflow-hidden flex-shrink-0 ring-2 ring-primary/40">
             {post.avatar_photo_url
               ? <img src={post.avatar_photo_url} alt={post.avatar_name} className="w-full h-full object-cover" />
-              : post.avatar_name?.[0] || 'A'}
-          </div>
+              : <div className="w-full h-full bg-primary/20 flex items-center justify-center text-sm font-bold text-primary">{post.avatar_name?.[0] || 'A'}</div>}
+          </button>
           <div className="flex-1 min-w-0">
-            <p className="text-sm font-semibold hover:text-primary transition-colors truncate">{post.avatar_name || 'Avatar'}</p>
+            <button onClick={goToProfile} className="text-sm font-semibold hover:opacity-80 truncate block text-left">{post.avatar_name || 'Avatar'}</button>
             {post.category && <p className="text-xs text-muted-foreground">{post.category}</p>}
           </div>
-
+          {/* Three dots */}
+          <button className="p-1 text-muted-foreground">
+            <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/></svg>
+          </button>
         </div>
 
-        {/* Media carousel */}
-        <div
-          className="relative bg-black w-full overflow-hidden"
-          style={{ aspectRatio: currentItem?.type === 'video' ? '9/16' : '4/5', maxHeight: '75vh' }}
-        >
+        {/* ── Full-width square media ── */}
+        <div className="w-full aspect-square bg-black overflow-hidden relative">
           <MediaCarousel
             items={items}
             activeIndex={activeIndex}
             setActiveIndex={setActiveIndex}
-            autoPlayIndex={inView ? activeIndex : -1}
+            autoPlayVideos={inView}
           />
-          {/* Fullscreen button */}
-          <button onClick={() => setModalOpen(true)} className="absolute top-2 right-2 p-1.5 rounded-full bg-black/50 text-white z-10">
-            <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5v-4m0 4h-4m4 0l-5-5" /></svg>
-          </button>
         </div>
 
-        {/* Actions */}
-        <div className="px-4 py-3">
-          <div className="flex items-center gap-4 mb-2">
-            <motion.button whileTap={{ scale: 0.8 }} onClick={() => user && toggleLike.mutate()} disabled={!user || toggleLike.isPending} className="flex items-center gap-1.5">
-              <Heart className={`w-5 h-5 transition-colors ${liked ? 'fill-primary text-primary' : 'text-muted-foreground'}`} />
-              <span className="text-sm font-medium">{post.likes_count || 0}</span>
+        {/* ── Actions row (Instagram style) ── */}
+        <div className="px-3 pt-2 pb-1">
+          <div className="flex items-center gap-3 mb-2">
+            <motion.button whileTap={{ scale: 0.8 }} onClick={() => user && toggleLike.mutate()} disabled={!user || toggleLike.isPending}>
+              <Heart className={`w-6 h-6 transition-colors ${liked ? 'fill-primary text-primary' : 'text-foreground'}`} />
             </motion.button>
-            <button onClick={() => setShowComments(v => !v)} className="flex items-center gap-1.5 text-muted-foreground hover:text-foreground transition-colors">
-              <MessageCircle className="w-5 h-5" />
-              <span className="text-sm font-medium">{post.comments_count || 0}</span>
+            <button onClick={() => setShowComments(v => !v)}>
+              <MessageCircle className="w-6 h-6 text-foreground" />
+            </button>
+            <button onClick={() => setModalOpen(true)} className="ml-auto">
+              <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5 text-muted-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5v-4m0 4h-4m4 0l-5-5" /></svg>
             </button>
           </div>
+
+          {/* Likes count */}
+          {(post.likes_count || 0) > 0 && (
+            <p className="text-sm font-semibold mb-1">{post.likes_count} {post.likes_count === 1 ? 'like' : 'likes'}</p>
+          )}
+
+          {/* Caption */}
           {post.caption && (
             <p className="text-sm mb-1">
-              <span className="font-semibold mr-1 cursor-pointer hover:text-primary" onClick={goToProfile}>{post.avatar_name}</span>
-              {post.caption}
+              <button onClick={goToProfile} className="font-semibold mr-1 hover:opacity-70">{post.avatar_name}</button>
+              <span className="text-foreground/90">{post.caption}</span>
             </p>
+          )}
+
+          {/* Comments count */}
+          {(post.comments_count || 0) > 0 && (
+            <button onClick={() => setShowComments(v => !v)} className="text-sm text-muted-foreground mb-1">
+              View all {post.comments_count} comments
+            </button>
           )}
         </div>
 
-        {/* Comments */}
+        {/* ── Comments section ── */}
         <AnimatePresence>
           {showComments && (
             <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} className="overflow-hidden border-t border-white/5">
-              <div className="px-4 py-3 space-y-3 max-h-48 overflow-y-auto">
-                {comments.length === 0 && <p className="text-xs text-muted-foreground">No comments yet. Be first!</p>}
+              <div className="px-3 py-2 space-y-2 max-h-40 overflow-y-auto">
+                {comments.length === 0 && <p className="text-xs text-muted-foreground">No comments yet.</p>}
                 {comments.map(c => (
                   <div key={c.id} className="flex gap-2">
                     <div className="w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center text-xs font-bold text-primary flex-shrink-0">{c.commenter_name?.[0] || 'U'}</div>
-                    <div>
-                      <span className="text-xs font-semibold mr-1">{c.commenter_name}</span>
-                      <span className="text-xs text-muted-foreground">{c.content}</span>
-                    </div>
+                    <div><span className="text-xs font-semibold mr-1">{c.commenter_name}</span><span className="text-xs text-muted-foreground">{c.content}</span></div>
                   </div>
                 ))}
               </div>
               {user && (
-                <div className="px-4 pb-3 flex gap-2">
+                <div className="px-3 pb-3 flex gap-2 border-t border-white/5 pt-2">
                   <input value={commentText} onChange={e => setCommentText(e.target.value)}
                     onKeyDown={e => { if (e.key === 'Enter' && commentText.trim()) addComment.mutate(); }}
                     placeholder="Add a comment..."
-                    className="flex-1 bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-primary/40 text-foreground placeholder:text-muted-foreground" />
-                  <button onClick={() => commentText.trim() && addComment.mutate()} disabled={!commentText.trim() || addComment.isPending} className="w-9 h-9 rounded-xl bg-primary/10 flex items-center justify-center hover:bg-primary/20 transition-colors disabled:opacity-40">
-                    <Send className="w-4 h-4 text-primary" />
-                  </button>
+                    className="flex-1 bg-transparent text-sm focus:outline-none text-foreground placeholder:text-muted-foreground" />
+                  <button onClick={() => commentText.trim() && addComment.mutate()} disabled={!commentText.trim() || addComment.isPending}
+                    className="text-primary text-sm font-semibold disabled:opacity-40">Post</button>
                 </div>
               )}
             </motion.div>
