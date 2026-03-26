@@ -198,6 +198,7 @@ export default function PostCard({ post, user }) {
   const [showComments, setShowComments] = useState(false);
   const [commentText, setCommentText] = useState('');
   const [playing, setPlaying] = useState(false);
+  const [muted, setMuted] = useState(true);
   const [modalOpen, setModalOpen] = useState(false);
   const videoRef = useRef(null);
   const cardRef = useRef(null);
@@ -315,7 +316,7 @@ export default function PostCard({ post, user }) {
                 className="w-full h-full object-cover cursor-pointer"
                 loop
                 playsInline
-                muted
+                muted={muted}
                 autoPlay
                 onPlay={() => setPlaying(true)}
                 onPause={() => setPlaying(false)}
@@ -334,6 +335,17 @@ export default function PostCard({ post, user }) {
                   </div>
                 </div>
               )}
+              {/* Mute/Unmute button */}
+              <button
+                onClick={() => setMuted(v => !v)}
+                className="absolute bottom-2 right-2 p-1.5 rounded-full bg-black/60 text-white z-10"
+              >
+                {muted ? (
+                  <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707A1 1 0 0112 5v14a1 1 0 01-1.707.707L5.586 15z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2" /></svg>
+                ) : (
+                  <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.536 8.464a5 5 0 010 7.072M12 6v12m0 0l-4-4H4V10h4l4-4z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18.364 5.636a9 9 0 010 12.728" /></svg>
+                )}
+              </button>
               {/* Fullscreen button */}
               <button
                 onClick={() => setModalOpen(true)}
