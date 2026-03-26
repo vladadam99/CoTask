@@ -1,0 +1,71 @@
+{
+  "name": "Post",
+  "type": "object",
+  "properties": {
+    "avatar_email": {
+      "type": "string"
+    },
+    "avatar_name": {
+      "type": "string"
+    },
+    "avatar_photo_url": {
+      "type": "string"
+    },
+    "avatar_profile_id": {
+      "type": "string"
+    },
+    "type": {
+      "type": "string",
+      "enum": [
+        "photo",
+        "video"
+      ],
+      "default": "photo"
+    },
+    "media_url": {
+      "type": "string"
+    },
+    "media_urls": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Array of media URLs for multi-item posts"
+    },
+    "media_types": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Type for each media item: photo or video"
+    },
+    "thumbnail_url": {
+      "type": "string"
+    },
+    "caption": {
+      "type": "string"
+    },
+    "category": {
+      "type": "string"
+    },
+    "likes_count": {
+      "type": "number",
+      "default": 0
+    },
+    "comments_count": {
+      "type": "number",
+      "default": 0
+    },
+    "duration_seconds": {
+      "type": "number"
+    },
+    "is_published": {
+      "type": "boolean",
+      "default": true
+    }
+  },
+  "required": [
+    "avatar_email",
+    "media_url"
+  ]
+}

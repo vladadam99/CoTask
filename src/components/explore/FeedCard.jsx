@@ -14,10 +14,21 @@ export default function FeedCard({ post, user }) {
   const [muted, setMuted] = useState(true);
   const [showComments, setShowComments] = useState(false);
   const [commentText, setCommentText] = useState('');
+  const [mediaIndex, setMediaIndex] = useState(0);
+
+  // Build media list from multi-post or single post
+  const mediaList = (post.media_urls && post.media_urls.length > 0)
+    ? post.media_urls.map((url, i) => ({ url, type: post.media_types?.[i] || 'photo' }))
+    : [{ url: post.media_url, type: post.type || 'photo' }];
+  const currentMedia = mediaList[mediaIndex];
+  const isMulti = mediaList.length > 1;
+
+  // Reset slide index when post changes
+  useEffect(() => { setMediaIndex(0); }, [post.id]);
 
   // Autoplay with sound when scrolled into view
   useEffect(() => {
-    if (post.type !== 'video') return;
+    if (currentMedia.type !== 'video') return;
     let cancelled = false;
     const observer = new IntersectionObserver(([entry]) => {
       const video = videoRef.current;
@@ -47,7 +58,7 @@ export default function FeedCard({ post, user }) {
     }, { threshold: 0.7 });
     if (cardRef.current) observer.observe(cardRef.current);
     return () => { cancelled = true; observer.disconnect(); };
-  }, [post.type]);
+  }, [currentMedia.type]);
 
   const { data: liked = false } = useQuery({
     queryKey: ['post-liked', user?.email, post.id],
@@ -105,24 +116,69 @@ export default function FeedCard({ post, user }) {
   };
 
   return (
-    <div ref={cardRef} className="relative w-full h-full bg-black flex-shrink-0 snap-start">
-      {/* Media */}
-      {post.type === 'video' ? (
-        <video
-          ref={videoRef}
-          src={post.media_url}
-          className="w-full h-full object-cover"
-          loop
-          playsInline
-          muted={muted}
-          onClick={togglePlay}
-        />
-      ) : (
-        <img src={post.media_url} alt={post.caption || 'Post'} className="w-full h-full object-cover" />
-      )}
+    <div ref={cardRef} className="relative w-full h-full bg-black flex-shrink-0 snap-start overflow-hidden">
+
+      {/* Media carousel */}
+      <div className="w-full h-full overflow-hidden relative">
+        <div
+          className="flex h-full transition-transform duration-300 ease-out"
+          style={{ transform: `translateX(-${mediaIndex * 100}%)`, width: `${mediaList.length * 100}%` }}
+        >
+          {mediaList.map((media, i) => (
+            <div key={i} className="h-full flex-shrink-0" style={{ width: `${100 / mediaList.length}%` }}>
+              {media.type === 'video' ? (
+                <video
+                  ref={i === mediaIndex ? videoRef : null}
+                  src={media.url}
+                  className="w-full h-full object-cover"
+                  loop playsInline muted={muted}
+                  onClick={togglePlay}
+                />
+              ) : (
+                <img src={media.url} alt={post.caption || 'Post'} className="w-full h-full object-cover" />
+              )}
+            </div>
+          ))}
+        </div>
+
+        {/* Prev/Next buttons */}
+        {isMulti && mediaIndex > 0 && (
+          <button
+            onClick={() => setMediaIndex(i => i - 1)}
+            className="absolute left-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-black/50 backdrop-blur flex items-center justify-center z-10"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+            </svg>
+          </button>
+        )}
+        {isMulti && mediaIndex < mediaList.length - 1 && (
+          <button
+            onClick={() => setMediaIndex(i => i + 1)}
+            className="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-black/50 backdrop-blur flex items-center justify-center z-10"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+            </svg>
+          </button>
+        )}
+
+        {/* Dot indicators */}
+        {isMulti && (
+          <div className="absolute top-16 left-0 right-0 flex justify-center gap-1.5 z-10">
+            {mediaList.map((_, i) => (
+              <button
+                key={i}
+                onClick={() => setMediaIndex(i)}
+                className={`rounded-full transition-all ${i === mediaIndex ? 'w-4 h-1.5 bg-white' : 'w-1.5 h-1.5 bg-white/40'}`}
+              />
+            ))}
+          </div>
+        )}
+      </div>
 
       {/* Play overlay */}
-      {post.type === 'video' && !playing && (
+      {currentMedia.type === 'video' && !playing && (
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
           <div className="w-16 h-16 rounded-full bg-black/50 flex items-center justify-center">
             <Play className="w-7 h-7 text-white fill-white ml-1" />
@@ -134,7 +190,7 @@ export default function FeedCard({ post, user }) {
       <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/20 pointer-events-none" />
 
       {/* Top: Avatar info */}
-      <div className="absolute top-0 left-0 right-0 px-4 pt-4 flex items-center gap-3">
+      <div className="absolute top-0 left-0 right-0 px-4 pt-4 flex items-center gap-3 z-10">
         <button
           onClick={() => navigate(`/AvatarView?id=${post.avatar_profile_id}`)}
           className="flex items-center gap-2"
@@ -152,8 +208,7 @@ export default function FeedCard({ post, user }) {
       </div>
 
       {/* Right side actions */}
-      <div className="absolute right-3 bottom-24 flex flex-col items-center gap-5">
-        {/* Like */}
+      <div className="absolute right-3 bottom-24 flex flex-col items-center gap-5 z-10">
         <div className="flex flex-col items-center gap-1">
           <motion.button
             whileTap={{ scale: 0.7 }}
@@ -166,7 +221,6 @@ export default function FeedCard({ post, user }) {
           <span className="text-xs text-white font-medium">{post.likes_count || 0}</span>
         </div>
 
-        {/* Comment */}
         <div className="flex flex-col items-center gap-1">
           <button
             onClick={() => setShowComments(v => !v)}
@@ -177,8 +231,7 @@ export default function FeedCard({ post, user }) {
           <span className="text-xs text-white font-medium">{post.comments_count || 0}</span>
         </div>
 
-        {/* Mute — only for videos */}
-        {post.type === 'video' && (
+        {currentMedia.type === 'video' && (
           <button
             onClick={() => {
               if (videoRef.current) videoRef.current.muted = !muted;
@@ -192,7 +245,7 @@ export default function FeedCard({ post, user }) {
       </div>
 
       {/* Bottom: Caption */}
-      <div className="absolute bottom-6 left-4 right-16">
+      <div className="absolute bottom-6 left-4 right-16 z-10">
         {post.caption && (
           <p className="text-sm text-white leading-relaxed">
             <span className="font-bold mr-1">{post.avatar_name}</span>

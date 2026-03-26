@@ -59,22 +59,29 @@ export default function PostUpload({ user, profile, onClose }) {
     mutationFn: async () => {
       setUploading(true);
       setProgress(0);
+      const uploadedUrls = [];
+      const uploadedTypes = [];
       for (let i = 0; i < items.length; i++) {
         const { file, fileType } = items[i];
         const { file_url } = await base44.integrations.Core.UploadFile({ file });
-        await base44.entities.Post.create({
-          avatar_email: user.email,
-          avatar_name: profile?.display_name || user.full_name,
-          avatar_photo_url: profile?.photo_url || '',
-          avatar_profile_id: profile?.id || '',
-          type: fileType,
-          media_url: file_url,
-          caption: caption.trim(),
-          category: category.trim(),
-          is_published: true,
-        });
+        uploadedUrls.push(file_url);
+        uploadedTypes.push(fileType);
         setProgress(Math.round(((i + 1) / items.length) * 100));
       }
+      // Create a single post with all media
+      await base44.entities.Post.create({
+        avatar_email: user.email,
+        avatar_name: profile?.display_name || user.full_name,
+        avatar_photo_url: profile?.photo_url || '',
+        avatar_profile_id: profile?.id || '',
+        type: uploadedTypes[0],
+        media_url: uploadedUrls[0],
+        media_urls: uploadedUrls,
+        media_types: uploadedTypes,
+        caption: caption.trim(),
+        category: category.trim(),
+        is_published: true,
+      });
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['explore-posts'] });
