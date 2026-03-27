@@ -1,8 +1,8 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
-import { Heart, MessageCircle, Send, X, Play, Volume2, VolumeX } from 'lucide-react';
+import { Heart, MessageCircle, Send, X, Play, Volume2, VolumeX, Loader2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 export default function FeedCard({ post, user }) {
@@ -15,6 +15,7 @@ export default function FeedCard({ post, user }) {
   const [showComments, setShowComments] = useState(false);
   const [commentText, setCommentText] = useState('');
   const [mediaIndex, setMediaIndex] = useState(0);
+  const [videoLoading, setVideoLoading] = useState(false);
 
   const mediaList = (post.media_urls && post.media_urls.length > 0)
     ? post.media_urls.map((url, i) => ({ url, type: post.media_types?.[i] || 'photo' }))
@@ -24,37 +25,45 @@ export default function FeedCard({ post, user }) {
 
   useEffect(() => { setMediaIndex(0); }, [post.id]);
 
-  // Autoplay muted, then try unmuting
+  // Autoplay when visible
   useEffect(() => {
     if (currentMedia.type !== 'video') return;
+    const video = videoRef.current;
+    if (!video) return;
+
+    const playVideo = () => {
+      video.muted = true;
+      setIsMuted(true);
+      setVideoLoading(true);
+      // Force reload to avoid stale state
+      video.load();
+      const onCanPlay = () => {
+        setVideoLoading(false);
+        video.play().catch(() => {});
+        setPlaying(true);
+      };
+      video.addEventListener('canplay', onCanPlay, { once: true });
+    };
 
     const observer = new IntersectionObserver(([entry]) => {
-      const video = videoRef.current;
-      if (!video) return;
-
+      const v = videoRef.current;
+      if (!v) return;
       if (entry.isIntersecting && entry.intersectionRatio >= 0.5) {
-        video.muted = true;
-        setIsMuted(true);
-        video.play().then(() => {
-          setPlaying(true);
-          // Try to unmute after play starts
-          video.muted = false;
-          setIsMuted(false);
-        }).catch(() => {
-          // Muted autoplay fallback
-          video.muted = true;
-          video.play().catch(() => {});
-          setPlaying(true);
-        });
+        playVideo();
       } else {
-        video.pause();
+        v.pause();
+        v.currentTime = 0;
         setPlaying(false);
+        setVideoLoading(false);
       }
     }, { threshold: 0.5 });
 
     if (cardRef.current) observer.observe(cardRef.current);
-    return () => observer.disconnect();
-  }, [currentMedia.type, mediaIndex]);
+    return () => {
+      observer.disconnect();
+      if (video) { video.pause(); video.src = ''; }
+    };
+  }, [currentMedia.type, currentMedia.url, mediaIndex]);
 
   const { data: liked = false } = useQuery({
     queryKey: ['post-liked', user?.email, post.id],
@@ -182,11 +191,13 @@ export default function FeedCard({ post, user }) {
         )}
       </div>
 
-      {/* Play overlay */}
-      {currentMedia.type === 'video' && !playing && (
+      {/* Play / loading overlay */}
+      {currentMedia.type === 'video' && (videoLoading || !playing) && (
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
           <div className="w-16 h-16 rounded-full bg-black/50 flex items-center justify-center">
-            <Play className="w-7 h-7 text-white fill-white ml-1" />
+            {videoLoading
+              ? <Loader2 className="w-7 h-7 text-white animate-spin" />
+              : <Play className="w-7 h-7 text-white fill-white ml-1" />}
           </div>
         </div>
       )}
