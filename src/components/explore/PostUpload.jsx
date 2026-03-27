@@ -2,13 +2,13 @@ import React, { useState, useRef } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { Button } from '@/components/ui/button';
-import { Upload, X, Loader2, Image, Video, Plus } from 'lucide-react';
+import { Upload, X, Loader2, Image as ImageIcon, Video, Plus } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 // Compress image to max 1080px, JPEG 80% quality
 async function compressImage(file) {
   return new Promise((resolve) => {
-    const img = new Image();
+    const img = new window.Image();
     const url = URL.createObjectURL(file);
     img.onload = () => {
       const MAX = 1080;
@@ -171,7 +171,7 @@ export default function PostUpload({ user, profile, onClose }) {
             >
               <div className="flex gap-4">
                 <div className="flex flex-col items-center gap-1 text-muted-foreground">
-                  <Image className="w-8 h-8" />
+                  <ImageIcon className="w-8 h-8" />
                   <span className="text-xs">Photos</span>
                 </div>
                 <div className="flex flex-col items-center gap-1 text-muted-foreground">
