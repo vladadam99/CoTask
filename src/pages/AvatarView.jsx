@@ -155,21 +155,41 @@ export default function AvatarView() {
   ].filter(e => avatar[e.key]);
 
   return (
-    <div className="min-h-screen bg-background p-4 lg:p-8">
-      <div className="max-w-3xl mx-auto">
-        {/* Header */}
-        <div className="bg-gradient-to-b from-primary/10 to-transparent rounded-2xl pt-6 pb-12 px-6 mb-0">
-          <Link to="/Explore" className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground mb-6">
-            <ArrowLeft className="w-4 h-4" /> Back to Explore
-          </Link>
+    <div className="min-h-screen bg-background">
+      <div className="max-w-4xl mx-auto">
 
-          <div className="flex flex-col sm:flex-row items-start gap-6">
-            <div className="w-20 h-20 rounded-2xl bg-primary/10 flex items-center justify-center text-3xl font-bold text-primary flex-shrink-0">
-              {avatar.display_name?.[0] || 'A'}
+        {/* Cover Photo */}
+        <div className="relative w-full h-48 md:h-64 rounded-b-2xl overflow-hidden">
+          {avatar.cover_url ? (
+            <img src={avatar.cover_url} alt="Cover" className="w-full h-full object-cover" />
+          ) : (
+            <div className="w-full h-full bg-gradient-to-br from-primary/20 via-primary/10 to-card" />
+          )}
+          <div className="absolute top-4 left-4">
+            <Link to="/Explore" className="inline-flex items-center gap-2 text-sm text-white/80 hover:text-white bg-black/30 backdrop-blur px-3 py-1.5 rounded-full">
+              <ArrowLeft className="w-4 h-4" /> Back
+            </Link>
+          </div>
+        </div>
+
+        {/* Profile Header */}
+        <div className="relative -mt-16 px-4 mb-6">
+          <div className="flex flex-col md:flex-row items-start md:items-end gap-4">
+            {/* Profile Picture */}
+            <div className="w-32 h-32 md:w-36 md:h-36 rounded-full bg-card border-4 border-card shadow-2xl flex-shrink-0 overflow-hidden">
+              {avatar.photo_url ? (
+                <img src={avatar.photo_url} alt={avatar.display_name} className="w-full h-full object-cover" />
+              ) : (
+                <div className="w-full h-full rounded-full bg-primary/20 flex items-center justify-center text-4xl font-black text-primary">
+                  {avatar.display_name?.[0] || 'A'}
+                </div>
+              )}
             </div>
-            <div className="flex-1">
-              <div className="flex items-center gap-3 mb-2">
-                <h1 className="text-2xl font-bold">{avatar.display_name}</h1>
+
+            {/* Name & Badges */}
+            <div className="flex-1 pb-2">
+              <div className="flex flex-wrap items-center gap-2 mb-1">
+                <h1 className="text-2xl md:text-3xl font-bold">{avatar.display_name}</h1>
                 {avatar.is_verified && (
                   <Badge className="bg-blue-500/10 text-blue-400 border-blue-500/20">
                     <Shield className="w-3 h-3 mr-1" /> Verified
@@ -179,18 +199,37 @@ export default function AvatarView() {
                   <Badge className="bg-green-500/10 text-green-400 border-green-500/20">Available</Badge>
                 )}
               </div>
-              <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground">
-                <span className="flex items-center gap-1"><MapPin className="w-4 h-4" /> {avatar.city || 'Remote'}{avatar.country ? `, ${avatar.country}` : ''}</span>
-                {avatar.rating > 0 && <span className="flex items-center gap-1"><Star className="w-4 h-4 text-yellow-400" /> {avatar.rating.toFixed(1)} ({avatar.review_count} reviews)</span>}
-                {avatar.response_time_minutes && <span className="flex items-center gap-1"><Clock className="w-4 h-4" /> Responds in ~{avatar.response_time_minutes}min</span>}
-                <span className="flex items-center gap-1"><Globe className="w-4 h-4" /> {(avatar.languages || ['English']).join(', ')}</span>
+              <div className="flex flex-wrap items-center gap-3 text-sm text-muted-foreground">
+                <span className="flex items-center gap-1"><MapPin className="w-3.5 h-3.5" /> {avatar.city || 'Remote'}{avatar.country ? `, ${avatar.country}` : ''}</span>
+                {avatar.rating > 0 && <span className="flex items-center gap-1"><Star className="w-3.5 h-3.5 text-yellow-400" /> {avatar.rating.toFixed(1)} ({avatar.review_count})</span>}
+                <span className="flex items-center gap-1"><Globe className="w-3.5 h-3.5" /> {(avatar.languages || ['English']).join(', ')}</span>
               </div>
             </div>
           </div>
         </div>
 
+        {/* Stats Row */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 px-4 mb-6">
+          <div className="bg-card/50 rounded-xl p-4 text-center border border-white/5">
+            <p className="text-2xl font-bold text-primary">${avatar.hourly_rate || 0}</p>
+            <p className="text-xs text-muted-foreground mt-1">Per Hour</p>
+          </div>
+          <div className="bg-card/50 rounded-xl p-4 text-center border border-white/5">
+            <p className="text-2xl font-bold text-primary">${avatar.per_session_rate || 0}</p>
+            <p className="text-xs text-muted-foreground mt-1">Per Session</p>
+          </div>
+          <div className="bg-card/50 rounded-xl p-4 text-center border border-white/5">
+            <p className="text-2xl font-bold text-primary">{avatar.completed_jobs || 0}</p>
+            <p className="text-xs text-muted-foreground mt-1">Jobs Done</p>
+          </div>
+          <div className="bg-card/50 rounded-xl p-4 text-center border border-white/5">
+            <p className="text-2xl font-bold text-primary">{avatar.rating > 0 ? avatar.rating.toFixed(1) : '—'}</p>
+            <p className="text-xs text-muted-foreground mt-1">Rating</p>
+          </div>
+        </div>
+
         {/* Action Buttons */}
-        <div className="flex gap-3 mb-8 mt-4">
+        <div className="flex gap-3 mb-6 px-4">
           <Link to={`/CreateBooking?avatar=${id}`} className="flex-1">
             <Button className="w-full bg-primary hover:bg-primary/90 glow-primary-sm py-5">
               <Calendar className="w-4 h-4 mr-2" /> Book Now — ${avatar.hourly_rate || 30}/hr
@@ -210,7 +249,7 @@ export default function AvatarView() {
           </Button>
         </div>
 
-        <div className="grid md:grid-cols-3 gap-6">
+        <div className="grid md:grid-cols-3 gap-6 px-4 pb-8">
           <div className="md:col-span-2 space-y-6">
             {/* Bio */}
             <GlassCard className="p-6">
