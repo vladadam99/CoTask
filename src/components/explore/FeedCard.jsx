@@ -202,7 +202,7 @@ export default function FeedCard({ post, user }) {
       <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/20 pointer-events-none z-10" />
 
       {/* Top: Avatar info */}
-      <div className="absolute top-0 left-0 right-0 px-4 pt-4 flex items-center gap-3 z-20">
+      <div className="absolute top-0 left-0 right-0 px-4 pt-16 lg:pt-4 flex items-center gap-3 z-20">
         <button
           onClick={() => navigate(`/AvatarView?id=${post.avatar_profile_id}`)}
           className="flex items-center gap-2"
@@ -220,7 +220,7 @@ export default function FeedCard({ post, user }) {
       </div>
 
       {/* Right side actions */}
-      <div className="absolute right-3 bottom-24 flex flex-col items-center gap-5 z-20">
+      <div className="absolute right-3 bottom-32 lg:bottom-24 flex flex-col items-center gap-5 z-20">
         <div className="flex flex-col items-center gap-1">
           <motion.button
             whileTap={{ scale: 0.7 }}
@@ -254,7 +254,7 @@ export default function FeedCard({ post, user }) {
       </div>
 
       {/* Bottom: Caption */}
-      <div className="absolute bottom-6 left-4 right-16 z-20">
+      <div className="absolute bottom-20 lg:bottom-6 left-4 right-16 z-20">
         {post.caption && (
           <p className="text-sm text-white leading-relaxed">
             <span className="font-bold mr-1">{post.avatar_name}</span>
