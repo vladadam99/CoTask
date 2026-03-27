@@ -7,22 +7,12 @@ import AppShell from '@/components/layout/AppShell';
 import GlassCard from '@/components/ui/GlassCard';
 import StatusBadge from '@/components/ui/StatusBadge';
 import { Button } from '@/components/ui/button';
+import { getNavItems } from '@/lib/navItems';
 import {
-  Home, Inbox, Calendar, Radio, MessageSquare, DollarSign,
-  Star, User, Settings, Play, Square, Clock, Clapperboard, Film
+  Radio, Play, Square, Clock, Clapperboard, Film
 } from 'lucide-react';
 
-const navItems = [
-  { icon: Home, label: 'Home', path: '/AvatarDashboard' },
-  { icon: Inbox, label: 'Requests', path: '/AvatarRequests' },
-  { icon: Calendar, label: 'Schedule', path: '/AvatarSchedule' },
-  { icon: Radio, label: 'Live', path: '/AvatarLive' },
-  { icon: MessageSquare, label: 'Messages', path: '/Messages' },
-  { icon: DollarSign, label: 'Earnings', path: '/AvatarEarnings' },
-  { icon: Star, label: 'Reviews', path: '/AvatarReviews' },
-  { icon: User, label: 'Profile', path: '/AvatarProfileEdit' },
-  { icon: Settings, label: 'Settings', path: '/AvatarSettings' },
-];
+
 
 export default function AvatarLive() {
   const { user, loading } = useCurrentUser();
@@ -110,7 +100,7 @@ export default function AvatarLive() {
   const pastSessions = sessions.filter(s => s.status === 'ended');
 
   return (
-    <AppShell navItems={navItems} user={user}>
+    <AppShell navItems={getNavItems(user?.role)} user={user}>
       <div className="flex items-start justify-between mb-8">
         <div>
           <h1 className="text-2xl lg:text-3xl font-bold mb-1">Live Sessions</h1>

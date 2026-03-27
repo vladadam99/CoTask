@@ -6,24 +6,14 @@ import { useCurrentUser } from '@/lib/useCurrentUser';
 import AppShell from '@/components/layout/AppShell';
 import GlassCard from '@/components/ui/GlassCard';
 import StatusBadge from '@/components/ui/StatusBadge';
+import { getNavItems } from '@/lib/navItems';
 import {
-  Home, Inbox, Calendar, Radio, MessageSquare, DollarSign,
-  Star, User, Settings, ChevronLeft, ChevronRight, Clock, MapPin
+  Calendar, ChevronLeft, ChevronRight, Clock, MapPin
 } from 'lucide-react';
 import { format, startOfMonth, endOfMonth, eachDayOfInterval, getDay, isSameDay, isToday, addMonths, subMonths } from 'date-fns';
 import AvailabilityManager from '@/components/schedule/AvailabilityManager';
 
-const navItems = [
-  { icon: Home, label: 'Home', path: '/AvatarDashboard' },
-  { icon: Inbox, label: 'Requests', path: '/AvatarRequests' },
-  { icon: Calendar, label: 'Schedule', path: '/AvatarSchedule' },
-  { icon: Radio, label: 'Live', path: '/AvatarLive' },
-  { icon: MessageSquare, label: 'Messages', path: '/Messages' },
-  { icon: DollarSign, label: 'Earnings', path: '/AvatarEarnings' },
-  { icon: Star, label: 'Reviews', path: '/AvatarReviews' },
-  { icon: User, label: 'Profile', path: '/AvatarProfileEdit' },
-  { icon: Settings, label: 'Settings', path: '/AvatarSettings' },
-];
+
 
 export default function AvatarSchedule() {
   const { user, loading } = useCurrentUser();
@@ -60,7 +50,7 @@ export default function AvatarSchedule() {
   const selectedBookings = bookingsOnDay(selectedDay);
 
   return (
-    <AppShell navItems={navItems} user={user}>
+    <AppShell navItems={getNavItems(user?.role)} user={user}>
       <div className="mb-8">
         <h1 className="text-2xl lg:text-3xl font-bold mb-1">My Schedule</h1>
         <p className="text-muted-foreground text-sm">{scheduledBookings.length} upcoming session{scheduledBookings.length !== 1 ? 's' : ''}</p>

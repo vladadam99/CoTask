@@ -7,22 +7,12 @@ import AppShell from '@/components/layout/AppShell';
 import GlassCard from '@/components/ui/GlassCard';
 import StatusBadge from '@/components/ui/StatusBadge';
 import { Button } from '@/components/ui/button';
+import { getNavItems } from '@/lib/navItems';
 import {
-  Home, Inbox, Calendar, Radio, MessageSquare, DollarSign,
-  Star, User, Settings, Clock, CheckCircle, XCircle, Eye, MapPin
+  Inbox, Calendar, Clock, CheckCircle, XCircle, Eye, MapPin
 } from 'lucide-react';
 
-const navItems = [
-  { icon: Home, label: 'Home', path: '/AvatarDashboard' },
-  { icon: Inbox, label: 'Requests', path: '/AvatarRequests' },
-  { icon: Calendar, label: 'Schedule', path: '/AvatarSchedule' },
-  { icon: Radio, label: 'Live', path: '/AvatarLive' },
-  { icon: MessageSquare, label: 'Messages', path: '/Messages' },
-  { icon: DollarSign, label: 'Earnings', path: '/AvatarEarnings' },
-  { icon: Star, label: 'Reviews', path: '/AvatarReviews' },
-  { icon: User, label: 'Profile', path: '/AvatarProfileEdit' },
-  { icon: Settings, label: 'Settings', path: '/AvatarSettings' },
-];
+
 
 const TABS = [
   { key: 'pending', label: 'Pending', icon: Clock },
@@ -85,7 +75,7 @@ export default function AvatarRequests() {
   const pendingCount = bookings.filter(b => b.status === 'pending').length;
 
   return (
-    <AppShell navItems={navItems} user={user}>
+    <AppShell navItems={getNavItems(user?.role)} user={user}>
       <div className="mb-8">
         <h1 className="text-2xl lg:text-3xl font-bold mb-1">Booking Requests</h1>
         <p className="text-muted-foreground text-sm">

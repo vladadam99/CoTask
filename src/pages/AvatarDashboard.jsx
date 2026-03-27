@@ -9,18 +9,14 @@ import StatusBadge from '@/components/ui/StatusBadge';
 import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
 import { motion } from 'framer-motion';
+import { getNavItems } from '@/lib/navItems';
 import {
   Radio, Inbox, Calendar, DollarSign, User,
   ArrowRight, TrendingUp, CheckCircle, Zap,
   Clock, Play, PlusCircle
 } from 'lucide-react';
 
-const navItems = [
-  { icon: Zap, label: 'Go Live', path: '/AvatarLive' },
-  { icon: Inbox, label: 'Bookings', path: '/AvatarRequests' },
-  { icon: DollarSign, label: 'Earnings', path: '/AvatarEarnings' },
-  { icon: User, label: 'Setup', path: '/AvatarProfileEdit' },
-];
+
 
 export default function AvatarDashboard() {
   const { user, loading: userLoading } = useCurrentUser();
@@ -65,7 +61,7 @@ export default function AvatarDashboard() {
   const firstName = user?.full_name?.split(' ')[0] || 'Avatar';
 
   return (
-    <AppShell navItems={navItems} user={user}>
+    <AppShell navItems={getNavItems(user?.role)} user={user}>
       {/* Header */}
       <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="flex items-center justify-between mb-8">
         <div>
