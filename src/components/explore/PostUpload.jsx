@@ -5,6 +5,31 @@ import { Button } from '@/components/ui/button';
 import { Upload, X, Loader2, Image, Video, Plus } from 'lucide-react';
 import { motion } from 'framer-motion';
 
+// Compress image to max 1080px, JPEG 80% quality
+async function compressImage(file) {
+  return new Promise((resolve) => {
+    const img = new Image();
+    const url = URL.createObjectURL(file);
+    img.onload = () => {
+      const MAX = 1080;
+      let { width, height } = img;
+      if (width > MAX || height > MAX) {
+        if (width > height) { height = Math.round(height * MAX / width); width = MAX; }
+        else { width = Math.round(width * MAX / height); height = MAX; }
+      }
+      const canvas = document.createElement('canvas');
+      canvas.width = width;
+      canvas.height = height;
+      canvas.getContext('2d').drawImage(img, 0, 0, width, height);
+      URL.revokeObjectURL(url);
+      canvas.toBlob((blob) => {
+        resolve(new File([blob], file.name.replace(/\.[^.]+$/, '.jpg'), { type: 'image/jpeg' }));
+      }, 'image/jpeg', 0.80);
+    };
+    img.src = url;
+  });
+}
+
 export default function PostUpload({ user, profile, onClose }) {
   const queryClient = useQueryClient();
   const [items, setItems] = useState([]); // [{file, preview, fileType}]
@@ -44,9 +69,12 @@ export default function PostUpload({ user, profile, onClose }) {
           if (pending === 0) setItems(prev => [...prev, ...newItems]);
         };
       } else {
-        newItems.push({ file: f, preview: URL.createObjectURL(f), fileType: 'photo' });
-        pending--;
-        if (pending === 0) setItems(prev => [...prev, ...newItems]);
+        // Compress image before storing
+        compressImage(f).then(compressed => {
+          newItems.push({ file: compressed, preview: URL.createObjectURL(compressed), fileType: 'photo' });
+          pending--;
+          if (pending === 0) setItems(prev => [...prev, ...newItems]);
+        });
       }
     });
   };
