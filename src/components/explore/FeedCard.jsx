@@ -31,28 +31,32 @@ export default function FeedCard({ post, user }) {
     const video = videoRef.current;
     if (!video) return;
 
-    const playVideo = () => {
+    const tryPlay = () => {
       video.muted = true;
       setIsMuted(true);
-      setVideoLoading(true);
-      // Force reload to avoid stale state
-      video.load();
-      const onCanPlay = () => {
-        setVideoLoading(false);
+      if (video.readyState >= 3) {
+        // Already buffered enough — play immediately
         video.play().catch(() => {});
         setPlaying(true);
-      };
-      video.addEventListener('canplay', onCanPlay, { once: true });
+        setVideoLoading(false);
+      } else {
+        setVideoLoading(true);
+        const onReady = () => {
+          setVideoLoading(false);
+          video.play().catch(() => {});
+          setPlaying(true);
+        };
+        video.addEventListener('canplay', onReady, { once: true });
+      }
     };
 
     const observer = new IntersectionObserver(([entry]) => {
       const v = videoRef.current;
       if (!v) return;
       if (entry.isIntersecting && entry.intersectionRatio >= 0.5) {
-        playVideo();
+        tryPlay();
       } else {
         v.pause();
-        v.currentTime = 0;
         setPlaying(false);
         setVideoLoading(false);
       }
@@ -61,7 +65,7 @@ export default function FeedCard({ post, user }) {
     if (cardRef.current) observer.observe(cardRef.current);
     return () => {
       observer.disconnect();
-      if (video) { video.pause(); video.src = ''; }
+      if (video) video.pause();
     };
   }, [currentMedia.type, currentMedia.url, mediaIndex]);
 
@@ -146,7 +150,8 @@ export default function FeedCard({ post, user }) {
                   className="w-full h-full object-cover"
                   loop
                   playsInline
-                  preload={i === mediaIndex ? 'auto' : 'none'}
+                  muted
+                  preload="auto"
                   onClick={togglePlay}
                 />
               ) : (
