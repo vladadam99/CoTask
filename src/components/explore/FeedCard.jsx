@@ -153,26 +153,18 @@ export default function FeedCard({ post, user }) {
           ))}
         </div>
 
-        {/* Prev/Next buttons */}
-        {isMulti && mediaIndex > 0 && (
-          <button
-            onClick={() => setMediaIndex(i => i - 1)}
-            className="absolute left-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-black/50 backdrop-blur flex items-center justify-center z-10"
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-            </svg>
-          </button>
-        )}
-        {isMulti && mediaIndex < mediaList.length - 1 && (
-          <button
-            onClick={() => setMediaIndex(i => i + 1)}
-            className="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-black/50 backdrop-blur flex items-center justify-center z-10"
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-            </svg>
-          </button>
+        {/* Tap zones for prev/next */}
+        {isMulti && (
+          <>
+            <div
+              className="absolute left-0 top-0 w-1/3 h-full z-10 cursor-pointer"
+              onClick={() => mediaIndex > 0 && setMediaIndex(i => i - 1)}
+            />
+            <div
+              className="absolute right-0 top-0 w-1/3 h-full z-10 cursor-pointer"
+              onClick={() => mediaIndex < mediaList.length - 1 && setMediaIndex(i => i + 1)}
+            />
+          </>
         )}
 
         {/* Dot indicators */}
