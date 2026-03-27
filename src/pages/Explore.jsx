@@ -22,24 +22,6 @@ export default function Explore() {
 
   return (
     <AppShell navItems={getNavItems(user?.role)} user={user}>
-      {/* Category filter bar — floating on top */}
-      <div className="fixed top-14 lg:top-0 left-0 right-0 lg:left-64 z-30 px-4 pt-3 pb-2 bg-gradient-to-b from-background to-transparent">
-        <div className="flex gap-2 overflow-x-auto pb-1" style={{ scrollbarWidth: 'none' }}>
-          {CATEGORIES.map(cat => (
-            <button
-              key={cat}
-              onClick={() => setCategory(cat)}
-              className={`flex-shrink-0 px-3 py-1.5 rounded-full text-xs font-medium transition-all ${
-                cat === category
-                  ? 'bg-primary text-white'
-                  : 'bg-white/5 border border-white/10 text-muted-foreground hover:border-primary/30'
-              }`}
-            >
-              {cat}
-            </button>
-          ))}
-        </div>
-      </div>
 
       {/* Full-screen snap-scroll feed */}
       <div
