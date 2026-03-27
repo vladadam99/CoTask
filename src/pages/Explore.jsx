@@ -39,18 +39,9 @@ export default function Explore() {
             <p className="text-sm text-muted-foreground mt-1">Be the first to post in this category!</p>
           </div>
         ) : (
-          posts.map((post, idx) => (
+          posts.map((post) => (
             <div key={post.id} className="h-screen w-full snap-start">
               <FeedCard post={post} user={user} />
-              {/* Preload next 2 posts' media */}
-              {[1, 2].map(offset => posts[idx + offset] && (
-                <link
-                  key={offset}
-                  rel="preload"
-                  as={posts[idx + offset].type === 'video' ? 'fetch' : 'image'}
-                  href={posts[idx + offset].media_url}
-                />
-              ))}
             </div>
           ))
         )}
