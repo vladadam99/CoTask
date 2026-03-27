@@ -161,7 +161,6 @@ export default function FeedCard({ post, user }) {
                   className="w-full h-full object-cover"
                   loading="eager"
                   decoding="async"
-                  fetchpriority={i === mediaIndex ? 'high' : 'low'}
                 />
               )}
             </div>
