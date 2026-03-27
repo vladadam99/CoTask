@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useCurrentUser } from '@/lib/useCurrentUser';
 import GlassCard from '@/components/ui/GlassCard';
@@ -11,8 +11,12 @@ export default function Profile() {
   const { user } = useCurrentUser();
   const navigate = useNavigate();
   const [uploading, setUploading] = useState(false);
-  const [profilePicUrl, setProfilePicUrl] = useState(user?.profile_picture_url || '');
+  const [profilePicUrl, setProfilePicUrl] = useState('');
   const fileInputRef = useRef(null);
+
+  React.useEffect(() => {
+    if (user?.profile_picture_url) setProfilePicUrl(user.profile_picture_url);
+  }, [user?.profile_picture_url]);
 
   const dashPath = user?.role === 'avatar' ? '/AvatarDashboard' : user?.role === 'enterprise' ? '/EnterpriseDashboard' : '/UserDashboard';
 
