@@ -20,7 +20,7 @@ import AvatarReviews from './pages/AvatarReviews';
 import AvatarProfileEdit from './pages/AvatarProfileEdit';
 import AvatarSettings from './pages/AvatarSettings';
 import EnterpriseDashboard from './pages/EnterpriseDashboard';
-import Explore from './pages/Explore';
+import Explore from './pages/Explore.jsx';
 import AvatarView from './pages/AvatarView';
 import CreateBooking from './pages/CreateBooking';
 import Bookings from './pages/Bookings';

@@ -5,7 +5,7 @@ import { base44 } from '@/api/base44Client';
 import { Heart, MessageCircle, Send, X, Play, Volume2, VolumeX, Loader2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
-export default function FeedCard({ post, user }) {
+export default function FeedCard({ post, user, isActive = true, isNear = true }) {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const videoRef = useRef(null);
@@ -151,7 +151,7 @@ export default function FeedCard({ post, user }) {
                   loop
                   playsInline
                   muted
-                  preload="auto"
+                  preload={isNear ? 'auto' : 'none'}
                   onClick={togglePlay}
                 />
               ) : (
