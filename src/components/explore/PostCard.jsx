@@ -323,7 +323,7 @@ export default function PostCard({ post, user }) {
         {/* Media — full width, taller */}
         <div
           className="relative bg-black w-full overflow-hidden"
-          style={{ aspectRatio: post.type === 'video' ? '9/16' : '4/5', maxHeight: '75vh' }}
+          style={{ aspectRatio: post.type === 'video' ? '9/16' : '4/5', maxHeight: '55vh' }}
         >
           {post.type === 'video' ? (
             <>
