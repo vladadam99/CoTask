@@ -42,10 +42,15 @@ export default function Explore() {
           posts.map((post, idx) => (
             <div key={post.id} className="h-screen w-full snap-start">
               <FeedCard post={post} user={user} />
-              {/* Preload next post's media */}
-              {posts[idx + 1] && (
-                <link rel="preload" as={posts[idx + 1].type === 'video' ? 'video' : 'image'} href={posts[idx + 1].media_url} />
-              )}
+              {/* Preload next 2 posts' media */}
+              {[1, 2].map(offset => posts[idx + offset] && (
+                <link
+                  key={offset}
+                  rel="preload"
+                  as={posts[idx + offset].type === 'video' ? 'fetch' : 'image'}
+                  href={posts[idx + offset].media_url}
+                />
+              ))}
             </div>
           ))
         )}
