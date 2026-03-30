@@ -8,6 +8,8 @@ import StatusBadge from '@/components/ui/StatusBadge';
 import { Calendar, Search, LayoutGrid, CalendarDays, ArrowLeft } from 'lucide-react';
 import BookingCalendar from '@/components/bookings/BookingCalendar';
 import { Input } from '@/components/ui/input';
+import AppShell from '@/components/layout/AppShell';
+import { getNavItems } from '@/lib/navItems';
 
 const TABS = ['All', 'Pending', 'Active', 'Completed', 'Cancelled'];
 
@@ -42,7 +44,7 @@ export default function Bookings() {
   });
 
   return (
-    <div className="min-h-screen bg-background p-4 lg:p-8">
+    <AppShell navItems={getNavItems(user?.role)} user={user}>
       <div className="max-w-3xl mx-auto">
         <Link to={dashPath} className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground mb-6">
           <ArrowLeft className="w-4 h-4" /> Dashboard
@@ -109,6 +111,6 @@ export default function Bookings() {
           </GlassCard>
         )}
       </div>
-    </div>
+    </AppShell>
   );
 }
