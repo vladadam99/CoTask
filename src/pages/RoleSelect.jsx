@@ -28,7 +28,7 @@ const roles = [
     iconBg: 'bg-primary/10',
     title: 'I want to earn',
     subtitle: 'Avatar / Helper',
-    desc: 'Turn your location into income. Apply to jobs, conduct live video tours, run tasks, and get paid for being someone\'s boots on the ground.',
+    desc: 'Get hired for your skills at your own rate. Apply to jobs, run tasks, conduct live tours, or do anything for anyone — and make money being someone\'s boots on the ground.',
     cta: 'Earn',
     tags: ['Apply to Jobs', 'Live Streams', 'Flexible Hours'],
     featured: true,
