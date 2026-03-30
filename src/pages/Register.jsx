@@ -496,7 +496,7 @@ export default function Register() {
                   </p>
                 </div>
                 <Button
-                  onClick={() => base44.auth.redirectToSignup('/RoleSelect')}
+                  onClick={() => base44.auth.redirectToLogin('/RoleSelect')}
                   className="w-full bg-primary hover:bg-primary/90 h-12 text-base font-semibold"
                 >
                   Continue Setting Up <ArrowRight className="w-5 h-5 ml-2" />
