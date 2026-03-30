@@ -30,6 +30,8 @@ export default function Register() {
   const [postcodeLoading, setPostcodeLoading] = useState(false);
   const [showManual, setShowManual] = useState(false);
   const [postcodeValidated, setPostcodeValidated] = useState(false);
+  const [addressSuggestions, setAddressSuggestions] = useState([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
 
   const [verifyCode, setVerifyCode] = useState(['', '', '', '', '', '']);
   const codeRefs = useRef([]);
@@ -41,16 +43,43 @@ export default function Register() {
     if (!pc) return;
     setPostcodeLoading(true);
     setError('');
+    setAddressSuggestions([]);
+    setShowSuggestions(false);
     try {
       const res = await fetch(`https://api.postcodes.io/postcodes/${pc}`);
       const data = await res.json();
       if (data.status === 200) {
+        const city = data.result.admin_district || data.result.parliamentary_constituency || '';
+        const county = data.result.admin_county || data.result.region || '';
         update('postcode', postcodeInput.toUpperCase().trim());
-        update('city', data.result.admin_district || data.result.parliamentary_constituency || '');
-        update('county', data.result.admin_county || data.result.region || '');
+        update('city', city);
+        update('county', county);
         update('country', 'United Kingdom');
         setPostcodeValidated(true);
-        setShowManual(true);
+        // Fetch street-level suggestions from Nominatim
+        const nomRes = await fetch(
+          `https://nominatim.openstreetmap.org/search?postalcode=${pc}&country=gb&format=json&addressdetails=1&limit=20`,
+          { headers: { 'Accept-Language': 'en' } }
+        );
+        const nomData = await nomRes.json();
+        const streets = [];
+        const seen = new Set();
+        nomData.forEach(item => {
+          const road = item.address?.road || item.address?.pedestrian || item.address?.path || '';
+          const suburb = item.address?.suburb || item.address?.neighbourhood || '';
+          const town = item.address?.town || item.address?.city || item.address?.village || city;
+          if (road && !seen.has(road)) {
+            seen.add(road);
+            streets.push({ road, suburb, town, display: road + (suburb ? `, ${suburb}` : '') });
+          }
+        });
+        if (streets.length > 0) {
+          setAddressSuggestions(streets);
+          setShowSuggestions(true);
+          setShowManual(false);
+        } else {
+          setShowManual(true);
+        }
       } else {
         setError('Postcode not found. Please enter your address manually below.');
         setShowManual(true);
@@ -63,6 +92,15 @@ export default function Register() {
     } finally {
       setPostcodeLoading(false);
     }
+  };
+
+  const selectSuggestion = (suggestion) => {
+    update('address_line1', suggestion.road);
+    update('address_line2', suggestion.suburb);
+    update('city', suggestion.town || formData.city);
+    update('country', 'United Kingdom');
+    setShowSuggestions(false);
+    setShowManual(true);
   };
 
   const handleCodeInput = (i, val) => {
@@ -229,14 +267,34 @@ export default function Register() {
                         : <><Search className="w-4 h-4 mr-1" />Find</>}
                     </Button>
                   </div>
-                  {postcodeValidated && (
+                  {postcodeValidated && !showSuggestions && (
                     <p className="text-xs text-green-400 mt-1.5 flex items-center gap-1">
                       <Check className="w-3 h-3" /> Postcode validated — complete your address below
                     </p>
                   )}
+
+                  {/* Address suggestions dropdown */}
+                  {showSuggestions && addressSuggestions.length > 0 && (
+                    <div className="mt-2 rounded-xl border border-white/10 overflow-hidden bg-card shadow-xl">
+                      <p className="text-xs text-muted-foreground px-3 py-2 border-b border-white/5">Select your street — then add your house number</p>
+                      <div className="max-h-52 overflow-y-auto">
+                        {addressSuggestions.map((s, i) => (
+                          <button key={i} onClick={() => selectSuggestion(s)}
+                            className="w-full text-left px-3 py-2.5 text-sm hover:bg-primary/10 hover:text-primary transition-colors border-b border-white/5 last:border-0 flex items-center gap-2">
+                            <MapPin className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
+                            <span>{s.display}</span>
+                          </button>
+                        ))}
+                      </div>
+                      <button onClick={() => { setShowSuggestions(false); setShowManual(true); }}
+                        className="w-full text-xs text-primary px-3 py-2 hover:bg-primary/5 text-left transition-colors border-t border-white/5">
+                        + Enter address manually instead
+                      </button>
+                    </div>
+                  )}
                 </div>
 
-                {!showManual && (
+                {!showManual && !showSuggestions && (
                   <button onClick={() => { setShowManual(true); }} className="text-sm text-primary hover:underline flex items-center gap-1.5">
                     <MapPin className="w-3.5 h-3.5" /> I don't see my address, add manually
                   </button>
