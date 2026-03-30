@@ -47,6 +47,7 @@ import JobDetail from './pages/JobDetail';
 import FindAvatars from './pages/FindAvatars';
 import AvatarExplore from './pages/AvatarExplore';
 import RoleSelectExisting from './pages/RoleSelectExisting';
+import Register from './pages/Register';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -115,6 +116,7 @@ const AuthenticatedApp = () => {
       <Route path="/FindAvatars" element={<FindAvatars />} />
       <Route path="/AvatarExplore" element={<AvatarExplore />} />
       <Route path="/RoleSelectExisting" element={<RoleSelectExisting />} />
+      <Route path="/Register" element={<Register />} />
       <Route path="*" element={<PageNotFound />} />
     </Routes>
   );

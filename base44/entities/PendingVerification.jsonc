@@ -1,0 +1,19 @@
+{
+  "name": "PendingVerification",
+  "type": "object",
+  "properties": {
+    "email": {
+      "type": "string"
+    },
+    "code": {
+      "type": "string"
+    },
+    "expires_at": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "email",
+    "code"
+  ]
+}
