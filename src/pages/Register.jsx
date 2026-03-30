@@ -56,23 +56,43 @@ export default function Register() {
         update('county', county);
         update('country', 'United Kingdom');
         setPostcodeValidated(true);
-        // Fetch street-level suggestions from Nominatim
-        const nomRes = await fetch(
-          `https://nominatim.openstreetmap.org/search?postalcode=${pc}&country=gb&format=json&addressdetails=1&limit=20`,
-          { headers: { 'Accept-Language': 'en' } }
-        );
-        const nomData = await nomRes.json();
+        // Use postcodes.io nearest streets endpoint + reverse geocode for suggestions
+        const { latitude, longitude } = data.result;
         const streets = [];
         const seen = new Set();
-        nomData.forEach(item => {
-          const road = item.address?.road || item.address?.pedestrian || item.address?.path || '';
+
+        // 1) Reverse geocode the postcode center
+        const revRes = await fetch(
+          `https://nominatim.openstreetmap.org/reverse?lat=${latitude}&lon=${longitude}&format=json&addressdetails=1&zoom=17`,
+          { headers: { 'User-Agent': 'CoTask-App/1.0', 'Accept-Language': 'en' } }
+        );
+        const revData = await revRes.json();
+        if (revData.address?.road) {
+          const road = revData.address.road;
+          const suburb = revData.address.suburb || revData.address.neighbourhood || '';
+          const town = revData.address.town || revData.address.city || revData.address.village || city;
+          seen.add(road);
+          streets.push({ road, suburb, town, display: road });
+        }
+
+        // 2) Search nearby streets in a small bounding box
+        const delta = 0.008;
+        const bbox = `${longitude - delta},${latitude + delta},${longitude + delta},${latitude - delta}`;
+        const nearRes = await fetch(
+          `https://nominatim.openstreetmap.org/search?format=json&addressdetails=1&limit=30&viewbox=${bbox}&bounded=1&featureType=street`,
+          { headers: { 'User-Agent': 'CoTask-App/1.0', 'Accept-Language': 'en' } }
+        );
+        const nearData = await nearRes.json();
+        nearData.forEach(item => {
+          const road = item.address?.road || item.address?.pedestrian || item.name || '';
           const suburb = item.address?.suburb || item.address?.neighbourhood || '';
           const town = item.address?.town || item.address?.city || item.address?.village || city;
           if (road && !seen.has(road)) {
             seen.add(road);
-            streets.push({ road, suburb, town, display: road + (suburb ? `, ${suburb}` : '') });
+            streets.push({ road, suburb, town, display: road });
           }
         });
+
         if (streets.length > 0) {
           setAddressSuggestions(streets);
           setShowSuggestions(true);
@@ -96,7 +116,7 @@ export default function Register() {
 
   const selectSuggestion = (suggestion) => {
     update('address_line1', suggestion.road);
-    update('address_line2', suggestion.suburb);
+    update('address_line2', suggestion.suburb || '');
     update('city', suggestion.town || formData.city);
     update('country', 'United Kingdom');
     setShowSuggestions(false);
@@ -276,7 +296,7 @@ export default function Register() {
                   {/* Address suggestions dropdown */}
                   {showSuggestions && addressSuggestions.length > 0 && (
                     <div className="mt-2 rounded-xl border border-white/10 overflow-hidden bg-card shadow-xl">
-                      <p className="text-xs text-muted-foreground px-3 py-2 border-b border-white/5">Select your street — then add your house number</p>
+                      <p className="text-xs text-muted-foreground px-3 py-2 border-b border-white/5">Select your street — you can add your house number after</p>
                       <div className="max-h-52 overflow-y-auto">
                         {addressSuggestions.map((s, i) => (
                           <button key={i} onClick={() => selectSuggestion(s)}
@@ -303,9 +323,9 @@ export default function Register() {
                 {showManual && (
                   <div className="space-y-3">
                     <div>
-                      <label className="text-sm font-medium mb-1.5 block">Address Line 1 *</label>
+                      <label className="text-sm font-medium mb-1.5 block">Address Line 1 * <span className="text-xs text-muted-foreground font-normal">(add your house/flat number)</span></label>
                       <Input value={formData.address_line1} onChange={e => update('address_line1', e.target.value)}
-                        placeholder="House number and street name" className="bg-muted/50 border-white/5" />
+                        placeholder="e.g. 12 Main Street" className="bg-muted/50 border-white/5" />
                     </div>
                     <div>
                       <label className="text-sm font-medium mb-1.5 block">
