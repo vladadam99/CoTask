@@ -30,7 +30,7 @@ const roles = [
     subtitle: 'Avatar / Helper',
     desc: 'Get hired for your skills at your own rate. Apply to jobs, run tasks, conduct live tours, or do anything for anyone — and make money being someone\'s boots on the ground.',
     cta: 'Earn',
-    tags: ['Apply to Jobs', 'Live Streams', 'Flexible Hours'],
+    tags: ['Apply to Jobs', 'Live Tours & Errands', 'Inspections', 'Shopping Runs', 'Flexible Hours'],
     featured: true,
   },
   {
