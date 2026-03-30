@@ -70,7 +70,7 @@ export default function Landing() {
             <button onClick={() => base44.auth.redirectToLogin('/RoleSelectExisting')} className="text-sm text-muted-foreground hover:text-foreground transition-colors">
               Sign in
             </button>
-            <Link to="/RoleSelect" className="px-4 py-2 bg-primary hover:bg-primary/90 text-white text-sm font-semibold rounded-lg transition-all glow-primary-sm">
+            <Link to="/Register" className="px-4 py-2 bg-primary hover:bg-primary/90 text-white text-sm font-semibold rounded-lg transition-all glow-primary-sm">
               Get Started
             </Link>
           </div>
@@ -83,7 +83,7 @@ export default function Landing() {
             <Link to="/HowItWorks" className="text-sm" onClick={() => setMobileMenuOpen(false)}>How it works</Link>
             <Link to="/Pricing" className="text-sm" onClick={() => setMobileMenuOpen(false)}>Pricing</Link>
             <button onClick={() => { base44.auth.redirectToLogin('/RoleSelectExisting'); setMobileMenuOpen(false); }} className="text-sm text-left text-muted-foreground">Sign in</button>
-            <Link to="/RoleSelect" className="px-4 py-2 bg-primary text-white text-sm font-semibold rounded-lg text-center" onClick={() => setMobileMenuOpen(false)}>
+            <Link to="/Register" className="px-4 py-2 bg-primary text-white text-sm font-semibold rounded-lg text-center" onClick={() => setMobileMenuOpen(false)}>
               Get Started
             </Link>
           </div>
@@ -117,7 +117,7 @@ export default function Landing() {
             <button onClick={() => base44.auth.redirectToLogin('/RoleSelectExisting')} className="px-10 py-4 bg-white/5 hover:bg-white/10 border border-white/10 text-foreground font-bold rounded-xl transition-all text-base flex items-center justify-center gap-2">
               Sign In
             </button>
-            <Link to="/RoleSelect" className="px-10 py-4 bg-primary hover:bg-primary/90 text-white font-bold rounded-xl glow-primary transition-all text-base flex items-center justify-center gap-2">
+            <Link to="/Register" className="px-10 py-4 bg-primary hover:bg-primary/90 text-white font-bold rounded-xl glow-primary transition-all text-base flex items-center justify-center gap-2">
               <Zap className="w-5 h-5" /> Get Started
             </Link>
           </div>
@@ -231,7 +231,7 @@ export default function Landing() {
               <p className="text-muted-foreground max-w-xl mx-auto mb-8 leading-relaxed">
                 Use your local knowledge, your camera, and your presence to earn money helping people remotely. Set your own schedule and rates.
               </p>
-              <Link to="/RoleSelect" className="inline-flex items-center gap-2 px-8 py-4 bg-primary hover:bg-primary/90 text-white font-bold rounded-xl glow-primary transition-all">
+              <Link to="/Register" className="inline-flex items-center gap-2 px-8 py-4 bg-primary hover:bg-primary/90 text-white font-bold rounded-xl glow-primary transition-all">
                 <Video className="w-5 h-5" /> Become an Avatar
               </Link>
             </div>
