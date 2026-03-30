@@ -65,9 +65,6 @@ export default function Landing() {
           <div className="hidden md:flex items-center gap-6">
             <Link to="/HowItWorks" className="text-sm text-muted-foreground hover:text-foreground transition-colors">How it works</Link>
             <Link to="/Pricing" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Pricing</Link>
-            <Link to="/ReelFeed" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Explore Reels</Link>
-            <Link to="/Explore" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Find Avatars</Link>
-            <Link to="/JobMarketplace" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Job Marketplace</Link>
           </div>
           <div className="hidden md:flex items-center gap-3">
             <button onClick={() => base44.auth.redirectToLogin('/UserDashboard')} className="text-sm text-muted-foreground hover:text-foreground transition-colors">
@@ -84,8 +81,8 @@ export default function Landing() {
         {mobileMenuOpen && (
           <div className="md:hidden glass-strong border-b border-white/5 px-4 py-4 flex flex-col gap-4">
             <Link to="/HowItWorks" className="text-sm" onClick={() => setMobileMenuOpen(false)}>How it works</Link>
-            <Link to="/Explore" className="text-sm" onClick={() => setMobileMenuOpen(false)}>Find Avatars</Link>
-            <Link to="/JobMarketplace" className="text-sm" onClick={() => setMobileMenuOpen(false)}>Job Marketplace</Link>
+            <Link to="/Pricing" className="text-sm" onClick={() => setMobileMenuOpen(false)}>Pricing</Link>
+            <button onClick={() => { base44.auth.redirectToLogin('/UserDashboard'); setMobileMenuOpen(false); }} className="text-sm text-left text-muted-foreground">Sign in</button>
             <Link to="/RoleSelect" className="px-4 py-2 bg-primary text-white text-sm font-semibold rounded-lg text-center" onClick={() => setMobileMenuOpen(false)}>
               Get Started
             </Link>
