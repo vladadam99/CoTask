@@ -15,7 +15,7 @@ const roles = [
     iconBg: 'bg-blue-500/10',
     title: 'I need help',
     subtitle: 'Client / Explorer',
-    desc: 'Browse a marketplace of skilled field workers. Post jobs, book live tours, run errands, or hire someone on the ground anywhere in the world.',
+    desc: 'Browse a marketplace of skilled field workers. Post jobs, book live tours, property inspections, shopping runs, queue-waiting, local errands, or hire someone on the ground for anything — anywhere in the world.',
     cta: 'Hire',
     tags: ['Post Jobs', 'Live Tours', 'Instant Booking'],
   },
@@ -30,7 +30,7 @@ const roles = [
     subtitle: 'Avatar / Helper',
     desc: 'Get hired for your skills at your own rate. Apply to jobs, run tasks, conduct live tours, or do anything for anyone — and make money being someone\'s boots on the ground.',
     cta: 'Earn',
-    tags: ['Apply to Jobs', 'Live Tours & Errands', 'Inspections', 'Shopping Runs', 'Flexible Hours'],
+    tags: ['Apply to Jobs', 'Live Streams', 'Flexible Hours'],
     featured: true,
   },
   {
