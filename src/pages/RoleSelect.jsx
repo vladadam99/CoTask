@@ -17,7 +17,7 @@ const roles = [
     subtitle: 'Client / Explorer',
     desc: 'Hire someone on the ground anywhere in the world — and watch it happen live. Tours, inspections, errands, shopping, queues — anything you need done, done in real time.',
     cta: 'Hire',
-    tags: ['Post Jobs', 'Live Tours', 'Instant Booking'],
+    tags: ['Post Jobs', 'Live Streaming', 'Any Task'],
   },
   {
     key: 'avatar',

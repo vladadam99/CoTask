@@ -12,7 +12,11 @@ import GlassCard from '@/components/ui/GlassCard';
 const CATEGORIES = [
   'City Guide', 'Property Walkthrough', 'Shopping Help', 'Event Attendance',
   'Queue & Errands', 'Family Support', 'Business Inspection', 'Training & Coaching',
-  'Campus Help', 'Travel Assistance', 'Custom Request'
+  'Campus Help', 'Travel Assistance', 'Pets & Animals', 'Cars & Vehicles',
+  'Mechanics', 'Plumbing', 'Electrical Work', 'Medical & Health',
+  'Outdoors & Nature', 'Cleaning', 'Gardening', 'Pick Ups', 'Deliveries',
+  'Cooking & Food', 'Dating & Social', 'Driving', 'Show Me Around',
+  'Carers & Companionship', 'DIY & Repairs', 'Custom Request'
 ];
 
 const TITLES = {
@@ -27,7 +31,7 @@ export default function Onboarding() {
   const [submitting, setSubmitting] = useState(false);
   const [role, setRole] = useState('user');
   const [formData, setFormData] = useState({
-    city: '', country: '', interests: [], preferred_language: 'English',
+    city: '', country: '', interests: [], preferred_language: 'English', custom_interest: '',
     display_name: '', bio: '', categories: [], hourly_rate: '',
     company_name: '', contact_person: '', phone: '', industry: '',
   });
@@ -165,7 +169,7 @@ export default function Onboarding() {
               {currentStep === 'Interests' && (
                 <div>
                   <p className="text-sm text-muted-foreground mb-4">Pick the services you're interested in so we can personalise your experience.</p>
-                  <div className="flex flex-wrap gap-2">
+                  <div className="flex flex-wrap gap-2 mb-4">
                     {CATEGORIES.map(cat => (
                       <button key={cat} onClick={() => toggle('interests', cat)}
                         className={`px-4 py-2 rounded-lg text-sm transition-all ${
@@ -175,7 +179,30 @@ export default function Onboarding() {
                         }`}>{cat}</button>
                     ))}
                   </div>
-                  <p className="text-xs text-muted-foreground mt-4">You can skip this and explore right away.</p>
+                  <div className="flex gap-2">
+                    <Input
+                      value={formData.custom_interest}
+                      onChange={e => update('custom_interest', e.target.value)}
+                      onKeyDown={e => {
+                        if (e.key === 'Enter' && formData.custom_interest.trim()) {
+                          toggle('interests', formData.custom_interest.trim());
+                          update('custom_interest', '');
+                        }
+                      }}
+                      placeholder="Add something else... (press Enter)"
+                      className="bg-muted/50 border-white/5 flex-1 text-sm"
+                    />
+                    <button
+                      onClick={() => {
+                        if (formData.custom_interest.trim()) {
+                          toggle('interests', formData.custom_interest.trim());
+                          update('custom_interest', '');
+                        }
+                      }}
+                      className="px-3 py-2 bg-primary/20 text-primary rounded-lg text-sm hover:bg-primary/30 transition-all"
+                    >Add</button>
+                  </div>
+                  <p className="text-xs text-muted-foreground mt-3">You can skip this and explore right away.</p>
                 </div>
               )}
 

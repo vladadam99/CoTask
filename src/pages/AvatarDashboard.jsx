@@ -15,6 +15,7 @@ import {
   ArrowRight, TrendingUp, CheckCircle, Zap,
   Clock, Play, PlusCircle
 } from 'lucide-react';
+import SuggestedJobs from '@/components/dashboard/SuggestedJobs';
 
 
 
@@ -216,6 +217,8 @@ export default function AvatarDashboard() {
           </div>
         </div>
       )}
+      <SuggestedJobs user={user} profile={profile} />
+
       {showPostUpload && (
         <PostUpload
           user={user}
