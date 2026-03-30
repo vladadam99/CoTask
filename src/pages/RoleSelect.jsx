@@ -15,7 +15,7 @@ const roles = [
     iconBg: 'bg-blue-500/10',
     title: 'I need help',
     subtitle: 'Client / Explorer',
-    desc: 'Browse a marketplace of skilled field workers. Post jobs, book live tours, property inspections, shopping runs, queue-waiting, local errands, or hire someone on the ground for anything — anywhere in the world.',
+    desc: 'Hire someone on the ground anywhere in the world — and watch it happen live. Tours, inspections, errands, shopping, queues — anything you need done, done in real time.',
     cta: 'Hire',
     tags: ['Post Jobs', 'Live Tours', 'Instant Booking'],
   },
