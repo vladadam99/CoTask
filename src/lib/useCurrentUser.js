@@ -1,22 +1,44 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { base44 } from '@/api/base44Client';
 
+// Shared state so all components using useCurrentUser stay in sync
+let _user = null;
+let _listeners = [];
+
+function notify(newUser) {
+  _user = newUser;
+  _listeners.forEach(fn => fn(newUser));
+}
+
 export function useCurrentUser() {
-  const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [user, setUser] = useState(_user);
+  const [loading, setLoading] = useState(!_user);
 
   useEffect(() => {
-    base44.auth.me()
-      .then(u => setUser(u))
-      .catch(() => setUser(null))
-      .finally(() => setLoading(false));
+    const listener = (u) => setUser(u);
+    _listeners.push(listener);
+
+    // Only fetch if we don't have user data yet
+    if (!_user) {
+      base44.auth.me()
+        .then(u => { notify(u); setLoading(false); })
+        .catch(() => { notify(null); setLoading(false); });
+    } else {
+      setLoading(false);
+      // Still re-fetch in background to ensure freshness on page navigation
+      base44.auth.me()
+        .then(u => notify(u))
+        .catch(() => {});
+    }
+
+    return () => { _listeners = _listeners.filter(fn => fn !== listener); };
   }, []);
 
-  const updateUser = async (data) => {
+  const updateUser = useCallback(async (data) => {
     const updated = await base44.auth.updateMe(data);
-    setUser(prev => ({ ...prev, ...data }));
+    notify({ ..._user, ...data });
     return updated;
-  };
+  }, []);
 
   return { user, loading, updateUser };
 }

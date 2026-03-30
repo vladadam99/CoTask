@@ -11,12 +11,15 @@ export default function RoleSwitcher({ user }) {
     if (user?.role === role) return;
     try {
       await base44.auth.updateMe({ role });
-      const dashboards = {
-        user: '/UserDashboard',
-        avatar: '/AvatarDashboard',
-        enterprise: '/EnterpriseDashboard',
-      };
-      navigate(dashboards[role] || '/UserDashboard');
+      if (role === 'avatar') {
+        const profiles = await base44.entities.AvatarProfile.filter({ user_email: user.email });
+        navigate(profiles.length > 0 ? '/AvatarDashboard' : '/Onboarding?role=avatar');
+      } else if (role === 'enterprise') {
+        const profiles = await base44.entities.EnterpriseProfile.filter({ user_email: user.email });
+        navigate(profiles.length > 0 ? '/EnterpriseDashboard' : '/Onboarding?role=enterprise');
+      } else {
+        navigate('/UserDashboard');
+      }
     } catch (err) {
       console.error('Failed to switch role:', err);
     }

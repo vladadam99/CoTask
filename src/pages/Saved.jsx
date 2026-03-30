@@ -10,6 +10,7 @@ import { Heart, Trash2, ArrowLeft } from 'lucide-react';
 export default function Saved() {
   const { user } = useCurrentUser();
   const queryClient = useQueryClient();
+  const dashPath = user?.role === 'avatar' ? '/AvatarDashboard' : user?.role === 'enterprise' ? '/EnterpriseDashboard' : '/UserDashboard';
 
   const { data: favorites = [] } = useQuery({
     queryKey: ['favorites', user?.email],
@@ -25,7 +26,7 @@ export default function Saved() {
   return (
     <div className="min-h-screen bg-background p-4 lg:p-8">
       <div className="max-w-3xl mx-auto">
-        <Link to="/UserDashboard" className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground mb-6">
+        <Link to={dashPath} className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground mb-6">
           <ArrowLeft className="w-4 h-4" /> Dashboard
         </Link>
 
