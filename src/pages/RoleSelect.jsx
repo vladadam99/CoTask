@@ -16,7 +16,7 @@ const roles = [
     title: 'I need help',
     subtitle: 'Client / Explorer',
     desc: 'Find and book avatars for live tours, errands, walkthroughs, and real-time remote assistance.',
-    cta: 'Explore Avatars',
+    cta: 'Take Control →',
     tags: ['Live Tours', 'Errands', 'Inspections'],
   },
   {
