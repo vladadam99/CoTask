@@ -15,9 +15,9 @@ const roles = [
     iconBg: 'bg-blue-500/10',
     title: 'I need help',
     subtitle: 'Client / Explorer',
-    desc: 'Find and book avatars for live tours, errands, walkthroughs, and real-time remote assistance.',
-    cta: 'Take Control →',
-    tags: ['Live Tours', 'Errands', 'Inspections'],
+    desc: 'Browse a marketplace of skilled field workers. Post jobs, book live tours, run errands, or hire someone on the ground anywhere in the world.',
+    cta: 'Hire',
+    tags: ['Post Jobs', 'Live Tours', 'Instant Booking'],
   },
   {
     key: 'avatar',
@@ -28,9 +28,9 @@ const roles = [
     iconBg: 'bg-primary/10',
     title: 'I want to earn',
     subtitle: 'Avatar / Helper',
-    desc: 'Offer your local presence. Help people remotely — be their eyes, hands, and on-the-ground guide.',
-    cta: 'Become an Avatar',
-    tags: ['Set your rate', 'Flexible hours', 'Earn daily'],
+    desc: 'Turn your location into income. Apply to jobs, conduct live video tours, run tasks, and get paid for being someone\'s boots on the ground.',
+    cta: 'Earn',
+    tags: ['Apply to Jobs', 'Live Streams', 'Flexible Hours'],
     featured: true,
   },
   {
@@ -42,9 +42,9 @@ const roles = [
     iconBg: 'bg-purple-500/10',
     title: 'Business solutions',
     subtitle: 'Enterprise',
-    desc: 'Book avatars for site inspections, field support, training, demos, and large-scale operations.',
-    cta: 'Set up Business',
-    tags: ['Team access', 'Invoicing', 'Priority support'],
+    desc: 'Scale field operations without the overhead. Deploy avatars for inspections, remote demos, multi-site coverage, and enterprise-grade workflows.',
+    cta: 'Deploy',
+    tags: ['Team Access', 'Bulk Jobs', 'Priority Support'],
   },
 ];
 
