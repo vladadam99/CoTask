@@ -67,13 +67,23 @@ export default function Register() {
         );
         const nomData = await nomRes.json();
         nomData.forEach(item => {
+          const houseNumber = item.address?.house_number || '';
           const road = item.address?.road || item.address?.pedestrian || item.address?.path || '';
           const suburb = item.address?.suburb || item.address?.neighbourhood || '';
           const town = item.address?.town || item.address?.city || item.address?.village || city;
-          if (road && !seen.has(road)) {
-            seen.add(road);
-            streets.push({ road, suburb, town, display: road });
+          if (!road) return;
+          const addressLine1 = houseNumber ? `${houseNumber} ${road}` : road;
+          const key = addressLine1;
+          if (!seen.has(key)) {
+            seen.add(key);
+            streets.push({ road, houseNumber, suburb, town, addressLine1, display: addressLine1 });
           }
+        });
+        // Sort: numbered addresses first, then street-only entries
+        streets.sort((a, b) => {
+          const aNum = parseInt(a.houseNumber) || Infinity;
+          const bNum = parseInt(b.houseNumber) || Infinity;
+          return aNum - bNum;
         });
 
         // Fallback: reverse geocode the postcode center if Nominatim search gave nothing
@@ -87,7 +97,7 @@ export default function Register() {
             const road = revData.address.road;
             const suburb = revData.address.suburb || revData.address.neighbourhood || '';
             const town = revData.address.town || revData.address.city || revData.address.village || city;
-            streets.push({ road, suburb, town, display: road });
+            streets.push({ road, houseNumber: '', suburb, town, addressLine1: road, display: road });
           }
         }
 
@@ -114,7 +124,7 @@ export default function Register() {
   };
 
   const selectSuggestion = (suggestion) => {
-    update('address_line1', suggestion.road);
+    update('address_line1', suggestion.addressLine1);
     update('address_line2', suggestion.suburb || '');
     update('city', suggestion.town || formData.city);
     update('country', 'United Kingdom');
@@ -322,7 +332,7 @@ export default function Register() {
                 {showManual && (
                   <div className="space-y-3">
                     <div>
-                      <label className="text-sm font-medium mb-1.5 block">Address Line 1 * <span className="text-xs text-muted-foreground font-normal">(add your house/flat number)</span></label>
+                      <label className="text-sm font-medium mb-1.5 block">Address Line 1 *</label>
                       <Input value={formData.address_line1} onChange={e => update('address_line1', e.target.value)}
                         placeholder="e.g. 12 Main Street" className="bg-muted/50 border-white/5" />
                     </div>
