@@ -120,7 +120,7 @@ export default function CreateBooking() {
   return (
     <div className="min-h-screen pb-12 px-4">
       <div className="max-w-2xl mx-auto pt-8">
-        <Link to={avatarId ? `/AvatarView?id=${avatarId}` : '/Explore'} className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground mb-6">
+        <Link to={avatarId ? `/AvatarView?id=${avatarId}` : user?.role === 'enterprise' ? '/EnterpriseDashboard' : '/Explore'} className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground mb-6">
           <ArrowLeft className="w-4 h-4" /> Back
         </Link>
 
