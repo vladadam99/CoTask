@@ -55,18 +55,7 @@ export default function RoleSelect() {
   const handleRoleSelect = async (role) => {
     setLoading(role);
     try {
-      if (role === 'user') {
-        window.location.href = '/Explore';
-        return;
-      }
       if (user) {
-        if (role === 'avatar') {
-          const profiles = await base44.entities.AvatarProfile.filter({ user_email: user.email });
-          if (profiles.length > 0) { window.location.href = '/AvatarDashboard'; return; }
-        } else if (role === 'enterprise') {
-          const profiles = await base44.entities.EnterpriseProfile.filter({ user_email: user.email });
-          if (profiles.length > 0) { window.location.href = '/EnterpriseDashboard'; return; }
-        }
         window.location.href = `/Onboarding?role=${role}`;
       } else {
         localStorage.setItem('cotask_role', role);
