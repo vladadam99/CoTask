@@ -492,7 +492,7 @@ export default function Register() {
                 <div>
                   <h2 className="text-2xl font-bold mb-2">Email verified! 🎉</h2>
                   <p className="text-muted-foreground text-sm leading-relaxed">
-                    Your email has been confirmed. Now let's create your account and set up your profile on CoTask.
+                    Your email has been confirmed. Click below to continue — you'll be asked to sign in or create a password on the next screen.
                   </p>
                 </div>
                 <Button
@@ -502,7 +502,7 @@ export default function Register() {
                   Continue Setting Up <ArrowRight className="w-5 h-5 ml-2" />
                 </Button>
                 <p className="text-xs text-muted-foreground">
-                  You'll be asked to create a password and choose your role on the next step.
+                  On the next screen, enter your email and choose a password to create your account.
                 </p>
               </div>
             )}
