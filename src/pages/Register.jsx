@@ -56,35 +56,18 @@ export default function Register() {
         update('county', county);
         update('country', 'United Kingdom');
         setPostcodeValidated(true);
-        // Use postcodes.io nearest streets endpoint + reverse geocode for suggestions
         const { latitude, longitude } = data.result;
         const streets = [];
         const seen = new Set();
 
-        // 1) Reverse geocode the postcode center
-        const revRes = await fetch(
-          `https://nominatim.openstreetmap.org/reverse?lat=${latitude}&lon=${longitude}&format=json&addressdetails=1&zoom=17`,
+        // Query Nominatim with the postcode string — most reliable free method
+        const nomRes = await fetch(
+          `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(postcodeInput.trim())}&countrycodes=gb&format=json&addressdetails=1&limit=50`,
           { headers: { 'User-Agent': 'CoTask-App/1.0', 'Accept-Language': 'en' } }
         );
-        const revData = await revRes.json();
-        if (revData.address?.road) {
-          const road = revData.address.road;
-          const suburb = revData.address.suburb || revData.address.neighbourhood || '';
-          const town = revData.address.town || revData.address.city || revData.address.village || city;
-          seen.add(road);
-          streets.push({ road, suburb, town, display: road });
-        }
-
-        // 2) Search nearby streets in a small bounding box
-        const delta = 0.008;
-        const bbox = `${longitude - delta},${latitude + delta},${longitude + delta},${latitude - delta}`;
-        const nearRes = await fetch(
-          `https://nominatim.openstreetmap.org/search?format=json&addressdetails=1&limit=30&viewbox=${bbox}&bounded=1&featureType=street`,
-          { headers: { 'User-Agent': 'CoTask-App/1.0', 'Accept-Language': 'en' } }
-        );
-        const nearData = await nearRes.json();
-        nearData.forEach(item => {
-          const road = item.address?.road || item.address?.pedestrian || item.name || '';
+        const nomData = await nomRes.json();
+        nomData.forEach(item => {
+          const road = item.address?.road || item.address?.pedestrian || item.address?.path || '';
           const suburb = item.address?.suburb || item.address?.neighbourhood || '';
           const town = item.address?.town || item.address?.city || item.address?.village || city;
           if (road && !seen.has(road)) {
@@ -93,11 +76,27 @@ export default function Register() {
           }
         });
 
+        // Fallback: reverse geocode the postcode center if Nominatim search gave nothing
+        if (streets.length === 0) {
+          const revRes = await fetch(
+            `https://nominatim.openstreetmap.org/reverse?lat=${latitude}&lon=${longitude}&format=json&addressdetails=1&zoom=17`,
+            { headers: { 'User-Agent': 'CoTask-App/1.0', 'Accept-Language': 'en' } }
+          );
+          const revData = await revRes.json();
+          if (revData.address?.road) {
+            const road = revData.address.road;
+            const suburb = revData.address.suburb || revData.address.neighbourhood || '';
+            const town = revData.address.town || revData.address.city || revData.address.village || city;
+            streets.push({ road, suburb, town, display: road });
+          }
+        }
+
         if (streets.length > 0) {
           setAddressSuggestions(streets);
           setShowSuggestions(true);
           setShowManual(false);
         } else {
+          // postcode validated but no streets found — show manual with city pre-filled
           setShowManual(true);
         }
       } else {
