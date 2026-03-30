@@ -32,6 +32,8 @@ export default function Register() {
   const [postcodeValidated, setPostcodeValidated] = useState(false);
   const [addressSuggestions, setAddressSuggestions] = useState([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
+  const [selectedStreet, setSelectedStreet] = useState(null);
+  const [houseNumber, setHouseNumber] = useState('');
 
   const [verifyCode, setVerifyCode] = useState(['', '', '', '', '', '']);
   const codeRefs = useRef([]);
@@ -124,11 +126,20 @@ export default function Register() {
   };
 
   const selectSuggestion = (suggestion) => {
-    update('address_line1', suggestion.addressLine1);
+    setSelectedStreet(suggestion);
+    setHouseNumber('');
+    update('address_line1', suggestion.road);
     update('address_line2', suggestion.suburb || '');
     update('city', suggestion.town || formData.city);
     update('country', 'United Kingdom');
     setShowSuggestions(false);
+    setShowManual(false);
+  };
+
+  const confirmStreet = () => {
+    if (!houseNumber.trim()) return;
+    update('address_line1', `${houseNumber.trim()} ${selectedStreet.road}`);
+    setSelectedStreet(null);
     setShowManual(true);
   };
 
@@ -323,7 +334,34 @@ export default function Register() {
                   )}
                 </div>
 
-                {!showManual && !showSuggestions && (
+                {/* House number prompt after street selection */}
+                {selectedStreet && !showManual && (
+                  <div className="mt-3 p-4 rounded-xl border border-primary/20 bg-primary/5 space-y-3">
+                    <p className="text-sm font-medium">📍 {selectedStreet.road}</p>
+                    <div>
+                      <label className="text-xs text-muted-foreground mb-1.5 block">Your house / flat number *</label>
+                      <div className="flex gap-2">
+                        <Input
+                          value={houseNumber}
+                          onChange={e => setHouseNumber(e.target.value)}
+                          onKeyDown={e => e.key === 'Enter' && confirmStreet()}
+                          placeholder="e.g. 12 or Flat 3B"
+                          className="bg-muted/50 border-white/5 flex-1"
+                          autoFocus
+                        />
+                        <Button onClick={confirmStreet} disabled={!houseNumber.trim()} className="bg-primary hover:bg-primary/90 shrink-0">
+                          <Check className="w-4 h-4" />
+                        </Button>
+                      </div>
+                    </div>
+                    <button onClick={() => { setSelectedStreet(null); setShowSuggestions(true); }}
+                      className="text-xs text-muted-foreground hover:text-foreground transition-colors">
+                      ← Choose a different street
+                    </button>
+                  </div>
+                )}
+
+                {!selectedStreet && !showManual && !showSuggestions && (
                   <button onClick={() => { setShowManual(true); }} className="text-sm text-primary hover:underline flex items-center gap-1.5">
                     <MapPin className="w-3.5 h-3.5" /> I don't see my address, add manually
                   </button>
