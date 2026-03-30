@@ -118,13 +118,10 @@ export default function Landing() {
 
           <motion.div
             initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2, duration: 0.5 }}
-            className="flex flex-col sm:flex-row gap-4 justify-center mb-12"
+            className="flex justify-center mb-12"
           >
-            <Link to="/RoleSelect" className="px-8 py-4 bg-primary hover:bg-primary/90 text-white font-bold rounded-xl glow-primary transition-all text-base flex items-center justify-center gap-2">
-              <Zap className="w-5 h-5" /> Book an Avatar Now
-            </Link>
-            <Link to="/ReelFeed" className="px-8 py-4 bg-white/5 hover:bg-white/10 border border-white/10 text-foreground font-semibold rounded-xl transition-all text-base flex items-center justify-center gap-2">
-              <Play className="w-5 h-5" /> Watch Reels
+            <Link to="/RoleSelect" className="px-10 py-4 bg-primary hover:bg-primary/90 text-white font-bold rounded-xl glow-primary transition-all text-base flex items-center justify-center gap-2">
+              <Zap className="w-5 h-5" /> Get Started
             </Link>
           </motion.div>
 
