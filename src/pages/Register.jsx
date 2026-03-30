@@ -492,17 +492,17 @@ export default function Register() {
                 <div>
                   <h2 className="text-2xl font-bold mb-2">Email verified! 🎉</h2>
                   <p className="text-muted-foreground text-sm leading-relaxed">
-                    Almost there! On the next screen, <strong className="text-foreground">enter your email and choose a password</strong> to create your CoTask account. If you see a "Sign in" button — that's the one to click after entering your new password.
+                    Almost there! Click below to create your password and finish setting up your CoTask account.
                   </p>
                 </div>
                 <Button
-                  onClick={() => base44.auth.redirectToLogin('/RoleSelect')}
+                  onClick={() => base44.auth.redirectToSignup('/RoleSelect')}
                   className="w-full bg-primary hover:bg-primary/90 h-12 text-base font-semibold"
                 >
                   Continue Setting Up <ArrowRight className="w-5 h-5 ml-2" />
                 </Button>
                 <p className="text-xs text-muted-foreground">
-                  🔒 The next page looks like a login page — that's normal! Just enter your email + a new password to finish creating your account.
+                  You'll be taken to a "Create your account" screen to set your password.
                 </p>
               </div>
             )}
