@@ -67,7 +67,7 @@ export default function Landing() {
             <Link to="/Pricing" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Pricing</Link>
           </div>
           <div className="hidden md:flex items-center gap-3">
-            <button onClick={() => base44.auth.redirectToLogin('/UserDashboard')} className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+            <button onClick={() => base44.auth.redirectToLogin('/RoleSelectExisting')} className="text-sm text-muted-foreground hover:text-foreground transition-colors">
               Sign in
             </button>
             <Link to="/RoleSelect" className="px-4 py-2 bg-primary hover:bg-primary/90 text-white text-sm font-semibold rounded-lg transition-all glow-primary-sm">
@@ -82,7 +82,7 @@ export default function Landing() {
           <div className="md:hidden glass-strong border-b border-white/5 px-4 py-4 flex flex-col gap-4">
             <Link to="/HowItWorks" className="text-sm" onClick={() => setMobileMenuOpen(false)}>How it works</Link>
             <Link to="/Pricing" className="text-sm" onClick={() => setMobileMenuOpen(false)}>Pricing</Link>
-            <button onClick={() => { base44.auth.redirectToLogin('/UserDashboard'); setMobileMenuOpen(false); }} className="text-sm text-left text-muted-foreground">Sign in</button>
+            <button onClick={() => { base44.auth.redirectToLogin('/RoleSelectExisting'); setMobileMenuOpen(false); }} className="text-sm text-left text-muted-foreground">Sign in</button>
             <Link to="/RoleSelect" className="px-4 py-2 bg-primary text-white text-sm font-semibold rounded-lg text-center" onClick={() => setMobileMenuOpen(false)}>
               Get Started
             </Link>
@@ -114,7 +114,7 @@ export default function Landing() {
           </motion.div>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
-            <button onClick={() => base44.auth.redirectToLogin('/UserDashboard')} className="px-10 py-4 bg-white/5 hover:bg-white/10 border border-white/10 text-foreground font-bold rounded-xl transition-all text-base flex items-center justify-center gap-2">
+            <button onClick={() => base44.auth.redirectToLogin('/RoleSelectExisting')} className="px-10 py-4 bg-white/5 hover:bg-white/10 border border-white/10 text-foreground font-bold rounded-xl transition-all text-base flex items-center justify-center gap-2">
               Sign In
             </button>
             <Link to="/RoleSelect" className="px-10 py-4 bg-primary hover:bg-primary/90 text-white font-bold rounded-xl glow-primary transition-all text-base flex items-center justify-center gap-2">

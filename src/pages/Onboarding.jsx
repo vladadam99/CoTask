@@ -46,15 +46,15 @@ export default function Onboarding() {
     }
   }, [user]);
 
-  // Redirect if already onboarded for this role
+  // Redirect if already onboarded for THIS specific role (not just any role)
   useEffect(() => {
-    if (!loading && user && user.onboarding_complete) {
+    if (!loading && user && user.onboarding_complete && user.role === role) {
       const dest = user.role === 'avatar' ? '/AvatarDashboard'
                  : user.role === 'enterprise' ? '/EnterpriseDashboard'
                  : '/UserDashboard';
       window.location.href = dest;
     }
-  }, [user, loading]);
+  }, [user, loading, role]);
 
   const update = (key, val) => setFormData(prev => ({ ...prev, [key]: val }));
   const toggle = (listKey, cat) => {
