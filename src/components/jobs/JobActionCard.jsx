@@ -271,7 +271,9 @@ export default function JobActionCard({ job, user, conversationId, onJobUpdated 
     return (
       <div className="mx-4 my-3 glass rounded-2xl p-3 border border-green-500/20 flex items-center gap-2">
         <CheckCircle className="w-4 h-4 text-green-400" />
-        <p className="text-sm text-green-400 font-medium">Job completed. Payment has been released. ✓</p>
+        <p className="text-sm text-green-400 font-medium">
+          {isAvatar ? '💰 Payment has been released to you. Great work!' : '✓ Job completed. Payment has been released to the avatar.'}
+        </p>
       </div>
     );
   }
