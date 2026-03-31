@@ -64,11 +64,9 @@ export default function PostJob() {
     <AppShell navItems={getNavItems(user?.role)} user={user}>
       <div className="max-w-2xl mx-auto space-y-6">
         <div className="flex items-center gap-3">
-          <Link to="/JobMarketplace">
-            <button className="w-9 h-9 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:border-primary/30 transition-colors">
-              <ArrowLeft className="w-4 h-4" />
-            </button>
-          </Link>
+          <button onClick={() => navigate(-1)} className="w-9 h-9 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:border-primary/30 transition-colors">
+            <ArrowLeft className="w-4 h-4" />
+          </button>
           <div>
             <h1 className="text-2xl font-bold">Post a Job</h1>
             <p className="text-muted-foreground text-sm">Find the perfect avatar for your task</p>

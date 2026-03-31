@@ -442,9 +442,9 @@ export default function LiveStreamStudio() {
 
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
-          <Link to="/AvatarLive" className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground">
+          <button onClick={() => navigate(-1)} className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground">
             <ArrowLeft className="w-4 h-4" /> Back
-          </Link>
+          </button>
           <h1 className="text-xl font-bold flex items-center gap-2">
             <Radio className="w-5 h-5 text-primary" /> Live Stream Studio
           </h1>

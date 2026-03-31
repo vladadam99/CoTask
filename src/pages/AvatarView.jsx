@@ -166,9 +166,9 @@ export default function AvatarView() {
             <div className="w-full h-full bg-gradient-to-br from-primary/20 via-primary/10 to-card" />
           )}
           <div className="absolute top-4 left-4">
-            <Link to="/Explore" className="inline-flex items-center gap-2 text-sm text-white/80 hover:text-white bg-black/30 backdrop-blur px-3 py-1.5 rounded-full">
+            <button onClick={() => navigate(-1)} className="inline-flex items-center gap-2 text-sm text-white/80 hover:text-white bg-black/30 backdrop-blur px-3 py-1.5 rounded-full">
               <ArrowLeft className="w-4 h-4" /> Back
-            </Link>
+            </button>
           </div>
         </div>
 
