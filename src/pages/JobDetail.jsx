@@ -128,9 +128,9 @@ export default function JobDetail() {
 
   const isAvatar = user?.role === 'avatar' || !!myAvatarProfile;
   const isOwner = user?.email === job?.posted_by_email;
-  // Avatars can always apply (even if same email posted the job as a user/enterprise role)
-  const canApply = isAvatar && job?.status === 'open' && !myApplication;
-  const showOwnerControls = isOwner && !isAvatar;
+  // Owner controls always show for the poster; avatars can apply but NOT to their own posts
+  const showOwnerControls = isOwner;
+  const canApply = isAvatar && !isOwner && job?.status === 'open' && !myApplication;
 
   if (isLoading) return (
     <AppShell navItems={getNavItems(user?.role)} user={user}>
@@ -149,12 +149,28 @@ export default function JobDetail() {
   return (
     <AppShell navItems={getNavItems(user?.role)} user={user}>
       <div className="max-w-3xl mx-auto space-y-6">
-        {/* Back */}
-        <Link to="/JobMarketplace">
-          <button className="w-9 h-9 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:border-primary/30 transition-colors">
-            <ArrowLeft className="w-4 h-4" />
-          </button>
-        </Link>
+        {/* Back + Delete */}
+        <div className="flex items-center justify-between">
+          <Link to="/JobMarketplace">
+            <button className="w-9 h-9 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:border-primary/30 transition-colors">
+              <ArrowLeft className="w-4 h-4" />
+            </button>
+          </Link>
+          {isOwner && (
+            <Button
+              variant="outline"
+              size="sm"
+              className="border-red-500/30 text-red-400 hover:bg-red-500/10 text-xs"
+              onClick={async () => {
+                if (!confirm('Delete this job post? This cannot be undone.')) return;
+                await base44.entities.JobPost.delete(jobId);
+                navigate('/JobMarketplace');
+              }}
+            >
+              Delete Post
+            </Button>
+          )}
+        </div>
 
         {/* Job Header */}
         <div className="glass rounded-2xl p-6 border border-white/5 space-y-4">
