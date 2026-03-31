@@ -85,105 +85,147 @@ export default function JobActionCard({ job, user, userRole, conversationId, onJ
   // ─── Avatar: Start Job ───
   const handleStartJob = async () => {
     setLoading(true);
-    const now = new Date().toISOString();
-    await base44.entities.JobPost.update(job.id, { started_at: now });
-    const timeStr = new Date(now).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-    await postSystemMessage(`🚀 Job started at ${timeStr} by ${user.full_name}. The clock is running!`);
-    await notify(job.posted_by_email, '🚀 Job has started!', `${user.full_name} has started working on your job.`, 'booking_accepted');
-    setLoading(false);
-    onJobUpdated?.();
+    try {
+      const now = new Date().toISOString();
+      await base44.entities.JobPost.update(job.id, { started_at: now });
+      const timeStr = new Date(now).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      await postSystemMessage(`🚀 Job started at ${timeStr} by ${user.full_name}. The clock is running!`);
+      await notify(job.posted_by_email, '🚀 Job has started!', `${user.full_name} has started working on your job.`, 'booking_accepted');
+      onJobUpdated?.();
+    } catch (error) {
+      console.error('Job start failed:', error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   // ─── Avatar: Submit proof ───
   const handleJobDone = async () => {
     if (!proofFile) return;
     setLoading(true);
-    const { file_url } = await base44.integrations.Core.UploadFile({ file: proofFile });
-    const now = new Date().toISOString();
-    const startedAt = job.started_at ? new Date(job.started_at) : null;
-    const endedAt = new Date(now);
-    const durationMins = startedAt ? Math.round((endedAt - startedAt) / 60000) : null;
-    const durationStr = durationMins != null
-      ? durationMins >= 60
-        ? `${Math.floor(durationMins / 60)}h ${durationMins % 60}m`
-        : `${durationMins}m`
-      : null;
+    try {
+      const { file_url } = await base44.integrations.Core.UploadFile({ file: proofFile });
+      const now = new Date().toISOString();
+      const startedAt = job.started_at ? new Date(job.started_at) : null;
+      const endedAt = new Date(now);
+      const durationMins = startedAt ? Math.round((endedAt - startedAt) / 60000) : null;
+      const durationStr = durationMins != null
+        ? durationMins >= 60
+          ? `${Math.floor(durationMins / 60)}h ${durationMins % 60}m`
+          : `${durationMins}m`
+        : null;
 
-    await base44.entities.JobPost.update(job.id, {
-      status: 'awaiting_approval',
-      proof_url: file_url,
-      proof_note: proofNote,
-      ended_at: now,
-    });
+      await base44.entities.JobPost.update(job.id, {
+        status: 'awaiting_approval',
+        proof_url: file_url,
+        proof_note: proofNote,
+        ended_at: now,
+      });
 
-    const summary = [
-      `✅ Job marked as done by ${user.full_name}.`,
-      startedAt ? `⏱ Started: ${startedAt.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}` : null,
-      durationStr ? `⏳ Duration: ${durationStr}` : null,
-      proofNote ? `📝 Note: "${proofNote}"` : null,
-      `📸 Proof photo uploaded. Awaiting client review.`,
-    ].filter(Boolean).join('\n');
+      const summary = [
+        `✅ Job marked as done by ${user.full_name}.`,
+        startedAt ? `⏱ Started: ${startedAt.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}` : null,
+        durationStr ? `⏳ Duration: ${durationStr}` : null,
+        proofNote ? `📝 Note: "${proofNote}"` : null,
+        `📸 Proof photo uploaded. Awaiting client review.`,
+      ].filter(Boolean).join('\n');
 
-    await postSystemMessage(summary);
-    await notify(job.posted_by_email, '📸 Job Done — Please Review', `${user.full_name} has completed the job. Please review the proof and release payment.`, 'booking_accepted');
-    setLoading(false);
-    onJobUpdated?.();
+      await postSystemMessage(summary);
+      await notify(job.posted_by_email, '📸 Job Done — Please Review', `${user.full_name} has completed the job. Please review the proof and release payment.`, 'booking_accepted');
+      setProofFile(null);
+      setProofPreview(null);
+      setProofNote('');
+      setShowProofForm(false);
+      onJobUpdated?.();
+    } catch (error) {
+      console.error('Upload failed:', error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   // ─── Client: Satisfied ───
   const handleSatisfied = async () => {
     setLoading(true);
-    await base44.entities.JobPost.update(job.id, { status: 'completed' });
-    await postSystemMessage(`🎉 Client confirmed satisfaction! Job is complete and payment released to ${job.winner_email}. Thank you both!`);
-    await notify(job.winner_email, '💰 Payment Released!', `${user.full_name} is satisfied with your work. Payment released!`, 'payment');
-    setLoading(false);
-    onJobUpdated?.();
+    try {
+      await base44.entities.JobPost.update(job.id, { status: 'completed' });
+      await postSystemMessage(`🎉 Client confirmed satisfaction! Job is complete and payment released to ${job.winner_email}. Thank you both!`);
+      await notify(job.winner_email, '💰 Payment Released!', `${user.full_name} is satisfied with your work. Payment released!`, 'payment');
+      onJobUpdated?.();
+    } catch (error) {
+      console.error('Satisfaction confirmation failed:', error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   // ─── Client: Dispute ───
   const handleDispute = async () => {
     if (!disputeReason) return;
     setLoading(true);
-    let disputePhotoUrl = null;
-    if (disputeFile) {
-      const { file_url } = await base44.integrations.Core.UploadFile({ file: disputeFile });
-      disputePhotoUrl = file_url;
+    try {
+      let disputePhotoUrl = null;
+      if (disputeFile) {
+        const { file_url } = await base44.integrations.Core.UploadFile({ file: disputeFile });
+        disputePhotoUrl = file_url;
+      }
+      await base44.entities.JobPost.update(job.id, { status: 'disputed', dispute_reason: disputeReason, dispute_photo_url: disputePhotoUrl || undefined });
+      await postSystemMessage(`⚠️ Client raised a dispute: "${disputeReason}"${disputePhotoUrl ? ' (photo attached)' : ''}. The avatar can now respond.`);
+      await notify(job.winner_email, '⚠️ Dispute Raised', `${user.full_name} raised a dispute. Please respond in the chat.`, 'system');
+      setDisputeReason('');
+      setDisputeFile(null);
+      setDisputePreview(null);
+      setShowDisputeForm(false);
+      onJobUpdated?.();
+    } catch (error) {
+      console.error('Dispute submission failed:', error);
+    } finally {
+      setLoading(false);
     }
-    await base44.entities.JobPost.update(job.id, { status: 'disputed', dispute_reason: disputeReason, dispute_photo_url: disputePhotoUrl || undefined });
-    await postSystemMessage(`⚠️ Client raised a dispute: "${disputeReason}"${disputePhotoUrl ? ' (photo attached)' : ''}. The avatar can now respond.`);
-    await notify(job.winner_email, '⚠️ Dispute Raised', `${user.full_name} raised a dispute. Please respond in the chat.`, 'system');
-    setLoading(false);
-    setShowDisputeForm(false);
-    onJobUpdated?.();
   };
 
   const handleFullRefund = async () => {
     setLoading(true);
-    await base44.entities.JobPost.update(job.id, { status: 'refunded' });
-    await postSystemMessage(`↩️ Avatar agreed to a full refund. Job closed.`);
-    await notify(job.posted_by_email, '↩️ Full Refund Agreed', `The avatar agreed to refund you in full.`, 'payment');
-    setLoading(false);
-    onJobUpdated?.();
+    try {
+      await base44.entities.JobPost.update(job.id, { status: 'refunded' });
+      await postSystemMessage(`↩️ Avatar agreed to a full refund. Job closed.`);
+      await notify(job.posted_by_email, '↩️ Full Refund Agreed', `The avatar agreed to refund you in full.`, 'payment');
+      onJobUpdated?.();
+    } catch (error) {
+      console.error('Refund failed:', error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handlePartialRefund = async () => {
     if (!partialAmount) return;
     setLoading(true);
-    await base44.entities.JobPost.update(job.id, { status: 'completed', partial_amount: Number(partialAmount) });
-    await postSystemMessage(`🤝 Partial settlement agreed: Client pays $${partialAmount}. Both parties accepted.`);
-    await notify(job.posted_by_email, '🤝 Partial Settlement', `The avatar proposed a partial payment of $${partialAmount}.`, 'payment');
-    setLoading(false);
-    onJobUpdated?.();
+    try {
+      await base44.entities.JobPost.update(job.id, { status: 'completed', partial_amount: Number(partialAmount) });
+      await postSystemMessage(`🤝 Partial settlement agreed: Client pays $${partialAmount}. Both parties accepted.`);
+      await notify(job.posted_by_email, '🤝 Partial Settlement', `The avatar proposed a partial payment of $${partialAmount}.`, 'payment');
+      onJobUpdated?.();
+    } catch (error) {
+      console.error('Partial refund failed:', error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleRaiseIssue = async () => {
     setLoading(true);
-    await base44.entities.JobPost.update(job.id, { status: 'disputed' });
-    await postSystemMessage(`🚨 Dispute escalated to CoTask team. A team member will review within 24–48 hours.`);
-    await base44.entities.Notification.create({ user_email: 'admin', title: '🚨 Escalated Dispute', message: `Job "${job.title}" escalated dispute.`, type: 'system', link: '/AdminDashboard', reference_id: job.id });
-    await notify(job.posted_by_email, '🚨 Dispute Escalated', 'Your dispute has been escalated to CoTask team.', 'system');
-    setLoading(false);
-    onJobUpdated?.();
+    try {
+      await base44.entities.JobPost.update(job.id, { status: 'disputed' });
+      await postSystemMessage(`🚨 Dispute escalated to CoTask team. A team member will review within 24–48 hours.`);
+      await base44.entities.Notification.create({ user_email: 'admin', title: '🚨 Escalated Dispute', message: `Job "${job.title}" escalated dispute.`, type: 'system', link: '/AdminDashboard', reference_id: job.id });
+      await notify(job.posted_by_email, '🚨 Dispute Escalated', 'Your dispute has been escalated to CoTask team.', 'system');
+      onJobUpdated?.();
+    } catch (error) {
+      console.error('Escalation failed:', error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   if (!job) return null;
