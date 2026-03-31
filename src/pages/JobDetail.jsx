@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import JobCountdown from '@/components/jobs/JobCountdown';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { useCurrentUser } from '@/lib/useCurrentUser';
@@ -8,7 +9,7 @@ import { getNavItems } from '@/lib/navItems';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import StatusBadge from '@/components/ui/StatusBadge';
-import { ArrowLeft, MapPin, Clock, DollarSign, Users, CheckCircle, XCircle, Star, Award } from 'lucide-react';
+import { ArrowLeft, MapPin, Clock, DollarSign, Users, CheckCircle, XCircle, Star, Award, MessageCircle } from 'lucide-react';
 
 const DURATION_LABELS = { hourly: '/hr', daily: '/day', weekly: '/wk', monthly: '/mo', custom: '' };
 
@@ -97,20 +98,32 @@ export default function JobDetail() {
         winner_email: app.applicant_email,
       });
       await base44.entities.JobApplication.update(app.id, { status: 'accepted' });
-      // Reject all others
       for (const other of applications.filter(a => a.id !== app.id)) {
         await base44.entities.JobApplication.update(other.id, { status: 'rejected' });
       }
-      await base44.entities.Notification.create({
-        user_email: app.applicant_email,
-        title: '🎉 You got the job!',
-        message: `You were selected for: ${job.title}`,
-        type: 'booking_accepted',
-        link: `/JobDetail?id=${jobId}`,
-        reference_id: jobId,
+      // Create chat between client and avatar (handles notifications inside)
+      const res = await base44.functions.invoke('createJobConversation', {
+        jobId,
+        jobTitle: job.title,
+        clientEmail: job.posted_by_email,
+        clientName: job.posted_by_name,
+        avatarEmail: app.applicant_email,
+        avatarName: app.applicant_name,
+        scheduledDate: job.flexible_dates ? null : job.scheduled_date,
       });
+      return res.data?.conversation;
     },
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['job-detail', jobId] }),
+    onSuccess: (conversation) => {
+      queryClient.invalidateQueries({ queryKey: ['job-detail', jobId] });
+      queryClient.invalidateQueries({ queryKey: ['job-applications', jobId] });
+      if (conversation?.id) navigate(`/Messages?conversation=${conversation.id}`);
+    },
+  });
+
+  const { data: jobConversation } = useQuery({
+    queryKey: ['job-conversation', jobId],
+    queryFn: () => base44.entities.Conversation.filter({ booking_id: `job_${jobId}` }).then(r => r[0] || null),
+    enabled: !!jobId && job?.status !== 'open',
   });
 
   const isAvatar = user?.role === 'avatar' || !!myAvatarProfile;
@@ -313,6 +326,18 @@ export default function JobDetail() {
               );
             })}
           </div>
+        )}
+
+        {/* Countdown for scheduled assigned jobs */}
+        {job.status === 'in_progress' && !job.flexible_dates && job.scheduled_date && (isAvatar || showOwnerControls) && (
+          <JobCountdown scheduledDate={job.scheduled_date} />
+        )}
+
+        {/* Open Chat button for assigned participants */}
+        {job.status === 'in_progress' && jobConversation && (user?.email === job.posted_by_email || user?.email === job.winner_email) && (
+          <Button className="w-full h-11 gap-2" onClick={() => navigate(`/Messages?conversation=${jobConversation.id}`)}>          
+            <MessageCircle className="w-4 h-4" /> Open Job Chat
+          </Button>
         )}
 
         {/* Winner Info (public) */}
