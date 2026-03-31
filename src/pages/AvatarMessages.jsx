@@ -4,11 +4,11 @@ import { base44 } from '@/api/base44Client';
 import { useCurrentUser } from '@/lib/useCurrentUser';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, Send, MessageSquare, Camera, Loader2, Video } from 'lucide-react';
+import { ArrowLeft, Send, MessageSquare, Camera, Loader2 } from 'lucide-react';
 import JobActionCard from '@/components/jobs/JobActionCard';
 import { Link } from 'react-router-dom';
 
-export default function Messages() {
+export default function AvatarMessages() {
   const { user } = useCurrentUser();
   const queryClient = useQueryClient();
   const [activeConvo, setActiveConvo] = useState(null);
@@ -20,17 +20,16 @@ export default function Messages() {
   const urlConvoId = new URLSearchParams(window.location.search).get('conversation') ||
     new URLSearchParams(window.location.search).get('conv');
 
-  // Derive linked job ID from booking_id field (format: job_<jobId>)
   const linkedJobId = activeConvo?.booking_id?.startsWith('job_') ? activeConvo.booking_id.slice(4) : null;
 
   const { data: linkedJob, refetch: refetchJob } = useQuery({
-    queryKey: ['linked-job', linkedJobId],
+    queryKey: ['linked-job-avatar', linkedJobId],
     queryFn: () => base44.entities.JobPost.filter({ id: linkedJobId }).then(r => r[0] || null),
     enabled: !!linkedJobId,
   });
 
   const { data: conversations = [] } = useQuery({
-    queryKey: ['conversations', user?.email],
+    queryKey: ['conversations-avatar', user?.email],
     queryFn: async () => {
       const convos = await base44.entities.Conversation.list('-updated_date', 50);
       return convos.filter(c => (c.participant_emails || []).includes(user.email));
@@ -46,7 +45,7 @@ export default function Messages() {
   }, [urlConvoId, conversations]);
 
   const { data: messages = [] } = useQuery({
-    queryKey: ['messages', activeConvo?.id],
+    queryKey: ['messages-avatar', activeConvo?.id],
     queryFn: () => base44.entities.Message.filter({ conversation_id: activeConvo.id }, 'created_date', 100),
     enabled: !!activeConvo,
   });
@@ -55,7 +54,7 @@ export default function Messages() {
     if (!activeConvo) return;
     const unsub = base44.entities.Message.subscribe((event) => {
       if (event.data?.conversation_id === activeConvo.id) {
-        queryClient.invalidateQueries({ queryKey: ['messages', activeConvo.id] });
+        queryClient.invalidateQueries({ queryKey: ['messages-avatar', activeConvo.id] });
       }
     });
     return unsub;
@@ -63,7 +62,7 @@ export default function Messages() {
 
   useEffect(() => {
     const unsub = base44.entities.Conversation.subscribe(() => {
-      queryClient.invalidateQueries({ queryKey: ['conversations'] });
+      queryClient.invalidateQueries({ queryKey: ['conversations-avatar'] });
     });
     return unsub;
   }, [queryClient]);
@@ -71,35 +70,6 @@ export default function Messages() {
   useEffect(() => {
     if (scrollRef.current) scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
   }, [messages]);
-
-  const requestCamera = async () => {
-    if (!activeConvo) return;
-    const otherEmail = (activeConvo.participant_emails || []).find(e => e !== user.email);
-    await base44.entities.Message.create({
-      conversation_id: activeConvo.id,
-      sender_email: user.email,
-      sender_name: user.full_name,
-      content: `📹 Camera upgrade request: I'd like to add Live Camera to this job (+$5/hr). Please reply to confirm.`,
-      message_type: 'system',
-    });
-    await base44.entities.Conversation.update(activeConvo.id, {
-      last_message: '📹 Camera upgrade requested',
-      last_message_at: new Date().toISOString(),
-      last_message_by: user.email,
-    });
-    if (otherEmail) {
-      await base44.entities.Notification.create({
-        user_email: otherEmail,
-        title: `📹 Camera upgrade request from ${user.full_name}`,
-        message: 'They want to add Live Camera to your job.',
-        type: 'message',
-        link: `/Messages?conversation=${activeConvo.id}`,
-        reference_id: activeConvo.id,
-      });
-    }
-    queryClient.invalidateQueries({ queryKey: ['messages', activeConvo?.id] });
-    queryClient.invalidateQueries({ queryKey: ['conversations'] });
-  };
 
   const sendPhoto = async (file) => {
     if (!file || !activeConvo) return;
@@ -124,13 +94,13 @@ export default function Messages() {
         title: `📷 Photo from ${user.full_name}`,
         message: 'Sent a photo in your job conversation.',
         type: 'message',
-        link: `/Messages?conversation=${activeConvo.id}`,
+        link: `/AvatarMessages?conversation=${activeConvo.id}`,
         reference_id: activeConvo.id,
       });
     }
     setUploadingPhoto(false);
-    queryClient.invalidateQueries({ queryKey: ['messages', activeConvo?.id] });
-    queryClient.invalidateQueries({ queryKey: ['conversations'] });
+    queryClient.invalidateQueries({ queryKey: ['messages-avatar', activeConvo?.id] });
+    queryClient.invalidateQueries({ queryKey: ['conversations-avatar'] });
   };
 
   const sendMessage = useMutation({
@@ -154,19 +124,17 @@ export default function Messages() {
           title: `New message from ${user.full_name}`,
           message: newMsg.length > 80 ? newMsg.slice(0, 80) + '…' : newMsg,
           type: 'message',
-          link: `/Messages?conversation=${activeConvo.id}`,
+          link: `/AvatarMessages?conversation=${activeConvo.id}`,
           reference_id: activeConvo.id,
         });
       }
     },
     onSuccess: () => {
       setNewMsg('');
-      queryClient.invalidateQueries({ queryKey: ['messages', activeConvo?.id] });
-      queryClient.invalidateQueries({ queryKey: ['conversations'] });
+      queryClient.invalidateQueries({ queryKey: ['messages-avatar', activeConvo?.id] });
+      queryClient.invalidateQueries({ queryKey: ['conversations-avatar'] });
     },
   });
-
-  const dashPath = user?.role === 'avatar' ? '/AvatarDashboard' : user?.role === 'enterprise' ? '/EnterpriseDashboard' : '/UserDashboard';
 
   const getOtherName = (convo) => {
     const idx = (convo.participant_emails || []).findIndex(e => e !== user?.email);
@@ -178,7 +146,7 @@ export default function Messages() {
       {/* Conversation List */}
       <div className={`w-full md:w-80 lg:w-96 border-r border-white/5 flex-shrink-0 ${activeConvo ? 'hidden md:flex' : 'flex'} flex-col`}>
         <div className="p-4 border-b border-white/5">
-          <Link to={dashPath} className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground mb-3">
+          <Link to="/AvatarDashboard" className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground mb-3">
             <ArrowLeft className="w-4 h-4" /> Dashboard
           </Link>
           <h1 className="text-xl font-bold">Messages</h1>
@@ -205,7 +173,6 @@ export default function Messages() {
             <div className="p-8 text-center">
               <MessageSquare className="w-8 h-8 text-muted-foreground mx-auto mb-3" />
               <p className="text-sm text-muted-foreground">No conversations yet</p>
-              <p className="text-xs text-muted-foreground mt-1">Messages from bookings will appear here</p>
             </div>
           )}
         </div>
@@ -223,45 +190,38 @@ export default function Messages() {
                 {getOtherName(activeConvo)[0]}
               </div>
               <span className="font-medium flex-1">{getOtherName(activeConvo)}</span>
-              <button
-                onClick={requestCamera}
-                title="Request live camera upgrade"
-                className="flex items-center gap-1.5 text-xs bg-primary/10 text-primary border border-primary/20 px-3 py-1.5 rounded-full hover:bg-primary/20 transition-colors"
-              >
-                <Video className="w-3 h-3" /> Request Camera
-              </button>
             </div>
             <div ref={scrollRef} className="flex-1 overflow-y-auto py-2 space-y-3">
-              {/* Job action card at top of chat */}
+              {/* Avatar job controls — hardcoded as avatar role */}
               {linkedJob && (
                 <JobActionCard
                   job={linkedJob}
                   user={user}
-                  userRole="user"
+                  userRole="avatar"
                   conversationId={activeConvo.id}
                   onJobUpdated={() => {
                     refetchJob();
-                    queryClient.invalidateQueries({ queryKey: ['messages', activeConvo.id] });
+                    queryClient.invalidateQueries({ queryKey: ['messages-avatar', activeConvo.id] });
                   }}
                 />
               )}
               <div className="px-4 space-y-3">
-              {messages.map(m => (
-                <div key={m.id} className={`flex ${m.sender_email === user?.email ? 'justify-end' : 'justify-start'}`}>
-                  {m.message_type === 'system' ? (
-                    <div className="w-full flex justify-center">
-                      <div className="max-w-sm text-center px-3 py-2 rounded-xl bg-white/5 border border-white/5 text-xs text-muted-foreground italic">{m.content}</div>
-                    </div>
-                  ) : (
-                    <div className={`max-w-xs lg:max-w-md rounded-2xl px-4 py-2.5 text-sm ${
-                      m.sender_email === user?.email ? 'bg-primary text-primary-foreground rounded-br-md' : 'glass rounded-bl-md'
-                    }`}>
-                      {m.message_type === 'photo' && <img src={m.content} alt="Photo" className="max-w-xs rounded-xl" />}
-                      {m.message_type !== 'photo' && <p>{m.content}</p>}
-                    </div>
-                  )}
-                </div>
-              ))}
+                {messages.map(m => (
+                  <div key={m.id} className={`flex ${m.sender_email === user?.email ? 'justify-end' : 'justify-start'}`}>
+                    {m.message_type === 'system' ? (
+                      <div className="w-full flex justify-center">
+                        <div className="max-w-sm text-center px-3 py-2 rounded-xl bg-white/5 border border-white/5 text-xs text-muted-foreground italic">{m.content}</div>
+                      </div>
+                    ) : (
+                      <div className={`max-w-xs lg:max-w-md rounded-2xl px-4 py-2.5 text-sm ${
+                        m.sender_email === user?.email ? 'bg-primary text-primary-foreground rounded-br-md' : 'glass rounded-bl-md'
+                      }`}>
+                        {m.message_type === 'photo' && <img src={m.content} alt="Photo" className="max-w-xs rounded-xl" />}
+                        {m.message_type !== 'photo' && <p>{m.content}</p>}
+                      </div>
+                    )}
+                  </div>
+                ))}
               </div>
             </div>
             <div className="p-4 border-t border-white/5">
@@ -271,7 +231,6 @@ export default function Messages() {
                   onClick={() => photoInputRef.current?.click()}
                   disabled={uploadingPhoto}
                   className="p-2 rounded-xl bg-muted/50 border border-white/5 text-muted-foreground hover:text-foreground transition-colors shrink-0"
-                  title="Send photo"
                 >
                   {uploadingPhoto ? <Loader2 className="w-4 h-4 animate-spin" /> : <Camera className="w-4 h-4" />}
                 </button>
