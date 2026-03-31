@@ -167,17 +167,7 @@ export default function JobActionCard({ job, user, conversationId, onJobUpdated 
     );
   }
 
-  // ─── AVATAR: Job awaiting approval → waiting banner ───
-  if (isAvatar && job.status === 'awaiting_approval') {
-    return (
-      <div className="mx-4 my-3 glass rounded-2xl p-3 border border-yellow-500/20 flex items-center gap-2">
-        <Loader2 className="w-4 h-4 text-yellow-400 animate-spin" />
-        <p className="text-sm text-yellow-400 font-medium">Proof submitted — waiting for the client to review and release payment.</p>
-      </div>
-    );
-  }
-
-  // ─── CLIENT: Job awaiting approval → review proof ───
+  // ─── CLIENT: Job awaiting approval → review proof ─── (must come first)
   if (isClient && job.status === 'awaiting_approval') {
     return (
       <div className="mx-4 my-3 glass rounded-2xl p-4 border border-yellow-500/30 space-y-3">
@@ -229,6 +219,16 @@ export default function JobActionCard({ job, user, conversationId, onJobUpdated 
             </div>
           </div>
         )}
+      </div>
+    );
+  }
+
+  // ─── AVATAR: Job awaiting approval → waiting banner ───
+  if (isAvatar && job.status === 'awaiting_approval') {
+    return (
+      <div className="mx-4 my-3 glass rounded-2xl p-3 border border-yellow-500/20 flex items-center gap-2">
+        <Loader2 className="w-4 h-4 text-yellow-400 animate-spin" />
+        <p className="text-sm text-yellow-400 font-medium">Proof submitted — waiting for the client to review and release payment.</p>
       </div>
     );
   }
