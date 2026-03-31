@@ -5,7 +5,6 @@ export const userNavItems = [
   { icon: Search, label: 'Explore', path: '/Explore' },
   { icon: Calendar, label: 'Bookings', path: '/Bookings' },
   { icon: MessageSquare, label: 'Messages', path: '/Messages' },
-  { icon: User, label: 'Profile', path: '/Profile' },
 ];
 
 export const avatarNavItems = [
