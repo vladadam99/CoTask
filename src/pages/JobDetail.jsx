@@ -39,6 +39,12 @@ export default function JobDetail() {
     enabled: !!jobId && !!user,
   });
 
+  const { data: myAvatarProfile } = useQuery({
+    queryKey: ['my-avatar-profile', user?.email],
+    queryFn: () => base44.entities.AvatarProfile.filter({ user_email: user.email }).then(r => r[0] || null),
+    enabled: !!user,
+  });
+
   const { data: applicantProfiles = [] } = useQuery({
     queryKey: ['applicant-profiles', jobId],
     queryFn: async () => {
@@ -108,7 +114,8 @@ export default function JobDetail() {
   });
 
   const isOwner = user?.email === job?.posted_by_email;
-  const canApply = (user?.role === 'avatar' || user?.role === 'enterprise') && !isOwner && job?.status === 'open' && !myApplication;
+  const isAvatar = user?.role === 'avatar' || !!myAvatarProfile;
+  const canApply = (isAvatar || user?.role === 'enterprise') && !isOwner && job?.status === 'open' && !myApplication;
 
   if (isLoading) return (
     <AppShell navItems={getNavItems(user?.role)} user={user}>
