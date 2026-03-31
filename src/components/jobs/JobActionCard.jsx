@@ -215,7 +215,15 @@ export default function JobActionCard({ job, user, userRole, conversationId, onJ
       await Promise.all([
         base44.entities.JobPost.update(job.id, { partial_amount: Number(partialAmount) }),
         postSystemMessage(`🤝 Avatar proposed partial settlement: Client pays $${partialAmount}. Awaiting client acceptance.`),
-        notify(job.posted_by_email, '🤝 Partial Settlement Proposal', `The avatar proposed a partial payment of $${partialAmount}. Please accept or reject.`, 'payment'),
+        base44.entities.Notification.create({
+          user_email: job.posted_by_email,
+          title: '🤝 Partial Settlement Proposal',
+          message: `The avatar proposed a partial payment of $${partialAmount}. Please accept or reject.`,
+          type: 'payment',
+          link: `/Messages?conversation=${conversationId}`,
+          reference_id: job.id,
+          target_role: 'user',
+        }),
       ]);
       onJobUpdated?.();
     } catch (error) {
