@@ -39,8 +39,12 @@ export default function JobActionCard({ job, user, userRole, conversationId, onJ
   const [showDisputeForm, setShowDisputeForm] = useState(false);
   const [showProofForm, setShowProofForm] = useState(false);
 
-  const isAvatar = userRole === 'avatar';
-  const isClient = !isAvatar;
+  // Use email match against the job as source of truth
+  // Fall back to role only if same person holds both emails (testing scenario)
+  const isJobWinner = user?.email === job?.winner_email;
+  const isJobPoster = user?.email === job?.posted_by_email;
+  const isAvatar = isJobWinner && (!isJobPoster || userRole === 'avatar');
+  const isClient = isJobPoster && (!isJobWinner || userRole !== 'avatar');
 
   // Build scheduled datetime string
   const scheduledStr = job?.scheduled_date
