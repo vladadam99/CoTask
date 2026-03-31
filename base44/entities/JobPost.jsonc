@@ -89,6 +89,10 @@
       "type": "string",
       "format": "date"
     },
+    "scheduled_time": {
+      "type": "string",
+      "description": "Time the job starts, e.g. 14:30"
+    },
     "flexible_dates": {
       "type": "boolean",
       "default": true

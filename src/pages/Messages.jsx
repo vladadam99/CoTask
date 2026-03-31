@@ -6,6 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft, Send, MessageSquare, Camera, Loader2, Video } from 'lucide-react';
 import JobActionCard from '@/components/jobs/JobActionCard';
+import JobCountdown from '@/components/jobs/JobCountdown';
 import { Link } from 'react-router-dom';
 
 export default function Messages() {
@@ -232,6 +233,18 @@ export default function Messages() {
               </button>
             </div>
             <div ref={scrollRef} className="flex-1 overflow-y-auto py-2 space-y-3">
+              {/* Countdown if job is scheduled for future */}
+              {linkedJob && linkedJob.scheduled_date && (() => {
+                const scheduledStr = linkedJob.scheduled_time
+                  ? `${linkedJob.scheduled_date}T${linkedJob.scheduled_time}`
+                  : linkedJob.scheduled_date;
+                const isFuture = new Date(scheduledStr).getTime() > Date.now();
+                return isFuture ? (
+                  <div className="px-4 pt-2">
+                    <JobCountdown scheduledDate={scheduledStr} />
+                  </div>
+                ) : null;
+              })()}
               {/* Job action card at top of chat */}
               {linkedJob && (
                 <JobActionCard

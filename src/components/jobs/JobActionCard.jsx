@@ -1,7 +1,7 @@
-import React, { useState, useRef } from 'react';
+import React, { useState } from 'react';
 import { base44 } from '@/api/base44Client';
 import { Button } from '@/components/ui/button';
-import { CheckCircle, XCircle, Camera, Upload, Loader2, AlertTriangle, RefreshCw, DollarSign, ImagePlus } from 'lucide-react';
+import { CheckCircle, XCircle, Camera, Loader2, AlertTriangle, RefreshCw, DollarSign } from 'lucide-react';
 
 // Renders contextual action card inside the job conversation
 export default function JobActionCard({ job, user, conversationId, onJobUpdated }) {
@@ -14,6 +14,7 @@ export default function JobActionCard({ job, user, conversationId, onJobUpdated 
   const [partialAmount, setPartialAmount] = useState('');
   const [loading, setLoading] = useState(false);
   const [showDisputeForm, setShowDisputeForm] = useState(false);
+  const [showProofForm, setShowProofForm] = useState(false);
 
 
   const isAvatar = user?.email === job?.winner_email;
@@ -133,13 +134,28 @@ export default function JobActionCard({ job, user, conversationId, onJobUpdated 
 
   if (!job) return null;
 
-  // ─── AVATAR: Job in progress → show "Mark as Done" ───
+  // ─── AVATAR: Job in progress → subtle button, then proof form ───
   if (isAvatar && job.status === 'in_progress') {
+    if (!showProofForm) {
+      return (
+        <div className="mx-4 my-3 flex justify-center">
+          <button
+            onClick={() => setShowProofForm(true)}
+            className="text-xs text-muted-foreground hover:text-foreground border border-white/10 hover:border-primary/30 px-4 py-2 rounded-full transition-all gap-2 flex items-center"
+          >
+            <CheckCircle className="w-3.5 h-3.5" /> Mark Job as Done
+          </button>
+        </div>
+      );
+    }
     return (
       <div className="mx-4 my-3 glass rounded-2xl p-4 border border-primary/20 space-y-3">
-        <div className="flex items-center gap-2">
-          <Camera className="w-4 h-4 text-primary" />
-          <p className="font-semibold text-sm">Mark Job as Done</p>
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <Camera className="w-4 h-4 text-primary" />
+            <p className="font-semibold text-sm">Submit Job Completion Proof</p>
+          </div>
+          <button onClick={() => setShowProofForm(false)} className="text-xs text-muted-foreground hover:text-foreground">Cancel</button>
         </div>
         <p className="text-xs text-muted-foreground">Upload a photo proof of the completed job. The client will review and release payment.</p>
 
