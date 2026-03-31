@@ -9,7 +9,7 @@ import { getNavItems } from '@/lib/navItems';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import StatusBadge from '@/components/ui/StatusBadge';
-import { ArrowLeft, MapPin, Clock, DollarSign, Users, CheckCircle, XCircle, Star, Award, MessageCircle } from 'lucide-react';
+import { ArrowLeft, MapPin, Clock, DollarSign, Users, CheckCircle, XCircle, Star, Award, MessageCircle, Pencil } from 'lucide-react';
 
 const DURATION_LABELS = { hourly: '/hr', daily: '/day', weekly: '/wk', monthly: '/mo', custom: '' };
 
@@ -21,6 +21,8 @@ export default function JobDetail() {
   const jobId = urlParams.get('id');
   const [applyForm, setApplyForm] = useState({ cover_message: '', proposed_rate: '', proposed_duration: '', available_from: '' });
   const [showApplyForm, setShowApplyForm] = useState(false);
+  const [showEditForm, setShowEditForm] = useState(false);
+  const [editForm, setEditForm] = useState({});
 
   const { data: job, isLoading } = useQuery({
     queryKey: ['job-detail', jobId],
@@ -129,6 +131,31 @@ export default function JobDetail() {
 
   const isAvatar = user?.role === 'avatar';
   const isOwner = user?.email === job?.posted_by_email && !isAvatar;
+
+  const openEditForm = () => {
+    setEditForm({
+      title: job.title || '',
+      description: job.description || '',
+      budget_min: job.budget_min || '',
+      budget_max: job.budget_max || '',
+      location: job.location || '',
+      scheduled_date: job.scheduled_date || '',
+    });
+    setShowEditForm(true);
+  };
+
+  const saveEdit = async () => {
+    await base44.entities.JobPost.update(jobId, {
+      title: editForm.title,
+      description: editForm.description,
+      budget_min: editForm.budget_min ? Number(editForm.budget_min) : undefined,
+      budget_max: editForm.budget_max ? Number(editForm.budget_max) : undefined,
+      location: editForm.location,
+      scheduled_date: editForm.scheduled_date || undefined,
+    });
+    queryClient.invalidateQueries({ queryKey: ['job-detail', jobId] });
+    setShowEditForm(false);
+  };
   const showOwnerControls = isOwner;
   const canApply = isAvatar && !isOwner && job?.status === 'open' && !myApplication;
 
@@ -157,18 +184,25 @@ export default function JobDetail() {
             </button>
           </Link>
           {isOwner && (
-            <Button
-              variant="outline"
-              size="sm"
-              className="border-red-500/30 text-red-400 hover:bg-red-500/10 text-xs"
-              onClick={async () => {
-                if (!confirm('Delete this job post? This cannot be undone.')) return;
-                await base44.entities.JobPost.delete(jobId);
-                navigate('/JobMarketplace');
-              }}
-            >
-              Delete Post
-            </Button>
+            <div className="flex gap-2">
+              {job.status === 'open' && (
+                <Button variant="outline" size="sm" className="border-white/10 text-xs gap-1" onClick={openEditForm}>
+                  <Pencil className="w-3 h-3" /> Edit
+                </Button>
+              )}
+              <Button
+                variant="outline"
+                size="sm"
+                className="border-red-500/30 text-red-400 hover:bg-red-500/10 text-xs"
+                onClick={async () => {
+                  if (!confirm('Delete this job post? This cannot be undone.')) return;
+                  await base44.entities.JobPost.delete(jobId);
+                  navigate('/JobMarketplace');
+                }}
+              >
+                Delete
+              </Button>
+            </div>
           )}
         </div>
 
@@ -235,6 +269,51 @@ export default function JobDetail() {
             </div>
           )}
         </div>
+
+        {/* Edit Form */}
+        {showEditForm && (
+          <div className="glass rounded-2xl p-6 border border-primary/20 space-y-4">
+            <h3 className="font-bold">Edit Job Post</h3>
+            <div>
+              <label className="text-sm font-medium mb-1.5 block">Title</label>
+              <input value={editForm.title} onChange={e => setEditForm(p => ({ ...p, title: e.target.value }))}
+                className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-primary/50 text-foreground" />
+            </div>
+            <div>
+              <label className="text-sm font-medium mb-1.5 block">Description</label>
+              <textarea value={editForm.description} onChange={e => setEditForm(p => ({ ...p, description: e.target.value }))} rows={4}
+                className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm resize-none focus:outline-none focus:border-primary/50 text-foreground" />
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="text-sm font-medium mb-1.5 block">Budget Min ($)</label>
+                <input type="number" value={editForm.budget_min} onChange={e => setEditForm(p => ({ ...p, budget_min: e.target.value }))}
+                  className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-primary/50 text-foreground" />
+              </div>
+              <div>
+                <label className="text-sm font-medium mb-1.5 block">Budget Max ($)</label>
+                <input type="number" value={editForm.budget_max} onChange={e => setEditForm(p => ({ ...p, budget_max: e.target.value }))}
+                  className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-primary/50 text-foreground" />
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="text-sm font-medium mb-1.5 block">Location</label>
+                <input value={editForm.location} onChange={e => setEditForm(p => ({ ...p, location: e.target.value }))}
+                  className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-primary/50 text-foreground" />
+              </div>
+              <div>
+                <label className="text-sm font-medium mb-1.5 block">Scheduled Date</label>
+                <input type="date" value={editForm.scheduled_date} onChange={e => setEditForm(p => ({ ...p, scheduled_date: e.target.value }))}
+                  className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-primary/50 text-foreground" />
+              </div>
+            </div>
+            <div className="flex gap-3">
+              <Button className="flex-1" onClick={saveEdit}>Save Changes</Button>
+              <Button variant="outline" className="border-white/10" onClick={() => setShowEditForm(false)}>Cancel</Button>
+            </div>
+          </div>
+        )}
 
         {/* My Application Status */}
         {myApplication && (
