@@ -89,9 +89,9 @@ export default function UserDashboard() {
               <Zap className="w-4 h-4 flex-shrink-0" /> Book an Avatar
             </Button>
           </Link>
-          <Link to="/JobMarketplace" className="min-w-0">
+          <Link to="/Bookings" className="min-w-0">
             <Button variant="outline" className="w-full sm:w-auto border-white/10 font-semibold">
-              <Briefcase className="w-4 h-4 flex-shrink-0" /> Browse Jobs
+              <Calendar className="w-4 h-4 flex-shrink-0" /> My Bookings
             </Button>
           </Link>
           <Link to="/PostJob" className="min-w-0">
