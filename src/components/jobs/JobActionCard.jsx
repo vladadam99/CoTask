@@ -14,9 +14,7 @@ export default function JobActionCard({ job, user, conversationId, onJobUpdated 
   const [partialAmount, setPartialAmount] = useState('');
   const [loading, setLoading] = useState(false);
   const [showDisputeForm, setShowDisputeForm] = useState(false);
-  const proofCameraRef = useRef(null);
-  const proofGalleryRef = useRef(null);
-  const disputeInputRef = useRef(null);
+
 
   const isAvatar = user?.email === job?.winner_email;
   const isClient = user?.email === job?.posted_by_email;
@@ -148,28 +146,24 @@ export default function JobActionCard({ job, user, conversationId, onJobUpdated 
         {proofPreview ? (
           <div>
             <img src={proofPreview} alt="Proof" className="w-full max-h-40 object-cover rounded-xl border border-white/10" />
-            <button onClick={() => { setProofPreview(null); setProofFile(null); }} className="text-xs text-muted-foreground hover:text-foreground mt-1">Remove photo</button>
+            <button type="button" onClick={() => { setProofPreview(null); setProofFile(null); }} className="text-xs text-muted-foreground hover:text-foreground mt-1">Remove photo</button>
           </div>
         ) : (
           <div className="grid grid-cols-2 gap-2">
-            <button onClick={() => proofCameraRef.current?.click()}
-              className="border-2 border-dashed border-white/10 rounded-xl p-4 flex flex-col items-center gap-1.5 hover:border-primary/30 transition-colors">
+            <label className="border-2 border-dashed border-white/10 rounded-xl p-4 flex flex-col items-center gap-1.5 hover:border-primary/30 transition-colors cursor-pointer">
+              <input type="file" accept="image/*" capture="environment" className="hidden"
+                onChange={e => { const f = e.target.files?.[0]; if (f) { setProofFile(f); setProofPreview(URL.createObjectURL(f)); } e.target.value = ''; }} />
               <Camera className="w-5 h-5 text-primary" />
               <span className="text-xs text-muted-foreground">Take Photo</span>
-            </button>
-            <button onClick={() => proofGalleryRef.current?.click()}
-              className="border-2 border-dashed border-white/10 rounded-xl p-4 flex flex-col items-center gap-1.5 hover:border-primary/30 transition-colors">
+            </label>
+            <label className="border-2 border-dashed border-white/10 rounded-xl p-4 flex flex-col items-center gap-1.5 hover:border-primary/30 transition-colors cursor-pointer">
+              <input type="file" accept="image/*" className="hidden"
+                onChange={e => { const f = e.target.files?.[0]; if (f) { setProofFile(f); setProofPreview(URL.createObjectURL(f)); } e.target.value = ''; }} />
               <ImagePlus className="w-5 h-5 text-muted-foreground" />
               <span className="text-xs text-muted-foreground">Upload from Gallery</span>
-            </button>
+            </label>
           </div>
         )}
-        {/* Camera input */}
-        <input ref={proofCameraRef} type="file" accept="image/*" capture="environment" className="hidden"
-          onChange={e => { const f = e.target.files?.[0]; if (f) { setProofFile(f); setProofPreview(URL.createObjectURL(f)); } e.target.value = ''; }} />
-        {/* Gallery/file input */}
-        <input ref={proofGalleryRef} type="file" accept="image/*" className="hidden"
-          onChange={e => { const f = e.target.files?.[0]; if (f) { setProofFile(f); setProofPreview(URL.createObjectURL(f)); } e.target.value = ''; }} />
 
         <textarea value={proofNote} onChange={e => setProofNote(e.target.value)} rows={2} placeholder="Optional note about the completed work…"
           className="w-full text-sm bg-muted/50 border border-white/5 rounded-xl px-3 py-2 focus:outline-none focus:border-primary/40 text-foreground placeholder:text-muted-foreground resize-none" />
@@ -218,13 +212,12 @@ export default function JobActionCard({ job, user, conversationId, onJobUpdated 
                 <button onClick={() => { setDisputePreview(null); setDisputeFile(null); }} className="text-xs text-muted-foreground mt-1">Remove</button>
               </div>
             ) : (
-              <button onClick={() => disputeInputRef.current?.click()}
-                className="w-full border border-dashed border-white/10 rounded-xl p-3 flex items-center gap-2 hover:border-red-500/20 transition-colors text-xs text-muted-foreground">
+              <label className="w-full border border-dashed border-white/10 rounded-xl p-3 flex items-center gap-2 hover:border-red-500/20 transition-colors text-xs text-muted-foreground cursor-pointer">
+                <input type="file" accept="image/*" className="hidden"
+                  onChange={e => { const f = e.target.files?.[0]; if (f) { setDisputeFile(f); setDisputePreview(URL.createObjectURL(f)); } e.target.value = ''; }} />
                 <Camera className="w-4 h-4" /> Attach photo evidence (optional)
-              </button>
+              </label>
             )}
-            <input ref={disputeInputRef} type="file" accept="image/*" capture="environment" className="hidden"
-              onChange={e => { const f = e.target.files?.[0]; if (f) { setDisputeFile(f); setDisputePreview(URL.createObjectURL(f)); } e.target.value = ''; }} />
 
             <div className="flex gap-2">
               <Button className="flex-1 bg-red-600 hover:bg-red-700 text-white gap-1.5" onClick={handleDispute} disabled={!disputeReason || loading}>
