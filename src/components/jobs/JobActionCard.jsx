@@ -71,9 +71,13 @@ export default function JobActionCard({ job, user, userRole, conversationId, onJ
   };
 
   const notify = async (email, title, message, type = 'system') => {
+    const isAvatarRecipient = email === job?.winner_email;
+    const link = isAvatarRecipient
+      ? `/AvatarMessages?conversation=${conversationId}`
+      : `/Messages?conversation=${conversationId}`;
     await base44.entities.Notification.create({
       user_email: email, title, message, type,
-      link: `/Messages?conversation=${conversationId}`,
+      link,
       reference_id: job.id,
     });
   };

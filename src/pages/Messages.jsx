@@ -93,7 +93,7 @@ export default function Messages() {
         title: `📹 Camera upgrade request from ${user.full_name}`,
         message: 'They want to add Live Camera to your job.',
         type: 'message',
-        link: `/Messages?conversation=${activeConvo.id}`,
+        link: `/AvatarMessages?conversation=${activeConvo.id}`,
         reference_id: activeConvo.id,
       });
     }
@@ -124,7 +124,7 @@ export default function Messages() {
         title: `📷 Photo from ${user.full_name}`,
         message: 'Sent a photo in your job conversation.',
         type: 'message',
-        link: `/Messages?conversation=${activeConvo.id}`,
+        link: `/AvatarMessages?conversation=${activeConvo.id}`,
         reference_id: activeConvo.id,
       });
     }
@@ -154,7 +154,7 @@ export default function Messages() {
           title: `New message from ${user.full_name}`,
           message: newMsg.length > 80 ? newMsg.slice(0, 80) + '…' : newMsg,
           type: 'message',
-          link: `/Messages?conversation=${activeConvo.id}`,
+          link: `/AvatarMessages?conversation=${activeConvo.id}`,
           reference_id: activeConvo.id,
         });
       }
