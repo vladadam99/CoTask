@@ -1,0 +1,50 @@
+{
+  "name": "Review",
+  "type": "object",
+  "properties": {
+    "booking_id": {
+      "type": "string"
+    },
+    "job_id": {
+      "type": "string"
+    },
+    "reviewer_email": {
+      "type": "string"
+    },
+    "reviewer_name": {
+      "type": "string"
+    },
+    "reviewer_type": {
+      "type": "string",
+      "enum": [
+        "client",
+        "avatar"
+      ],
+      "description": "Who is leaving the review"
+    },
+    "reviewed_email": {
+      "type": "string",
+      "description": "Who is being reviewed"
+    },
+    "avatar_email": {
+      "type": "string"
+    },
+    "avatar_name": {
+      "type": "string"
+    },
+    "rating": {
+      "type": "number"
+    },
+    "comment": {
+      "type": "string"
+    },
+    "category": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "reviewer_email",
+    "reviewed_email",
+    "rating"
+  ]
+}

@@ -120,9 +120,16 @@
       "type": "number",
       "default": 0
     },
-    "proof_url": {
+    "started_at": {
       "type": "string",
-      "description": "Photo proof uploaded by avatar on job completion"
+      "description": "ISO timestamp when avatar clicked Start Job"
+    },
+    "ended_at": {
+      "type": "string",
+      "description": "ISO timestamp when avatar submitted proof"
+    },
+    "proof_url": {
+      "type": "string"
     },
     "proof_note": {
       "type": "string"
@@ -134,8 +141,15 @@
       "type": "string"
     },
     "partial_amount": {
-      "type": "number",
-      "description": "Amount agreed in partial refund"
+      "type": "number"
+    },
+    "review_left_by_avatar": {
+      "type": "boolean",
+      "default": false
+    },
+    "review_left_by_client": {
+      "type": "boolean",
+      "default": false
     }
   },
   "required": [
