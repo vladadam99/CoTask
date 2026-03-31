@@ -5,8 +5,7 @@ import { base44 } from '@/api/base44Client';
 import { useCurrentUser } from '@/lib/useCurrentUser';
 import GlassCard from '@/components/ui/GlassCard';
 import StatusBadge from '@/components/ui/StatusBadge';
-import { Calendar, Search, LayoutGrid, CalendarDays, ArrowLeft, Briefcase, Users, Clock, CheckCircle, XCircle } from 'lucide-react';
-import BookingCalendar from '@/components/bookings/BookingCalendar';
+import { Calendar, Search, ArrowLeft, Briefcase, Users, Clock, CheckCircle } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import AppShell from '@/components/layout/AppShell';
 import { getNavItems } from '@/lib/navItems';
@@ -21,7 +20,6 @@ export default function Bookings() {
 
   const isAvatar = user?.role === 'avatar';
   const isClient = !isAvatar;
-  const [mainTab, setMainTab] = useState('bookings'); // 'bookings' | 'jobs'
 
   const dashPath = isAvatar ? '/AvatarDashboard' : user?.role === 'enterprise' ? '/EnterpriseDashboard' : '/UserDashboard';
 
@@ -71,35 +69,26 @@ export default function Bookings() {
           <ArrowLeft className="w-4 h-4" /> Dashboard
         </Link>
 
-        {/* Main tabs for client users */}
-        {isClient && (
-          <div className="flex gap-2 mb-6">
-            <button onClick={() => setMainTab('bookings')} className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition-all ${mainTab === 'bookings' ? 'bg-primary text-primary-foreground' : 'glass text-muted-foreground hover:text-foreground'}`}>
-              <Calendar className="w-4 h-4" /> Bookings
-            </button>
-            <button onClick={() => setMainTab('jobs')} className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition-all ${mainTab === 'jobs' ? 'bg-primary text-primary-foreground' : 'glass text-muted-foreground hover:text-foreground'}`}>
-              <Briefcase className="w-4 h-4" /> My Job Posts
-              {myJobs.length > 0 && <span className={`text-xs px-1.5 py-0.5 rounded-full ${mainTab === 'jobs' ? 'bg-white/20' : 'bg-primary/20 text-primary'}`}>{myJobs.length}</span>}
-            </button>
-          </div>
-        )}
+
 
         <div className="flex items-center justify-between mb-6">
-          <h1 className="text-2xl font-bold">{mainTab === 'jobs' ? 'My Job Posts' : 'Bookings'}</h1>
+          <h1 className="text-2xl font-bold">{isClient ? 'My Job Posts' : 'Bookings'}</h1>
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
           <Input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search bookings..." className="pl-10 bg-muted/50 border-white/5" />
         </div>
 
-        <div className="flex gap-2 mb-6 overflow-x-auto">
-          {TABS.map(t => (
-            <button key={t} onClick={() => setTab(t)}
-              className={`px-4 py-1.5 rounded-full text-sm whitespace-nowrap transition-all ${
-                t === tab ? 'bg-primary text-primary-foreground' : 'bg-muted/50 text-muted-foreground hover:bg-muted'
-              }`}>{t}</button>
-          ))}
-        </div>
+        {isAvatar && (
+          <div className="flex gap-2 mb-6 overflow-x-auto">
+            {TABS.map(t => (
+              <button key={t} onClick={() => setTab(t)}
+                className={`px-4 py-1.5 rounded-full text-sm whitespace-nowrap transition-all ${
+                  t === tab ? 'bg-primary text-primary-foreground' : 'bg-muted/50 text-muted-foreground hover:bg-muted'
+                }`}>{t}</button>
+            ))}
+          </div>
+        )}
 
-        {mainTab === 'jobs' && isClient ? (
+        {isClient ? (
           jobsLoading ? (
             <div className="space-y-3">
               {[1,2,3].map(i => <div key={i} className="glass rounded-xl p-5 animate-pulse"><div className="h-4 bg-muted rounded w-1/2 mb-2" /><div className="h-3 bg-muted rounded w-1/3" /></div>)}
