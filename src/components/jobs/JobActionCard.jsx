@@ -338,7 +338,12 @@ export default function JobActionCard({ job, user, userRole, conversationId, onJ
               <Camera className="w-4 h-4 text-primary" />
               <p className="font-semibold text-sm">Submit Completion Proof</p>
             </div>
-            <button onClick={() => setShowProofForm(false)} className="text-xs text-muted-foreground hover:text-foreground">Cancel</button>
+            <button onClick={() => {
+              setShowProofForm(false);
+              setProofFile(null);
+              setProofPreview(null);
+              setProofNote('');
+            }} className="text-xs text-muted-foreground hover:text-foreground">Cancel</button>
           </div>
           <p className="text-xs text-muted-foreground">Upload a photo proof. The client will review and release payment.</p>
           {proofPreview ? (
