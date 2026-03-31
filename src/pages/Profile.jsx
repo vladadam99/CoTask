@@ -12,6 +12,7 @@ export default function Profile() {
   const navigate = useNavigate();
   const [uploading, setUploading] = useState(false);
   const [profilePicUrl, setProfilePicUrl] = useState('');
+  const [switchingRole, setSwitchingRole] = useState(false);
   const fileInputRef = useRef(null);
 
   React.useEffect(() => {
@@ -35,15 +36,22 @@ export default function Profile() {
 
   const handleSwitchRole = async (targetRole) => {
     if (targetRole === user?.role) return;
-    await base44.auth.updateMe({ role: targetRole });
-    if (targetRole === 'avatar') {
-      const profiles = await base44.entities.AvatarProfile.filter({ user_email: user.email });
-      navigate(profiles.length > 0 ? '/AvatarDashboard' : '/Onboarding?role=avatar');
-    } else if (targetRole === 'enterprise') {
-      const profiles = await base44.entities.EnterpriseProfile.filter({ user_email: user.email });
-      navigate(profiles.length > 0 ? '/EnterpriseDashboard' : '/Onboarding?role=enterprise');
-    } else {
-      navigate('/UserDashboard');
+    setSwitchingRole(true);
+    try {
+      await base44.auth.updateMe({ role: targetRole });
+      if (targetRole === 'avatar') {
+        const profiles = await base44.entities.AvatarProfile.filter({ user_email: user.email });
+        navigate(profiles.length > 0 ? '/AvatarDashboard' : '/Onboarding?role=avatar');
+      } else if (targetRole === 'enterprise') {
+        const profiles = await base44.entities.EnterpriseProfile.filter({ user_email: user.email });
+        navigate(profiles.length > 0 ? '/EnterpriseDashboard' : '/Onboarding?role=enterprise');
+      } else {
+        navigate('/UserDashboard');
+      }
+    } catch (error) {
+      console.error('Failed to switch role:', error);
+    } finally {
+      setSwitchingRole(false);
     }
   };
 
@@ -102,26 +110,26 @@ export default function Profile() {
             <h3 className="font-semibold mb-3">Switch Role</h3>
             <div className="space-y-2">
               {user?.role !== 'user' && (
-                <button onClick={() => handleSwitchRole('user')} className="w-full text-left">
+                 <button onClick={() => handleSwitchRole('user')} disabled={switchingRole} className="w-full text-left disabled:opacity-50">
                   <div className="p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors text-sm flex items-center gap-3">
                     <ArrowRightLeft className="w-4 h-4 text-muted-foreground" />
-                    <span>Switch to User</span>
+                    <span>{switchingRole ? 'Switching...' : 'Switch to User'}</span>
                   </div>
                 </button>
               )}
               {user?.role !== 'avatar' && (
-                <button onClick={() => handleSwitchRole('avatar')} className="w-full text-left">
+                 <button onClick={() => handleSwitchRole('avatar')} disabled={switchingRole} className="w-full text-left disabled:opacity-50">
                   <div className="p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors text-sm flex items-center gap-3">
                     <ArrowRightLeft className="w-4 h-4 text-muted-foreground" />
-                    <span>Switch to Avatar</span>
+                    <span>{switchingRole ? 'Switching...' : 'Switch to Avatar'}</span>
                   </div>
                 </button>
               )}
               {user?.role !== 'enterprise' && (
-                <button onClick={() => handleSwitchRole('enterprise')} className="w-full text-left">
+                 <button onClick={() => handleSwitchRole('enterprise')} disabled={switchingRole} className="w-full text-left disabled:opacity-50">
                   <div className="p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors text-sm flex items-center gap-3">
                     <ArrowRightLeft className="w-4 h-4 text-muted-foreground" />
-                    <span>Switch to Enterprise</span>
+                    <span>{switchingRole ? 'Switching...' : 'Switch to Enterprise'}</span>
                   </div>
                 </button>
               )}
