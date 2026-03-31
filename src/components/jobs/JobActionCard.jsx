@@ -182,69 +182,79 @@ export default function JobActionCard({ job, user, conversationId, onJobUpdated 
 
   // ─── IN_PROGRESS: Countdown / Start Job / Mark Done ───
   if (job.status === 'in_progress') {
-    // Step 1: Countdown until scheduled time (avatar only sees countdown + start button when expired)
     if (!job.started_at) {
+      // ── AVATAR: countdown then Start Job ──
       if (isAvatar) {
-        if (!countdown || !countdown.expired) {
-          // Show countdown
+        const hasSchedule = !!scheduledStr;
+        const timerRunning = hasSchedule && countdown && !countdown.expired;
+        const timerExpiredOrNoSchedule = !hasSchedule || (countdown && countdown.expired);
+
+        if (timerRunning) {
           return (
             <div className="mx-4 my-3 glass rounded-2xl p-5 border border-primary/20 space-y-3">
               <div className="flex items-center gap-2">
                 <Clock className="w-4 h-4 text-primary" />
                 <span className="text-sm font-semibold">Job starts in</span>
               </div>
-              {countdown && !countdown.expired ? (
-                <div className="grid grid-cols-4 gap-2">
-                  {[{ label: 'Days', v: countdown.days }, { label: 'Hours', v: countdown.hours }, { label: 'Mins', v: countdown.minutes }, { label: 'Secs', v: countdown.seconds }].map(u => (
-                    <div key={u.label} className="bg-white/5 rounded-xl p-3 text-center border border-white/5">
-                      <div className="text-2xl font-bold tabular-nums">{String(u.v).padStart(2, '0')}</div>
-                      <div className="text-xs text-muted-foreground mt-0.5">{u.label}</div>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <p className="text-sm text-muted-foreground">Calculating…</p>
-              )}
+              <div className="grid grid-cols-4 gap-2">
+                {[{ label: 'Days', v: countdown.days }, { label: 'Hours', v: countdown.hours }, { label: 'Mins', v: countdown.minutes }, { label: 'Secs', v: countdown.seconds }].map(u => (
+                  <div key={u.label} className="bg-white/5 rounded-xl p-3 text-center border border-white/5">
+                    <div className="text-2xl font-bold tabular-nums">{String(u.v).padStart(2, '0')}</div>
+                    <div className="text-xs text-muted-foreground mt-0.5">{u.label}</div>
+                  </div>
+                ))}
+              </div>
               <p className="text-xs text-muted-foreground">You'll be able to start the job when the timer reaches zero.</p>
             </div>
           );
         }
-        // Timer expired → show Start Job button
-        return (
-          <div className="mx-4 my-3 glass rounded-2xl p-4 border border-green-500/30 space-y-3">
-            <div className="flex items-center gap-2">
-              <Play className="w-4 h-4 text-green-400" />
-              <p className="font-semibold text-sm text-green-400">It's time! Start your job</p>
+
+        if (timerExpiredOrNoSchedule) {
+          return (
+            <div className="mx-4 my-3 glass rounded-2xl p-4 border border-green-500/30 space-y-3">
+              <div className="flex items-center gap-2">
+                <Play className="w-4 h-4 text-green-400" />
+                <p className="font-semibold text-sm text-green-400">It's time! Start your job</p>
+              </div>
+              <p className="text-xs text-muted-foreground">Click below to officially start the job and notify your client.</p>
+              <Button className="w-full gap-2 bg-green-600 hover:bg-green-700 text-white" onClick={handleStartJob} disabled={loading}>
+                {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <><Play className="w-4 h-4" /> Start Job Now</>}
+              </Button>
             </div>
-            <p className="text-xs text-muted-foreground">The scheduled time has arrived. Click below to officially start the job and notify your client.</p>
-            <Button className="w-full gap-2 bg-green-600 hover:bg-green-700 text-white" onClick={handleStartJob} disabled={loading}>
-              {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <><Play className="w-4 h-4" /> Start Job Now</>}
-            </Button>
+          );
+        }
+
+        return null; // countdown loading
+      }
+
+      // ── CLIENT: waiting view ──
+      if (isClient) {
+        return (
+          <div className="mx-4 my-3 glass rounded-2xl p-5 border border-primary/20 space-y-3">
+            <div className="flex items-center gap-2">
+              <Clock className="w-4 h-4 text-primary" />
+              <span className="text-sm font-semibold">
+                {scheduledStr && countdown && !countdown.expired ? 'Job starts in' : 'Waiting for avatar to start…'}
+              </span>
+            </div>
+            {scheduledStr && countdown && !countdown.expired && (
+              <div className="grid grid-cols-4 gap-2">
+                {[{ label: 'Days', v: countdown.days }, { label: 'Hours', v: countdown.hours }, { label: 'Mins', v: countdown.minutes }, { label: 'Secs', v: countdown.seconds }].map(u => (
+                  <div key={u.label} className="bg-white/5 rounded-xl p-3 text-center border border-white/5">
+                    <div className="text-2xl font-bold tabular-nums">{String(u.v).padStart(2, '0')}</div>
+                    <div className="text-xs text-muted-foreground mt-0.5">{u.label}</div>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         );
       }
-      // Client side — show countdown too
-      return (
-        <div className="mx-4 my-3 glass rounded-2xl p-5 border border-primary/20 space-y-3">
-          <div className="flex items-center gap-2">
-            <Clock className="w-4 h-4 text-primary" />
-            <span className="text-sm font-semibold">Job starts in</span>
-          </div>
-          {countdown && !countdown.expired ? (
-            <div className="grid grid-cols-4 gap-2">
-              {[{ label: 'Days', v: countdown.days }, { label: 'Hours', v: countdown.hours }, { label: 'Mins', v: countdown.minutes }, { label: 'Secs', v: countdown.seconds }].map(u => (
-                <div key={u.label} className="bg-white/5 rounded-xl p-3 text-center border border-white/5">
-                  <div className="text-2xl font-bold tabular-nums">{String(u.v).padStart(2, '0')}</div>
-                  <div className="text-xs text-muted-foreground mt-0.5">{u.label}</div>
-                </div>
-              ))}
-            </div>
-          ) : <p className="text-sm text-muted-foreground text-center">Waiting for avatar to start…</p>}
-        </div>
-      );
+
+      return null;
     }
 
-    // Step 2: Job started — avatar sees subtle "Mark Done" button
+    // Job started — avatar sees subtle Mark Done, client sees in-progress banner
     if (isAvatar) {
       if (!showProofForm) {
         return (
@@ -290,13 +300,16 @@ export default function JobActionCard({ job, user, conversationId, onJobUpdated 
       );
     }
 
-    // Client: job in progress, started
-    return (
-      <div className="mx-4 my-3 glass rounded-2xl p-3 border border-green-500/20 flex items-center gap-2">
-        <Play className="w-4 h-4 text-green-400" />
-        <p className="text-sm text-green-400 font-medium">Job is in progress — avatar is working on it.</p>
-      </div>
-    );
+    if (isClient) {
+      return (
+        <div className="mx-4 my-3 glass rounded-2xl p-3 border border-green-500/20 flex items-center gap-2">
+          <Play className="w-4 h-4 text-green-400" />
+          <p className="text-sm text-green-400 font-medium">Job is in progress — avatar is working on it.</p>
+        </div>
+      );
+    }
+
+    return null;
   }
 
   // ─── AWAITING APPROVAL ───
