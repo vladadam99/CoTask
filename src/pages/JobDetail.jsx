@@ -178,11 +178,9 @@ export default function JobDetail() {
       <div className="max-w-3xl mx-auto space-y-6">
         {/* Back + Delete */}
         <div className="flex items-center justify-between">
-          <Link to="/JobMarketplace">
-            <button className="w-9 h-9 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:border-primary/30 transition-colors">
-              <ArrowLeft className="w-4 h-4" />
-            </button>
-          </Link>
+          <button onClick={() => navigate(-1)} className="w-9 h-9 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:border-primary/30 transition-colors">
+            <ArrowLeft className="w-4 h-4" />
+          </button>
           {isOwner && (
             <div className="flex gap-2">
               {job.status === 'open' && (
