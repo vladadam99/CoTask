@@ -127,9 +127,8 @@ export default function JobDetail() {
     enabled: !!jobId && job?.status !== 'open',
   });
 
-  const isAvatar = user?.role === 'avatar' || !!myAvatarProfile;
-  const isOwner = user?.email === job?.posted_by_email;
-  // Owner controls always show for the poster; avatars can apply but NOT to their own posts
+  const isAvatar = user?.role === 'avatar';
+  const isOwner = user?.email === job?.posted_by_email && !isAvatar;
   const showOwnerControls = isOwner;
   const canApply = isAvatar && !isOwner && job?.status === 'open' && !myApplication;
 
