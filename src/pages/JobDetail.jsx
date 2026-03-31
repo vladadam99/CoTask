@@ -113,9 +113,11 @@ export default function JobDetail() {
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['job-detail', jobId] }),
   });
 
-  const isOwner = user?.email === job?.posted_by_email;
   const isAvatar = user?.role === 'avatar' || !!myAvatarProfile;
-  const canApply = (isAvatar || user?.role === 'enterprise') && !isOwner && job?.status === 'open' && !myApplication;
+  const isOwner = user?.email === job?.posted_by_email;
+  // Avatars can always apply (even if same email posted the job as a user/enterprise role)
+  const canApply = isAvatar && job?.status === 'open' && !myApplication;
+  const showOwnerControls = isOwner && !isAvatar;
 
   if (isLoading) return (
     <AppShell navItems={getNavItems(user?.role)} user={user}>
@@ -152,7 +154,7 @@ export default function JobDetail() {
               </div>
               <p className="text-sm text-muted-foreground">Posted by {job.posted_by_name} · {job.posted_by_type}</p>
             </div>
-            {isOwner && job.status === 'open' && (
+            {showOwnerControls && job.status === 'open' && (
               <Badge variant="outline" className="text-xs bg-yellow-500/10 text-yellow-400 border-yellow-500/20">
                 {job.application_count || 0} applicant{job.application_count !== 1 ? 's' : ''}
               </Badge>
@@ -262,7 +264,7 @@ export default function JobDetail() {
         )}
 
         {/* Applications List (Owner Only) */}
-        {isOwner && applications.length > 0 && (
+        {showOwnerControls && applications.length > 0 && (
           <div className="space-y-3">
             <h2 className="font-bold text-lg">Applications ({applications.length})</h2>
             {applications.map(app => {
@@ -291,7 +293,7 @@ export default function JobDetail() {
                         {app.available_from && <span>Available: {app.available_from}</span>}
                       </div>
                     </div>
-                    {job.status === 'open' && app.status === 'pending' && (
+                    {showOwnerControls && job.status === 'open' && app.status === 'pending' && (
                       <div className="flex flex-col gap-2">
                         <Link to={`/AvatarView?id=${profile?.id || ''}`}>
                           <Button size="sm" variant="outline" className="border-white/10 text-xs w-full">View Profile</Button>
