@@ -1,0 +1,49 @@
+{
+  "name": "Notification",
+  "type": "object",
+  "properties": {
+    "user_email": {
+      "type": "string"
+    },
+    "title": {
+      "type": "string"
+    },
+    "message": {
+      "type": "string"
+    },
+    "type": {
+      "type": "string",
+      "enum": [
+        "booking_request",
+        "booking_accepted",
+        "booking_declined",
+        "message",
+        "session_starting",
+        "session_live",
+        "payment",
+        "review",
+        "system"
+      ]
+    },
+    "is_read": {
+      "type": "boolean",
+      "default": false
+    },
+    "link": {
+      "type": "string"
+    },
+    "reference_id": {
+      "type": "string"
+    },
+    "target_role": {
+      "type": "string",
+      "description": "If set, only show to users with this role (e.g. 'avatar', 'user', 'enterprise')"
+    }
+  },
+  "required": [
+    "user_email",
+    "title",
+    "message",
+    "type"
+  ]
+}

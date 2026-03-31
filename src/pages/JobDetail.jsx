@@ -80,6 +80,7 @@ export default function JobDetail() {
         type: 'booking_request',
         link: `/JobDetail?id=${jobId}`,
         reference_id: jobId,
+        target_role: 'user',
       });
       return app;
     },

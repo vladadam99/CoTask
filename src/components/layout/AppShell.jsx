@@ -42,7 +42,7 @@ export default function AppShell({ children, navItems = [], user }) {
         </nav>
         <div className="p-4 border-t border-white/5 space-y-4">
           <div className="hidden lg:flex justify-end mb-2">
-            <NotificationBell userEmail={user?.email} />
+            <NotificationBell userEmail={user?.email} userRole={user?.role} />
           </div>
           <div className="flex items-center gap-3">
             <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center text-sm font-medium text-primary">
@@ -64,7 +64,7 @@ export default function AppShell({ children, navItems = [], user }) {
       <div className="lg:hidden fixed top-0 left-0 right-0 z-50 h-14 glass-strong border-b border-white/5 flex items-center justify-between px-4">
         <Link to={homePath} className="text-lg font-bold">Co<span className="text-primary">Task</span></Link>
         <div className="flex items-center gap-2">
-          <NotificationBell userEmail={user?.email} />
+          <NotificationBell userEmail={user?.email} userRole={user?.role} />
           <button onClick={() => setDrawerOpen(true)} className="p-1.5 rounded-lg hover:bg-white/10 transition-colors">
             <Menu className="w-5 h-5" />
           </button>

@@ -41,29 +41,27 @@ Deno.serve(async (req) => {
       is_read: false,
     });
 
-    // Notify avatar only (skip if same person as client)
-    if (avatarEmail !== clientEmail) {
-      await base44.asServiceRole.entities.Notification.create({
-        user_email: avatarEmail,
-        title: '🎉 You got the job!',
-        message: `You were selected for: ${jobTitle}. Open chat to get started!`,
-        type: 'booking_accepted',
-        link: `/Messages?conversation=${conversation.id}`,
-        reference_id: jobId,
-      });
-    }
+    // Notify avatar
+    await base44.asServiceRole.entities.Notification.create({
+      user_email: avatarEmail,
+      title: '🎉 You got the job!',
+      message: `You were selected for: ${jobTitle}. Open chat to get started!`,
+      type: 'booking_accepted',
+      link: `/Messages?conversation=${conversation.id}`,
+      reference_id: jobId,
+      target_role: 'avatar',
+    });
 
-    // Notify client only (skip if same person as avatar)
-    if (clientEmail !== avatarEmail) {
-      await base44.asServiceRole.entities.Notification.create({
-        user_email: clientEmail,
-        title: '✅ Job Assigned',
-        message: `${avatarName} has been assigned to: ${jobTitle}. A chat has been opened!`,
-        type: 'booking_accepted',
-        link: `/Messages?conversation=${conversation.id}`,
-        reference_id: jobId,
-      });
-    }
+    // Notify client
+    await base44.asServiceRole.entities.Notification.create({
+      user_email: clientEmail,
+      title: '✅ Job Assigned',
+      message: `${avatarName} has been assigned to: ${jobTitle}. A chat has been opened!`,
+      type: 'booking_accepted',
+      link: `/Messages?conversation=${conversation.id}`,
+      reference_id: jobId,
+      target_role: 'user',
+    });
 
     console.log(`Job conversation created for job ${jobId}, conversation ${conversation.id}`);
     return Response.json({ conversation });

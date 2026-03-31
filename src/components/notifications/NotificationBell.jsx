@@ -14,7 +14,7 @@ const TYPE_COLORS = {
   system: 'bg-muted/50 text-muted-foreground',
 };
 
-export default function NotificationBell({ userEmail }) {
+export default function NotificationBell({ userEmail, userRole }) {
   const [open, setOpen] = useState(false);
   const [notifications, setNotifications] = useState([]);
   const dropdownRef = useRef(null);
@@ -24,8 +24,10 @@ export default function NotificationBell({ userEmail }) {
     if (!userEmail) return;
     const load = async () => {
       try {
-        const list = await base44.entities.Notification.filter({ user_email: userEmail }, '-created_date', 20);
-        setNotifications(list);
+        const list = await base44.entities.Notification.filter({ user_email: userEmail }, '-created_date', 50);
+        // Filter: show notifications with no target_role, or matching this user's role
+        const filtered = list.filter(n => !n.target_role || n.target_role === userRole);
+        setNotifications(filtered);
       } catch (e) {
         // silently ignore network errors
       }
@@ -38,8 +40,9 @@ export default function NotificationBell({ userEmail }) {
     if (!userEmail) return;
     const unsub = base44.entities.Notification.subscribe((event) => {
       if (event.data?.user_email === userEmail) {
+        const matchesRole = !event.data?.target_role || event.data?.target_role === userRole;
         if (event.type === 'create') {
-          setNotifications(prev => [event.data, ...prev]);
+          if (matchesRole) setNotifications(prev => [event.data, ...prev]);
         } else if (event.type === 'update') {
           setNotifications(prev => prev.map(n => n.id === event.id ? event.data : n));
         } else if (event.type === 'delete') {
