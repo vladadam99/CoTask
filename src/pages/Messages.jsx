@@ -237,6 +237,7 @@ export default function Messages() {
                 <JobActionCard
                   job={linkedJob}
                   user={user}
+                  userRole={user?.role}
                   conversationId={activeConvo.id}
                   onJobUpdated={() => {
                     refetchJob();

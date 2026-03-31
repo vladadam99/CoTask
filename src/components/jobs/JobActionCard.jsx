@@ -27,7 +27,7 @@ function useCountdown(targetDate) {
   return timeLeft;
 }
 
-export default function JobActionCard({ job, user, conversationId, onJobUpdated }) {
+export default function JobActionCard({ job, user, userRole, conversationId, onJobUpdated }) {
   const [proofFile, setProofFile] = useState(null);
   const [proofPreview, setProofPreview] = useState(null);
   const [proofNote, setProofNote] = useState('');
@@ -39,8 +39,8 @@ export default function JobActionCard({ job, user, conversationId, onJobUpdated 
   const [showDisputeForm, setShowDisputeForm] = useState(false);
   const [showProofForm, setShowProofForm] = useState(false);
 
-  const isAvatar = user?.email === job?.winner_email;
-  const isClient = user?.email === job?.posted_by_email;
+  const isAvatar = user?.email === job?.winner_email && userRole === 'avatar';
+  const isClient = user?.email === job?.posted_by_email && userRole !== 'avatar';
 
   // Build scheduled datetime string
   const scheduledStr = job?.scheduled_date
