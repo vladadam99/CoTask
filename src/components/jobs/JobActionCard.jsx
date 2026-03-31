@@ -213,13 +213,46 @@ export default function JobActionCard({ job, user, userRole, conversationId, onJ
     setLoading(true);
     try {
       await Promise.all([
-        base44.entities.JobPost.update(job.id, { status: 'completed', partial_amount: Number(partialAmount) }),
-        postSystemMessage(`🤝 Partial settlement agreed: Client pays $${partialAmount}. Both parties accepted.`),
-        notify(job.posted_by_email, '🤝 Partial Settlement', `The avatar proposed a partial payment of $${partialAmount}.`, 'payment'),
+        base44.entities.JobPost.update(job.id, { partial_amount: Number(partialAmount) }),
+        postSystemMessage(`🤝 Avatar proposed partial settlement: Client pays $${partialAmount}. Awaiting client acceptance.`),
+        notify(job.posted_by_email, '🤝 Partial Settlement Proposal', `The avatar proposed a partial payment of $${partialAmount}. Please accept or reject.`, 'payment'),
       ]);
       onJobUpdated?.();
     } catch (error) {
       console.error('Partial refund failed:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleAcceptPartialRefund = async () => {
+    if (!job.partial_amount) return;
+    setLoading(true);
+    try {
+      await Promise.all([
+        base44.entities.JobPost.update(job.id, { status: 'completed' }),
+        postSystemMessage(`✅ Client accepted partial settlement of $${job.partial_amount}.`),
+        notify(job.winner_email, '✅ Partial Settlement Accepted', `Client accepted your partial settlement proposal of $${job.partial_amount}.`, 'payment'),
+      ]);
+      onJobUpdated?.();
+    } catch (error) {
+      console.error('Accept partial failed:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleRejectPartialRefund = async () => {
+    setLoading(true);
+    try {
+      await Promise.all([
+        base44.entities.JobPost.update(job.id, { partial_amount: null }),
+        postSystemMessage(`❌ Client rejected the partial settlement proposal.`),
+        notify(job.winner_email, '❌ Partial Settlement Rejected', `Client rejected your partial settlement proposal.`, 'payment'),
+      ]);
+      onJobUpdated?.();
+    } catch (error) {
+      console.error('Reject partial failed:', error);
     } finally {
       setLoading(false);
     }
@@ -442,6 +475,27 @@ export default function JobActionCard({ job, user, userRole, conversationId, onJ
     }
   }
 
+  // ─── DISPUTED: Partial Proposal Pending Client Acceptance ───
+  if (isClient && job.status === 'disputed' && job.partial_amount) {
+    return (
+      <div className="mx-4 my-3 glass rounded-2xl p-4 border border-blue-500/30 space-y-3">
+        <div className="flex items-center gap-2">
+          <AlertTriangle className="w-4 h-4 text-blue-400" />
+          <p className="font-semibold text-sm text-blue-400">Partial Settlement Proposal</p>
+        </div>
+        <p className="text-xs text-muted-foreground">The avatar proposed a partial settlement of <span className="font-semibold text-blue-400">${job.partial_amount}</span>. Do you accept?</p>
+        <div className="flex gap-2">
+          <Button className="flex-1 gap-1.5 bg-green-600 hover:bg-green-700 text-white" onClick={handleAcceptPartialRefund} disabled={loading}>
+            {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <><CheckCircle className="w-4 h-4" /> Accept</>}
+          </Button>
+          <Button variant="outline" className="flex-1 gap-1.5 border-red-500/30 text-red-400 hover:bg-red-500/10" onClick={handleRejectPartialRefund} disabled={loading}>
+            <XCircle className="w-4 h-4" /> Reject
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
   // ─── DISPUTED ───
   if (isAvatar && job.status === 'disputed') {
     return (
@@ -471,8 +525,8 @@ export default function JobActionCard({ job, user, userRole, conversationId, onJ
     );
   }
 
-  // ─── COMPLETED or REFUNDED → Reviews ───
-  if (job.status === 'completed' || job.status === 'refunded') {
+  // ─── COMPLETED or REFUNDED → Reviews (or Partial Pending) ───
+  if (job.status === 'completed' || job.status === 'refunded' || (job.status === 'disputed' && job.partial_amount)) {
     const avatarReviewDone = job.review_left_by_avatar;
     const clientReviewDone = job.review_left_by_client;
 
@@ -490,8 +544,8 @@ export default function JobActionCard({ job, user, userRole, conversationId, onJ
         {isClient && !clientReviewDone && (
           <JobReviewForm job={job} user={user} reviewerType="client" onDone={onJobUpdated} />
         )}
-        {((isAvatar && avatarReviewDone) || (isClient && clientReviewDone)) && (
-          <p className="text-xs text-muted-foreground">✓ You've already left a review.</p>
+        {((isAvatar && avatarReviewDone) || (isClient && clientReviewDone) || (job.status === 'disputed' && job.partial_amount)) && (
+          <p className="text-xs text-muted-foreground">{job.status === 'disputed' && job.partial_amount ? 'Awaiting settlement acceptance...' : '✓ You\'ve already left a review.'}</p>
         )}
       </div>
     );
