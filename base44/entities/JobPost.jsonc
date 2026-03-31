@@ -1,0 +1,143 @@
+{
+  "name": "JobPost",
+  "type": "object",
+  "properties": {
+    "posted_by_email": {
+      "type": "string"
+    },
+    "posted_by_name": {
+      "type": "string"
+    },
+    "posted_by_type": {
+      "type": "string",
+      "enum": [
+        "user",
+        "enterprise"
+      ]
+    },
+    "title": {
+      "type": "string"
+    },
+    "description": {
+      "type": "string"
+    },
+    "category": {
+      "type": "string"
+    },
+    "location": {
+      "type": "string"
+    },
+    "remote_ok": {
+      "type": "boolean",
+      "default": false
+    },
+    "travel_required": {
+      "type": "boolean",
+      "default": false
+    },
+    "duration_type": {
+      "type": "string",
+      "enum": [
+        "hourly",
+        "daily",
+        "weekly",
+        "monthly",
+        "custom"
+      ],
+      "default": "hourly"
+    },
+    "duration_value": {
+      "type": "number"
+    },
+    "budget_min": {
+      "type": "number"
+    },
+    "budget_max": {
+      "type": "number"
+    },
+    "currency": {
+      "type": "string",
+      "default": "USD"
+    },
+    "negotiable": {
+      "type": "boolean",
+      "default": true
+    },
+    "skills_required": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "languages_required": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "equipment_needed": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "camera_required": {
+      "type": "boolean",
+      "default": false
+    },
+    "scheduled_date": {
+      "type": "string",
+      "format": "date"
+    },
+    "flexible_dates": {
+      "type": "boolean",
+      "default": true
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "open",
+        "in_progress",
+        "awaiting_approval",
+        "completed",
+        "disputed",
+        "refunded",
+        "cancelled"
+      ],
+      "default": "open"
+    },
+    "winner_application_id": {
+      "type": "string"
+    },
+    "winner_email": {
+      "type": "string"
+    },
+    "application_count": {
+      "type": "number",
+      "default": 0
+    },
+    "proof_url": {
+      "type": "string",
+      "description": "Photo proof uploaded by avatar on job completion"
+    },
+    "proof_note": {
+      "type": "string"
+    },
+    "dispute_reason": {
+      "type": "string"
+    },
+    "dispute_photo_url": {
+      "type": "string"
+    },
+    "partial_amount": {
+      "type": "number",
+      "description": "Amount agreed in partial refund"
+    }
+  },
+  "required": [
+    "posted_by_email",
+    "title",
+    "description",
+    "category"
+  ]
+}
