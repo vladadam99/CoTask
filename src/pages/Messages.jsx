@@ -95,6 +95,7 @@ export default function Messages() {
         type: 'message',
         link: `/AvatarMessages?conversation=${activeConvo.id}`,
         reference_id: activeConvo.id,
+        target_role: 'avatar',
       });
     }
     queryClient.invalidateQueries({ queryKey: ['messages', activeConvo?.id] });
@@ -126,6 +127,7 @@ export default function Messages() {
         type: 'message',
         link: `/AvatarMessages?conversation=${activeConvo.id}`,
         reference_id: activeConvo.id,
+        target_role: 'avatar',
       });
     }
     setUploadingPhoto(false);
@@ -156,6 +158,7 @@ export default function Messages() {
           type: 'message',
           link: `/AvatarMessages?conversation=${activeConvo.id}`,
           reference_id: activeConvo.id,
+          target_role: 'avatar',
         });
       }
     },
