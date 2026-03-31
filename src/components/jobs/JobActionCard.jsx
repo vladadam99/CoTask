@@ -79,6 +79,7 @@ export default function JobActionCard({ job, user, userRole, conversationId, onJ
       user_email: email, title, message, type,
       link,
       reference_id: job.id,
+      target_role: isAvatarRecipient ? 'avatar' : 'user',
     });
   };
 
