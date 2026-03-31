@@ -71,8 +71,7 @@ export default function Bookings() {
 
 
 
-        <div className="flex items-center justify-between mb-6">
-
+        <div className="relative mb-6">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
           <Input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search bookings..." className="pl-10 bg-muted/50 border-white/5" />
         </div>
@@ -93,9 +92,9 @@ export default function Bookings() {
             <div className="space-y-3">
               {[1,2,3].map(i => <div key={i} className="glass rounded-xl p-5 animate-pulse"><div className="h-4 bg-muted rounded w-1/2 mb-2" /><div className="h-3 bg-muted rounded w-1/3" /></div>)}
             </div>
-          ) : myJobs.length > 0 ? (
+          ) : myJobs.filter(job => !search || job.title?.toLowerCase().includes(search.toLowerCase()) || job.category?.toLowerCase().includes(search.toLowerCase()) || job.description?.toLowerCase().includes(search.toLowerCase())).length > 0 ? (
             <div className="space-y-3">
-              {myJobs.map(job => {
+              {myJobs.filter(job => !search || job.title?.toLowerCase().includes(search.toLowerCase()) || job.category?.toLowerCase().includes(search.toLowerCase()) || job.description?.toLowerCase().includes(search.toLowerCase())).map(job => {
                 const jobApps = allApplications.filter(a => a.job_id === job.id);
                 const pendingApps = jobApps.filter(a => a.status === 'pending');
                 const acceptedApp = jobApps.find(a => a.status === 'accepted');
