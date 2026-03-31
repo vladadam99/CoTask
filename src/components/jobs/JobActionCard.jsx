@@ -149,20 +149,12 @@ export default function JobActionCard({ job, user, conversationId, onJobUpdated 
             <button type="button" onClick={() => { setProofPreview(null); setProofFile(null); }} className="text-xs text-muted-foreground hover:text-foreground mt-1">Remove photo</button>
           </div>
         ) : (
-          <div className="grid grid-cols-2 gap-2">
-            <label className="border-2 border-dashed border-white/10 rounded-xl p-4 flex flex-col items-center gap-1.5 hover:border-primary/30 transition-colors cursor-pointer">
-              <input type="file" accept="image/*" capture="environment" className="hidden"
-                onChange={e => { const f = e.target.files?.[0]; if (f) { setProofFile(f); setProofPreview(URL.createObjectURL(f)); } e.target.value = ''; }} />
-              <Camera className="w-5 h-5 text-primary" />
-              <span className="text-xs text-muted-foreground">Take Photo</span>
-            </label>
-            <label className="border-2 border-dashed border-white/10 rounded-xl p-4 flex flex-col items-center gap-1.5 hover:border-primary/30 transition-colors cursor-pointer">
-              <input type="file" accept="image/*" className="hidden"
-                onChange={e => { const f = e.target.files?.[0]; if (f) { setProofFile(f); setProofPreview(URL.createObjectURL(f)); } e.target.value = ''; }} />
-              <ImagePlus className="w-5 h-5 text-muted-foreground" />
-              <span className="text-xs text-muted-foreground">Upload from Gallery</span>
-            </label>
-          </div>
+          <label className="w-full border-2 border-dashed border-white/10 rounded-xl p-6 flex flex-col items-center gap-2 hover:border-primary/30 transition-colors cursor-pointer">
+            <input type="file" accept="image/*" className="hidden"
+              onChange={e => { const f = e.target.files?.[0]; if (f) { setProofFile(f); setProofPreview(URL.createObjectURL(f)); } e.target.value = ''; }} />
+            <Camera className="w-6 h-6 text-primary" />
+            <span className="text-xs text-muted-foreground text-center">Tap to take a photo or upload from gallery</span>
+          </label>
         )}
 
         <textarea value={proofNote} onChange={e => setProofNote(e.target.value)} rows={2} placeholder="Optional note about the completed work…"
