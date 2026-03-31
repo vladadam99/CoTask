@@ -39,8 +39,8 @@ export default function JobActionCard({ job, user, userRole, conversationId, onJ
   const [showDisputeForm, setShowDisputeForm] = useState(false);
   const [showProofForm, setShowProofForm] = useState(false);
 
-  const isAvatar = user?.email === job?.winner_email && userRole === 'avatar';
-  const isClient = user?.email === job?.posted_by_email && userRole !== 'avatar';
+  const isAvatar = userRole === 'avatar';
+  const isClient = !isAvatar;
 
   // Build scheduled datetime string
   const scheduledStr = job?.scheduled_date
