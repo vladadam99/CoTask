@@ -343,6 +343,7 @@ export default function JobActionCard({ job, user, userRole, conversationId, onJ
               setProofFile(null);
               setProofPreview(null);
               setProofNote('');
+              setLoading(false);
             }} className="text-xs text-muted-foreground hover:text-foreground">Cancel</button>
           </div>
           <p className="text-xs text-muted-foreground">Upload a photo proof. The client will review and release payment.</p>
