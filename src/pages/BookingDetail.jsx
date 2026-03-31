@@ -111,9 +111,9 @@ export default function BookingDetail() {
   return (
     <div className="min-h-screen bg-background p-4 lg:p-8">
       <div className="max-w-2xl mx-auto">
-        <Link to="/Bookings" className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground mb-6">
-          <ArrowLeft className="w-4 h-4" /> Back to Bookings
-        </Link>
+        <button onClick={() => navigate(-1)} className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground mb-6">
+          <ArrowLeft className="w-4 h-4" /> Back
+        </button>
 
         {paymentResult === 'success' && (
           <div className="mb-6 flex items-center gap-3 bg-green-500/10 border border-green-500/20 text-green-400 rounded-xl px-4 py-3">
