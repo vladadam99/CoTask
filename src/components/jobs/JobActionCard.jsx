@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { base44 } from '@/api/base44Client';
 import { Button } from '@/components/ui/button';
-import { CheckCircle, XCircle, Camera, Loader2, AlertTriangle, RefreshCw, DollarSign, Play, Clock } from 'lucide-react';
+import { CheckCircle, XCircle, Camera, Loader2, AlertTriangle, RefreshCw, DollarSign, Play, Clock, Scale } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import JobReviewForm from './JobReviewForm';
 
 function useCountdown(targetDate) {
@@ -528,6 +529,9 @@ export default function JobActionCard({ job, user, userRole, conversationId, onJ
           <Button variant="outline" className="w-full gap-2 border-red-500/30 text-red-400 hover:bg-red-500/10" onClick={handleRaiseIssue} disabled={loading}>
             <AlertTriangle className="w-4 h-4" /> Escalate to CoTask Team
           </Button>
+          <Link to={`/DisputeAgent?jobId=${job.id}`} className="w-full inline-flex items-center justify-center gap-2 text-sm border border-orange-500/30 text-orange-400 hover:bg-orange-500/10 rounded-xl px-4 py-2 transition-colors">
+            <Scale className="w-4 h-4" /> Get AI Resolution Help
+          </Link>
         </div>
       </div>
     );
