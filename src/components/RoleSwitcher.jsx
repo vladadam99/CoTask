@@ -1,21 +1,19 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { base44 } from '@/api/base44Client';
+import { useQueryClient } from '@tanstack/react-query';
 import { Button } from '@/components/ui/button';
 import { Users, User, Building2 } from 'lucide-react';
 
 export default function RoleSwitcher({ user }) {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
 
   const switchRole = async (role) => {
     if (user?.role === role) return;
     try {
-      // Update role in auth
       await base44.auth.updateMe({ role });
-      // Force cache invalidation to prevent stale data
-      localStorage.removeItem('user_auth_cache');
-      // Add small delay to ensure backend propagation
-      await new Promise(resolve => setTimeout(resolve, 300));
+      queryClient.invalidateQueries();
       if (role === 'avatar') {
         const profiles = await base44.entities.AvatarProfile.filter({ user_email: user.email });
         navigate(profiles.length > 0 ? '/AvatarDashboard' : '/Onboarding?role=avatar');
@@ -25,8 +23,6 @@ export default function RoleSwitcher({ user }) {
       } else {
        navigate('/UserDashboard');
       }
-      // Reload page to ensure fresh auth state
-      window.location.reload();
       } catch (err) {
       console.error('Failed to switch role:', err);
       }
