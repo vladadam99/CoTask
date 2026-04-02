@@ -14,6 +14,7 @@ import {
 function PostItem({ post }) {
   const videoRef = useRef(null);
   const [playing, setPlaying] = useState(false);
+  const [hovered, setHovered] = useState(false);
 
   const togglePlay = () => {
     if (!videoRef.current) return;
@@ -22,19 +23,33 @@ function PostItem({ post }) {
   };
 
   return (
-    <div className="aspect-square rounded-xl overflow-hidden bg-white/5 relative cursor-pointer" onClick={post.type === 'video' ? togglePlay : undefined}>
+    <div
+      className="aspect-square overflow-hidden bg-white/5 relative cursor-pointer group"
+      onClick={post.type === 'video' ? togglePlay : undefined}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+    >
       {post.type === 'video' ? (
         <>
           <video ref={videoRef} src={post.media_url} className="w-full h-full object-cover" playsInline loop />
-          <div className={`absolute inset-0 flex items-center justify-center transition-opacity ${playing ? 'opacity-0 hover:opacity-100' : 'opacity-100'}`}>
-            <div className="w-8 h-8 rounded-full bg-black/60 flex items-center justify-center">
-              <span className="text-white text-xs">{playing ? '⏸' : '▶'}</span>
+          <div className={`absolute inset-0 flex items-center justify-center transition-opacity ${playing ? 'opacity-0 group-hover:opacity-100' : 'opacity-100'}`}>
+            <div className="w-10 h-10 rounded-full bg-black/60 flex items-center justify-center">
+              <span className="text-white text-sm">{playing ? '⏸' : '▶'}</span>
             </div>
           </div>
         </>
       ) : (
         <img src={post.media_url} alt={post.caption} className="w-full h-full object-cover" />
       )}
+      {/* Hover overlay with likes/comments */}
+      <div className={`absolute inset-0 bg-black/40 flex items-center justify-center gap-4 transition-opacity duration-200 ${hovered ? 'opacity-100' : 'opacity-0'}`}>
+        {post.likes_count > 0 && (
+          <span className="text-white text-sm font-semibold flex items-center gap-1">❤️ {post.likes_count}</span>
+        )}
+        {post.comments_count > 0 && (
+          <span className="text-white text-sm font-semibold flex items-center gap-1">💬 {post.comments_count}</span>
+        )}
+      </div>
     </div>
   );
 }
@@ -318,15 +333,17 @@ export default function AvatarView() {
           )}
 
           {activeTab === 'Posts' && (
-            <GlassCard className="p-6">
+            <div>
               {posts.length > 0 ? (
-                <div className="grid grid-cols-3 gap-2">
+                <div className="grid grid-cols-3 gap-0.5">
                   {posts.map(post => <PostItem key={post.id} post={post} />)}
                 </div>
               ) : (
-                <p className="text-sm text-muted-foreground text-center py-8">No posts yet</p>
+                <div className="text-center py-16">
+                  <p className="text-muted-foreground text-sm">No posts yet</p>
+                </div>
               )}
-            </GlassCard>
+            </div>
           )}
 
           {activeTab === 'Reviews' && (
