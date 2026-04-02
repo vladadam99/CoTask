@@ -11,14 +11,11 @@ import {
   Wifi, Headphones, Car, Calendar, MessageSquare, Heart, Loader2
 } from 'lucide-react';
 
-function PostCard({ post, onOpen }) {
+function PostCard({ post }) {
   return (
-    <div
-      className="bg-card border-b border-white/5 cursor-pointer"
-      onClick={() => onOpen(post)}
-    >
+    <div className="bg-card rounded-2xl overflow-hidden border border-white/8 mb-3">
       {post.type === 'video' ? (
-        <div className="relative w-full aspect-square bg-black">
+        <div className="relative w-full aspect-square bg-black rounded-t-2xl overflow-hidden">
           <video src={post.media_url} className="w-full h-full object-cover" playsInline />
           <div className="absolute inset-0 flex items-center justify-center">
             <div className="w-12 h-12 rounded-full bg-black/60 flex items-center justify-center">
@@ -149,10 +146,7 @@ export default function AvatarView() {
   const [activeTab, setActiveTab] = useState('About');
   const [viewerIndex, setViewerIndex] = useState(null);
 
-  const openPost = (post) => {
-    const idx = posts.findIndex(p => p.id === post.id);
-    setViewerIndex(idx >= 0 ? idx : 0);
-  };
+
 
   const { data: avatar, isLoading } = useQuery({
     queryKey: ['avatar', id],
@@ -353,16 +347,7 @@ export default function AvatarView() {
           </Button>
         </div>
 
-        {/* Post Viewer */}
-        {viewerIndex !== null && (
-          <PostViewer
-            posts={posts}
-            initialIndex={viewerIndex}
-            onClose={() => setViewerIndex(null)}
-            avatarName={avatar.display_name}
-            avatarPhoto={avatar.photo_url}
-          />
-        )}
+
 
         {/* Tab Navigation */}
         <div className="flex gap-2 px-4 mb-4 overflow-x-auto pb-1">
@@ -438,7 +423,7 @@ export default function AvatarView() {
             <div>
               {posts.length > 0 ? (
                 <div className="space-y-0">
-                  {posts.map(post => <PostCard key={post.id} post={post} onOpen={openPost} />)}
+                  {posts.map(post => <PostCard key={post.id} post={post} />)}
                 </div>
               ) : (
                 <div className="text-center py-16">
