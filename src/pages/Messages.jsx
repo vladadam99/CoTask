@@ -6,6 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft, Send, MessageSquare, Camera, Loader2, Video } from 'lucide-react';
 import JobActionCard from '@/components/jobs/JobActionCard';
+import JobStatusBanner from '@/components/jobs/JobStatusBanner';
 import { Link } from 'react-router-dom';
 
 export default function Messages() {
@@ -237,7 +238,7 @@ export default function Messages() {
               )}
             </div>
             <div ref={scrollRef} className="flex-1 overflow-y-auto py-2 space-y-3">
-              {/* Job action card at top of chat */}
+              {/* Job action card + live status banner for client */}
               {linkedJob && (
                 <JobActionCard
                   job={linkedJob}
@@ -248,6 +249,12 @@ export default function Messages() {
                     refetchJob();
                     queryClient.invalidateQueries({ queryKey: ['messages', activeConvo.id] });
                   }}
+                />
+              )}
+              {linkedJob && (
+                <JobStatusBanner
+                  job={linkedJob}
+                  onJobUpdated={refetchJob}
                 />
               )}
               <div className="px-4 space-y-3">

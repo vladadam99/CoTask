@@ -6,6 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft, Send, MessageSquare, Camera, Loader2, Video } from 'lucide-react';
 import JobActionCard from '@/components/jobs/JobActionCard';
+import JobStatusTracker from '@/components/jobs/JobStatusTracker';
 import { Link } from 'react-router-dom';
 
 export default function AvatarMessages() {
@@ -239,6 +240,17 @@ export default function AvatarMessages() {
                   job={linkedJob}
                   user={user}
                   userRole="avatar"
+                  conversationId={activeConvo.id}
+                  onJobUpdated={() => {
+                    refetchJob();
+                    queryClient.invalidateQueries({ queryKey: ['messages', activeConvo.id] });
+                  }}
+                />
+              )}
+              {linkedJob && (
+                <JobStatusTracker
+                  job={linkedJob}
+                  user={user}
                   conversationId={activeConvo.id}
                   onJobUpdated={() => {
                     refetchJob();

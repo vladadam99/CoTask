@@ -150,6 +150,27 @@
     "review_left_by_client": {
       "type": "boolean",
       "default": false
+    },
+    "arrival_status": {
+      "type": "string",
+      "enum": [
+        "on_the_way",
+        "arrived",
+        "working",
+        "wrapping_up"
+      ],
+      "description": "Real-time arrival/progress status updated by avatar during in_progress jobs"
+    },
+    "arrival_status_updated_at": {
+      "type": "string",
+      "description": "ISO timestamp of last arrival_status update"
+    },
+    "progress_photos": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Progress photo URLs uploaded by avatar during the job"
     }
   },
   "required": [
