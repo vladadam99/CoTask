@@ -5,6 +5,12 @@ import { base44 } from '@/api/base44Client';
 let _user = null;
 let _listeners = [];
 
+// Clear cache when role changes
+export function clearUserCache() {
+  _user = null;
+  notify(null);
+}
+
 function notify(newUser) {
   _user = newUser;
   _listeners.forEach(fn => fn(newUser));
@@ -42,5 +48,5 @@ export function useCurrentUser() {
     return updated;
   }, []);
 
-  return { user, loading, updateUser };
+  return { user, loading, updateUser, clearCache: clearUserCache };
 }
