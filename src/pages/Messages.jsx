@@ -226,7 +226,7 @@ export default function Messages() {
                 {getOtherName(activeConvo)[0]}
               </div>
               <span className="font-medium flex-1">{getOtherName(activeConvo)}</span>
-              {linkedJob?.started_at && (
+              {linkedJob?.started_at && linkedJob?.status === 'in_progress' && (
                 <button
                   onClick={requestCamera}
                   title="Request live camera upgrade"
