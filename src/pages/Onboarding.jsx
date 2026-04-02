@@ -29,8 +29,12 @@ export default function Onboarding() {
       } else if (role === 'enterprise') {
         const profiles = await base44.entities.EnterpriseProfile.filter({ user_email: user.email });
         if (profiles.length > 0) { window.location.href = '/EnterpriseDashboard'; }
-      } else if (role === 'user' && user.onboarding_complete && user.role === 'user') {
-        window.location.href = '/UserDashboard';
+      } else if (role === 'user') {
+        // Re-fetch fresh user data to ensure onboarding_complete is current
+        const freshUser = await base44.auth.me();
+        if (freshUser?.onboarding_complete) {
+          window.location.href = '/UserDashboard';
+        }
       }
     };
     check();

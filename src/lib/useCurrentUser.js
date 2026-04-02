@@ -36,9 +36,14 @@ export function useCurrentUser() {
 
   const updateUser = useCallback(async (data) => {
     const updated = await base44.auth.updateMe(data);
-    notify({ ..._user, ...data });
+    // Re-fetch fresh user data to ensure all fields are current
+    const fresh = await base44.auth.me();
+    notify(fresh);
     return updated;
   }, []);
+
+  return { user, loading, updateUser };
+}
 
   return { user, loading, updateUser };
 }
