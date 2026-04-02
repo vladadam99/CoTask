@@ -56,6 +56,16 @@ export default function AvatarDashboard() {
     </div>
   );
 
+  // Guard: redirect if user role is not 'avatar'
+  if (user && user.role !== 'avatar') {
+    const dest = user.role === 'user' ? '/UserDashboard' : '/EnterpriseDashboard';
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <script>{`window.location.href = '${dest}';`}</script>
+      </div>
+    );
+  }
+
   const pendingBookings = bookings.filter(b => b.status === 'pending');
   const upcomingBookings = bookings.filter(b => ['accepted', 'scheduled'].includes(b.status));
   const completedCount = bookings.filter(b => b.status === 'completed').length;

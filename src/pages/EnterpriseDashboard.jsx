@@ -53,6 +53,16 @@ export default function EnterpriseDashboard() {
     </div>
   );
 
+  // Guard: redirect if user role is not 'enterprise'
+  if (user && user.role !== 'enterprise') {
+    const dest = user.role === 'user' ? '/UserDashboard' : '/AvatarDashboard';
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <script>{`window.location.href = '${dest}';`}</script>
+      </div>
+    );
+  }
+
   const activeBookings = bookings.filter(b => ['accepted', 'scheduled', 'in_progress', 'live'].includes(b.status));
   const totalSpend = bookings.filter(b => b.payment_status === 'paid').reduce((sum, b) => sum + (b.total_amount || 0), 0);
   const pendingCount = bookings.filter(b => b.status === 'pending').length;

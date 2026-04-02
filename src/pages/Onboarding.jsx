@@ -21,6 +21,14 @@ export default function Onboarding() {
 
   useEffect(() => {
     if (loading || !user || !role) return;
+    // If user's current role doesn't match onboarding role, redirect to correct dashboard
+    if (user.role !== role) {
+      const dest = user.role === 'avatar' ? '/AvatarDashboard'
+                 : user.role === 'enterprise' ? '/EnterpriseDashboard'
+                 : '/UserDashboard';
+      window.location.href = dest;
+      return;
+    }
     // If user already has a completed profile for THIS specific role, skip onboarding
     const check = async () => {
       if (role === 'avatar') {
@@ -30,11 +38,8 @@ export default function Onboarding() {
         const profiles = await base44.entities.EnterpriseProfile.filter({ user_email: user.email });
         if (profiles.length > 0) { window.location.href = '/EnterpriseDashboard'; }
       } else if (role === 'user') {
-        // Re-fetch fresh user data to ensure onboarding_complete is current
-        const freshUser = await base44.auth.me();
-        if (freshUser?.onboarding_complete) {
-          window.location.href = '/UserDashboard';
-        }
+        // User role onboarding complete, redirect to dashboard
+        window.location.href = '/UserDashboard';
       }
     };
     check();

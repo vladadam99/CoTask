@@ -71,6 +71,16 @@ export default function UserDashboard() {
     </div>
   );
 
+  // Guard: redirect if user role is not 'user'
+  if (user && user.role !== 'user') {
+    const dest = user.role === 'avatar' ? '/AvatarDashboard' : '/EnterpriseDashboard';
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <script>{`window.location.href = '${dest}';`}</script>
+      </div>
+    );
+  }
+
   const firstName = user?.full_name?.split(' ')[0] || '';
 
   return (
