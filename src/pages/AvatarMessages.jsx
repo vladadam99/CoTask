@@ -267,16 +267,10 @@ export default function AvatarMessages() {
             </div>
             <div className="p-4 border-t border-white/5">
               <form onSubmit={e => { e.preventDefault(); if (newMsg.trim()) sendMessage.mutate(); }} className="flex gap-2">
-                <button
-                  type="button"
-                  onClick={() => photoInputRef.current?.click()}
-                  disabled={uploadingPhoto}
-                  className="p-2 rounded-xl bg-muted/50 border border-white/5 text-muted-foreground hover:text-foreground transition-colors shrink-0"
-                  title="Send photo"
-                >
+                <label className={`p-2 rounded-xl bg-muted/50 border border-white/5 text-muted-foreground hover:text-foreground transition-colors shrink-0 cursor-pointer ${uploadingPhoto ? 'opacity-50 pointer-events-none' : ''}`} title="Send photo">
+                  <input type="file" accept="image/*" className="hidden" onChange={e => { const f = e.target.files?.[0]; if (f) sendPhoto(f); e.target.value = ''; }} />
                   {uploadingPhoto ? <Loader2 className="w-4 h-4 animate-spin" /> : <Camera className="w-4 h-4" />}
-                </button>
-                <input ref={photoInputRef} type="file" accept="image/*" capture="environment" className="hidden" onChange={e => { const f = e.target.files?.[0]; if (f) sendPhoto(f); e.target.value = ''; }} />
+                </label>
                 <Input value={newMsg} onChange={e => setNewMsg(e.target.value)} placeholder="Type a message..." className="bg-muted/50 border-white/5" />
                 <Button type="submit" className="bg-primary hover:bg-primary/90" disabled={!newMsg.trim()}>
                   <Send className="w-4 h-4" />
