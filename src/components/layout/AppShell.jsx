@@ -22,7 +22,7 @@ export default function AppShell({ children, navItems = [], user }) {
             user?.role === 'avatar' ? '/AvatarDashboard'
             : user?.role === 'enterprise' ? '/EnterpriseDashboard'
             : '/UserDashboard'
-          } className="text-xl font-bold tracking-tight">
+          } className="text-xl font-bold tracking-tight flex-1 py-3 px-2 rounded-lg hover:bg-white/5 transition-colors">
             Co<span className="text-primary">Task</span>
           </Link>
         </div>

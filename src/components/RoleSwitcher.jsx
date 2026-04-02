@@ -10,7 +10,12 @@ export default function RoleSwitcher({ user }) {
   const switchRole = async (role) => {
     if (user?.role === role) return;
     try {
+      // Update role in auth
       await base44.auth.updateMe({ role });
+      // Force cache invalidation to prevent stale data
+      localStorage.removeItem('user_auth_cache');
+      // Add small delay to ensure backend propagation
+      await new Promise(resolve => setTimeout(resolve, 300));
       if (role === 'avatar') {
         const profiles = await base44.entities.AvatarProfile.filter({ user_email: user.email });
         navigate(profiles.length > 0 ? '/AvatarDashboard' : '/Onboarding?role=avatar');
@@ -18,11 +23,13 @@ export default function RoleSwitcher({ user }) {
         const profiles = await base44.entities.EnterpriseProfile.filter({ user_email: user.email });
         navigate(profiles.length > 0 ? '/EnterpriseDashboard' : '/Onboarding?role=enterprise');
       } else {
-        navigate('/UserDashboard');
+       navigate('/UserDashboard');
       }
-    } catch (err) {
+      // Reload page to ensure fresh auth state
+      window.location.reload();
+      } catch (err) {
       console.error('Failed to switch role:', err);
-    }
+      }
   };
 
   return (
