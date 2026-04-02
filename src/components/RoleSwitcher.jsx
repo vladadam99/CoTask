@@ -16,6 +16,8 @@ export default function RoleSwitcher({ user }) {
       await base44.auth.updateMe({ role });
       clearUserCache();
       queryClient.invalidateQueries();
+      // Wait for fresh user data to load before navigating
+      await base44.auth.me();
       if (role === 'avatar') {
         const profiles = await base44.entities.AvatarProfile.filter({ user_email: user.email });
         navigate(profiles.length > 0 ? '/AvatarDashboard' : '/Onboarding?role=avatar');
