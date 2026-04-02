@@ -44,6 +44,3 @@ export function useCurrentUser() {
 
   return { user, loading, updateUser };
 }
-
-  return { user, loading, updateUser };
-}
