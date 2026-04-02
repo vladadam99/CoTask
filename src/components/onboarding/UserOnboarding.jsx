@@ -14,7 +14,7 @@ const CATEGORIES = [
   'Carers & Companionship', 'DIY & Repairs', 'Custom Request',
 ];
 
-const STEPS = ['What You Need', 'How You Work', 'Your Details'];
+const STEPS = ['What You Need', 'Your Details'];
 
 const Chip = ({ label, active, onClick }) => (
   <button type="button" onClick={onClick}
@@ -41,14 +41,9 @@ export default function UserOnboarding({ user, onComplete, submitting }) {
       interests: [],
       what_looking_for: '',
       what_need_help_with: '',
-      camera_preference: 'no_preference',
-      scheduling_preference: 'both',
       city: reg.city || '',
       country: reg.country || 'United Kingdom',
       phone: reg.phone || '',
-      budget_min: '',
-      budget_max: '',
-      currency: 'GBP',
     };
   });
 
@@ -59,11 +54,14 @@ export default function UserOnboarding({ user, onComplete, submitting }) {
   };
 
   const addCustomInterest = () => {
-    if (customInterest.trim()) {
-      toggle('interests', customInterest.trim());
+    const val = customInterest.trim();
+    if (val && !data.interests.includes(val)) {
+      update('interests', [...data.interests, val]);
       setCustomInterest('');
     }
   };
+
+  const customChips = data.interests.filter(i => !CATEGORIES.includes(i));
 
   return (
     <div>
@@ -92,6 +90,9 @@ export default function UserOnboarding({ user, onComplete, submitting }) {
                     {CATEGORIES.map(cat => (
                       <Chip key={cat} label={cat} active={data.interests.includes(cat)} onClick={() => toggle('interests', cat)} />
                     ))}
+                    {customChips.map(c => (
+                      <Chip key={c} label={c} active={true} onClick={() => toggle('interests', c)} />
+                    ))}
                   </div>
                   <div className="flex gap-2 mt-3">
                     <Input value={customInterest} onChange={e => setCustomInterest(e.target.value)}
@@ -103,56 +104,31 @@ export default function UserOnboarding({ user, onComplete, submitting }) {
                   </div>
                 </div>
                 <div>
-                  <label className="text-sm font-medium mb-1.5 block">
-                    What do you need help with? <span className="text-muted-foreground font-normal">(describe your situation)</span>
-                  </label>
-                  <textarea value={data.what_need_help_with} onChange={e => update('what_need_help_with', e.target.value)}
-                    placeholder="e.g. I need someone to check on a property I'm thinking of buying, inspect it, and give me a live walkthrough while I watch from abroad..."
-                    className="w-full h-24 px-3 py-2 bg-muted/50 border border-white/5 rounded-md text-sm resize-none text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary/50" />
+                  <label className="text-sm font-medium mb-2 block">How soon do you typically need help?</label>
+                  <div className="grid grid-cols-2 gap-2">
+                    {[
+                      { val: 'right_now', label: '⚡ Right Now', desc: 'I need someone immediately' },
+                      { val: 'today', label: '📅 Same Day', desc: 'Within the next few hours' },
+                      { val: 'this_week', label: '🗓 This Week', desc: 'Plan a few days ahead' },
+                      { val: 'flexible', label: '🌀 Flexible', desc: 'No rush, I plan ahead' },
+                    ].map(({ val, label, desc }) => (
+                      <button key={val} type="button" onClick={() => update('what_need_help_with', val)}
+                        className={`p-3 rounded-xl border text-left transition-all ${
+                          data.what_need_help_with === val
+                            ? 'bg-primary/10 border-primary/40 text-primary'
+                            : 'bg-muted/30 border-white/5 hover:bg-muted/50'
+                        }`}>
+                        <p className="text-sm font-semibold">{label}</p>
+                        <p className={`text-xs mt-0.5 ${data.what_need_help_with === val ? 'text-primary/70' : 'text-muted-foreground'}`}>{desc}</p>
+                      </button>
+                    ))}
+                  </div>
                 </div>
               </div>
             )}
 
-            {/* Step 1: How You Work */}
+            {/* Step 1: Your Details */}
             {step === 1 && (
-              <div className="space-y-5">
-                <div>
-                  <label className="text-sm font-medium mb-2 block">Do you want jobs done with a live camera feed?</label>
-                  <div className="grid grid-cols-3 gap-2">
-                    <OptionCard label="Yes, live camera" description="Watch everything happen in real time" selected={data.camera_preference === 'live'} onClick={() => update('camera_preference', 'live')} />
-                    <OptionCard label="No camera needed" description="Just get the task done" selected={data.camera_preference === 'no_camera'} onClick={() => update('camera_preference', 'no_camera')} />
-                    <OptionCard label="No preference" description="Either option works for me" selected={data.camera_preference === 'no_preference'} onClick={() => update('camera_preference', 'no_preference')} />
-                  </div>
-                </div>
-                <div>
-                  <label className="text-sm font-medium mb-2 block">When do you typically need jobs done?</label>
-                  <div className="grid grid-cols-3 gap-2">
-                    <OptionCard label="Immediately" description="Find available avatars right now" selected={data.scheduling_preference === 'immediate'} onClick={() => update('scheduling_preference', 'immediate')} />
-                    <OptionCard label="Plan ahead" description="Schedule jobs in advance" selected={data.scheduling_preference === 'scheduled'} onClick={() => update('scheduling_preference', 'scheduled')} />
-                    <OptionCard label="Both" description="Depends on the situation" selected={data.scheduling_preference === 'both'} onClick={() => update('scheduling_preference', 'both')} />
-                  </div>
-                </div>
-                <div>
-                  <label className="text-sm font-medium mb-1.5 block">
-                    Typical budget per job <span className="text-muted-foreground font-normal">(optional — helps us show relevant avatars)</span>
-                  </label>
-                  <div className="flex items-center gap-2">
-                    <select value={data.currency} onChange={e => update('currency', e.target.value)}
-                      className="h-9 px-2 rounded-md bg-muted/50 border border-white/5 text-sm text-foreground w-20">
-                      {['GBP', 'USD', 'EUR', 'CAD', 'AUD'].map(c => <option key={c} value={c}>{c}</option>)}
-                    </select>
-                    <Input type="number" value={data.budget_min} onChange={e => update('budget_min', e.target.value)}
-                      placeholder="Min" className="bg-muted/50 border-white/5 flex-1" />
-                    <span className="text-muted-foreground text-sm">–</span>
-                    <Input type="number" value={data.budget_max} onChange={e => update('budget_max', e.target.value)}
-                      placeholder="Max" className="bg-muted/50 border-white/5 flex-1" />
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {/* Step 2: Your Details */}
-            {step === 2 && (
               <div className="space-y-4">
                 <p className="text-sm text-muted-foreground">Almost done! Just a few location details so we can find avatars near you.</p>
                 <div className="grid grid-cols-2 gap-3">
