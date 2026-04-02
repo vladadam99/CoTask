@@ -141,7 +141,7 @@ export default function EnterpriseDashboard() {
                   <div>
                     <p className="font-medium text-sm">{b.category}</p>
                     <p className="text-xs text-muted-foreground mt-1">
-                      {b.avatar_name} · {b.scheduled_date || 'Pending'} · {b.location || 'TBD'}
+                      {b.avatar_name} · {b.scheduled_date ? `${b.scheduled_date}${b.scheduled_time ? ` at ${b.scheduled_time}` : ''}` : 'Pending'} · {b.location || 'TBD'}
                     </p>
                   </div>
                   <div className="flex items-center gap-3">

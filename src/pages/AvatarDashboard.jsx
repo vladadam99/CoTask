@@ -207,7 +207,7 @@ export default function AvatarDashboard() {
                   <div>
                     <p className="font-semibold text-sm">{b.category}</p>
                     <p className="text-xs text-muted-foreground mt-1">
-                      {b.client_name} · {b.scheduled_date || 'TBD'}
+                      {b.client_name} · {b.scheduled_date ? `${b.scheduled_date}${b.scheduled_time ? ` at ${b.scheduled_time}` : ''}` : 'TBD'}
                     </p>
                   </div>
                   <StatusBadge status={b.status} />
