@@ -153,6 +153,10 @@ export default function JobActionCard({ job, user, userRole, conversationId, onJ
   const handleSatisfied = async () => {
     setLoading(true);
     try {
+      // Capture escrow funds if held
+      if (job.stripe_payment_intent_id && job.escrow_status === 'authorized') {
+        await base44.functions.invoke('captureJobPayment', { jobId: job.id });
+      }
       await Promise.all([
         base44.entities.JobPost.update(job.id, { status: 'completed' }),
         postSystemMessage(`🎉 Client confirmed satisfaction! Job is complete and payment released to ${job.winner_email}. Thank you both!`),

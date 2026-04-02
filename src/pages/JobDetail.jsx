@@ -9,6 +9,7 @@ import { getNavItems } from '@/lib/navItems';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import StatusBadge from '@/components/ui/StatusBadge';
+import JobPaymentModal from '@/components/jobs/JobPaymentModal';
 import { ArrowLeft, MapPin, Clock, DollarSign, Users, CheckCircle, XCircle, Star, Award, MessageCircle, Pencil, Calendar, AlertCircle } from 'lucide-react';
 
 const DURATION_LABELS = { hourly: '/hr', daily: '/day', weekly: '/wk', monthly: '/mo', custom: '' };
@@ -23,6 +24,8 @@ export default function JobDetail() {
   const [showApplyForm, setShowApplyForm] = useState(false);
   const [showEditForm, setShowEditForm] = useState(false);
   const [editForm, setEditForm] = useState({});
+  const [showPaymentModal, setShowPaymentModal] = useState(false);
+  const [pendingWinnerApp, setPendingWinnerApp] = useState(null);
 
   const { data: job, isLoading } = useQuery({
     queryKey: ['job-detail', jobId],
@@ -93,35 +96,47 @@ export default function JobDetail() {
     },
   });
 
+  // Called after payment is authorized — assigns winner and opens chat
+  const proceedWithWinner = async (app) => {
+    await base44.entities.JobPost.update(jobId, {
+      status: 'in_progress',
+      winner_application_id: app.id,
+      winner_email: app.applicant_email,
+      escrow_status: 'authorized',
+    });
+    await base44.entities.JobApplication.update(app.id, { status: 'accepted' });
+    for (const other of applications.filter(a => a.id !== app.id)) {
+      await base44.entities.JobApplication.update(other.id, { status: 'rejected' });
+    }
+    const res = await base44.functions.invoke('createJobConversation', {
+      jobId,
+      jobTitle: job.title,
+      clientEmail: job.posted_by_email,
+      clientName: job.posted_by_name,
+      avatarEmail: app.applicant_email,
+      avatarName: app.applicant_name,
+      scheduledDate: job.flexible_dates ? null : job.scheduled_date,
+    });
+    return res.data?.conversation;
+  };
+
   const selectWinner = useMutation({
     mutationFn: async (app) => {
-      await base44.entities.JobPost.update(jobId, {
-        status: 'in_progress',
-        winner_application_id: app.id,
-        winner_email: app.applicant_email,
-      });
-      await base44.entities.JobApplication.update(app.id, { status: 'accepted' });
-      for (const other of applications.filter(a => a.id !== app.id)) {
-        await base44.entities.JobApplication.update(other.id, { status: 'rejected' });
-      }
-      // Create chat between client and avatar (handles notifications inside)
-      const res = await base44.functions.invoke('createJobConversation', {
-        jobId,
-        jobTitle: job.title,
-        clientEmail: job.posted_by_email,
-        clientName: job.posted_by_name,
-        avatarEmail: app.applicant_email,
-        avatarName: app.applicant_name,
-        scheduledDate: job.flexible_dates ? null : job.scheduled_date,
-      });
-      return res.data?.conversation;
+      setPendingWinnerApp(app);
+      setShowPaymentModal(true);
+      return null;
     },
-    onSuccess: (conversation) => {
-      queryClient.invalidateQueries({ queryKey: ['job-detail', jobId] });
-      queryClient.invalidateQueries({ queryKey: ['job-applications', jobId] });
-      if (conversation?.id) navigate(`/Messages?conversation=${conversation.id}`);
-    },
+    onSuccess: () => {},
   });
+
+  const handlePaymentSuccess = async () => {
+    setShowPaymentModal(false);
+    const conversation = await proceedWithWinner(pendingWinnerApp);
+    setPendingWinnerApp(null);
+    queryClient.invalidateQueries({ queryKey: ['job-detail', jobId] });
+    queryClient.invalidateQueries({ queryKey: ['job-applications', jobId] });
+    if (conversation?.id) navigate(`/Messages?conversation=${conversation.id}`);
+  };
 
   const { data: jobConversation } = useQuery({
     queryKey: ['job-conversation', jobId],
@@ -158,6 +173,7 @@ export default function JobDetail() {
     queryClient.invalidateQueries({ queryKey: ['job-detail', jobId] });
     setShowEditForm(false);
   };
+
   const showOwnerControls = isOwner;
   const canApply = isAvatar && !isOwner && job?.status === 'open' && !myApplication;
 
@@ -240,7 +256,8 @@ export default function JobDetail() {
           <div className="flex flex-wrap gap-2 text-xs">
             {job.remote_ok && <span className="px-2 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400">Remote OK</span>}
             {job.travel_required && <span className="px-2 py-1 rounded-full bg-orange-500/10 border border-orange-500/20 text-orange-400">Travel Required</span>}
-            {job.flexible_dates ? <span className="px-2 py-1 rounded-full bg-green-500/10 border border-green-500/20 text-green-400">Flexible Dates</span>
+            {job.flexible_dates
+              ? <span className="px-2 py-1 rounded-full bg-green-500/10 border border-green-500/20 text-green-400">Flexible Dates</span>
               : job.scheduled_date && (
                 <span className="px-2 py-1 rounded-full bg-white/5 border border-white/10 text-muted-foreground flex items-center gap-1.5">
                   <Calendar className="w-3.5 h-3.5" />
@@ -279,6 +296,34 @@ export default function JobDetail() {
             </div>
           )}
         </div>
+
+        {/* Payment Modal (shown when selecting a winner) */}
+        {showPaymentModal && pendingWinnerApp && (
+          <JobPaymentModal
+            job={{ ...job, escrow_amount: pendingWinnerApp.proposed_rate || job.budget_max || job.budget_min || 50 }}
+            onSuccess={handlePaymentSuccess}
+            onCancel={() => { setShowPaymentModal(false); setPendingWinnerApp(null); }}
+          />
+        )}
+
+        {/* Escrow Status Banner */}
+        {job.stripe_payment_intent_id && job.escrow_status === 'authorized' && isOwner && (
+          <div className="glass rounded-2xl p-4 border border-yellow-500/20 flex items-center gap-3">
+            <div className="w-8 h-8 rounded-full bg-yellow-500/10 flex items-center justify-center flex-shrink-0">
+              <DollarSign className="w-4 h-4 text-yellow-400" />
+            </div>
+            <div>
+              <p className="text-sm font-semibold text-yellow-400">💰 ${job.escrow_amount} held in escrow</p>
+              <p className="text-xs text-muted-foreground">Funds will be released to the avatar once you approve their work.</p>
+            </div>
+          </div>
+        )}
+        {job.escrow_status === 'captured' && (
+          <div className="glass rounded-2xl p-3 border border-green-500/20 flex items-center gap-2">
+            <CheckCircle className="w-4 h-4 text-green-400" />
+            <p className="text-xs text-green-400">Payment of ${job.escrow_amount} released to the avatar.</p>
+          </div>
+        )}
 
         {/* Edit Form */}
         {showEditForm && (
@@ -445,7 +490,7 @@ export default function JobDetail() {
 
         {/* Open Chat button for assigned participants */}
         {job.status === 'in_progress' && jobConversation && (user?.email === job.posted_by_email || user?.email === job.winner_email) && (
-          <Button className="w-full h-11 gap-2" onClick={() => navigate(`/Messages?conversation=${jobConversation.id}`)}>          
+          <Button className="w-full h-11 gap-2" onClick={() => navigate(`/Messages?conversation=${jobConversation.id}`)}>
             <MessageCircle className="w-4 h-4" /> Open Job Chat
           </Button>
         )}
