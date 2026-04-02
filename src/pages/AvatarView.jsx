@@ -219,10 +219,7 @@ export default function AvatarView() {
             <p className="text-2xl font-bold text-primary">${avatar.per_session_rate || 0}</p>
             <p className="text-xs text-muted-foreground mt-1">Per Session</p>
           </div>
-          <div className="bg-card/50 rounded-xl p-4 text-center border border-white/5">
-            <p className="text-2xl font-bold text-primary">{avatar.completed_jobs || 0}</p>
-            <p className="text-xs text-muted-foreground mt-1">Jobs Done</p>
-          </div>
+
           <div className="bg-card/50 rounded-xl p-4 text-center border border-white/5">
             <p className="text-2xl font-bold text-primary">{avatar.rating > 0 ? avatar.rating.toFixed(1) : '—'}</p>
             <p className="text-xs text-muted-foreground mt-1">Rating</p>
@@ -275,10 +272,7 @@ export default function AvatarView() {
                 {avatar.bio || 'This avatar is available for bookings. Contact them to learn more about their services.'}
               </p>
               <div className="grid grid-cols-2 gap-3 pt-2">
-                <div className="bg-card/50 rounded-xl p-3 border border-white/5">
-                  <p className="text-xs text-muted-foreground">Completed Jobs</p>
-                  <p className="text-lg font-bold">{avatar.completed_jobs || 0}</p>
-                </div>
+
                 <div className="bg-card/50 rounded-xl p-3 border border-white/5">
                   <p className="text-xs text-muted-foreground">Hourly Rate</p>
                   <p className="text-lg font-bold text-primary">${avatar.hourly_rate || 0}</p>
