@@ -79,7 +79,7 @@ export default function AppShell({ children, navItems = [], user }) {
             {/* Drawer Header */}
             <div className="h-14 flex items-center justify-between px-4 border-b border-white/5">
               <span className="font-bold text-sm">Menu</span>
-              <button onClick={() => setDrawerOpen(false)} className="p-1.5 rounded-lg hover:bg-white/10">
+              <button onClick={() => setDrawerOpen(false)} className="p-3 -mr-1 rounded-lg hover:bg-white/10">
                 <X className="w-4 h-4" />
               </button>
             </div>
