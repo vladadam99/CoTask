@@ -11,7 +11,7 @@ import {
   Wifi, Headphones, Car, Calendar, MessageSquare, Heart, Loader2
 } from 'lucide-react';
 
-function PostItem({ post }) {
+function PostItem({ post, onOpen }) {
   const videoRef = useRef(null);
   const [playing, setPlaying] = useState(false);
   const [hovered, setHovered] = useState(false);
@@ -25,7 +25,7 @@ function PostItem({ post }) {
   return (
     <div
       className="aspect-square overflow-hidden bg-white/5 relative cursor-pointer group"
-      onClick={post.type === 'video' ? togglePlay : undefined}
+      onClick={() => onOpen(post)}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
     >
@@ -62,6 +62,7 @@ export default function AvatarView() {
   const id = params.get('id');
   const [messaging, setMessaging] = useState(false);
   const [activeTab, setActiveTab] = useState('About');
+  const [selectedPost, setSelectedPost] = useState(null);
 
   const { data: avatar, isLoading } = useQuery({
     queryKey: ['avatar', id],
@@ -262,6 +263,33 @@ export default function AvatarView() {
           </Button>
         </div>
 
+        {/* Post Modal */}
+        {selectedPost && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4" onClick={() => setSelectedPost(null)}>
+            <div className="relative max-w-lg w-full bg-card rounded-2xl overflow-hidden border border-white/10" onClick={e => e.stopPropagation()}>
+              <button onClick={() => setSelectedPost(null)} className="absolute top-3 right-3 z-10 w-8 h-8 rounded-full bg-black/60 flex items-center justify-center text-white hover:bg-black/80">
+                ✕
+              </button>
+              {selectedPost.type === 'video' ? (
+                <video src={selectedPost.media_url} className="w-full max-h-[70vh] object-contain bg-black" controls autoPlay playsInline />
+              ) : (
+                <img src={selectedPost.media_url} alt={selectedPost.caption} className="w-full max-h-[70vh] object-contain bg-black" />
+              )}
+              {selectedPost.caption && (
+                <div className="p-4">
+                  <p className="text-sm text-foreground">{selectedPost.caption}</p>
+                </div>
+              )}
+              {(selectedPost.likes_count > 0 || selectedPost.comments_count > 0) && (
+                <div className="px-4 pb-4 flex gap-4 text-sm text-muted-foreground">
+                  {selectedPost.likes_count > 0 && <span>❤️ {selectedPost.likes_count}</span>}
+                  {selectedPost.comments_count > 0 && <span>💬 {selectedPost.comments_count}</span>}
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
         {/* Tab Navigation */}
         <div className="flex gap-2 px-4 mb-4 overflow-x-auto pb-1">
           {['About', 'Posts', 'Reviews', 'Services'].map(tab => (
@@ -336,7 +364,7 @@ export default function AvatarView() {
             <div>
               {posts.length > 0 ? (
                 <div className="grid grid-cols-3 gap-0.5">
-                  {posts.map(post => <PostItem key={post.id} post={post} />)}
+                  {posts.map(post => <PostItem key={post.id} post={post} onOpen={setSelectedPost} />)}
                 </div>
               ) : (
                 <div className="text-center py-16">
