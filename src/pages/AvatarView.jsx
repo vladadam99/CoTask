@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
@@ -11,44 +11,129 @@ import {
   Wifi, Headphones, Car, Calendar, MessageSquare, Heart, Loader2
 } from 'lucide-react';
 
-function PostItem({ post, onOpen }) {
-  const videoRef = useRef(null);
-  const [playing, setPlaying] = useState(false);
-  const [hovered, setHovered] = useState(false);
+function PostCard({ post, onOpen }) {
+  return (
+    <div
+      className="bg-card border-b border-white/5 cursor-pointer"
+      onClick={() => onOpen(post)}
+    >
+      {post.type === 'video' ? (
+        <div className="relative w-full aspect-square bg-black">
+          <video src={post.media_url} className="w-full h-full object-cover" playsInline />
+          <div className="absolute inset-0 flex items-center justify-center">
+            <div className="w-12 h-12 rounded-full bg-black/60 flex items-center justify-center">
+              <span className="text-white text-lg">▶</span>
+            </div>
+          </div>
+        </div>
+      ) : (
+        <img src={post.media_url} alt={post.caption} className="w-full aspect-square object-cover" />
+      )}
+      <div className="px-4 pt-3 pb-4">
+        <div className="flex gap-4 text-lg mb-2">
+          <span className="text-foreground">♡ {post.likes_count || 0}</span>
+          <span className="text-foreground">💬 {post.comments_count || 0}</span>
+        </div>
+        {post.caption && <p className="text-sm text-foreground leading-snug">{post.caption}</p>}
+      </div>
+    </div>
+  );
+}
 
-  const togglePlay = () => {
-    if (!videoRef.current) return;
-    if (playing) { videoRef.current.pause(); setPlaying(false); }
-    else { videoRef.current.play(); setPlaying(true); }
+function PostViewer({ posts, initialIndex, onClose, avatarName, avatarPhoto }) {
+  const [index, setIndex] = useState(initialIndex);
+  const [liked, setLiked] = useState(false);
+  const touchStartY = useRef(null);
+  const post = posts[index];
+
+  const { data: comments = [] } = useQuery({
+    queryKey: ['post-comments', post?.id],
+    queryFn: () => base44.entities.PostComment.filter({ post_id: post.id }, 'created_date', 20),
+    enabled: !!post?.id,
+  });
+
+  const goNext = () => { if (index < posts.length - 1) setIndex(i => i + 1); };
+  const goPrev = () => { if (index > 0) setIndex(i => i - 1); };
+
+  const handleTouchStart = (e) => { touchStartY.current = e.touches[0].clientY; };
+  const handleTouchEnd = (e) => {
+    if (touchStartY.current === null) return;
+    const diff = touchStartY.current - e.changedTouches[0].clientY;
+    if (diff > 50) goNext();
+    else if (diff < -50) goPrev();
+    touchStartY.current = null;
   };
+
+  useEffect(() => { setLiked(false); }, [index]);
+
+  if (!post) return null;
 
   return (
     <div
-      className="aspect-square overflow-hidden bg-white/5 relative cursor-pointer group"
-      onClick={() => onOpen(post)}
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
+      className="fixed inset-0 z-50 bg-black flex flex-col"
+      onTouchStart={handleTouchStart}
+      onTouchEnd={handleTouchEnd}
     >
-      {post.type === 'video' ? (
-        <>
-          <video ref={videoRef} src={post.media_url} className="w-full h-full object-cover" playsInline loop />
-          <div className={`absolute inset-0 flex items-center justify-center transition-opacity ${playing ? 'opacity-0 group-hover:opacity-100' : 'opacity-100'}`}>
-            <div className="w-10 h-10 rounded-full bg-black/60 flex items-center justify-center">
-              <span className="text-white text-sm">{playing ? '⏸' : '▶'}</span>
-            </div>
+      {/* Header */}
+      <div className="flex items-center gap-3 px-4 py-3 border-b border-white/10">
+        <button onClick={onClose} className="text-white mr-1">
+          <ArrowLeft className="w-5 h-5" />
+        </button>
+        {avatarPhoto ? (
+          <img src={avatarPhoto} className="w-8 h-8 rounded-full object-cover" />
+        ) : (
+          <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center text-sm font-bold text-primary">{avatarName?.[0]}</div>
+        )}
+        <span className="text-white font-semibold text-sm">{avatarName}</span>
+        <span className="ml-auto text-white/40 text-xs">{index + 1} / {posts.length}</span>
+      </div>
+
+      {/* Media */}
+      <div className="flex-1 overflow-hidden flex flex-col">
+        <div className="flex-shrink-0">
+          {post.type === 'video' ? (
+            <video key={post.id} src={post.media_url} className="w-full max-h-[55vh] object-contain bg-black" controls autoPlay playsInline />
+          ) : (
+            <img src={post.media_url} alt={post.caption} className="w-full max-h-[55vh] object-contain bg-black" />
+          )}
+        </div>
+
+        {/* Actions + caption */}
+        <div className="px-4 py-3 border-t border-white/10">
+          <div className="flex gap-5 mb-2">
+            <button onClick={() => setLiked(l => !l)} className="text-2xl transition-transform active:scale-125">
+              {liked ? '♥' : '♡'}
+            </button>
+            <span className="text-white/70 text-sm self-center">{(post.likes_count || 0) + (liked ? 1 : 0)} likes</span>
           </div>
-        </>
-      ) : (
-        <img src={post.media_url} alt={post.caption} className="w-full h-full object-cover" />
-      )}
-      {/* Hover overlay with likes/comments */}
-      <div className={`absolute inset-0 bg-black/40 flex items-center justify-center gap-4 transition-opacity duration-200 ${hovered ? 'opacity-100' : 'opacity-0'}`}>
-        {post.likes_count > 0 && (
-          <span className="text-white text-sm font-semibold flex items-center gap-1">❤️ {post.likes_count}</span>
-        )}
-        {post.comments_count > 0 && (
-          <span className="text-white text-sm font-semibold flex items-center gap-1">💬 {post.comments_count}</span>
-        )}
+          {post.caption && (
+            <p className="text-white text-sm leading-snug">
+              <span className="font-semibold mr-2">{avatarName}</span>{post.caption}
+            </p>
+          )}
+        </div>
+
+        {/* Comments */}
+        <div className="flex-1 overflow-y-auto px-4 pb-4 space-y-3">
+          {comments.length > 0 ? (
+            comments.map(c => (
+              <div key={c.id} className="flex gap-2">
+                <div className="w-6 h-6 rounded-full bg-white/10 flex items-center justify-center text-xs flex-shrink-0">{c.commenter_name?.[0]}</div>
+                <p className="text-sm text-white/80">
+                  <span className="font-semibold text-white mr-2">{c.commenter_name}</span>{c.content}
+                </p>
+              </div>
+            ))
+          ) : (
+            <p className="text-white/30 text-xs text-center pt-2">No comments yet</p>
+          )}
+        </div>
+      </div>
+
+      {/* Swipe hint */}
+      <div className="flex justify-center gap-6 py-3 border-t border-white/10">
+        <button onClick={goPrev} disabled={index === 0} className="text-white/50 disabled:opacity-20 text-sm">↑ Prev</button>
+        <button onClick={goNext} disabled={index === posts.length - 1} className="text-white/50 disabled:opacity-20 text-sm">↓ Next</button>
       </div>
     </div>
   );
@@ -62,7 +147,12 @@ export default function AvatarView() {
   const id = params.get('id');
   const [messaging, setMessaging] = useState(false);
   const [activeTab, setActiveTab] = useState('About');
-  const [selectedPost, setSelectedPost] = useState(null);
+  const [viewerIndex, setViewerIndex] = useState(null);
+
+  const openPost = (post) => {
+    const idx = posts.findIndex(p => p.id === post.id);
+    setViewerIndex(idx >= 0 ? idx : 0);
+  };
 
   const { data: avatar, isLoading } = useQuery({
     queryKey: ['avatar', id],
@@ -263,31 +353,15 @@ export default function AvatarView() {
           </Button>
         </div>
 
-        {/* Post Modal */}
-        {selectedPost && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4" onClick={() => setSelectedPost(null)}>
-            <div className="relative max-w-lg w-full bg-card rounded-2xl overflow-hidden border border-white/10" onClick={e => e.stopPropagation()}>
-              <button onClick={() => setSelectedPost(null)} className="absolute top-3 right-3 z-10 w-8 h-8 rounded-full bg-black/60 flex items-center justify-center text-white hover:bg-black/80">
-                ✕
-              </button>
-              {selectedPost.type === 'video' ? (
-                <video src={selectedPost.media_url} className="w-full max-h-[70vh] object-contain bg-black" controls autoPlay playsInline />
-              ) : (
-                <img src={selectedPost.media_url} alt={selectedPost.caption} className="w-full max-h-[70vh] object-contain bg-black" />
-              )}
-              {selectedPost.caption && (
-                <div className="p-4">
-                  <p className="text-sm text-foreground">{selectedPost.caption}</p>
-                </div>
-              )}
-              {(selectedPost.likes_count > 0 || selectedPost.comments_count > 0) && (
-                <div className="px-4 pb-4 flex gap-4 text-sm text-muted-foreground">
-                  {selectedPost.likes_count > 0 && <span>❤️ {selectedPost.likes_count}</span>}
-                  {selectedPost.comments_count > 0 && <span>💬 {selectedPost.comments_count}</span>}
-                </div>
-              )}
-            </div>
-          </div>
+        {/* Post Viewer */}
+        {viewerIndex !== null && (
+          <PostViewer
+            posts={posts}
+            initialIndex={viewerIndex}
+            onClose={() => setViewerIndex(null)}
+            avatarName={avatar.display_name}
+            avatarPhoto={avatar.photo_url}
+          />
         )}
 
         {/* Tab Navigation */}
@@ -363,8 +437,8 @@ export default function AvatarView() {
           {activeTab === 'Posts' && (
             <div>
               {posts.length > 0 ? (
-                <div className="grid grid-cols-3 gap-0.5">
-                  {posts.map(post => <PostItem key={post.id} post={post} onOpen={setSelectedPost} />)}
+                <div className="space-y-0">
+                  {posts.map(post => <PostCard key={post.id} post={post} onOpen={openPost} />)}
                 </div>
               ) : (
                 <div className="text-center py-16">
