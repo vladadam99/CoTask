@@ -1,0 +1,61 @@
+{
+  "name": "FlaggedContent",
+  "type": "object",
+  "properties": {
+    "entity_type": {
+      "type": "string",
+      "enum": [
+        "message",
+        "post",
+        "job_post",
+        "review"
+      ],
+      "description": "What type of content was flagged"
+    },
+    "entity_id": {
+      "type": "string"
+    },
+    "content_preview": {
+      "type": "string",
+      "description": "Short preview of the flagged content"
+    },
+    "reason": {
+      "type": "string",
+      "description": "Why it was flagged"
+    },
+    "severity": {
+      "type": "string",
+      "enum": [
+        "low",
+        "medium",
+        "high",
+        "critical"
+      ],
+      "default": "medium"
+    },
+    "author_email": {
+      "type": "string"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "reviewed",
+        "dismissed",
+        "actioned"
+      ],
+      "default": "pending"
+    },
+    "admin_notes": {
+      "type": "string"
+    },
+    "media_url": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "entity_type",
+    "entity_id",
+    "reason"
+  ]
+}

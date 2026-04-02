@@ -50,6 +50,7 @@ import RoleSelectExisting from './pages/RoleSelectExisting';
 import Register from './pages/Register';
 import AvatarMessages from './pages/AvatarMessages';
 import DisputeAgent from './pages/DisputeAgent';
+import SafetyAgent from './pages/SafetyAgent';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -121,6 +122,7 @@ const AuthenticatedApp = () => {
       <Route path="/Register" element={<Register />} />
       <Route path="/AvatarMessages" element={<AvatarMessages />} />
       <Route path="/DisputeAgent" element={<DisputeAgent />} />
+      <Route path="/SafetyAgent" element={<SafetyAgent />} />
       <Route path="*" element={<PageNotFound />} />
     </Routes>
   );
