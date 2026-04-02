@@ -9,7 +9,7 @@ import StatusBadge from '@/components/ui/StatusBadge';
 import { Button } from '@/components/ui/button';
 import {
   Plus, MessageSquare, Settings,
-  ArrowRight, Calendar, FileText, DollarSign, Clock, Rocket
+  ArrowRight, Calendar, FileText, DollarSign, Clock, Rocket, Star
 } from 'lucide-react';
 
 const navItems = [
@@ -36,6 +36,16 @@ export default function EnterpriseDashboard() {
     queryFn: () => base44.entities.Booking.filter({ client_email: user.email, client_type: 'enterprise' }, '-created_date', 10),
     enabled: !!user,
   });
+
+  const { data: myReviews = [] } = useQuery({
+    queryKey: ['enterprise-reviews', user?.email],
+    queryFn: () => base44.entities.Review.filter({ reviewed_email: user.email }),
+    enabled: !!user,
+  });
+
+  const avgRating = myReviews.length
+    ? (myReviews.reduce((s, r) => s + r.rating, 0) / myReviews.length).toFixed(1)
+    : null;
 
   if (userLoading) return (
     <div className="min-h-screen flex items-center justify-center">
@@ -80,6 +90,16 @@ export default function EnterpriseDashboard() {
 
       {/* Stats */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-8">
+        {avgRating && (
+          <GlassCard className="p-5 border border-yellow-500/20 col-span-2 lg:col-span-1">
+            <Star className="w-5 h-5 text-yellow-400 mb-3 fill-yellow-400" />
+            <div className="flex items-end gap-1.5">
+              <p className="text-2xl font-bold">{avgRating}</p>
+              <p className="text-xs text-muted-foreground mb-1">/ 5</p>
+            </div>
+            <p className="text-xs text-muted-foreground mt-1">Avg Client Rating · {myReviews.length} review{myReviews.length !== 1 ? 's' : ''}</p>
+          </GlassCard>
+        )}
         {[
           { label: 'Active Sessions', value: activeBookings.length, icon: Calendar, color: 'text-blue-400' },
           { label: 'Total Bookings', value: bookings.length, icon: FileText, color: 'text-purple-400' },
