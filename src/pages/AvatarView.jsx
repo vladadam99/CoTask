@@ -271,12 +271,25 @@ export default function AvatarView() {
               <p className="text-sm text-muted-foreground leading-relaxed">
                 {avatar.bio || 'This avatar is available for bookings. Contact them to learn more about their services.'}
               </p>
-              <div className="grid grid-cols-2 gap-3 pt-2">
-
-                <div className="bg-card/50 rounded-xl p-3 border border-white/5">
-                  <p className="text-xs text-muted-foreground">Hourly Rate</p>
-                  <p className="text-lg font-bold text-primary">${avatar.hourly_rate || 0}</p>
-                </div>
+              <div className="space-y-2 pt-2">
+                {(avatar.city || avatar.country) && (
+                  <div className="flex items-center gap-2 text-sm">
+                    <MapPin className="w-4 h-4 text-muted-foreground flex-shrink-0" />
+                    <span>{[avatar.city, avatar.country].filter(Boolean).join(', ')}</span>
+                  </div>
+                )}
+                {(avatar.languages || []).length > 0 && (
+                  <div className="flex items-center gap-2 text-sm">
+                    <Globe className="w-4 h-4 text-muted-foreground flex-shrink-0" />
+                    <span>{avatar.languages.join(', ')}</span>
+                  </div>
+                )}
+                {avatar.response_time_minutes && (
+                  <div className="flex items-center gap-2 text-sm">
+                    <Clock className="w-4 h-4 text-muted-foreground flex-shrink-0" />
+                    <span>Responds in ~{avatar.response_time_minutes} min</span>
+                  </div>
+                )}
               </div>
               {equipment.length > 0 && (
                 <div>
