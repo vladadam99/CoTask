@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Play, MapPin, Star, Shield, Zap, ArrowRight, Menu, X, Video, Globe, Users, TrendingUp } from 'lucide-react';
+import { ArrowRight, Shield, Zap, Globe, Video, TrendingUp, Menu, X } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 
 const STATS = [
@@ -66,13 +66,10 @@ export default function Landing() {
             <Link to="/HowItWorks" className="text-sm text-muted-foreground hover:text-foreground transition-colors">How it works</Link>
             <Link to="/Pricing" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Pricing</Link>
           </div>
-          <div className="hidden md:flex items-center gap-3">
-            <button onClick={() => base44.auth.redirectToLogin('/RoleSelectExisting')} className="text-sm text-muted-foreground hover:text-foreground transition-colors">
-              Sign in
+          <div className="hidden md:flex">
+            <button onClick={() => base44.auth.redirectToLogin('/RoleSelect')} className="px-5 py-2 bg-primary hover:bg-primary/90 text-white text-sm font-semibold rounded-lg transition-all glow-primary-sm">
+              Let's Go
             </button>
-            <Link to="/Register" className="px-4 py-2 bg-primary hover:bg-primary/90 text-white text-sm font-semibold rounded-lg transition-all glow-primary-sm">
-              Get Started
-            </Link>
           </div>
           <button className="md:hidden p-2" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
             {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
@@ -82,10 +79,9 @@ export default function Landing() {
           <div className="md:hidden glass-strong border-b border-white/5 px-4 py-4 flex flex-col gap-4">
             <Link to="/HowItWorks" className="text-sm" onClick={() => setMobileMenuOpen(false)}>How it works</Link>
             <Link to="/Pricing" className="text-sm" onClick={() => setMobileMenuOpen(false)}>Pricing</Link>
-            <button onClick={() => { base44.auth.redirectToLogin('/RoleSelectExisting'); setMobileMenuOpen(false); }} className="text-sm text-left text-muted-foreground">Sign in</button>
-            <Link to="/Register" className="px-4 py-2 bg-primary text-white text-sm font-semibold rounded-lg text-center" onClick={() => setMobileMenuOpen(false)}>
-              Get Started
-            </Link>
+            <button onClick={() => { base44.auth.redirectToLogin('/RoleSelect'); setMobileMenuOpen(false); }} className="px-4 py-2.5 bg-primary text-white text-sm font-semibold rounded-lg text-center">
+              Let's Go
+            </button>
           </div>
         )}
       </nav>
@@ -113,13 +109,13 @@ export default function Landing() {
             </p>
           </motion.div>
 
-          <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
-            <button onClick={() => base44.auth.redirectToLogin('/RoleSelectExisting')} className="px-10 py-4 bg-white/5 hover:bg-white/10 border border-white/10 text-foreground font-bold rounded-xl transition-all text-base flex items-center justify-center gap-2">
-              Sign In
+          <div className="flex justify-center mb-12">
+            <button
+              onClick={() => base44.auth.redirectToLogin('/RoleSelect')}
+              className="px-12 py-4 bg-primary hover:bg-primary/90 text-white font-bold rounded-xl glow-primary transition-all text-lg flex items-center justify-center gap-3"
+            >
+              <Zap className="w-5 h-5" /> Let's Go <ArrowRight className="w-5 h-5" />
             </button>
-            <Link to="/Register" className="px-10 py-4 bg-primary hover:bg-primary/90 text-white font-bold rounded-xl glow-primary transition-all text-base flex items-center justify-center gap-2">
-              <Zap className="w-5 h-5" /> Get Started
-            </Link>
           </div>
 
           {/* Stats */}

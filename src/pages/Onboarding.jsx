@@ -20,13 +20,21 @@ export default function Onboarding() {
   }, []);
 
   useEffect(() => {
-    if (!loading && user && user.onboarding_complete) {
-      const dest = user.role === 'avatar' ? '/AvatarDashboard'
-                 : user.role === 'enterprise' ? '/EnterpriseDashboard'
-                 : '/UserDashboard';
-      window.location.href = dest;
-    }
-  }, [user, loading]);
+    if (loading || !user || !role) return;
+    // If user already has a completed profile for THIS specific role, skip onboarding
+    const check = async () => {
+      if (role === 'avatar') {
+        const profiles = await base44.entities.AvatarProfile.filter({ user_email: user.email });
+        if (profiles.length > 0) { window.location.href = '/AvatarDashboard'; }
+      } else if (role === 'enterprise') {
+        const profiles = await base44.entities.EnterpriseProfile.filter({ user_email: user.email });
+        if (profiles.length > 0) { window.location.href = '/EnterpriseDashboard'; }
+      } else if (role === 'user' && user.onboarding_complete && user.role === 'user') {
+        window.location.href = '/UserDashboard';
+      }
+    };
+    check();
+  }, [user, loading, role]);
 
   const handleComplete = async (data) => {
     if (!user) {

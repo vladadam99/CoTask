@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { User, Radio, Building2, ArrowRight, Zap, Globe, BarChart2 } from 'lucide-react';
@@ -49,18 +49,48 @@ const roles = [
 ];
 
 export default function RoleSelect() {
-  const { user } = useCurrentUser();
+  const { user, loading: userLoading } = useCurrentUser();
   const [loading, setLoading] = useState(null);
 
+  // After Google login redirect back here, auto-trigger stored role
+  useEffect(() => {
+    if (!user || userLoading) return;
+    const stored = localStorage.getItem('cotask_role');
+    if (stored) {
+      localStorage.removeItem('cotask_role');
+      handleRoleSelect(stored);
+    }
+  }, [user, userLoading]);
+
   const handleRoleSelect = async (role) => {
+    if (!user) {
+      localStorage.setItem('cotask_role', role);
+      base44.auth.redirectToLogin(`/RoleSelect`);
+      return;
+    }
     setLoading(role);
     try {
-      if (user) {
-        window.location.href = `/Onboarding?role=${role}`;
-      } else {
-        localStorage.setItem('cotask_role', role);
-        base44.auth.redirectToLogin(`/Onboarding?role=${role}`);
+      if (role === 'avatar') {
+        const profiles = await base44.entities.AvatarProfile.filter({ user_email: user.email });
+        if (profiles.length > 0) {
+          window.location.href = '/AvatarDashboard';
+          return;
+        }
+      } else if (role === 'enterprise') {
+        const profiles = await base44.entities.EnterpriseProfile.filter({ user_email: user.email });
+        if (profiles.length > 0) {
+          window.location.href = '/EnterpriseDashboard';
+          return;
+        }
+      } else if (role === 'user') {
+        // User role: check if they've previously completed user onboarding
+        if (user.onboarding_complete && user.role === 'user') {
+          window.location.href = '/UserDashboard';
+          return;
+        }
       }
+      // No existing profile for this role — go to onboarding
+      window.location.href = `/Onboarding?role=${role}`;
     } finally {
       setLoading(null);
     }
