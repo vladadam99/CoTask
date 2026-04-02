@@ -104,6 +104,16 @@
       "type": "boolean",
       "default": false
     },
+    "willing_to_travel": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether this avatar is willing to travel outside their city"
+    },
+    "travel_radius_km": {
+      "type": "number",
+      "default": 0,
+      "description": "How far in km the avatar is willing to travel from their city"
+    },
     "verification_status": {
       "type": "string",
       "enum": [

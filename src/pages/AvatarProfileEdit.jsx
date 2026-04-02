@@ -15,7 +15,7 @@ import { getNavItems } from '@/lib/navItems';
 import { useNavigate } from 'react-router-dom';
 import {
   Home, Inbox, Calendar, Radio, MessageSquare, DollarSign,
-  Star, User, Settings, Camera, Upload, Loader2, Plus, Grid, MapPin, Pencil, Trash2, X
+  Star, User, Settings, Camera, Upload, Loader2, Plus, Grid, MapPin, Pencil, Trash2, X, Navigation
 } from 'lucide-react';
 
 
@@ -48,6 +48,7 @@ export default function AvatarProfileEdit() {
     display_name: '', bio: '', city: '', country: '',
     hourly_rate: '', per_session_rate: '', currency: 'USD',
     languages: '', skills: '', categories: '', photo_url: '', cover_url: '',
+    willing_to_travel: false, travel_radius_km: 0,
   });
 
   useEffect(() => {
@@ -65,6 +66,8 @@ export default function AvatarProfileEdit() {
         categories: (profile.categories || []).join(', '),
         photo_url: profile.photo_url || '',
         cover_url: profile.cover_url || '',
+        willing_to_travel: profile.willing_to_travel || false,
+        travel_radius_km: profile.travel_radius_km || 0,
       });
     }
   }, [profile]);
@@ -125,6 +128,7 @@ export default function AvatarProfileEdit() {
           ...form,
           hourly_rate: parseFloat(form.hourly_rate) || 0,
           per_session_rate: parseFloat(form.per_session_rate) || 0,
+          travel_radius_km: parseInt(form.travel_radius_km) || 0,
           languages: form.languages.split(',').map(s => s.trim()).filter(Boolean),
           skills: form.skills.split(',').map(s => s.trim()).filter(Boolean),
           categories: form.categories.split(',').map(s => s.trim()).filter(Boolean),
@@ -140,7 +144,7 @@ export default function AvatarProfileEdit() {
       }
     }, 1500);
     return () => clearTimeout(timer);
-  }, [form.display_name, form.bio, form.city, form.country, form.hourly_rate, form.per_session_rate, form.categories, form.skills, form.languages]);
+  }, [form.display_name, form.bio, form.city, form.country, form.hourly_rate, form.per_session_rate, form.categories, form.skills, form.languages, form.willing_to_travel, form.travel_radius_km]);
 
   const deletePost = useMutation({
     mutationFn: (postId) => base44.entities.Post.delete(postId),
@@ -353,6 +357,46 @@ export default function AvatarProfileEdit() {
                 className="bg-transparent border-white/10"
                 placeholder="Country"
               />
+            </div>
+          </GlassCard>
+
+          {/* Travel Preferences */}
+          <GlassCard className="p-5">
+            <div className="flex items-center gap-2 mb-3">
+              <Navigation className="w-4 h-4 text-primary" />
+              <h3 className="font-semibold text-sm">Travel Preferences</h3>
+            </div>
+            <div className="space-y-3">
+              <label className="flex items-center justify-between cursor-pointer">
+                <div>
+                  <p className="text-sm font-medium">Willing to travel</p>
+                  <p className="text-xs text-muted-foreground">Accept jobs outside your city</p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setForm(f => ({ ...f, willing_to_travel: !f.willing_to_travel }))}
+                  className={`relative w-11 h-6 rounded-full transition-colors ${
+                    form.willing_to_travel ? 'bg-primary' : 'bg-muted'
+                  }`}
+                >
+                  <span className={`absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform ${
+                    form.willing_to_travel ? 'translate-x-5' : 'translate-x-0'
+                  }`} />
+                </button>
+              </label>
+              {form.willing_to_travel && (
+                <div>
+                  <label className="text-xs text-muted-foreground mb-1 block">Max travel radius (km)</label>
+                  <Input
+                    type="number"
+                    value={form.travel_radius_km}
+                    onChange={set('travel_radius_km')}
+                    className="bg-transparent border-white/10"
+                    placeholder="e.g. 50"
+                  />
+                  <p className="text-xs text-muted-foreground mt-1">Jobs further than this won't be matched to you</p>
+                </div>
+              )}
             </div>
           </GlassCard>
 
