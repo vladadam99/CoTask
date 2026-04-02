@@ -46,6 +46,7 @@ export default function AvatarView() {
   const params = new URLSearchParams(window.location.search);
   const id = params.get('id');
   const [messaging, setMessaging] = useState(false);
+  const [activeTab, setActiveTab] = useState('About');
 
   const { data: avatar, isLoading } = useQuery({
     queryKey: ['avatar', id],
@@ -249,41 +250,80 @@ export default function AvatarView() {
           </Button>
         </div>
 
-        <div className="grid md:grid-cols-3 gap-6 px-4 pb-8">
-          <div className="md:col-span-2 space-y-6">
-            {/* Bio */}
-            <GlassCard className="p-6">
-              <h2 className="font-semibold mb-3">About</h2>
+        {/* Tab Navigation */}
+        <div className="flex gap-2 px-4 mb-4 overflow-x-auto pb-1">
+          {['About', 'Posts', 'Reviews', 'Services'].map(tab => (
+            <button
+              key={tab}
+              onClick={() => setActiveTab(tab)}
+              className={`px-5 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all border ${
+                activeTab === tab
+                  ? 'bg-primary text-primary-foreground border-primary'
+                  : 'bg-card/50 text-muted-foreground border-white/10 hover:border-white/20 hover:text-foreground'
+              }`}
+            >
+              {tab}{tab === 'Posts' ? ` (${posts.length})` : tab === 'Reviews' ? ` (${reviews.length})` : ''}
+            </button>
+          ))}
+        </div>
+
+        {/* Tab Content */}
+        <div className="px-4 pb-8">
+          {activeTab === 'About' && (
+            <GlassCard className="p-6 space-y-4">
               <p className="text-sm text-muted-foreground leading-relaxed">
                 {avatar.bio || 'This avatar is available for bookings. Contact them to learn more about their services.'}
               </p>
-            </GlassCard>
-
-            {/* Categories */}
-            <GlassCard className="p-6">
-              <h2 className="font-semibold mb-3">Services</h2>
-              <div className="flex flex-wrap gap-2">
-                {(avatar.categories || []).map(c => (
-                  <Badge key={c} variant="secondary" className="bg-muted/50">{c}</Badge>
-                ))}
-              </div>
-            </GlassCard>
-
-            {/* Posts */}
-            {posts.length > 0 && (
-              <GlassCard className="p-6">
-                <h2 className="font-semibold mb-4">Posts ({posts.length})</h2>
-                <div className="grid grid-cols-3 gap-2">
-                  {posts.map(post => (
-                    <PostItem key={post.id} post={post} />
-                  ))}
+              <div className="grid grid-cols-2 gap-3 pt-2">
+                <div className="bg-card/50 rounded-xl p-3 border border-white/5">
+                  <p className="text-xs text-muted-foreground">Completed Jobs</p>
+                  <p className="text-lg font-bold">{avatar.completed_jobs || 0}</p>
                 </div>
-              </GlassCard>
-            )}
+                <div className="bg-card/50 rounded-xl p-3 border border-white/5">
+                  <p className="text-xs text-muted-foreground">Hourly Rate</p>
+                  <p className="text-lg font-bold text-primary">${avatar.hourly_rate || 0}</p>
+                </div>
+              </div>
+              {equipment.length > 0 && (
+                <div>
+                  <p className="text-sm font-semibold mb-2">Equipment</p>
+                  <div className="flex flex-wrap gap-3">
+                    {equipment.map(eq => (
+                      <div key={eq.key} className="flex items-center gap-1.5 text-sm text-muted-foreground">
+                        <eq.icon className="w-4 h-4 text-green-400" />
+                        {eq.label}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+              {(avatar.skills || []).length > 0 && (
+                <div>
+                  <p className="text-sm font-semibold mb-2">Skills</p>
+                  <div className="flex flex-wrap gap-1.5">
+                    {avatar.skills.map(s => (
+                      <Badge key={s} variant="outline" className="text-xs border-white/10">{s}</Badge>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </GlassCard>
+          )}
 
-            {/* Reviews */}
+          {activeTab === 'Posts' && (
             <GlassCard className="p-6">
-              <h2 className="font-semibold mb-4">Reviews ({reviews.length})</h2>
+              {posts.length > 0 ? (
+                <div className="grid grid-cols-3 gap-2">
+                  {posts.map(post => <PostItem key={post.id} post={post} />)}
+                </div>
+              ) : (
+                <p className="text-sm text-muted-foreground text-center py-8">No posts yet</p>
+              )}
+            </GlassCard>
+          )}
+
+          {activeTab === 'Reviews' && (
+            <GlassCard className="p-6">
               {reviews.length > 0 ? (
                 <div className="space-y-4">
                   {reviews.map(r => (
@@ -301,47 +341,24 @@ export default function AvatarView() {
                   ))}
                 </div>
               ) : (
-                <p className="text-sm text-muted-foreground">No reviews yet</p>
+                <p className="text-sm text-muted-foreground text-center py-8">No reviews yet</p>
               )}
             </GlassCard>
-          </div>
+          )}
 
-          {/* Sidebar */}
-          <div className="space-y-4">
-            <GlassCard className="p-5">
-              <h3 className="text-sm font-semibold mb-3">Stats</h3>
-              <div className="space-y-3 text-sm">
-                <div className="flex justify-between"><span className="text-muted-foreground">Completed Jobs</span><span className="font-medium">{avatar.completed_jobs || 0}</span></div>
-                <div className="flex justify-between"><span className="text-muted-foreground">Hourly Rate</span><span className="font-medium text-primary">${avatar.hourly_rate || 30}</span></div>
-                {avatar.per_session_rate && <div className="flex justify-between"><span className="text-muted-foreground">Per Session</span><span className="font-medium">${avatar.per_session_rate}</span></div>}
-              </div>
+          {activeTab === 'Services' && (
+            <GlassCard className="p-6">
+              {(avatar.categories || []).length > 0 ? (
+                <div className="flex flex-wrap gap-2">
+                  {avatar.categories.map(c => (
+                    <Badge key={c} variant="secondary" className="bg-muted/50 text-sm py-1.5 px-3">{c}</Badge>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-sm text-muted-foreground text-center py-8">No services listed</p>
+              )}
             </GlassCard>
-
-            {equipment.length > 0 && (
-              <GlassCard className="p-5">
-                <h3 className="text-sm font-semibold mb-3">Equipment</h3>
-                <div className="space-y-2">
-                  {equipment.map(eq => (
-                    <div key={eq.key} className="flex items-center gap-2 text-sm text-muted-foreground">
-                      <eq.icon className="w-4 h-4 text-green-400" />
-                      {eq.label}
-                    </div>
-                  ))}
-                </div>
-              </GlassCard>
-            )}
-
-            {(avatar.skills || []).length > 0 && (
-              <GlassCard className="p-5">
-                <h3 className="text-sm font-semibold mb-3">Skills</h3>
-                <div className="flex flex-wrap gap-1.5">
-                  {avatar.skills.map(s => (
-                    <Badge key={s} variant="outline" className="text-xs border-white/10">{s}</Badge>
-                  ))}
-                </div>
-              </GlassCard>
-            )}
-          </div>
+          )}
         </div>
       </div>
     </div>
