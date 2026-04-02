@@ -9,7 +9,7 @@ import { Button } from '@/components/ui/button';
 import { getNavItems } from '@/lib/navItems';
 import {
   Search, Calendar, MessageSquare, Radio, Heart, User,
-  ArrowRight, MapPin, Star, Play, Zap, Briefcase
+  ArrowRight, MapPin, Star, Play, Zap, Briefcase, Clock, AlertCircle, CheckCircle
 } from 'lucide-react';
 import SuggestedForYou from '@/components/dashboard/SuggestedForYou';
 import { motion } from 'framer-motion';
@@ -223,19 +223,36 @@ export default function UserDashboard() {
         </div>
         {bookings.length > 0 ? (
           <div className="space-y-3">
-            {bookings.map(b => (
-              <Link key={b.id} to={`/BookingDetail?id=${b.id}`}>
-                <div className="glass border border-white/5 hover:border-primary/30 rounded-2xl p-4 flex items-center justify-between transition-all">
-                  <div>
-                    <p className="font-semibold text-sm">{b.category}</p>
-                    <p className="text-xs text-muted-foreground mt-1">
-                      {b.avatar_name} · {b.scheduled_date ? `${b.scheduled_date}${b.scheduled_time ? ` at ${b.scheduled_time}` : ''}` : 'Pending'}
-                    </p>
+            {bookings.map(b => {
+              const isPending = b.status === 'pending';
+              const isAccepted = b.status === 'accepted';
+              const statusColor = isPending ? 'border-yellow-500/20 bg-yellow-500/5' : isAccepted ? 'border-green-500/20 bg-green-500/5' : 'border-white/5';
+              return (
+                <Link key={b.id} to={`/BookingDetail?id=${b.id}`}>
+                  <div className={`glass border rounded-2xl p-4 flex items-center justify-between transition-all hover:border-primary/30 ${statusColor}`}>
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2 mb-1">
+                        <p className="font-semibold text-sm">{b.category}</p>
+                        {isPending && (
+                          <span className="inline-flex items-center gap-1 text-xs bg-yellow-500/20 text-yellow-400 px-2 py-0.5 rounded-full">
+                            <Clock className="w-3 h-3" /> Awaiting response
+                          </span>
+                        )}
+                        {isAccepted && (
+                          <span className="inline-flex items-center gap-1 text-xs bg-green-500/20 text-green-400 px-2 py-0.5 rounded-full">
+                            <CheckCircle className="w-3 h-3" /> Confirmed
+                          </span>
+                        )}
+                      </div>
+                      <p className="text-xs text-muted-foreground mt-1">
+                        {b.avatar_name} · {b.scheduled_date ? `${b.scheduled_date}${b.scheduled_time ? ` at ${b.scheduled_time}` : ''}` : 'Pending'}
+                      </p>
+                    </div>
+                    <StatusBadge status={b.status} />
                   </div>
-                  <StatusBadge status={b.status} />
-                </div>
-              </Link>
-            ))}
+                </Link>
+              );
+            })}
           </div>
         ) : (
           <div className="glass rounded-2xl p-8 text-center border border-white/5">
