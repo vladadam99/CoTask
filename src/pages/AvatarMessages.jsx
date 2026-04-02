@@ -268,7 +268,7 @@ export default function AvatarMessages() {
             <div className="p-4 border-t border-white/5">
               <form onSubmit={e => { e.preventDefault(); if (newMsg.trim()) sendMessage.mutate(); }} className="flex gap-2">
                 <label className={`inline-flex items-center justify-center w-9 h-9 rounded-xl bg-muted/50 border border-white/5 text-muted-foreground hover:text-foreground transition-colors shrink-0 cursor-pointer ${uploadingPhoto ? 'opacity-50 pointer-events-none' : ''}`} title="Send photo">
-                  <input type="file" accept="image/*" capture="environment" className="hidden" onChange={e => { const f = e.target.files?.[0]; if (f) sendPhoto(f); e.target.value = ''; }} />
+                  <input type="file" accept="image/*" style={{position:'absolute',width:0,height:0,opacity:0}} onChange={e => { const f = e.target.files?.[0]; if (f) sendPhoto(f); e.target.value = ''; }} />
                   {uploadingPhoto ? <Loader2 className="w-4 h-4 animate-spin" /> : <Camera className="w-4 h-4" />}
                 </label>
                 <Input value={newMsg} onChange={e => setNewMsg(e.target.value)} placeholder="Type a message..." className="bg-muted/50 border-white/5" />
