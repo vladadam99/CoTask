@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { ArrowRight, Shield, Zap, Globe, Video, TrendingUp, Menu, X } from 'lucide-react';
+import { Zap, Shield, Globe, ArrowRight, Menu, X, Video, TrendingUp } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 
 const STATS = [
@@ -54,23 +54,26 @@ export default function Landing() {
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
+  const handleGetStarted = () => base44.auth.redirectToLogin('/RoleSelect');
+
   return (
     <div className="min-h-screen bg-background text-foreground overflow-x-hidden">
       {/* Nav */}
       <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${scrolled ? 'glass-strong border-b border-white/5' : ''}`}>
         <div className="max-w-6xl mx-auto px-4 lg:px-6 h-16 flex items-center justify-between">
-          <Link to="/Landing" className="text-xl font-bold tracking-tight">
+          <Link to="/" className="text-xl font-bold tracking-tight">
             Co<span className="text-primary">Task</span>
           </Link>
           <div className="hidden md:flex items-center gap-6">
             <Link to="/HowItWorks" className="text-sm text-muted-foreground hover:text-foreground transition-colors">How it works</Link>
             <Link to="/Pricing" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Pricing</Link>
           </div>
-          <div className="hidden md:flex">
-            <button onClick={() => base44.auth.redirectToLogin('/RoleSelect')} className="px-5 py-2 bg-primary hover:bg-primary/90 text-white text-sm font-semibold rounded-lg transition-all glow-primary-sm">
-              Let's Go
-            </button>
-          </div>
+          <button
+            onClick={handleGetStarted}
+            className="hidden md:flex px-5 py-2 bg-primary hover:bg-primary/90 text-white text-sm font-semibold rounded-lg transition-all glow-primary-sm items-center gap-2"
+          >
+            Let's Go <ArrowRight className="w-4 h-4" />
+          </button>
           <button className="md:hidden p-2" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
             {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
           </button>
@@ -79,8 +82,8 @@ export default function Landing() {
           <div className="md:hidden glass-strong border-b border-white/5 px-4 py-4 flex flex-col gap-4">
             <Link to="/HowItWorks" className="text-sm" onClick={() => setMobileMenuOpen(false)}>How it works</Link>
             <Link to="/Pricing" className="text-sm" onClick={() => setMobileMenuOpen(false)}>Pricing</Link>
-            <button onClick={() => { base44.auth.redirectToLogin('/RoleSelect'); setMobileMenuOpen(false); }} className="px-4 py-2.5 bg-primary text-white text-sm font-semibold rounded-lg text-center">
-              Let's Go
+            <button onClick={() => { handleGetStarted(); setMobileMenuOpen(false); }} className="px-4 py-2 bg-primary text-white text-sm font-semibold rounded-lg text-left flex items-center gap-2">
+              Let's Go <ArrowRight className="w-4 h-4" />
             </button>
           </div>
         )}
@@ -88,7 +91,6 @@ export default function Landing() {
 
       {/* Hero */}
       <section className="relative min-h-screen flex items-center justify-center px-4 overflow-hidden pt-16">
-        {/* Background */}
         <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-background to-background" />
         <div className="absolute top-1/4 right-0 w-96 h-96 bg-primary/10 rounded-full blur-3xl" />
         <div className="absolute bottom-1/4 left-0 w-64 h-64 bg-blue-500/8 rounded-full blur-3xl" />
@@ -111,10 +113,10 @@ export default function Landing() {
 
           <div className="flex justify-center mb-12">
             <button
-              onClick={() => base44.auth.redirectToLogin('/RoleSelect')}
-              className="px-12 py-4 bg-primary hover:bg-primary/90 text-white font-bold rounded-xl glow-primary transition-all text-lg flex items-center justify-center gap-3"
+              onClick={handleGetStarted}
+              className="px-12 py-4 bg-primary hover:bg-primary/90 text-white font-bold rounded-xl glow-primary transition-all text-lg flex items-center gap-3 hover:scale-105"
             >
-              <Zap className="w-5 h-5" /> Let's Go <ArrowRight className="w-5 h-5" />
+              <Zap className="w-5 h-5" /> Let's Go
             </button>
           </div>
 
@@ -133,7 +135,7 @@ export default function Landing() {
         </div>
       </section>
 
-      {/* Live Cards Preview */}
+      {/* Categories */}
       <section className="py-20 px-4">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-12">
@@ -142,16 +144,15 @@ export default function Landing() {
           </div>
           <div className="flex flex-wrap gap-3 justify-center mb-8">
             {CATEGORIES.map(cat => (
-              <Link key={cat.label} to={`/Explore?category=${encodeURIComponent(cat.label)}`}
-                className="px-5 py-2 glass border border-white/5 hover:border-primary/30 rounded-full text-sm transition-all flex items-center gap-2">
+              <span key={cat.label} className="px-5 py-2 glass border border-white/5 rounded-full text-sm flex items-center gap-2">
                 {cat.icon} {cat.label}
-              </Link>
+              </span>
             ))}
           </div>
           <div className="text-center">
-            <Link to="/Explore" className="inline-flex items-center gap-2 px-6 py-3 bg-primary/10 hover:bg-primary/20 border border-primary/20 text-primary rounded-xl font-medium transition-all">
+            <button onClick={handleGetStarted} className="inline-flex items-center gap-2 px-6 py-3 bg-primary/10 hover:bg-primary/20 border border-primary/20 text-primary rounded-xl font-medium transition-all">
               Explore all avatars <ArrowRight className="w-4 h-4" />
-            </Link>
+            </button>
           </div>
         </div>
       </section>
@@ -167,7 +168,7 @@ export default function Landing() {
             {[
               { n: '01', title: 'Find an Avatar', desc: 'Search by category, location or availability. See real ratings and live previews before you book.' },
               { n: '02', title: 'Book & Connect', desc: 'Schedule ahead or book instantly. Pay securely and get connected via live stream with your avatar.' },
-              { n: '03', title: 'Experience Live', desc: 'Direct your avatar in real time. They\'re your eyes, hands, and guide — wherever you need them.' },
+              { n: '03', title: 'Experience Live', desc: "Direct your avatar in real time. They're your eyes, hands, and guide — wherever you need them." },
             ].map((step, i) => (
               <motion.div
                 key={step.n}
@@ -227,9 +228,9 @@ export default function Landing() {
               <p className="text-muted-foreground max-w-xl mx-auto mb-8 leading-relaxed">
                 Use your local knowledge, your camera, and your presence to earn money helping people remotely. Set your own schedule and rates.
               </p>
-              <Link to="/Register" className="inline-flex items-center gap-2 px-8 py-4 bg-primary hover:bg-primary/90 text-white font-bold rounded-xl glow-primary transition-all">
+              <button onClick={handleGetStarted} className="inline-flex items-center gap-2 px-8 py-4 bg-primary hover:bg-primary/90 text-white font-bold rounded-xl glow-primary transition-all">
                 <Video className="w-5 h-5" /> Become an Avatar
-              </Link>
+              </button>
             </div>
           </div>
         </div>
@@ -239,7 +240,7 @@ export default function Landing() {
       <footer className="py-12 px-4 border-t border-white/5">
         <div className="max-w-6xl mx-auto">
           <div className="flex flex-col md:flex-row items-center justify-between gap-6">
-            <Link to="/Landing" className="text-xl font-bold">Co<span className="text-primary">Task</span></Link>
+            <Link to="/" className="text-xl font-bold">Co<span className="text-primary">Task</span></Link>
             <div className="flex flex-wrap gap-6 text-sm text-muted-foreground">
               <Link to="/HowItWorks" className="hover:text-foreground transition-colors">How it works</Link>
               <Link to="/Pricing" className="hover:text-foreground transition-colors">Pricing</Link>

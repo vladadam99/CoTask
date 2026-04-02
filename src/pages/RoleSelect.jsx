@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { User, Radio, Building2, ArrowRight, Zap, Globe, BarChart2 } from 'lucide-react';
+import { Radio, Building2, ArrowRight, Globe, BarChart2, Loader2 } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { useCurrentUser } from '@/lib/useCurrentUser';
 
@@ -16,7 +16,7 @@ const roles = [
     title: 'I need help',
     subtitle: 'Client / Explorer',
     desc: 'Hire someone on the ground anywhere in the world — and watch it happen live. Tours, inspections, errands, shopping, queues — anything you need done, done in real time.',
-    cta: 'Hire',
+    cta: 'Continue as Client',
     tags: ['Post Jobs', 'Live Streaming', 'Any Task'],
   },
   {
@@ -28,8 +28,8 @@ const roles = [
     iconBg: 'bg-primary/10',
     title: 'I want to earn',
     subtitle: 'Avatar / Helper',
-    desc: 'Get hired for your skills at your own rate. Apply to jobs, run tasks, conduct live tours, or do anything for anyone — and make money being someone\'s boots on the ground.',
-    cta: 'Earn',
+    desc: "Get hired for your skills at your own rate. Apply to jobs, run tasks, conduct live tours, or do anything for anyone — and make money being someone's boots on the ground.",
+    cta: 'Continue as Avatar',
     tags: ['Apply to Jobs', 'Live Streams', 'Flexible Hours'],
     featured: true,
   },
@@ -43,7 +43,7 @@ const roles = [
     title: 'Business solutions',
     subtitle: 'Enterprise',
     desc: 'Scale field operations without the overhead. Deploy avatars for inspections, remote demos, multi-site coverage, and enterprise-grade workflows.',
-    cta: 'Deploy',
+    cta: 'Continue as Enterprise',
     tags: ['Team Access', 'Bulk Jobs', 'Priority Support'],
   },
 ];
@@ -52,22 +52,15 @@ export default function RoleSelect() {
   const { user, loading: userLoading } = useCurrentUser();
   const [loading, setLoading] = useState(null);
 
-  // After Google login redirect back here, auto-trigger stored role
+  // If user isn't signed in yet, redirect to Google login and come back here
   useEffect(() => {
-    if (!user || userLoading) return;
-    const stored = localStorage.getItem('cotask_role');
-    if (stored) {
-      localStorage.removeItem('cotask_role');
-      handleRoleSelect(stored);
+    if (!userLoading && !user) {
+      base44.auth.redirectToLogin('/RoleSelect');
     }
   }, [user, userLoading]);
 
   const handleRoleSelect = async (role) => {
-    if (!user) {
-      localStorage.setItem('cotask_role', role);
-      base44.auth.redirectToLogin(`/RoleSelect`);
-      return;
-    }
+    if (!user) return;
     setLoading(role);
     try {
       if (role === 'avatar') {
@@ -83,29 +76,37 @@ export default function RoleSelect() {
           return;
         }
       } else if (role === 'user') {
-        // User role: check if they've previously completed user onboarding
-        if (user.onboarding_complete && user.role === 'user') {
+        // User profile exists if they have previously completed user onboarding
+        // We store this on the User entity as role='user' + onboarding_complete
+        if (user.onboarding_complete && (user.role === 'user' || !user.role)) {
           window.location.href = '/UserDashboard';
           return;
         }
       }
-      // No existing profile for this role — go to onboarding
+      // No existing profile for this role — set up a new one
       window.location.href = `/Onboarding?role=${role}`;
     } finally {
       setLoading(null);
     }
   };
 
+  if (userLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <Loader2 className="w-8 h-8 animate-spin text-primary" />
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen flex items-center justify-center px-4 py-12 relative overflow-hidden">
-      {/* Background */}
       <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-background to-background" />
       <div className="absolute top-0 right-0 w-96 h-96 bg-primary/8 rounded-full blur-3xl" />
       <div className="absolute bottom-0 left-0 w-64 h-64 bg-blue-500/6 rounded-full blur-3xl" />
 
       <div className="relative z-10 max-w-4xl w-full">
         <div className="text-center mb-12">
-          <Link to="/Landing" className="text-2xl font-bold tracking-tight mb-6 inline-block">
+          <Link to="/" className="text-2xl font-bold tracking-tight mb-6 inline-block">
             Co<span className="text-primary">Task</span>
           </Link>
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
@@ -133,7 +134,7 @@ export default function RoleSelect() {
 
               <div className={`w-14 h-14 rounded-2xl ${role.iconBg} flex items-center justify-center mb-5 group-hover:scale-110 transition-transform`}>
                 {loading === role.key ? (
-                  <div className="w-6 h-6 border-2 border-current border-t-transparent rounded-full animate-spin" />
+                  <Loader2 className={`w-6 h-6 ${role.iconColor} animate-spin`} />
                 ) : (
                   <role.icon className={`w-7 h-7 ${role.iconColor}`} />
                 )}
@@ -157,13 +158,6 @@ export default function RoleSelect() {
             </motion.button>
           ))}
         </div>
-
-        <p className="text-center mt-8 text-sm text-muted-foreground">
-          Already have an account?{' '}
-          <button onClick={() => base44.auth.redirectToLogin('/UserDashboard')} className="text-primary hover:underline font-medium">
-            Sign in
-          </button>
-        </p>
       </div>
     </div>
   );
