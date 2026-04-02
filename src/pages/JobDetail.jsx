@@ -9,7 +9,7 @@ import { getNavItems } from '@/lib/navItems';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import StatusBadge from '@/components/ui/StatusBadge';
-import { ArrowLeft, MapPin, Clock, DollarSign, Users, CheckCircle, XCircle, Star, Award, MessageCircle, Pencil } from 'lucide-react';
+import { ArrowLeft, MapPin, Clock, DollarSign, Users, CheckCircle, XCircle, Star, Award, MessageCircle, Pencil, Calendar, AlertCircle } from 'lucide-react';
 
 const DURATION_LABELS = { hourly: '/hr', daily: '/day', weekly: '/wk', monthly: '/mo', custom: '' };
 
@@ -140,6 +140,7 @@ export default function JobDetail() {
       budget_max: job.budget_max || '',
       location: job.location || '',
       scheduled_date: job.scheduled_date || '',
+      scheduled_time: job.scheduled_time || '',
     });
     setShowEditForm(true);
   };
@@ -152,6 +153,7 @@ export default function JobDetail() {
       budget_max: editForm.budget_max ? Number(editForm.budget_max) : undefined,
       location: editForm.location,
       scheduled_date: editForm.scheduled_date || undefined,
+      scheduled_time: editForm.scheduled_time || undefined,
     });
     queryClient.invalidateQueries({ queryKey: ['job-detail', jobId] });
     setShowEditForm(false);
@@ -239,7 +241,17 @@ export default function JobDetail() {
             {job.remote_ok && <span className="px-2 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400">Remote OK</span>}
             {job.travel_required && <span className="px-2 py-1 rounded-full bg-orange-500/10 border border-orange-500/20 text-orange-400">Travel Required</span>}
             {job.flexible_dates ? <span className="px-2 py-1 rounded-full bg-green-500/10 border border-green-500/20 text-green-400">Flexible Dates</span>
-              : job.scheduled_date && <span className="px-2 py-1 rounded-full bg-white/5 border border-white/10 text-muted-foreground">📅 {job.scheduled_date}</span>}
+              : job.scheduled_date && (
+                <span className="px-2 py-1 rounded-full bg-white/5 border border-white/10 text-muted-foreground flex items-center gap-1.5">
+                  <Calendar className="w-3.5 h-3.5" />
+                  {job.scheduled_date}{job.scheduled_time ? ` at ${job.scheduled_time}` : ''}
+                </span>
+              )}
+            {!job.flexible_dates && job.scheduled_date && job.scheduled_time && job.status === 'open' && (
+              <span className="px-2 py-1 rounded-full bg-yellow-500/10 border border-yellow-500/20 text-yellow-400 flex items-center gap-1.5 text-xs">
+                <AlertCircle className="w-3 h-3" /> Expires if unclaimed by {job.scheduled_time} on {job.scheduled_date}
+              </span>
+            )}
           </div>
 
           {(job.skills_required || []).length > 0 && (
@@ -303,6 +315,11 @@ export default function JobDetail() {
               <div>
                 <label className="text-sm font-medium mb-1.5 block">Scheduled Date</label>
                 <input type="date" value={editForm.scheduled_date} onChange={e => setEditForm(p => ({ ...p, scheduled_date: e.target.value }))}
+                  className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-primary/50 text-foreground" />
+              </div>
+              <div>
+                <label className="text-sm font-medium mb-1.5 block">Scheduled Time</label>
+                <input type="time" value={editForm.scheduled_time || ''} onChange={e => setEditForm(p => ({ ...p, scheduled_time: e.target.value }))}
                   className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-primary/50 text-foreground" />
               </div>
             </div>
