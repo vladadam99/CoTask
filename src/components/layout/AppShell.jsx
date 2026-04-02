@@ -65,7 +65,7 @@ export default function AppShell({ children, navItems = [], user }) {
         <Link to={homePath} className="text-lg font-bold">Co<span className="text-primary">Task</span></Link>
         <div className="flex items-center gap-2">
           <NotificationBell userEmail={user?.email} userRole={user?.role} />
-          <button onClick={() => setDrawerOpen(true)} className="p-1.5 rounded-lg hover:bg-white/10 transition-colors">
+          <button onClick={() => setDrawerOpen(true)} className="p-3 -mr-1 rounded-lg hover:bg-white/10 transition-colors">
             <Menu className="w-5 h-5" />
           </button>
         </div>
