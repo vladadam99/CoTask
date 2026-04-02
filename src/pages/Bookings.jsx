@@ -9,6 +9,7 @@ import { Calendar, Search, ArrowLeft, Briefcase, Users, Clock, CheckCircle } fro
 import { Input } from '@/components/ui/input';
 import AppShell from '@/components/layout/AppShell';
 import { getNavItems } from '@/lib/navItems';
+import BookingCalendar from '@/components/bookings/BookingCalendar';
 
 const TABS = ['All', 'Pending', 'Active', 'Completed', 'Cancelled'];
 
