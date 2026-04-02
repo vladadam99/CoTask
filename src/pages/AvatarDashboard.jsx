@@ -65,7 +65,8 @@ export default function AvatarDashboard() {
     </div>
   );
 
-  if (!user || user.role !== 'avatar') return null;
+  if (!user) return null;
+  if (user.role !== 'avatar') return null;
   const pendingBookings = bookings.filter(b => b.status === 'pending');
   const upcomingBookings = bookings.filter(b => ['accepted', 'scheduled'].includes(b.status));
   const completedCount = bookings.filter(b => b.status === 'completed').length;

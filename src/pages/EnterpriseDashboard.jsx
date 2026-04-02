@@ -62,7 +62,8 @@ export default function EnterpriseDashboard() {
     </div>
   );
 
-  if (!user || user.role !== 'enterprise') return null;
+  if (!user) return null;
+  if (user.role !== 'enterprise') return null;
   const activeBookings = bookings.filter(b => ['accepted', 'scheduled', 'in_progress', 'live'].includes(b.status));
   const totalSpend = bookings.filter(b => b.payment_status === 'paid').reduce((sum, b) => sum + (b.total_amount || 0), 0);
   const pendingCount = bookings.filter(b => b.status === 'pending').length;

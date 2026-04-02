@@ -80,7 +80,8 @@ export default function UserDashboard() {
     </div>
   );
 
-  if (!user || user.role !== 'user') return null;
+  if (!user) return null;
+  if (user.role !== 'user') return null;
   const firstName = user?.full_name?.split(' ')[0] || '';
 
   return (
