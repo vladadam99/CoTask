@@ -217,7 +217,7 @@ export default function AvatarMessages() {
         {activeConvo ? (
           <>
             <div className="p-4 border-b border-white/5 flex items-center gap-3">
-              <button onClick={() => setActiveConvo(null)}>
+              <button onClick={() => setActiveConvo(null)} className="p-2 -ml-2 rounded-full hover:bg-white/10 transition-colors">
                 <ArrowLeft className="w-5 h-5" />
               </button>
               <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-sm font-bold text-primary">
