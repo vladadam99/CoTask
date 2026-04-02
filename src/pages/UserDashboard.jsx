@@ -1,5 +1,5 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, { useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { useCurrentUser } from '@/lib/useCurrentUser';
@@ -47,7 +47,16 @@ const CATEGORIES = [
 ];
 
 export default function UserDashboard() {
+  const navigate = useNavigate();
   const { user, loading: userLoading } = useCurrentUser();
+
+  // Guard: redirect if user role is not 'user'
+  useEffect(() => {
+    if (user && user.role !== 'user') {
+      const dest = user.role === 'avatar' ? '/AvatarDashboard' : '/EnterpriseDashboard';
+      navigate(dest);
+    }
+  }, [user, navigate]);
 
   const { data: bookings = [] } = useQuery({
     queryKey: ['user-bookings', user?.email],
@@ -71,16 +80,7 @@ export default function UserDashboard() {
     </div>
   );
 
-  // Guard: redirect if user role is not 'user'
-  if (user && user.role !== 'user') {
-    const dest = user.role === 'avatar' ? '/AvatarDashboard' : '/EnterpriseDashboard';
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <script>{`window.location.href = '${dest}';`}</script>
-      </div>
-    );
-  }
-
+  if (!user || user.role !== 'user') return null;
   const firstName = user?.full_name?.split(' ')[0] || '';
 
   return (

@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import PostUpload from '@/components/explore/PostUpload';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
@@ -20,6 +20,7 @@ import SuggestedJobs from '@/components/dashboard/SuggestedJobs';
 
 
 export default function AvatarDashboard() {
+  const navigate = useNavigate();
   const { user, loading: userLoading } = useCurrentUser();
   const queryClient = useQueryClient();
   const [showPostUpload, setShowPostUpload] = useState(false);
@@ -50,22 +51,21 @@ export default function AvatarDashboard() {
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['avatar-profile'] }),
   });
 
+  // Guard: redirect if user role is not 'avatar'
+  useEffect(() => {
+    if (user && user.role !== 'avatar') {
+      const dest = user.role === 'user' ? '/UserDashboard' : '/EnterpriseDashboard';
+      navigate(dest);
+    }
+  }, [user, navigate]);
+
   if (userLoading) return (
     <div className="min-h-screen flex items-center justify-center">
       <div className="w-8 h-8 border-4 border-primary/20 border-t-primary rounded-full animate-spin" />
     </div>
   );
 
-  // Guard: redirect if user role is not 'avatar'
-  if (user && user.role !== 'avatar') {
-    const dest = user.role === 'user' ? '/UserDashboard' : '/EnterpriseDashboard';
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <script>{`window.location.href = '${dest}';`}</script>
-      </div>
-    );
-  }
-
+  if (!user || user.role !== 'avatar') return null;
   const pendingBookings = bookings.filter(b => b.status === 'pending');
   const upcomingBookings = bookings.filter(b => ['accepted', 'scheduled'].includes(b.status));
   const completedCount = bookings.filter(b => b.status === 'completed').length;

@@ -1,5 +1,5 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, { useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { useCurrentUser } from '@/lib/useCurrentUser';
@@ -20,6 +20,7 @@ const navItems = [
 ];
 
 export default function EnterpriseDashboard() {
+  const navigate = useNavigate();
   const { user, loading: userLoading } = useCurrentUser();
 
   const { data: profile } = useQuery({
@@ -43,6 +44,14 @@ export default function EnterpriseDashboard() {
     enabled: !!user,
   });
 
+  // Guard: redirect if user role is not 'enterprise'
+  useEffect(() => {
+    if (user && user.role !== 'enterprise') {
+      const dest = user.role === 'user' ? '/UserDashboard' : '/AvatarDashboard';
+      navigate(dest);
+    }
+  }, [user, navigate]);
+
   const avgRating = myReviews.length
     ? (myReviews.reduce((s, r) => s + r.rating, 0) / myReviews.length).toFixed(1)
     : null;
@@ -53,16 +62,7 @@ export default function EnterpriseDashboard() {
     </div>
   );
 
-  // Guard: redirect if user role is not 'enterprise'
-  if (user && user.role !== 'enterprise') {
-    const dest = user.role === 'user' ? '/UserDashboard' : '/AvatarDashboard';
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <script>{`window.location.href = '${dest}';`}</script>
-      </div>
-    );
-  }
-
+  if (!user || user.role !== 'enterprise') return null;
   const activeBookings = bookings.filter(b => ['accepted', 'scheduled', 'in_progress', 'live'].includes(b.status));
   const totalSpend = bookings.filter(b => b.payment_status === 'paid').reduce((sum, b) => sum + (b.total_amount || 0), 0);
   const pendingCount = bookings.filter(b => b.status === 'pending').length;
