@@ -23,7 +23,7 @@ export default function PostJob() {
     remote_ok: false, travel_required: false,
     duration_type: 'hourly', duration_value: 1,
     budget_min: '', budget_max: '', negotiable: true,
-    camera_required: false, flexible_dates: true, scheduled_date: '',
+    camera_required: false, flexible_dates: true, scheduled_date: '', scheduled_time: '',
     skills_required: [], languages_required: [], equipment_needed: [],
   });
   const [skillInput, setSkillInput] = useState('');
@@ -144,9 +144,15 @@ export default function PostJob() {
 
           {/* Date (if not flexible) */}
           {!form.flexible_dates && (
-            <div>
-              <label className="text-sm font-medium mb-1.5 block">Scheduled Date</label>
-              <Input type="date" value={form.scheduled_date} onChange={e => set('scheduled_date', e.target.value)} className="bg-white/5 border-white/10" />
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="text-sm font-medium mb-1.5 block">Scheduled Date</label>
+                <Input type="date" value={form.scheduled_date} onChange={e => set('scheduled_date', e.target.value)} className="bg-white/5 border-white/10" />
+              </div>
+              <div>
+                <label className="text-sm font-medium mb-1.5 block">Scheduled Time</label>
+                <Input type="time" value={form.scheduled_time} onChange={e => set('scheduled_time', e.target.value)} className="bg-white/5 border-white/10" />
+              </div>
             </div>
           )}
 
