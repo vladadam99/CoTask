@@ -7,7 +7,7 @@ import EnterpriseOnboarding from '@/components/onboarding/EnterpriseOnboarding';
 
 export default function Onboarding() {
   const { user, loading, updateUser } = useCurrentUser();
-  const [role, setRole] = useState('user');
+  const [role, setRole] = useState(null);
   const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
@@ -22,7 +22,8 @@ export default function Onboarding() {
   useEffect(() => {
     if (loading || !user || !role) return;
     // If user's current role doesn't match onboarding role, redirect to correct dashboard
-    if (user.role !== role) {
+    // But only if user already has onboarding complete (i.e. they have an existing session)
+    if (user.onboarding_complete && user.role !== role) {
       const dest = user.role === 'avatar' ? '/AvatarDashboard'
                  : user.role === 'enterprise' ? '/EnterpriseDashboard'
                  : '/UserDashboard';
@@ -37,9 +38,6 @@ export default function Onboarding() {
       } else if (role === 'enterprise') {
         const profiles = await base44.entities.EnterpriseProfile.filter({ user_email: user.email });
         if (profiles.length > 0) { window.location.href = '/EnterpriseDashboard'; }
-      } else if (role === 'user') {
-        // User role onboarding complete, redirect to dashboard
-        window.location.href = '/UserDashboard';
       }
     };
     check();
