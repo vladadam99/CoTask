@@ -23,8 +23,8 @@ function notify(newUser) {
 }
 
 export function useCurrentUser() {
-  const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [user, setUser] = useState(_user); // init with cached user if available (SPA navigation)
+  const [loading, setLoading] = useState(!_user); // if we already have user, not loading
 
   useEffect(() => {
     const listener = (u) => setUser(u);
@@ -40,9 +40,9 @@ export function useCurrentUser() {
 
   const updateUser = useCallback(async (data) => {
     const updated = await base44.auth.updateMe(data);
-    // Re-fetch fresh user data to ensure all fields are current
-    const fresh = await base44.auth.me();
-    notify(fresh);
+    // Immediately notify with merged result so all listeners get the new role right away
+    // This avoids relying on base44.auth.me() which may return stale JWT data
+    notify({ ..._user, ...data, ...updated });
     return updated;
   }, []);
 

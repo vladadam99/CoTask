@@ -51,13 +51,13 @@ export default function AvatarDashboard() {
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['avatar-profile'] }),
   });
 
-  // Guard: redirect if user role is not 'avatar'
+  // Guard: redirect if user role is not 'avatar' — wait until loading is done to avoid stale-state redirect
   useEffect(() => {
-    if (user && user.role !== 'avatar') {
+    if (!userLoading && user && user.role !== 'avatar') {
       const dest = user.role === 'user' ? '/UserDashboard' : '/EnterpriseDashboard';
-      navigate(dest);
+      navigate(dest, { replace: true });
     }
-  }, [user, navigate]);
+  }, [user, userLoading, navigate]);
 
   if (userLoading) return (
     <div className="min-h-screen flex items-center justify-center">

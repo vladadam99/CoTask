@@ -44,13 +44,13 @@ export default function EnterpriseDashboard() {
     enabled: !!user,
   });
 
-  // Guard: redirect if user role is not 'enterprise'
+  // Guard: wait until loading is done to avoid stale-state redirect
   useEffect(() => {
-    if (user && user.role !== 'enterprise') {
+    if (!userLoading && user && user.role !== 'enterprise') {
       const dest = user.role === 'user' ? '/UserDashboard' : '/AvatarDashboard';
-      navigate(dest);
+      navigate(dest, { replace: true });
     }
-  }, [user, navigate]);
+  }, [user, userLoading, navigate]);
 
   const avgRating = myReviews.length
     ? (myReviews.reduce((s, r) => s + r.rating, 0) / myReviews.length).toFixed(1)

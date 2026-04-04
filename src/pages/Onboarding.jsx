@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useCurrentUser } from '@/lib/useCurrentUser';
 import { base44 } from '@/api/base44Client';
 import AvatarOnboarding from '@/components/onboarding/AvatarOnboarding';
@@ -6,6 +7,7 @@ import UserOnboarding from '@/components/onboarding/UserOnboarding';
 import EnterpriseOnboarding from '@/components/onboarding/EnterpriseOnboarding';
 
 export default function Onboarding() {
+  const navigate = useNavigate();
   const { user, loading, updateUser } = useCurrentUser();
   const [role, setRole] = useState(null);
   const [submitting, setSubmitting] = useState(false);
@@ -109,7 +111,7 @@ export default function Onboarding() {
       const dest = role === 'avatar' ? '/AvatarDashboard'
                  : role === 'enterprise' ? '/EnterpriseDashboard'
                  : '/UserDashboard';
-      window.location.href = dest;
+      navigate(dest, { replace: true });
     } finally {
       setSubmitting(false);
     }

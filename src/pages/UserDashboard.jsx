@@ -50,13 +50,13 @@ export default function UserDashboard() {
   const navigate = useNavigate();
   const { user, loading: userLoading } = useCurrentUser();
 
-  // Guard: redirect if user role is not 'user'
+  // Guard: redirect if user role is not 'user' — wait until loading is done to avoid stale-state redirect
   useEffect(() => {
-    if (user && user.role !== 'user') {
+    if (!userLoading && user && user.role !== 'user') {
       const dest = user.role === 'avatar' ? '/AvatarDashboard' : '/EnterpriseDashboard';
-      navigate(dest);
+      navigate(dest, { replace: true });
     }
-  }, [user, navigate]);
+  }, [user, userLoading, navigate]);
 
   const { data: bookings = [] } = useQuery({
     queryKey: ['user-bookings', user?.email],
