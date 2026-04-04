@@ -23,25 +23,17 @@ function notify(newUser) {
 }
 
 export function useCurrentUser() {
-  const [user, setUser] = useState(_user);
-  const [loading, setLoading] = useState(!_user);
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const listener = (u) => setUser(u);
     _listeners.push(listener);
 
-    // Only fetch if we don't have user data yet
-    if (!_user) {
-      base44.auth.me()
-        .then(u => { notify(u); setLoading(false); })
-        .catch(() => { notify(null); setLoading(false); });
-    } else {
-      setLoading(false);
-      // Still re-fetch in background to ensure freshness on page navigation
-      base44.auth.me()
-        .then(u => notify(u))
-        .catch(() => {});
-    }
+    // Always fetch fresh to avoid stale cached role from previous session
+    base44.auth.me()
+      .then(u => { notify(u); setLoading(false); })
+      .catch(() => { notify(null); setLoading(false); });
 
     return () => { _listeners = _listeners.filter(fn => fn !== listener); };
   }, []);
