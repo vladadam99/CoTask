@@ -155,8 +155,8 @@ export default function CounterOfferFlow({ booking, user, convId, onBookingUpdat
             ))}
           </div>
 
-          {/* Respond to latest pending offer */}
-          {latestOffer?.status === 'pending' && myTurn && (
+          {/* Respond to latest pending offer — only shown to the OTHER party */}
+          {latestOffer?.status === 'pending' && latestOffer.offered_by_email !== user?.email && myTurn && (
             <div className="flex gap-2 pt-1">
               <Button size="sm" className="bg-green-600 hover:bg-green-700 flex-1" onClick={() => respondToOffer(latestOffer.id, true)}>
                 <CheckCircle className="w-3.5 h-3.5 mr-1" /> Accept ${latestOffer.amount.toFixed(2)}
@@ -165,6 +165,10 @@ export default function CounterOfferFlow({ booking, user, convId, onBookingUpdat
                 <X className="w-3.5 h-3.5 mr-1" /> Decline
               </Button>
             </div>
+          )}
+          {/* Waiting message for the sender */}
+          {latestOffer?.status === 'pending' && latestOffer.offered_by_email === user?.email && (
+            <p className="text-xs text-muted-foreground text-center pt-2 italic">✉️ Offer sent — awaiting the other party's response…</p>
           )}
         </GlassCard>
       )}
