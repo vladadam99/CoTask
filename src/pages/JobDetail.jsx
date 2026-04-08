@@ -11,6 +11,7 @@ import { Badge } from '@/components/ui/badge';
 import StatusBadge from '@/components/ui/StatusBadge';
 import JobPaymentModal from '@/components/jobs/JobPaymentModal';
 import { ArrowLeft, MapPin, Clock, DollarSign, Users, CheckCircle, XCircle, Star, Award, MessageCircle, Pencil, Calendar, AlertCircle } from 'lucide-react';
+import JobNegotiationFlow from '@/components/jobs/JobNegotiationFlow';
 
 const DURATION_LABELS = { hourly: '/hr', daily: '/day', weekly: '/wk', monthly: '/mo', custom: '' };
 
@@ -387,6 +388,11 @@ export default function JobDetail() {
                 <p className="text-xs text-muted-foreground">{myApplication.cover_message}</p>
               </div>
             </div>
+            <JobNegotiationFlow
+              application={myApplication}
+              job={job}
+              user={user}
+            />
           </div>
         )}
 
@@ -460,6 +466,14 @@ export default function JobDetail() {
                         {app.proposed_rate && <span className="text-primary font-medium">${app.proposed_rate}</span>}
                         {app.available_from && <span>Available: {app.available_from}</span>}
                       </div>
+                      <JobNegotiationFlow
+                        application={app}
+                        job={job}
+                        user={user}
+                        onRateAgreed={(agreedRate) => {
+                          setPendingWinnerApp({ ...app, proposed_rate: agreedRate });
+                        }}
+                      />
                     </div>
                     {showOwnerControls && job.status === 'open' && app.status === 'pending' && (
                       <div className="flex flex-col gap-2">

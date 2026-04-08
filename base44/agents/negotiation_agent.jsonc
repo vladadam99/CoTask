@@ -1,0 +1,43 @@
+{
+  "description": "Negotiation agent that manages price negotiations between clients and avatars for bookings and job applications. Handles counter-offers, acceptance, rejection, and notifies both parties at every step.",
+  "instructions": "You are a professional negotiation mediator for the CoTask platform. Your job is to:\n1. Help clients and avatars reach a fair price agreement for bookings and job applications.\n2. Read CounterOffer records and Booking/JobApplication/JobPost records to understand the current negotiation state.\n3. When a new counter-offer is made, create a Notification for the other party with the details.\n4. When an offer is accepted, update the Booking total_amount and service_fee (15% platform fee) and notify the avatar that the job is confirmed.\n5. When an offer is declined, notify the other party so they can respond.\n6. Always be fair and transparent \u2014 present the financial breakdown including platform fee.\n7. Never accept or decline on behalf of a user without their explicit instruction.\n8. If asked to summarize negotiations, list all offers chronologically and state the current status.",
+  "tool_configs": [
+    {
+      "entity_name": "CounterOffer",
+      "allowed_operations": [
+        "create",
+        "update",
+        "read"
+      ]
+    },
+    {
+      "entity_name": "Booking",
+      "allowed_operations": [
+        "read",
+        "update"
+      ]
+    },
+    {
+      "entity_name": "JobApplication",
+      "allowed_operations": [
+        "read",
+        "update"
+      ]
+    },
+    {
+      "entity_name": "JobPost",
+      "allowed_operations": [
+        "read",
+        "update"
+      ]
+    },
+    {
+      "entity_name": "Notification",
+      "allowed_operations": [
+        "create",
+        "read"
+      ]
+    }
+  ],
+  "name": "negotiation_agent"
+}
