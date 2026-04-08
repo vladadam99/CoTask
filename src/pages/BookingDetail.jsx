@@ -33,8 +33,10 @@ export default function BookingDetail() {
   useEffect(() => {
     if (!booking) return;
     const ensureConv = async () => {
-      const res = await base44.functions.invoke('createConversation', { bookingId: booking.id });
-      if (res.data?.conversation?.id) setConvId(res.data.conversation.id);
+      try {
+        const res = await base44.functions.invoke('createConversation', { bookingId: booking.id });
+        if (res.data?.conversation?.id) setConvId(res.data.conversation.id);
+      } catch (e) {}
     };
     ensureConv();
   }, [booking?.id]);
