@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Radio, Building2, ArrowRight, Globe, BarChart2, Loader2 } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
@@ -49,7 +49,8 @@ const roles = [
 ];
 
 export default function RoleSelect() {
-  const { user, loading: userLoading } = useCurrentUser();
+  const { user, loading: userLoading, updateUser } = useCurrentUser();
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(null);
 
   // If user isn't signed in yet, redirect to Google login and come back here
@@ -63,28 +64,23 @@ export default function RoleSelect() {
     if (!user) return;
     setLoading(role);
     try {
+      // Always update the role first so dashboard guards see the correct value
+      await updateUser({ role });
+
       if (role === 'avatar') {
         const profiles = await base44.entities.AvatarProfile.filter({ user_email: user.email });
-        if (profiles.length > 0) {
-          window.location.href = '/AvatarDashboard';
-          return;
-        }
+        navigate(profiles.length > 0 ? '/AvatarDashboard' : `/Onboarding?role=avatar`, { replace: true });
       } else if (role === 'enterprise') {
         const profiles = await base44.entities.EnterpriseProfile.filter({ user_email: user.email });
-        if (profiles.length > 0) {
-          window.location.href = '/EnterpriseDashboard';
-          return;
-        }
-      } else if (role === 'user') {
-        // User profile exists if they have previously completed user onboarding
-        // We store this on the User entity as role='user' + onboarding_complete
-        if (user.onboarding_complete && (user.role === 'user' || !user.role)) {
-          window.location.href = '/UserDashboard';
-          return;
+        navigate(profiles.length > 0 ? '/EnterpriseDashboard' : `/Onboarding?role=enterprise`, { replace: true });
+      } else {
+        // user role
+        if (user.onboarding_complete) {
+          navigate('/UserDashboard', { replace: true });
+        } else {
+          navigate('/Onboarding?role=user', { replace: true });
         }
       }
-      // No existing profile for this role — set up a new one
-      window.location.href = `/Onboarding?role=${role}`;
     } finally {
       setLoading(null);
     }
