@@ -76,6 +76,17 @@ export default function UserBookingDetail() {
   };
 
   const isClient = !!user && !!booking && user.email === booking?.client_email;
+
+  const { data: counterOffers = [] } = useQuery({
+    queryKey: ['counter-offers', id],
+    queryFn: () => base44.entities.CounterOffer.filter({ booking_id: id }, '-created_date', 5),
+    enabled: !!id,
+  });
+
+  const latestOffer = counterOffers[0];
+  // Only allow payment if: no counter-offers at all, OR latest offer is accepted (both agreed)
+  const negotiationResolved = counterOffers.length === 0 || latestOffer?.status === 'accepted';
+
   const { data: existingReview } = useQuery({
     queryKey: ['user-booking-review', id, user?.email],
     queryFn: async () => {
@@ -100,7 +111,7 @@ export default function UserBookingDetail() {
   );
 
   const canCancel = isClient && ['pending', 'accepted', 'scheduled'].includes(booking.status);
-  const needsPayment = isClient && booking.payment_status === 'pending' && ['pending', 'accepted'].includes(booking.status);
+  const needsPayment = isClient && booking.payment_status === 'pending' && ['pending', 'accepted'].includes(booking.status) && negotiationResolved;
 
   return (
     <div className="min-h-screen bg-background p-4 lg:p-8">
