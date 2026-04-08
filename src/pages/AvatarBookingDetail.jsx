@@ -174,7 +174,7 @@ export default function AvatarBookingDetail() {
             <h3 className="font-semibold mb-3 flex items-center gap-2"><DollarSign className="w-4 h-4 text-primary" /> Your Earnings</h3>
             <div className="space-y-2 text-sm">
               <div className="flex justify-between"><span className="text-muted-foreground">Service rate</span><span>${booking.amount?.toFixed(2)}</span></div>
-              <div className="flex justify-between"><span className="text-muted-foreground">Platform fee (15%)</span><span className="text-red-400">-${booking.service_fee?.toFixed(2)}</span></div>
+              <div className="flex justify-between"><span className="text-muted-foreground">Platform fee (10%)</span><span className="text-red-400">-${booking.service_fee?.toFixed(2)}</span></div>
               <div className="border-t border-white/5 pt-2 flex justify-between font-semibold">
                 <span>You receive</span><span className="text-green-400">${(booking.amount - booking.service_fee || 0).toFixed(2)}</span>
               </div>
@@ -216,6 +216,7 @@ export default function AvatarBookingDetail() {
             booking={booking}
             user={user}
             convId={convId}
+            role="avatar"
             onBookingUpdate={() => queryClient.invalidateQueries({ queryKey: ['avatar-booking', id] })}
           />
 

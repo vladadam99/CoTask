@@ -5,15 +5,16 @@ import { Button } from '@/components/ui/button';
 import GlassCard from '@/components/ui/GlassCard';
 import { AlertTriangle, Loader2, CheckCircle, X, DollarSign, ArrowRight } from 'lucide-react';
 
-export default function CounterOfferFlow({ booking, user, convId, onBookingUpdate }) {
+export default function CounterOfferFlow({ booking, user, convId, onBookingUpdate, role }) {
   const queryClient = useQueryClient();
   const [showForm, setShowForm] = useState(false);
   const [amount, setAmount] = useState('');
   const [note, setNote] = useState('');
   const [sending, setSending] = useState(false);
 
-  const isAvatar = user?.email === booking?.avatar_email;
-  const isClient = user?.email === booking?.client_email;
+  // role prop ('avatar' | 'client') is explicit — avoids issues when same user tests both sides
+  const isAvatar = role === 'avatar';
+  const isClient = role === 'client';
 
   const { data: offers = [] } = useQuery({
     queryKey: ['counter-offers', booking?.id],
@@ -82,7 +83,7 @@ export default function CounterOfferFlow({ booking, user, convId, onBookingUpdat
     if (accept && latestOffer) {
       // Update booking amount
       const newAmount = latestOffer.amount;
-      const fee = parseFloat((newAmount * 0.15).toFixed(2));
+      const fee = parseFloat((newAmount * 0.10).toFixed(2));
       await base44.entities.Booking.update(booking.id, {
         amount: newAmount,
         service_fee: fee,
@@ -140,7 +141,7 @@ export default function CounterOfferFlow({ booking, user, convId, onBookingUpdat
               }`}>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2">
-                    <span className="font-medium text-xs capitalize">{offer.offered_by_role}</span>
+                    <span className="font-medium text-xs capitalize">{offer.offered_by_name || offer.offered_by_role}</span>
                     <ArrowRight className="w-3 h-3 text-muted-foreground" />
                     <span className="font-bold text-primary">${offer.amount.toFixed(2)}</span>
                     <span className={`ml-auto text-xs px-2 py-0.5 rounded-full ${

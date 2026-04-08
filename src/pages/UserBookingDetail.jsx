@@ -220,7 +220,7 @@ export default function UserBookingDetail() {
             <h3 className="font-semibold mb-3 flex items-center gap-2"><DollarSign className="w-4 h-4 text-primary" /> Payment</h3>
             <div className="space-y-2 text-sm">
               <div className="flex justify-between"><span className="text-muted-foreground">Service</span><span>${booking.amount?.toFixed(2)}</span></div>
-              <div className="flex justify-between"><span className="text-muted-foreground">Platform fee</span><span>${booking.service_fee?.toFixed(2)}</span></div>
+              <div className="flex justify-between"><span className="text-muted-foreground">Platform fee (10%)</span><span>${booking.service_fee?.toFixed(2)}</span></div>
               <div className="border-t border-white/5 pt-2 flex justify-between font-semibold">
                 <span>Total</span><span className="text-primary">${booking.total_amount?.toFixed(2)}</span>
               </div>
@@ -259,6 +259,7 @@ export default function UserBookingDetail() {
             booking={booking}
             user={user}
             convId={convId}
+            role="client"
             onBookingUpdate={() => queryClient.invalidateQueries({ queryKey: ['user-booking', id] })}
           />
 

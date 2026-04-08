@@ -32,6 +32,23 @@ export default function AvatarRequests() {
     enabled: !!user,
   });
 
+  // Fetch latest counter-offer per booking to show current negotiated price
+  const { data: allOffers = [] } = useQuery({
+    queryKey: ['avatar-counter-offers', user?.email],
+    queryFn: async () => {
+      if (!bookings.length) return [];
+      const ids = bookings.map(b => b.id);
+      const results = await Promise.all(
+        ids.map(bid => base44.entities.CounterOffer.filter({ booking_id: bid }, '-created_date', 1).then(r => r[0] || null))
+      );
+      return results.filter(Boolean);
+    },
+    enabled: bookings.length > 0,
+    refetchInterval: 8000,
+  });
+
+  const getLatestOffer = (bookingId) => allOffers.find(o => o.booking_id === bookingId);
+
   const { data: wonJobs = [], isLoading: isLoadingJobs } = useQuery({
     queryKey: ['avatar-won-jobs', user?.email],
     queryFn: () => base44.entities.JobPost.filter({ winner_email: user.email }, '-updated_date', 50),
@@ -196,9 +213,20 @@ export default function AvatarRequests() {
                 </div>
 
                 <div className="flex flex-col items-end gap-3 flex-shrink-0">
-                  <span className="text-lg font-bold text-primary">
-                    ${booking.total_amount || booking.amount || 0}
-                  </span>
+                  {(() => {
+                    const latestOffer = getLatestOffer(booking.id);
+                    const displayAmount = latestOffer?.status === 'pending'
+                      ? latestOffer.amount
+                      : (booking.total_amount || booking.amount || 0);
+                    return (
+                      <div className="text-right">
+                        <span className="text-lg font-bold text-primary">${typeof displayAmount === 'number' ? displayAmount.toFixed(2) : displayAmount}</span>
+                        {latestOffer?.status === 'pending' && latestOffer.offered_by_role === 'client' && (
+                          <p className="text-xs text-yellow-400 mt-0.5">Counter-offer pending</p>
+                        )}
+                      </div>
+                    );
+                  })()}
                   <div className="flex gap-2">
                     <Link to={`/AvatarBookingDetail?id=${booking.id}`}>
                       <Button size="sm" variant="outline" className="h-8 gap-1">
