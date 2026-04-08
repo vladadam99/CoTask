@@ -96,7 +96,7 @@ export default function Bookings() {
             <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-3">Direct Bookings</h2>
             <div className="space-y-3">
               {clientBookings.map(b => (
-                <Link key={b.id} to={`/BookingDetail?id=${b.id}`}>
+                <Link key={b.id} to={`/UserBookingDetail?id=${b.id}`}>
                   <GlassCard className="p-5" hover>
                     <div className="flex items-center justify-between">
                       <div>
@@ -183,7 +183,7 @@ export default function Bookings() {
         ) : filtered.length > 0 ? (
           <div className="space-y-3">
             {filtered.map(b => (
-              <Link key={b.id} to={`/BookingDetail?id=${b.id}`}>
+              <Link key={b.id} to={`/AvatarBookingDetail?id=${b.id}`}>
                 <GlassCard className="p-5" hover>
                   <div className="flex items-center justify-between">
                     <div>

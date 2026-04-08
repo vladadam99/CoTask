@@ -53,17 +53,17 @@ export default function AvatarRequests() {
             title: 'Booking Accepted!',
             message: `${user.full_name} accepted your ${booking.category} booking request.`,
             type: 'booking_accepted',
-            link: `/BookingDetail?id=${id}`,
+            link: `/UserBookingDetail?id=${id}`,
             reference_id: id,
-          });
-        }
+            });
+            }
       } else if (status === 'declined' && booking?.client_email) {
         await base44.entities.Notification.create({
           user_email: booking.client_email,
           title: 'Booking Declined',
           message: `${user.full_name} declined your ${booking.category} booking request.`,
           type: 'booking_declined',
-          link: `/BookingDetail?id=${id}`,
+          link: `/UserBookingDetail?id=${id}`,
           reference_id: id,
         });
       }

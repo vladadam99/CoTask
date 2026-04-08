@@ -24,7 +24,7 @@ import Explore from './pages/Explore.jsx';
 import AvatarView from './pages/AvatarView';
 import CreateBooking from './pages/CreateBooking';
 import Bookings from './pages/Bookings';
-import BookingDetail from './pages/BookingDetail';
+
 import Messages from './pages/Messages';
 import LiveSessions from './pages/LiveSessions';
 import Saved from './pages/Saved';
@@ -100,7 +100,7 @@ const AuthenticatedApp = () => {
       <Route path="/AvatarView" element={<AvatarView />} />
       <Route path="/CreateBooking" element={<CreateBooking />} />
       <Route path="/Bookings" element={<Bookings />} />
-      <Route path="/BookingDetail" element={<BookingDetail />} />
+
       <Route path="/AvatarBookingDetail" element={<AvatarBookingDetail />} />
       <Route path="/UserBookingDetail" element={<UserBookingDetail />} />
       <Route path="/Messages" element={<Messages />} />
