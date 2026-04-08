@@ -52,6 +52,7 @@ import AvatarMessages from './pages/AvatarMessages';
 import DisputeAgent from './pages/DisputeAgent';
 import SafetyAgent from './pages/SafetyAgent';
 import AvatarWallet from './pages/AvatarWallet';
+import AvatarBookingDetail from './pages/AvatarBookingDetail';
 import UserWallet from './pages/UserWallet';
 
 const AuthenticatedApp = () => {
@@ -99,6 +100,7 @@ const AuthenticatedApp = () => {
       <Route path="/CreateBooking" element={<CreateBooking />} />
       <Route path="/Bookings" element={<Bookings />} />
       <Route path="/BookingDetail" element={<BookingDetail />} />
+      <Route path="/AvatarBookingDetail" element={<AvatarBookingDetail />} />
       <Route path="/Messages" element={<Messages />} />
       <Route path="/LiveSessions" element={<LiveSessions />} />
       <Route path="/Saved" element={<Saved />} />

@@ -6,24 +6,21 @@ import { useCurrentUser } from '@/lib/useCurrentUser';
 import GlassCard from '@/components/ui/GlassCard';
 import StatusBadge from '@/components/ui/StatusBadge';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, Calendar, Clock, MapPin, User, DollarSign, MessageSquare, Video, VideoOff, CreditCard, CheckCircle, Loader2, Camera, Wifi, Truck, Wrench } from 'lucide-react';
-import LeaveReview from '@/components/reviews/LeaveReview';
+import { ArrowLeft, Calendar, Clock, MapPin, User, DollarSign, MessageSquare, Video, VideoOff, Loader2, Camera, Wifi, Truck, Wrench } from 'lucide-react';
 import CounterOfferFlow from '@/components/bookings/CounterOfferFlow';
 import ProofUpload from '@/components/bookings/ProofUpload';
 import JobApprovalFlow from '@/components/bookings/JobApprovalFlow';
 
-export default function BookingDetail() {
+export default function AvatarBookingDetail() {
   const params = new URLSearchParams(window.location.search);
   const id = params.get('id');
-  const paymentResult = params.get('payment');
   const { user } = useCurrentUser();
   const queryClient = useQueryClient();
   const navigate = useNavigate();
-  const [checkoutLoading, setCheckoutLoading] = useState(false);
   const [convId, setConvId] = useState(null);
 
   const { data: booking, isLoading } = useQuery({
-    queryKey: ['booking', id],
+    queryKey: ['avatar-booking', id],
     queryFn: async () => {
       const list = await base44.entities.Booking.filter({ id });
       return list[0] || null;
@@ -43,7 +40,7 @@ export default function BookingDetail() {
   }, [booking?.id]);
 
   const { data: liveSession } = useQuery({
-    queryKey: ['booking-live-session', id],
+    queryKey: ['avatar-booking-live', id],
     queryFn: async () => {
       const list = await base44.entities.LiveSession.filter({ booking_id: id });
       return list.find(s => ['live', 'waiting'].includes(s.status)) || null;
@@ -54,37 +51,7 @@ export default function BookingDetail() {
 
   const updateStatus = useMutation({
     mutationFn: (status) => base44.entities.Booking.update(id, { status }),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['booking', id] }),
-  });
-
-  const handlePay = async () => {
-    if (!booking) return;
-    if (window.self !== window.top) {
-      alert('Payment checkout only works on the published app.');
-      return;
-    }
-    setCheckoutLoading(true);
-    const res = await base44.functions.invoke('createCheckout', {
-      bookingId: booking.id,
-      amount: booking.total_amount || booking.amount,
-      avatarName: booking.avatar_name,
-      category: booking.category,
-    });
-    if (res.data?.url) {
-      window.location.href = res.data.url;
-    } else {
-      setCheckoutLoading(false);
-    }
-  };
-
-  const isClientReviewer = !!user && !!booking && user.email === booking?.client_email && booking?.status === 'completed';
-  const { data: existingReview } = useQuery({
-    queryKey: ['booking-review', id, user?.email],
-    queryFn: async () => {
-      const list = await base44.entities.Review.filter({ booking_id: id, reviewer_email: user?.email });
-      return list[0] || null;
-    },
-    enabled: !!id && isClientReviewer,
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['avatar-booking', id] }),
   });
 
   if (isLoading) return (
@@ -101,24 +68,18 @@ export default function BookingDetail() {
     </div>
   );
 
-  const isClient = user?.email === booking.client_email;
-  const canCancel = isClient && ['pending', 'accepted', 'scheduled'].includes(booking.status);
-  const needsPayment = isClient && booking.payment_status === 'pending' && ['pending', 'accepted'].includes(booking.status);
-
+  const canAccept = booking.status === 'pending';
+  const canDecline = booking.status === 'pending';
+  const canStart = ['accepted', 'scheduled'].includes(booking.status) && booking.stream_mode === 'live_camera';
+  const canComplete = booking.status === 'in_progress' && !booking.proof_url;
+  const canUploadProof = booking.status === 'in_progress' && !booking.proof_url;
 
   return (
     <div className="min-h-screen bg-background p-4 lg:p-8">
       <div className="max-w-2xl mx-auto">
-        <button onClick={() => navigate(-1)} className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground mb-6">
-          <ArrowLeft className="w-4 h-4" /> Back
+        <button onClick={() => navigate('/AvatarRequests')} className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground mb-6">
+          <ArrowLeft className="w-4 h-4" /> Back to Requests
         </button>
-
-        {paymentResult === 'success' && (
-          <div className="mb-6 flex items-center gap-3 bg-green-500/10 border border-green-500/20 text-green-400 rounded-xl px-4 py-3">
-            <CheckCircle className="w-5 h-5 shrink-0" />
-            <p className="text-sm font-medium">Payment successful! Your booking is confirmed.</p>
-          </div>
-        )}
 
         <div className="flex items-center justify-between mb-6">
           <h1 className="text-2xl font-bold">Booking Details</h1>
@@ -143,8 +104,8 @@ export default function BookingDetail() {
               <div className="flex items-center gap-2 text-muted-foreground">
                 <User className="w-4 h-4" />
                 <div>
-                  <p className="text-xs text-muted-foreground">Avatar</p>
-                  <p className="text-foreground font-medium">{booking.avatar_name}</p>
+                  <p className="text-xs text-muted-foreground">Client</p>
+                  <p className="text-foreground font-medium">{booking.client_name}</p>
                 </div>
               </div>
               <div className="flex items-center gap-2 text-muted-foreground">
@@ -186,7 +147,7 @@ export default function BookingDetail() {
               ) : null}
               {booking.notes && (
                 <div>
-                  <h3 className="font-semibold mb-1">Instructions</h3>
+                  <h3 className="font-semibold mb-1">Client Instructions</h3>
                   <p className="text-sm text-muted-foreground">{booking.notes}</p>
                 </div>
               )}
@@ -198,7 +159,7 @@ export default function BookingDetail() {
               )}
               {(booking.equipment_needed || []).length > 0 && (
                 <div>
-                  <h3 className="font-semibold mb-2 text-sm flex items-center gap-1.5"><Wrench className="w-3.5 h-3.5 text-primary" /> Equipment / Tools Needed</h3>
+                  <h3 className="font-semibold mb-2 text-sm flex items-center gap-1.5"><Wrench className="w-3.5 h-3.5 text-primary" /> Equipment Needed</h3>
                   <div className="flex flex-wrap gap-2">
                     {booking.equipment_needed.map((eq, i) => (
                       <span key={i} className="bg-white/5 border border-white/10 text-xs px-3 py-1 rounded-full">{eq}</span>
@@ -210,12 +171,12 @@ export default function BookingDetail() {
           )}
 
           <GlassCard className="p-6">
-            <h3 className="font-semibold mb-3 flex items-center gap-2"><DollarSign className="w-4 h-4 text-primary" /> Payment</h3>
+            <h3 className="font-semibold mb-3 flex items-center gap-2"><DollarSign className="w-4 h-4 text-primary" /> Your Earnings</h3>
             <div className="space-y-2 text-sm">
-              <div className="flex justify-between"><span className="text-muted-foreground">Service</span><span>${booking.amount?.toFixed(2)}</span></div>
-              <div className="flex justify-between"><span className="text-muted-foreground">Platform fee</span><span>${booking.service_fee?.toFixed(2)}</span></div>
+              <div className="flex justify-between"><span className="text-muted-foreground">Service rate</span><span>${booking.amount?.toFixed(2)}</span></div>
+              <div className="flex justify-between"><span className="text-muted-foreground">Platform fee (15%)</span><span className="text-red-400">-${booking.service_fee?.toFixed(2)}</span></div>
               <div className="border-t border-white/5 pt-2 flex justify-between font-semibold">
-                <span>Total</span><span className="text-primary">${booking.total_amount?.toFixed(2)}</span>
+                <span>You receive</span><span className="text-green-400">${(booking.amount - booking.service_fee || 0).toFixed(2)}</span>
               </div>
               <div className="pt-1"><StatusBadge status={booking.payment_status} /></div>
             </div>
@@ -227,64 +188,66 @@ export default function BookingDetail() {
                 <div>
                   <p className="font-semibold text-sm flex items-center gap-2">
                     <span className="w-2 h-2 rounded-full bg-primary animate-pulse" />
-                    {liveSession.status === 'live' ? 'Session is LIVE' : 'Avatar is getting ready'}
+                    {liveSession.status === 'live' ? 'Session is LIVE' : 'Session starting…'}
                   </p>
-                  <p className="text-xs text-muted-foreground mt-1">{liveSession.title || liveSession.category}</p>
                 </div>
-                <Link to={`/ClientLiveView?session=${liveSession.id}`}>
-                  <Button size="sm" className="bg-primary gap-2">
-                    <Video className="w-3.5 h-3.5" /> Join Stream
-                  </Button>
-                </Link>
+                <Button size="sm" className="bg-primary gap-2" onClick={() => navigate(`/LiveStreamStudio?booking=${booking.id}`)}>
+                  <Video className="w-3.5 h-3.5" /> Open Studio
+                </Button>
               </div>
             </GlassCard>
           )}
 
           {booking.proof_url && (
             <GlassCard className="p-5">
-              <h3 className="font-semibold text-sm mb-3 flex items-center gap-2"><Camera className="w-4 h-4 text-primary" /> Job Completion Proof</h3>
+              <h3 className="font-semibold text-sm mb-3 flex items-center gap-2"><Camera className="w-4 h-4 text-primary" /> Proof Submitted</h3>
               <img src={booking.proof_url} alt="Job proof" className="w-full max-h-64 object-cover rounded-xl border border-white/10 mb-2" />
               {booking.proof_note && <p className="text-xs text-muted-foreground">"{booking.proof_note}"</p>}
             </GlassCard>
           )}
 
+          {canUploadProof && (
+            <ProofUpload booking={booking} onUpload={() => queryClient.invalidateQueries({ queryKey: ['avatar-booking', id] })} />
+          )}
 
+          <JobApprovalFlow booking={booking} user={user} onUpdate={() => queryClient.invalidateQueries({ queryKey: ['avatar-booking', id] })} />
+
+          <CounterOfferFlow
+            booking={booking}
+            user={user}
+            convId={convId}
+            onBookingUpdate={() => queryClient.invalidateQueries({ queryKey: ['avatar-booking', id] })}
+          />
 
           <div className="flex flex-wrap gap-3">
-            {canCancel && <Button variant="outline" className="border-white/10 flex-1" onClick={() => updateStatus.mutate('cancelled')}>Cancel Booking</Button>}
-
-            {needsPayment && (
-              <Button
-                className="w-full bg-primary hover:bg-primary/90 gap-2"
-                onClick={handlePay}
-                disabled={checkoutLoading}
-              >
-                {checkoutLoading ? <><Loader2 className="w-4 h-4 animate-spin" /> Redirecting…</> : <><CreditCard className="w-4 h-4" /> Pay Now — ${booking.total_amount?.toFixed(2)}</>}
+            {canAccept && (
+              <Button className="bg-green-600 hover:bg-green-700 flex-1" onClick={() => updateStatus.mutate('accepted')}>
+                Accept Booking
+              </Button>
+            )}
+            {canDecline && (
+              <Button variant="outline" className="border-red-500/20 text-red-400 flex-1" onClick={() => updateStatus.mutate('declined')}>
+                Decline
+              </Button>
+            )}
+            {canStart && (
+              <Button className="bg-primary hover:bg-primary/90 flex-1" onClick={() => navigate(`/LiveStreamStudio?booking=${booking.id}`)}>
+                Start Stream
+              </Button>
+            )}
+            {canComplete && (
+              <Button className="bg-green-600 hover:bg-green-700 flex-1" onClick={() => updateStatus.mutate('completed')}>
+                Mark Complete
               </Button>
             )}
 
-            <Link to={convId ? `/Messages?conv=${convId}` : '/Messages'} className="flex-1">
+            <Link to={convId ? `/AvatarMessages?conv=${convId}` : '/AvatarMessages'} className="flex-1">
               <Button variant="outline" className="w-full border-white/10 gap-2">
-                <MessageSquare className="w-4 h-4" /> Message
+                <MessageSquare className="w-4 h-4" /> Message Client
               </Button>
             </Link>
           </div>
         </div>
-
-        {isClient && booking.status === 'completed' && !existingReview && (
-          <LeaveReview booking={booking} user={user} />
-        )}
-        {isClient && booking.status === 'completed' && existingReview && (
-          <GlassCard className="p-5 border-yellow-500/20 mt-4">
-            <div className="flex items-center gap-2 mb-2">
-              {[1,2,3,4,5].map(i => (
-                <svg key={i} className={`w-4 h-4 ${i <= existingReview.rating ? 'text-yellow-400 fill-yellow-400' : 'text-muted-foreground'}`} viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-              ))}
-              <span className="text-xs text-muted-foreground ml-1">Your review</span>
-            </div>
-            {existingReview.comment && <p className="text-sm text-muted-foreground">"{existingReview.comment}"</p>}
-          </GlassCard>
-        )}
       </div>
     </div>
   );

@@ -200,7 +200,7 @@ export default function AvatarRequests() {
                     ${booking.total_amount || booking.amount || 0}
                   </span>
                   <div className="flex gap-2">
-                    <Link to={`/BookingDetail?id=${booking.id}`}>
+                    <Link to={`/AvatarBookingDetail?id=${booking.id}`}>
                       <Button size="sm" variant="outline" className="h-8 gap-1">
                         <Eye className="w-3 h-3" /> View
                       </Button>
