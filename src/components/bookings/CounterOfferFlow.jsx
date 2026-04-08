@@ -156,7 +156,7 @@ export default function CounterOfferFlow({ booking, user, convId, onBookingUpdat
           </div>
 
           {/* Respond to latest pending offer */}
-          {latestOffer?.status === 'pending' && myTurn && (
+          {latestOffer?.status === 'pending' && myTurn && latestOffer.offered_by_email !== user?.email && (
             <div className="flex gap-2 pt-1">
               <Button size="sm" className="bg-green-600 hover:bg-green-700 flex-1" onClick={() => respondToOffer(latestOffer.id, true)}>
                 <CheckCircle className="w-3.5 h-3.5 mr-1" /> Accept ${latestOffer.amount.toFixed(2)}
