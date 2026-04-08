@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import SmartImage from '@/components/media/SmartImage';
 import { useQuery } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { useCurrentUser } from '@/lib/useCurrentUser'; // user used for future auth-gated features
@@ -66,7 +67,7 @@ export default function ReelFeed() {
                   <div className="relative">
                     <div className="w-16 h-16 rounded-full border-2 border-primary overflow-hidden bg-primary/10 flex items-center justify-center text-xl font-bold text-primary mx-auto">
                       {avatar.photo_url
-                        ? <img src={avatar.photo_url} alt={avatar.display_name} className="w-full h-full object-cover" />
+                        ? <SmartImage src={avatar.photo_url} alt={avatar.display_name} className="w-full h-full" width={64} />
                         : avatar.display_name?.[0] || 'A'}
                     </div>
                     <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 bg-primary text-white text-[9px] font-bold px-1.5 rounded-full">LIVE</span>
@@ -97,7 +98,7 @@ export default function ReelFeed() {
               >
                 {/* Thumbnail */}
                 {reel.thumbnail_url ? (
-                  <img src={reel.thumbnail_url} alt={reel.title} className="w-full h-full object-cover" />
+                  <SmartImage src={reel.thumbnail_url} alt={reel.title} className="w-full h-full" width={400} />
                 ) : (
                   <div className="w-full h-full bg-gradient-to-br from-primary/20 to-purple-900/40 flex items-center justify-center">
                     <Play className="w-10 h-10 text-white/40" />
@@ -129,7 +130,7 @@ export default function ReelFeed() {
                   <div className="flex items-center gap-1 mb-2">
                     <div className="w-5 h-5 rounded-full bg-primary/20 flex items-center justify-center text-[10px] font-bold text-primary overflow-hidden">
                       {reel.avatar_photo_url
-                        ? <img src={reel.avatar_photo_url} className="w-full h-full object-cover" />
+                        ? <SmartImage src={reel.avatar_photo_url} alt={reel.avatar_name} className="w-full h-full" width={40} />
                         : reel.avatar_name?.[0] || 'A'}
                     </div>
                     <span className="text-white/70 text-[10px] truncate">{reel.avatar_name}</span>

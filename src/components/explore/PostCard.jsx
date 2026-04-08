@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
+import SmartImage from '@/components/media/SmartImage';
 import { Heart, MessageCircle, Send, X, Play, Pause, Volume2, VolumeX } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -93,7 +94,7 @@ function MediaModal({ post, user, onClose }) {
           >
             <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center text-sm font-bold text-primary overflow-hidden">
               {post.avatar_photo_url
-                ? <img src={post.avatar_photo_url} alt={post.avatar_name} className="w-full h-full object-cover" />
+                ? <SmartImage src={post.avatar_photo_url} alt={post.avatar_name} className="w-full h-full" width={64} />
                 : post.avatar_name?.[0] || 'A'}
             </div>
             <span className="text-sm font-semibold text-white">{post.avatar_name || 'Avatar'}</span>
@@ -130,7 +131,7 @@ function MediaModal({ post, user, onClose }) {
               )}
             </>
           ) : (
-            <img src={post.media_url} alt={post.caption || 'Post'} className="w-full h-full object-contain" />
+            <SmartImage src={post.media_url} alt={post.caption || 'Post'} className="w-full h-full" />
           )}
         </div>
 
@@ -311,7 +312,7 @@ export default function PostCard({ post, user }) {
         <div className="flex items-center gap-3 px-4 py-3 cursor-pointer" onClick={goToProfile}>
           <div className="w-9 h-9 rounded-full bg-primary/20 flex items-center justify-center text-sm font-bold text-primary overflow-hidden flex-shrink-0">
             {post.avatar_photo_url
-              ? <img src={post.avatar_photo_url} alt={post.avatar_name} className="w-full h-full object-cover" />
+              ? <SmartImage src={post.avatar_photo_url} alt={post.avatar_name} className="w-full h-full" width={64} />
               : post.avatar_name?.[0] || 'A'}
           </div>
           <div className="flex-1 min-w-0">
@@ -372,7 +373,7 @@ export default function PostCard({ post, user }) {
               </button>
             </>
           ) : (
-            <img src={post.media_url} alt={post.caption || 'Post'} className="w-full h-full object-cover cursor-pointer" onClick={() => setModalOpen(true)} />
+            <SmartImage src={post.media_url} alt={post.caption || 'Post'} className="w-full h-full cursor-pointer" onClick={() => setModalOpen(true)} />
           )}
         </div>
 

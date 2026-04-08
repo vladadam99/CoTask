@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
+import SmartImage from '@/components/media/SmartImage';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { Heart, MessageCircle, Send, X, Play, Volume2, VolumeX, Loader2 } from 'lucide-react';
@@ -155,12 +156,10 @@ export default function FeedCard({ post, user, isActive = true, isNear = true })
                   onClick={togglePlay}
                 />
               ) : (
-                <img
+                <SmartImage
                   src={media.url}
                   alt={post.caption || 'Post'}
-                  className="w-full h-full object-cover"
-                  loading="eager"
-                  decoding="async"
+                  className="w-full h-full"
                 />
               )}
             </div>
@@ -217,7 +216,7 @@ export default function FeedCard({ post, user, isActive = true, isNear = true })
         >
           <div className="w-9 h-9 rounded-full bg-primary/30 overflow-hidden border-2 border-white/20 flex-shrink-0 flex items-center justify-center text-sm font-bold text-white">
             {post.avatar_photo_url
-              ? <img src={post.avatar_photo_url} alt={post.avatar_name} className="w-full h-full object-cover" />
+              ? <SmartImage src={post.avatar_photo_url} alt={post.avatar_name} className="w-full h-full" width={64} />
               : post.avatar_name?.[0] || 'A'}
           </div>
           <div className="text-left">
