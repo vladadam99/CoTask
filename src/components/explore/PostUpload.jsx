@@ -91,8 +91,14 @@ export default function PostUpload({ user, profile, onClose }) {
       const uploadedTypes = [];
       for (let i = 0; i < items.length; i++) {
         const { file, fileType } = items[i];
-        const { file_url } = await base44.integrations.Core.UploadFile({ file });
-        uploadedUrls.push(file_url);
+        // Step 1: Upload to Base44 storage first to get a URL
+        const { file_url: base44Url } = await base44.integrations.Core.UploadFile({ file });
+        // Step 2: Push from Base44 URL into Cloudinary for CDN + optimization
+        const res = await base44.functions.invoke('uploadToCloudinary', {
+          file_url: base44Url,
+          resource_type: fileType === 'video' ? 'video' : 'image',
+        });
+        uploadedUrls.push(res.data.url);
         uploadedTypes.push(fileType);
         setProgress(Math.round(((i + 1) / items.length) * 100));
       }
