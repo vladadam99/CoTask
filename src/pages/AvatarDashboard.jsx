@@ -185,7 +185,7 @@ export default function AvatarDashboard() {
           </div>
           <div className="space-y-3">
             {pendingBookings.slice(0, 3).map(b => (
-              <Link key={b.id} to={`/BookingDetail?id=${b.id}`}>
+              <Link key={b.id} to={`/AvatarBookingDetail?id=${b.id}`}>
                 <div className="glass border border-white/5 hover:border-primary/30 rounded-2xl p-4 flex items-center justify-between transition-all">
                   <div>
                     <p className="font-semibold text-sm">{b.category}</p>
@@ -213,7 +213,7 @@ export default function AvatarDashboard() {
           </div>
           <div className="space-y-3">
             {upcomingBookings.slice(0, 3).map(b => (
-              <Link key={b.id} to={`/BookingDetail?id=${b.id}`}>
+              <Link key={b.id} to={`/AvatarBookingDetail?id=${b.id}`}>
                 <div className="glass border border-white/5 hover:border-primary/30 rounded-2xl p-4 flex items-center justify-between transition-all">
                   <div>
                     <p className="font-semibold text-sm">{b.category}</p>
