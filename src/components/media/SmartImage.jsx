@@ -8,7 +8,7 @@ import React, { useState } from 'react';
  * To enable Cloudinary later, replace the placeholder below with your cloud name:
  * const CLOUDINARY_CLOUD_NAME = 'your_cloud_name';
  */
-const CLOUDINARY_CLOUD_NAME = null; // Set this when you connect Cloudinary
+const CLOUDINARY_CLOUD_NAME = 'dllyfrdpr';
 
 export function getOptimizedUrl(url, { width = 800, quality = 'auto' } = {}) {
   if (!url) return url;
