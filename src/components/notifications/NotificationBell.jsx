@@ -1,9 +1,13 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { base44 } from '@/api/base44Client';
 import { Bell, X, CheckCheck } from 'lucide-react';
 
+// These types are handled by bottom nav icons — exclude from bell
+const EXCLUDED_FROM_BELL = ['message', 'booking_request', 'booking_accepted', 'booking_declined'];
+
 const TYPE_COLORS = {
+
   booking_request: 'bg-blue-500/10 text-blue-400',
   booking_accepted: 'bg-green-500/10 text-green-400',
   booking_declined: 'bg-red-500/10 text-red-400',
@@ -15,6 +19,7 @@ const TYPE_COLORS = {
 };
 
 export default function NotificationBell({ userEmail, userRole }) {
+  const navigate = useNavigate();
   const [open, setOpen] = useState(false);
   const [notifications, setNotifications] = useState([]);
   const dropdownRef = useRef(null);
@@ -25,12 +30,9 @@ export default function NotificationBell({ userEmail, userRole }) {
     const load = async () => {
       try {
         const list = await base44.entities.Notification.filter({ user_email: userEmail }, '-created_date', 50);
-        // Only show notifications that have a matching target_role
-        const filtered = list.filter(n => n.target_role === userRole);
+        const filtered = list.filter(n => n.target_role === userRole && !EXCLUDED_FROM_BELL.includes(n.type));
         setNotifications(filtered);
-      } catch (e) {
-        // silently ignore network errors
-      }
+      } catch (e) {}
     };
     load();
   }, [userEmail]);
@@ -41,8 +43,9 @@ export default function NotificationBell({ userEmail, userRole }) {
     const unsub = base44.entities.Notification.subscribe((event) => {
       if (event.data?.user_email === userEmail) {
         const matchesRole = event.data?.target_role === userRole;
+        const notExcluded = !EXCLUDED_FROM_BELL.includes(event.data?.type);
         if (event.type === 'create') {
-          if (matchesRole) setNotifications(prev => [event.data, ...prev]);
+          if (matchesRole && notExcluded) setNotifications(prev => [event.data, ...prev]);
         } else if (event.type === 'update') {
           setNotifications(prev => prev.map(n => n.id === event.id ? event.data : n));
         } else if (event.type === 'delete') {
@@ -64,6 +67,7 @@ export default function NotificationBell({ userEmail, userRole }) {
 
   const unread = notifications.filter(n => !n.is_read);
 
+
   const markAllRead = async () => {
     const unreadItems = notifications.filter(n => !n.is_read);
     await Promise.all(unreadItems.map(n => base44.entities.Notification.update(n.id, { is_read: true })));
@@ -76,7 +80,14 @@ export default function NotificationBell({ userEmail, userRole }) {
     setNotifications(prev => prev.map(x => x.id === n.id ? { ...x, is_read: true } : x));
   };
 
+  const handleNotifClick = async (n) => {
+    await markRead(n);
+    setOpen(false);
+    if (n.link) navigate(n.link);
+  };
+
   return (
+
     <div className="relative" ref={dropdownRef}>
       <button
         onClick={() => setOpen(v => !v)}
@@ -118,7 +129,7 @@ export default function NotificationBell({ userEmail, userRole }) {
               notifications.map(n => (
                 <div
                   key={n.id}
-                  onClick={() => markRead(n)}
+                  onClick={() => handleNotifClick(n)}
                   className={`px-4 py-3 border-b border-white/5 last:border-0 cursor-pointer hover:bg-white/5 transition-colors ${!n.is_read ? 'bg-primary/5' : ''}`}
                 >
                   <div className="flex items-start gap-3">
@@ -126,11 +137,6 @@ export default function NotificationBell({ userEmail, userRole }) {
                     <div className="flex-1 min-w-0">
                       <p className="text-sm font-medium leading-tight">{n.title}</p>
                       <p className="text-xs text-muted-foreground mt-0.5 leading-snug">{n.message}</p>
-                      {n.link && (
-                        <Link to={n.link} className="text-xs text-primary mt-1 inline-block hover:underline" onClick={() => setOpen(false)}>
-                          View →
-                        </Link>
-                      )}
                     </div>
                   </div>
                 </div>

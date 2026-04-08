@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { LogOut, Menu, X, HelpCircle, Settings, User, ChevronRight } from 'lucide-react';
@@ -6,11 +6,49 @@ import { base44 } from '@/api/base44Client';
 import NotificationBell from '@/components/notifications/NotificationBell';
 import RoleSwitcher from '@/components/RoleSwitcher';
 
+// Types that map to bottom nav icons
+const MSG_TYPES = ['message'];
+const BOOKING_TYPES = ['booking_accepted', 'booking_declined'];
+const JOB_TYPES = ['booking_request'];
+
+function getNavBadgeCount(path, unreadNotifs) {
+  return unreadNotifs.filter(n => {
+    if (path.includes('Messages')) return MSG_TYPES.includes(n.type);
+    if (path.includes('Bookings') || path.includes('AvatarRequests')) return BOOKING_TYPES.includes(n.type);
+    if (path.includes('JobMarketplace')) return JOB_TYPES.includes(n.type);
+    return false;
+  }).length;
+}
+
 export default function AppShell({ children, navItems = [], user }) {
-  const location = useLocation();
+  const [unreadNotifs, setUnreadNotifs] = useState([]);
   const [drawerOpen, setDrawerOpen] = useState(false);
 
-  const homePath = user?.role === 'avatar' ? '/AvatarDashboard' : user?.role === 'enterprise' ? '/EnterpriseDashboard' : '/UserDashboard';
+  useEffect(() => {
+    if (!user?.email) return;
+    const load = async () => {
+      try {
+        const list = await base44.entities.Notification.filter({ user_email: user.email, is_read: false }, '-created_date', 100);
+        setUnreadNotifs(list.filter(n => n.target_role === user.role));
+      } catch (e) {}
+    };
+    load();
+    const unsub = base44.entities.Notification.subscribe((event) => {
+      if (event.data?.user_email === user.email) {
+        if (event.type === 'create' && event.data?.target_role === user.role && !event.data?.is_read) {
+          setUnreadNotifs(prev => [event.data, ...prev]);
+        } else if (event.type === 'update') {
+          setUnreadNotifs(prev => event.data?.is_read ? prev.filter(n => n.id !== event.id) : prev.map(n => n.id === event.id ? event.data : n));
+        } else if (event.type === 'delete') {
+          setUnreadNotifs(prev => prev.filter(n => n.id !== event.id));
+        }
+      }
+    });
+    return unsub;
+  }, [user?.email]);
+
+  const homePath = user?.role
+ === 'avatar' ? '/AvatarDashboard' : user?.role === 'enterprise' ? '/EnterpriseDashboard' : '/UserDashboard';
   const settingsPath = user?.role === 'avatar' ? '/AvatarSettings' : user?.role === 'enterprise' ? '/EnterpriseSettings' : '/Profile';
 
   return (
@@ -133,12 +171,18 @@ export default function AppShell({ children, navItems = [], user }) {
       <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-50 glass-strong border-t border-white/5 flex items-center justify-around px-2 py-2 pb-safe">
         {navItems.slice(0, 5).map(item => {
           const isActive = location.pathname === item.path;
+          const badgeCount = getNavBadgeCount(item.path, unreadNotifs);
           return (
             <Link key={item.path} to={item.path}
-              className={`flex flex-col items-center gap-1 px-3 py-1.5 rounded-xl transition-all ${
+              className={`relative flex flex-col items-center gap-1 px-3 py-1.5 rounded-xl transition-all ${
                 isActive ? 'text-primary' : 'text-muted-foreground'
               }`}>
               <item.icon className="w-5 h-5" />
+              {badgeCount > 0 && (
+                <span className="absolute -top-0.5 right-1 w-4 h-4 bg-primary text-primary-foreground text-[9px] font-bold rounded-full flex items-center justify-center">
+                  {badgeCount > 9 ? '9+' : badgeCount}
+                </span>
+              )}
               <span className="text-[10px] font-medium">{item.label}</span>
             </Link>
           );
