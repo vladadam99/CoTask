@@ -172,8 +172,20 @@ export default function AppShell({ children, navItems = [], user }) {
         {navItems.slice(0, 5).map(item => {
           const isActive = location.pathname === item.path;
           const badgeCount = getNavBadgeCount(item.path, unreadNotifs);
+          const handleNavClick = async () => {
+            if (badgeCount > 0) {
+              const toMark = unreadNotifs.filter(n => {
+                if (item.path.includes('Messages')) return MSG_TYPES.includes(n.type);
+                if (item.path.includes('Bookings') || item.path.includes('AvatarRequests')) return BOOKING_TYPES.includes(n.type);
+                if (item.path.includes('JobMarketplace')) return JOB_TYPES.includes(n.type);
+                return false;
+              });
+              setUnreadNotifs(prev => prev.filter(n => !toMark.find(m => m.id === n.id)));
+              toMark.forEach(n => base44.entities.Notification.update(n.id, { is_read: true }));
+            }
+          };
           return (
-            <Link key={item.path} to={item.path}
+            <Link key={item.path} to={item.path} onClick={handleNavClick}
               className={`relative flex flex-col items-center gap-1 px-3 py-1.5 rounded-xl transition-all ${
                 isActive ? 'text-primary' : 'text-muted-foreground'
               }`}>
