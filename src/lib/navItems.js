@@ -1,10 +1,11 @@
-import { Search, Calendar, MessageSquare, Home, Heart, User, Zap, Inbox, DollarSign, Settings, Building2, Briefcase, Compass, Users } from 'lucide-react';
+import { Search, Calendar, MessageSquare, Home, Heart, User, Zap, Inbox, DollarSign, Settings, Building2, Briefcase, Compass, Users, Wallet } from 'lucide-react';
 
 export const userNavItems = [
   { icon: Home, label: 'Home', path: '/UserDashboard' },
   { icon: Search, label: 'Explore', path: '/Explore' },
   { icon: Calendar, label: 'Bookings', path: '/Bookings' },
   { icon: MessageSquare, label: 'Messages', path: '/Messages' },
+  { icon: Wallet, label: 'Wallet', path: '/UserWallet' },
 ];
 
 export const avatarNavItems = [
@@ -13,6 +14,7 @@ export const avatarNavItems = [
   { icon: Briefcase, label: 'Jobs', path: '/JobMarketplace' },
   { icon: MessageSquare, label: 'Messages', path: '/AvatarMessages' },
   { icon: Inbox, label: 'Bookings', path: '/AvatarRequests' },
+  { icon: Wallet, label: 'Wallet', path: '/AvatarWallet' },
   { icon: DollarSign, label: 'Earnings', path: '/AvatarEarnings' },
   { icon: User, label: 'Profile', path: '/AvatarProfileEdit' },
 ];

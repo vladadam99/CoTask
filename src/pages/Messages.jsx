@@ -40,9 +40,13 @@ export default function Messages() {
   });
 
   useEffect(() => {
-    if (urlConvoId && conversations.length > 0 && !activeConvo) {
-      const target = conversations.find(c => c.id === urlConvoId);
-      if (target) setActiveConvo(target);
+    if (conversations.length > 0 && !activeConvo) {
+      if (urlConvoId) {
+        const target = conversations.find(c => c.id === urlConvoId);
+        if (target) { setActiveConvo(target); return; }
+      }
+      // Auto-open the most recent conversation
+      setActiveConvo(conversations[0]);
     }
   }, [urlConvoId, conversations]);
 

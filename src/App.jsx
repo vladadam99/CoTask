@@ -51,6 +51,8 @@ import Register from './pages/Register';
 import AvatarMessages from './pages/AvatarMessages';
 import DisputeAgent from './pages/DisputeAgent';
 import SafetyAgent from './pages/SafetyAgent';
+import AvatarWallet from './pages/AvatarWallet';
+import UserWallet from './pages/UserWallet';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -123,6 +125,8 @@ const AuthenticatedApp = () => {
       <Route path="/AvatarMessages" element={<AvatarMessages />} />
       <Route path="/DisputeAgent" element={<DisputeAgent />} />
       <Route path="/SafetyAgent" element={<SafetyAgent />} />
+      <Route path="/AvatarWallet" element={<AvatarWallet />} />
+      <Route path="/UserWallet" element={<UserWallet />} />
       <Route path="*" element={<PageNotFound />} />
     </Routes>
   );

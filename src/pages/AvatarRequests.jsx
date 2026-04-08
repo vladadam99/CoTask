@@ -9,7 +9,7 @@ import StatusBadge from '@/components/ui/StatusBadge';
 import { Button } from '@/components/ui/button';
 import { getNavItems } from '@/lib/navItems';
 import {
-  Inbox, Calendar, Clock, CheckCircle, XCircle, Eye, MapPin
+  Inbox, Calendar, Clock, CheckCircle, XCircle, Eye, MapPin, Briefcase
 } from 'lucide-react';
 
 
@@ -17,6 +17,7 @@ import {
 const TABS = [
   { key: 'pending', label: 'Pending', icon: Clock },
   { key: 'accepted', label: 'Accepted', icon: CheckCircle },
+  { key: 'jobs', label: 'My Jobs', icon: Briefcase },
   { key: 'all', label: 'All', icon: Inbox },
 ];
 
@@ -25,11 +26,19 @@ export default function AvatarRequests() {
   const queryClient = useQueryClient();
   const [activeTab, setActiveTab] = useState('pending');
 
-  const { data: bookings = [], isLoading } = useQuery({
+  const { data: bookings = [], isLoading: isLoadingBookings } = useQuery({
     queryKey: ['avatar-all-bookings', user?.email],
     queryFn: () => base44.entities.Booking.filter({ avatar_email: user.email }, '-created_date', 50),
     enabled: !!user,
   });
+
+  const { data: wonJobs = [], isLoading: isLoadingJobs } = useQuery({
+    queryKey: ['avatar-won-jobs', user?.email],
+    queryFn: () => base44.entities.JobPost.filter({ winner_email: user.email }, '-updated_date', 50),
+    enabled: !!user,
+  });
+
+  const isLoading = isLoadingBookings || isLoadingJobs;
 
   const updateBooking = useMutation({
     mutationFn: async ({ id, status }) => {
@@ -70,6 +79,8 @@ export default function AvatarRequests() {
 
   const filtered = activeTab === 'all'
     ? bookings
+    : activeTab === 'jobs'
+    ? wonJobs
     : bookings.filter(b => b.status === activeTab);
 
   const pendingCount = bookings.filter(b => b.status === 'pending').length;
@@ -117,11 +128,34 @@ export default function AvatarRequests() {
       ) : filtered.length === 0 ? (
         <GlassCard className="p-12 text-center">
           <Inbox className="w-10 h-10 text-muted-foreground mx-auto mb-3" />
-          <p className="text-sm text-muted-foreground">No {activeTab === 'all' ? '' : activeTab} requests found</p>
+          <p className="text-sm text-muted-foreground">No {activeTab === 'jobs' ? 'won jobs' : activeTab === 'all' ? '' : activeTab} found</p>
         </GlassCard>
       ) : (
         <div className="space-y-3">
-          {filtered.map(booking => (
+          {activeTab === 'jobs' ? wonJobs.map(job => (
+            <GlassCard key={job.id} className="p-5">
+              <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2 mb-1 flex-wrap">
+                    <span className="font-semibold text-sm">{job.title}</span>
+                    <StatusBadge status={job.status} />
+                  </div>
+                  <p className="text-sm text-muted-foreground mb-1">Client: <span className="font-medium text-foreground">{job.posted_by_name}</span></p>
+                  <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted-foreground mt-2">
+                    {job.category && <span className="flex items-center gap-1"><Briefcase className="w-3 h-3" />{job.category}</span>}
+                    {job.location && <span className="flex items-center gap-1"><MapPin className="w-3 h-3" />{job.location}</span>}
+                    {job.scheduled_date && <span className="flex items-center gap-1"><Calendar className="w-3 h-3" />{job.scheduled_date}</span>}
+                  </div>
+                </div>
+                <div className="flex flex-col items-end gap-3 flex-shrink-0">
+                  <span className="text-lg font-bold text-primary">${job.escrow_amount || job.budget_max || 0}</span>
+                  <Link to={`/JobDetail?id=${job.id}`}>
+                    <Button size="sm" variant="outline" className="h-8 gap-1"><Eye className="w-3 h-3" /> View</Button>
+                  </Link>
+                </div>
+              </div>
+            </GlassCard>
+          )) : filtered.map(booking => (
             <GlassCard key={booking.id} className="p-5">
               <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
                 <div className="flex-1 min-w-0">
