@@ -117,11 +117,7 @@ Only include genuinely relevant matches. Return them ranked by relevance (best f
         )}
       </div>
 
-      {aiActive && (
-        <p className="text-[10px] text-primary flex items-center gap-1 mt-1 ml-1">
-          <Sparkles className="w-2.5 h-2.5" /> AI-powered results
-        </p>
-      )}
+
 
       {showDropdown && (
         <div className="absolute top-full left-0 right-0 mt-1 bg-card border border-white/10 rounded-xl shadow-xl z-50 overflow-hidden">
