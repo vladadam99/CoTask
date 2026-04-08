@@ -100,7 +100,15 @@ export default function UserWallet() {
       </div>
 
       {/* Summary Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
+        <GlassCard className="p-5 border border-green-500/20">
+          <div className="flex items-center gap-3 mb-2">
+            <div className="w-9 h-9 rounded-xl bg-green-500/10 flex items-center justify-center"><Wallet className="w-5 h-5 text-green-400" /></div>
+            <span className="text-sm text-muted-foreground">Total Balance</span>
+          </div>
+          <p className="text-2xl font-bold text-green-400">${totalSpent.toFixed(2)}</p>
+          <p className="text-xs text-muted-foreground mt-1">Lifetime spend on platform</p>
+        </GlassCard>
         <GlassCard className="p-5">
           <div className="flex items-center gap-3 mb-2">
             <div className="w-9 h-9 rounded-xl bg-primary/10 flex items-center justify-center"><DollarSign className="w-5 h-5 text-primary" /></div>

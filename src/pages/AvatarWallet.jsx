@@ -145,10 +145,10 @@ export default function AvatarWallet() {
         <GlassCard className="p-5">
           <div className="flex items-center gap-3 mb-2">
             <div className="w-9 h-9 rounded-xl bg-primary/10 flex items-center justify-center"><TrendingUp className="w-5 h-5 text-primary" /></div>
-            <span className="text-sm text-muted-foreground">Total Fees Paid</span>
+            <span className="text-sm text-muted-foreground">Total Earned (Gross)</span>
           </div>
-          <p className="text-2xl font-bold text-primary">${totalFees.toFixed(2)}</p>
-          <p className="text-xs text-muted-foreground mt-1">10% platform fee</p>
+          <p className="text-2xl font-bold text-primary">${totalGross.toFixed(2)}</p>
+          <p className="text-xs text-muted-foreground mt-1">{completedJobs.length} completed job{completedJobs.length !== 1 ? 's' : ''}</p>
         </GlassCard>
       </div>
 
