@@ -6,8 +6,9 @@ import { useCurrentUser } from '@/lib/useCurrentUser';
 import GlassCard from '@/components/ui/GlassCard';
 import StatusBadge from '@/components/ui/StatusBadge';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, Calendar, Clock, MapPin, User, DollarSign, MessageSquare, Video, VideoOff, CreditCard, CheckCircle, Loader2, Camera, Wifi, Truck, Wrench, AlertTriangle, X } from 'lucide-react';
+import { ArrowLeft, Calendar, Clock, MapPin, User, DollarSign, MessageSquare, Video, VideoOff, CreditCard, CheckCircle, Loader2, Camera, Wifi, Truck, Wrench } from 'lucide-react';
 import LeaveReview from '@/components/reviews/LeaveReview';
+import CounterOfferFlow from '@/components/bookings/CounterOfferFlow';
 import ProofUpload from '@/components/bookings/ProofUpload';
 import JobApprovalFlow from '@/components/bookings/JobApprovalFlow';
 
@@ -19,9 +20,6 @@ export default function BookingDetail() {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
   const [checkoutLoading, setCheckoutLoading] = useState(false);
-  const [showChallenge, setShowChallenge] = useState(false);
-  const [challengeNote, setChallengeNote] = useState('');
-  const [challengeSending, setChallengeSending] = useState(false);
   const [convId, setConvId] = useState(null);
 
   const { data: booking, isLoading } = useQuery({
@@ -112,31 +110,7 @@ export default function BookingDetail() {
   const canUploadProof = isAvatar && booking.status === 'in_progress' && !booking.proof_url;
   const canCancel = isClient && !isAvatar && ['pending', 'accepted', 'scheduled'].includes(booking.status);
   const needsPayment = isClient && !isAvatar && booking.payment_status === 'pending' && ['pending', 'accepted'].includes(booking.status);
-  const canChallenge = isAvatar && booking.status === 'pending';
 
-  const handleChallenge = async () => {
-    if (!challengeNote.trim() || !convId) return;
-    setChallengeSending(true);
-    await base44.entities.Message.create({
-      conversation_id: convId,
-      sender_email: user.email,
-      sender_name: user.full_name,
-      content: `⚠️ Counter-offer request: ${challengeNote.trim()}`,
-      message_type: 'system',
-    });
-    await base44.entities.Notification.create({
-      user_email: booking.client_email,
-      title: 'Avatar has a question about your booking',
-      message: challengeNote.trim(),
-      type: 'message',
-      reference_id: booking.id,
-      link: `/Messages?conv=${convId}`,
-      target_role: 'user',
-    });
-    setChallengeNote('');
-    setShowChallenge(false);
-    setChallengeSending(false);
-  };
 
   return (
     <div className="min-h-screen bg-background p-4 lg:p-8">
@@ -286,39 +260,17 @@ export default function BookingDetail() {
 
           <JobApprovalFlow booking={booking} user={user} onUpdate={() => queryClient.invalidateQueries({ queryKey: ['booking', id] })} />
 
-          {showChallenge && (
-            <div className="bg-yellow-500/5 border border-yellow-500/20 rounded-xl p-4 space-y-3">
-              <div className="flex items-center justify-between">
-                <p className="text-sm font-semibold flex items-center gap-2"><AlertTriangle className="w-4 h-4 text-yellow-400" /> Challenge this offer</p>
-                <button onClick={() => setShowChallenge(false)}><X className="w-4 h-4 text-muted-foreground" /></button>
-              </div>
-              <p className="text-xs text-muted-foreground">Explain why you need to adjust (e.g. travel distance, extra equipment, time constraints)</p>
-              <textarea
-                value={challengeNote}
-                onChange={e => setChallengeNote(e.target.value)}
-                placeholder="e.g. The location requires 2+ hours of travel, I'd need an additional travel fee of $20..."
-                rows={3}
-                className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-yellow-500/40 text-foreground placeholder:text-muted-foreground resize-none"
-              />
-              <Button
-                size="sm"
-                className="w-full bg-yellow-600 hover:bg-yellow-700 text-white"
-                onClick={handleChallenge}
-                disabled={!challengeNote.trim() || challengeSending}
-              >
-                {challengeSending ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Send Challenge'}
-              </Button>
-            </div>
-          )}
+          <CounterOfferFlow
+            booking={booking}
+            user={user}
+            convId={convId}
+            onBookingUpdate={() => queryClient.invalidateQueries({ queryKey: ['booking', id] })}
+          />
 
           <div className="flex flex-wrap gap-3">
             {canAccept && <Button className="bg-green-600 hover:bg-green-700 flex-1" onClick={() => updateStatus.mutate('accepted')}>Accept</Button>}
             {canDecline && <Button variant="outline" className="border-red-500/20 text-red-400 flex-1" onClick={() => updateStatus.mutate('declined')}>Decline</Button>}
-            {canChallenge && (
-              <Button variant="outline" className="border-yellow-500/20 text-yellow-400 flex-1" onClick={() => setShowChallenge(v => !v)}>
-                <AlertTriangle className="w-4 h-4 mr-1" /> Challenge Offer
-              </Button>
-            )}
+
             {canStart && <Button className="bg-primary hover:bg-primary/90 flex-1" onClick={() => navigate(`/LiveStreamStudio?booking=${booking.id}`)}>Start Stream</Button>}
             {canComplete && <Button className="bg-green-600 hover:bg-green-700 flex-1" onClick={() => updateStatus.mutate('completed')}>Mark Complete</Button>}
             {canCancel && <Button variant="outline" className="border-white/10 flex-1" onClick={() => updateStatus.mutate('cancelled')}>Cancel Booking</Button>}

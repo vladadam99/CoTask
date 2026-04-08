@@ -1,0 +1,44 @@
+{
+  "name": "CounterOffer",
+  "type": "object",
+  "properties": {
+    "booking_id": {
+      "type": "string"
+    },
+    "offered_by_email": {
+      "type": "string"
+    },
+    "offered_by_role": {
+      "type": "string",
+      "enum": [
+        "avatar",
+        "client"
+      ]
+    },
+    "offered_by_name": {
+      "type": "string"
+    },
+    "amount": {
+      "type": "number",
+      "description": "Proposed total amount"
+    },
+    "note": {
+      "type": "string",
+      "description": "Reason for counter offer"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "accepted",
+        "declined"
+      ],
+      "default": "pending"
+    }
+  },
+  "required": [
+    "booking_id",
+    "offered_by_email",
+    "amount"
+  ]
+}
