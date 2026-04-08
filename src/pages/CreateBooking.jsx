@@ -144,7 +144,7 @@ Based on this, return:
       base44.functions.invoke('createConversation', { bookingId: booking.id }).catch(() => {});
 
       if (freeTest) {
-        navigate(`/BookingDetail?id=${booking.id}`);
+        navigate(`/UserBookingDetail?id=${booking.id}`);
         return;
       }
 
