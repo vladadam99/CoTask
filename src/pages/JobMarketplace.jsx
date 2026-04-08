@@ -9,13 +9,14 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Plus, Search, MapPin, Clock, DollarSign, Users, Filter, Briefcase } from 'lucide-react';
+import SmartSearchBar from '@/components/search/SmartSearchBar';
 
 const CATEGORIES = ['All', 'Shopping', 'Delivery', 'Real Estate', 'Tourism', 'Events', 'Inspection', 'Translation', 'Other'];
 const DURATION_LABELS = { hourly: '/hr', daily: '/day', weekly: '/wk', monthly: '/mo', custom: '' };
 
 export default function JobMarketplace() {
   const { user } = useCurrentUser();
-  const [search, setSearch] = useState('');
+  const [aiMatchedIds, setAiMatchedIds] = useState(null);
   const [category, setCategory] = useState('All');
   const [showOpen, setShowOpen] = useState(true);
 
@@ -24,11 +25,21 @@ export default function JobMarketplace() {
     queryFn: () => base44.entities.JobPost.filter(showOpen ? { status: 'open' } : {}, '-created_date', 50),
   });
 
+  const jobSummaryFn = (j) => [
+    j.title, j.description, j.category, j.location,
+    (j.skills_required || []).join(', '),
+    (j.languages_required || []).join(', '),
+  ].filter(Boolean).join(' | ');
+
   const filtered = jobs.filter(j => {
+    if (aiMatchedIds !== null && !aiMatchedIds.includes(j.id)) return false;
     const matchCat = category === 'All' || j.category === category;
-    const matchSearch = !search || j.title.toLowerCase().includes(search.toLowerCase()) || j.description?.toLowerCase().includes(search.toLowerCase());
-    return matchCat && matchSearch;
+    return matchCat;
   });
+
+  const sortedFiltered = aiMatchedIds
+    ? [...filtered].sort((a, b) => aiMatchedIds.indexOf(a.id) - aiMatchedIds.indexOf(b.id))
+    : filtered;
 
   const canPost = user?.role === 'user' || user?.role === 'enterprise';
   const canApply = user?.role === 'avatar' || user?.role === 'enterprise';
@@ -55,15 +66,13 @@ export default function JobMarketplace() {
 
         {/* Search + Filter bar */}
         <div className="glass rounded-2xl p-4 space-y-3">
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-            <Input
-              value={search}
-              onChange={e => setSearch(e.target.value)}
-              placeholder="Search jobs..."
-              className="pl-10 bg-white/5 border-white/10"
-            />
-          </div>
+          <SmartSearchBar
+            items={jobs}
+            itemSummaryFn={jobSummaryFn}
+            onResults={setAiMatchedIds}
+            placeholder="Search jobs, tasks, skills... (AI-powered)"
+            suggestions={CATEGORIES.filter(c => c !== 'All')}
+          />
           <div className="flex gap-2 overflow-x-auto pb-1">
             {CATEGORIES.map(cat => (
               <button key={cat} onClick={() => setCategory(cat)}
@@ -87,7 +96,7 @@ export default function JobMarketplace() {
         </div>
 
         {/* Job Count */}
-        <p className="text-sm text-muted-foreground">{isLoading ? 'Loading...' : `${filtered.length} job${filtered.length !== 1 ? 's' : ''} found`}</p>
+        <p className="text-sm text-muted-foreground">{isLoading ? 'Loading...' : `${sortedFiltered.length} job${sortedFiltered.length !== 1 ? 's' : ''} found`}</p>
 
         {/* Job Cards */}
         {isLoading ? (
@@ -107,7 +116,7 @@ export default function JobMarketplace() {
           </div>
         ) : (
           <div className="space-y-3">
-            {filtered.map(job => (
+            {sortedFiltered.map(job => (
               <Link key={job.id} to={`/JobDetail?id=${job.id}`}>
                 <div className="glass border border-white/5 hover:border-primary/30 rounded-2xl p-5 transition-all hover:scale-[1.005]">
                   <div className="flex items-start justify-between gap-3">
