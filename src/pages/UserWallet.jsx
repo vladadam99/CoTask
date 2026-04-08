@@ -5,7 +5,42 @@ import { useCurrentUser } from '@/lib/useCurrentUser';
 import AppShell from '@/components/layout/AppShell';
 import GlassCard from '@/components/ui/GlassCard';
 import { getNavItems } from '@/lib/navItems';
-import { Wallet, DollarSign, Clock, CheckCircle, AlertCircle } from 'lucide-react';
+import { Wallet, DollarSign, Clock, CheckCircle, AlertCircle, Download } from 'lucide-react';
+import { jsPDF } from 'jspdf';
+
+function downloadInvoice(tx, userEmail, userName) {
+  const doc = new jsPDF();
+  const invoiceNo = `INV-${tx.id.slice(-6).toUpperCase()}`;
+  const date = new Date(tx.date).toLocaleDateString();
+
+  doc.setFontSize(22); doc.setFont('helvetica', 'bold');
+  doc.text('CoTask Invoice', 20, 25);
+  doc.setFontSize(10); doc.setFont('helvetica', 'normal');
+  doc.text(`Invoice #: ${invoiceNo}`, 20, 38);
+  doc.text(`Date: ${date}`, 20, 45);
+  doc.text(`Role: Client`, 20, 52);
+  doc.text(`Name: ${userName}`, 20, 59);
+  doc.text(`Email: ${userEmail}`, 20, 66);
+
+  doc.line(20, 72, 190, 72);
+  doc.setFont('helvetica', 'bold');
+  doc.text('Service Details', 20, 82);
+  doc.setFont('helvetica', 'normal');
+  doc.text(`Description: ${tx.title}`, 20, 92);
+  doc.text(`Provider: ${tx.to}`, 20, 99);
+  doc.text(`Type: ${tx.type === 'job' ? 'Job Post' : 'Booking'}`, 20, 106);
+
+  doc.line(20, 114, 190, 114);
+  doc.setFont('helvetica', 'bold');
+  doc.text('Payment', 20, 124);
+  doc.setFont('helvetica', 'normal');
+  doc.text(`Amount Paid:`, 20, 134); doc.text(`$${tx.amount.toFixed(2)}`, 160, 134);
+  doc.text(`Status:`, 20, 141); doc.text(tx.status, 160, 141);
+
+  doc.setFontSize(8); doc.setFont('helvetica', 'normal');
+  doc.text('CoTask Platform · cotask.app · support@cotask.app', 20, 280);
+  doc.save(`cotask-invoice-${invoiceNo}.pdf`);
+}
 
 export default function UserWallet() {
   const { user, loading } = useCurrentUser();
@@ -111,7 +146,10 @@ export default function UserWallet() {
                 </div>
                 <div className="text-right flex-shrink-0">
                   <p className="font-bold text-primary">-${tx.amount.toFixed(2)}</p>
-                  <p className="text-xs text-muted-foreground capitalize">{tx.status}</p>
+                  <p className="text-xs text-muted-foreground capitalize mb-1">{tx.status}</p>
+                  <button onClick={() => downloadInvoice(tx, user.email, user.full_name)} className="flex items-center gap-1 text-xs text-primary hover:underline ml-auto">
+                    <Download className="w-3 h-3" /> Invoice PDF
+                  </button>
                 </div>
               </div>
             </GlassCard>

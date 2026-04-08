@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { LogOut, Menu, X, HelpCircle, Settings, User, ChevronRight } from 'lucide-react';
+import { LogOut, Menu, X, HelpCircle, Settings, User, ChevronRight, Wallet } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import NotificationBell from '@/components/notifications/NotificationBell';
 import RoleSwitcher from '@/components/RoleSwitcher';
@@ -147,6 +147,14 @@ export default function AppShell({ children, navItems = [], user }) {
                 className="flex items-center gap-3 px-3 py-3 rounded-xl hover:bg-white/5 transition-colors text-sm">
                 <Settings className="w-4 h-4 text-muted-foreground" />
                 <span>Settings</span>
+                <ChevronRight className="w-4 h-4 text-muted-foreground ml-auto" />
+              </Link>
+              <Link
+                to={user?.role === 'avatar' ? '/AvatarWallet' : '/UserWallet'}
+                onClick={() => setDrawerOpen(false)}
+                className="flex items-center gap-3 px-3 py-3 rounded-xl hover:bg-white/5 transition-colors text-sm">
+                <Wallet className="w-4 h-4 text-muted-foreground" />
+                <span>Wallet</span>
                 <ChevronRight className="w-4 h-4 text-muted-foreground ml-auto" />
               </Link>
               <Link to="/FAQ" onClick={() => setDrawerOpen(false)}
