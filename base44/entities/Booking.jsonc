@@ -50,6 +50,19 @@
       "type": "number",
       "default": 0
     },
+    "service_location_type": {
+      "type": "string",
+      "enum": [
+        "onsite",
+        "remote"
+      ],
+      "default": "onsite",
+      "description": "Whether the avatar attends physically or virtually"
+    },
+    "meeting_platform": {
+      "type": "string",
+      "description": "Platform for remote sessions e.g. Zoom, Google Meet"
+    },
     "scheduled_date": {
       "type": "string",
       "format": "date"
@@ -72,19 +85,16 @@
     },
     "transport_required": {
       "type": "boolean",
-      "default": false,
-      "description": "Whether the avatar needs to travel/transport"
+      "default": false
     },
     "transport_notes": {
-      "type": "string",
-      "description": "Details about transport requirements"
+      "type": "string"
     },
     "equipment_needed": {
       "type": "array",
       "items": {
         "type": "string"
-      },
-      "description": "List of tools, devices or equipment the avatar should bring"
+      }
     },
     "amount": {
       "type": "number"

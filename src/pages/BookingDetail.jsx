@@ -6,7 +6,7 @@ import { useCurrentUser } from '@/lib/useCurrentUser';
 import GlassCard from '@/components/ui/GlassCard';
 import StatusBadge from '@/components/ui/StatusBadge';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, Calendar, Clock, MapPin, User, DollarSign, MessageSquare, Video, VideoOff, CreditCard, CheckCircle, Loader2, Camera } from 'lucide-react';
+import { ArrowLeft, Calendar, Clock, MapPin, User, DollarSign, MessageSquare, Video, VideoOff, CreditCard, CheckCircle, Loader2, Camera, Wifi, Truck, Wrench } from 'lucide-react';
 import LeaveReview from '@/components/reviews/LeaveReview';
 import ProofUpload from '@/components/bookings/ProofUpload';
 import JobApprovalFlow from '@/components/bookings/JobApprovalFlow';
@@ -173,23 +173,34 @@ export default function BookingDetail() {
             </div>
           </GlassCard>
 
-          {(booking.notes || booking.transport_required || (booking.equipment_needed || []).length > 0) && (
+          {(booking.notes || booking.transport_required || (booking.equipment_needed || []).length > 0 || booking.service_location_type || booking.meeting_platform) && (
             <GlassCard className="p-6 space-y-3">
+              {booking.service_location_type === 'remote' ? (
+                <div>
+                  <h3 className="font-semibold mb-1 text-sm flex items-center gap-1.5"><Wifi className="w-3.5 h-3.5 text-primary" /> Remote Session</h3>
+                  {booking.meeting_platform && <p className="text-sm text-muted-foreground">Platform: <span className="text-foreground font-medium">{booking.meeting_platform}</span></p>}
+                </div>
+              ) : booking.location ? (
+                <div>
+                  <h3 className="font-semibold mb-1 text-sm flex items-center gap-1.5"><MapPin className="w-3.5 h-3.5 text-primary" /> On-site Location</h3>
+                  <p className="text-sm text-muted-foreground">{booking.location}</p>
+                </div>
+              ) : null}
               {booking.notes && (
                 <div>
-                  <h3 className="font-semibold mb-1">Notes</h3>
+                  <h3 className="font-semibold mb-1">Instructions</h3>
                   <p className="text-sm text-muted-foreground">{booking.notes}</p>
                 </div>
               )}
               {booking.transport_required && (
                 <div>
-                  <h3 className="font-semibold mb-1 text-sm flex items-center gap-1.5">🚗 Transport Required</h3>
+                  <h3 className="font-semibold mb-1 text-sm flex items-center gap-1.5"><Truck className="w-3.5 h-3.5 text-primary" /> Transport Required</h3>
                   {booking.transport_notes && <p className="text-sm text-muted-foreground">{booking.transport_notes}</p>}
                 </div>
               )}
               {(booking.equipment_needed || []).length > 0 && (
                 <div>
-                  <h3 className="font-semibold mb-2 text-sm">🔧 Equipment / Tools Needed</h3>
+                  <h3 className="font-semibold mb-2 text-sm flex items-center gap-1.5"><Wrench className="w-3.5 h-3.5 text-primary" /> Equipment / Tools Needed</h3>
                   <div className="flex flex-wrap gap-2">
                     {booking.equipment_needed.map((eq, i) => (
                       <span key={i} className="bg-white/5 border border-white/10 text-xs px-3 py-1 rounded-full">{eq}</span>

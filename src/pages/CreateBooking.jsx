@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { useQuery, useMutation } from '@tanstack/react-query';
+import { useNavigate } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { useCurrentUser } from '@/lib/useCurrentUser';
 import GlassCard from '@/components/ui/GlassCard';
@@ -8,14 +8,32 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { ArrowLeft, Calendar, MapPin, CreditCard, Loader2, FlaskConical, Truck, Wrench, Plus, X } from 'lucide-react';
+import { ArrowLeft, Calendar, MapPin, Wifi, Truck, Wrench, Plus, X, FlaskConical } from 'lucide-react';
 import CameraOptionPicker from '@/components/bookings/CameraOptionPicker';
+import ReviewBookingPanel from '@/components/bookings/ReviewBookingPanel';
 
 const CATEGORIES = [
   'City Guide', 'Property Walkthrough', 'Shopping Help', 'Event Attendance',
   'Queue & Errands', 'Family Support', 'Business Inspection', 'Training & Coaching',
-  'Campus Help', 'Travel Assistance', 'Custom Request'
+  'Campus Help', 'Travel Assistance', 'DIY & Home Help', 'Custom Request'
 ];
+
+const CATEGORY_PROMPTS = {
+  'City Guide': 'e.g. I need someone to walk around the Shoreditch area and show me the best coffee shops, street art, and hidden gems. Should take about 1 hour.',
+  'Property Walkthrough': 'e.g. Please visit the flat at 12 Baker St and do a full walkthrough — check the kitchen, bathrooms, windows, and any visible damage. Note anything unusual.',
+  'Shopping Help': 'e.g. I need someone to visit Zara on Oxford St and check if the blue linen trousers (size M) are in stock. If yes, please purchase them.',
+  'Event Attendance': 'e.g. Attend the product launch at ExCeL London on my behalf. Take notes, collect any brochures or swag, and take photos of the main presentations.',
+  'Queue & Errands': 'e.g. Please queue at the Apple Store on Regent St for the new iPhone drop. Doors open at 8am, I need you there by 7am.',
+  'Family Support': 'e.g. Help my elderly mother with her weekly grocery shopping at Waitrose. She needs someone patient who can assist her around the store.',
+  'Business Inspection': 'e.g. Visit our supplier\'s warehouse and verify that the stock matches the invoice — 200 units of SKU-4421. Take photos of the pallets.',
+  'Training & Coaching': 'e.g. Guide me through setting up my new home office. I need help with cable management, monitor positioning, and ergonomic setup. Remote session preferred.',
+  'Campus Help': 'e.g. Please collect my transcript from the admin office at UCL and drop it at the post office on Gower St.',
+  'Travel Assistance': 'e.g. Meet me at Heathrow Terminal 5 and help me navigate to my gate. I have mobility issues and need someone to assist with my luggage.',
+  'DIY & Home Help': 'e.g. I need help assembling an IKEA KALLAX shelf (4x4). All parts are here. Should take around 2 hours. No special tools needed, just a screwdriver.',
+  'Custom Request': 'Describe your task in as much detail as possible — what, where, when, and any specific requirements or preferences.',
+};
+
+const MEETING_PLATFORMS = ['Google Meet', 'Zoom', 'Microsoft Teams', 'WhatsApp Video', 'FaceTime', 'Skype', 'Base44 Live', 'Other'];
 
 export default function CreateBooking() {
   const params = new URLSearchParams(window.location.search);
@@ -25,6 +43,8 @@ export default function CreateBooking() {
   const [checkoutLoading, setCheckoutLoading] = useState(false);
   const [error, setError] = useState('');
   const [freeTest, setFreeTest] = useState(false);
+  const [step, setStep] = useState('form'); // 'form' | 'review'
+  const [newEquipment, setNewEquipment] = useState('');
 
   const { data: avatar } = useQuery({
     queryKey: ['booking-avatar', avatarId],
@@ -36,12 +56,21 @@ export default function CreateBooking() {
   });
 
   const [form, setForm] = useState({
-    category: '', booking_type: 'scheduled', scheduled_date: '', scheduled_time: '',
-    duration_minutes: 60, location: '', notes: '', custom_request: '',
-    stream_mode: 'no_camera', transport_required: false, transport_notes: '',
+    category: '',
+    booking_type: 'scheduled',
+    scheduled_date: '',
+    scheduled_time: '',
+    duration_minutes: 60,
+    service_location_type: 'onsite', // 'onsite' | 'remote'
+    location: '',
+    meeting_platform: '',
+    notes: '',
+    custom_request: '',
+    stream_mode: 'no_camera',
+    transport_required: false,
+    transport_notes: '',
     equipment_needed: [],
   });
-  const [newEquipment, setNewEquipment] = useState('');
 
   const update = (k, v) => setForm(prev => ({ ...prev, [k]: v }));
 
@@ -52,13 +81,19 @@ export default function CreateBooking() {
   const serviceFee = Math.round(amount * 0.15 * 100) / 100;
   const total = amount + serviceFee;
 
+  const handleReview = () => {
+    if (!form.category) { setError('Please select a service category.'); return; }
+    if (form.service_location_type === 'onsite' && !form.location) { setError('Please enter the location / address.'); return; }
+    if (form.booking_type === 'scheduled' && !form.scheduled_date) { setError('Please select a date.'); return; }
+    setError('');
+    setStep('review');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
   const createAndPay = async () => {
-    if (!form.category) { setError('Please select a category.'); return; }
     setError('');
     setCheckoutLoading(true);
-
     try {
-      // 1. Create booking
       const booking = await base44.entities.Booking.create({
         client_email: user.email,
         client_name: user.full_name,
@@ -72,11 +107,13 @@ export default function CreateBooking() {
         scheduled_date: form.scheduled_date,
         scheduled_time: form.scheduled_time,
         duration_minutes: form.duration_minutes,
-        location: form.location,
+        service_location_type: form.service_location_type,
+        location: form.service_location_type === 'onsite' ? form.location : '',
+        meeting_platform: form.service_location_type === 'remote' ? form.meeting_platform : '',
         notes: form.notes,
         custom_request: form.custom_request,
         stream_mode: form.stream_mode,
-        transport_required: form.transport_required,
+        transport_required: form.service_location_type === 'onsite' ? form.transport_required : false,
         transport_notes: form.transport_notes,
         equipment_needed: form.equipment_needed,
         live_premium: freeTest ? 0 : livePremium,
@@ -87,23 +124,19 @@ export default function CreateBooking() {
         payment_status: freeTest ? 'paid' : 'pending',
       });
 
-      // 2. Auto-create conversation (don't await — fire and forget to speed things up)
       base44.functions.invoke('createConversation', { bookingId: booking.id }).catch(() => {});
 
-      // 3. Free test — skip payment, go straight to booking detail
       if (freeTest) {
         navigate(`/BookingDetail?id=${booking.id}`);
         return;
       }
 
-      // Check if inside iframe (editor preview)
       if (window.self !== window.top) {
         alert('Payment checkout only works on the published app. Please open the published link to complete payment.');
         setCheckoutLoading(false);
         return;
       }
 
-      // 4. Create Stripe checkout
       const res = await base44.functions.invoke('createCheckout', {
         bookingId: booking.id,
         amount: total,
@@ -122,6 +155,28 @@ export default function CreateBooking() {
     }
   };
 
+  if (step === 'review') {
+    return (
+      <div className="min-h-screen pb-12 px-4">
+        <div className="max-w-2xl mx-auto pt-8">
+          {error && <p className="text-sm text-red-400 bg-red-500/10 border border-red-500/20 rounded-xl px-4 py-3 mb-4">{error}</p>}
+          <ReviewBookingPanel
+            form={form}
+            avatar={avatar}
+            amount={amount}
+            livePremium={livePremium}
+            serviceFee={serviceFee}
+            total={total}
+            freeTest={freeTest}
+            loading={checkoutLoading}
+            onBack={() => setStep('form')}
+            onConfirm={createAndPay}
+          />
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen pb-12 px-4">
       <div className="max-w-2xl mx-auto pt-8">
@@ -130,9 +185,21 @@ export default function CreateBooking() {
         </button>
 
         <h1 className="text-2xl font-bold mb-2">Create Booking</h1>
-        {avatar && <p className="text-muted-foreground text-sm mb-8">Booking with <span className="text-foreground font-medium">{avatar.display_name}</span> — ${rate}/hr</p>}
+        {avatar && (
+          <div className="flex items-center gap-3 mb-8">
+            {avatar.photo_url ? (
+              <img src={avatar.photo_url} className="w-10 h-10 rounded-full object-cover border border-white/10" alt={avatar.display_name} />
+            ) : (
+              <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center text-primary font-bold">
+                {avatar.display_name?.[0] || 'A'}
+              </div>
+            )}
+            <p className="text-muted-foreground text-sm">Booking with <span className="text-foreground font-medium">{avatar.display_name}</span> — ${rate}/hr</p>
+          </div>
+        )}
 
         <div className="space-y-6">
+          {/* Service Details */}
           <GlassCard className="p-6 space-y-4">
             <h2 className="font-semibold">Service Details</h2>
             <CameraOptionPicker value={form.stream_mode} onChange={v => update('stream_mode', v)} premiumRate={LIVE_PREMIUM_PER_HOUR} />
@@ -146,7 +213,7 @@ export default function CreateBooking() {
               </Select>
             </div>
             <div>
-              <label className="text-sm font-medium mb-1.5 block">Type</label>
+              <label className="text-sm font-medium mb-1.5 block">Booking Type</label>
               <Select value={form.booking_type} onValueChange={v => update('booking_type', v)}>
                 <SelectTrigger className="bg-muted/50 border-white/5"><SelectValue /></SelectTrigger>
                 <SelectContent>
@@ -157,6 +224,7 @@ export default function CreateBooking() {
             </div>
           </GlassCard>
 
+          {/* Schedule */}
           {form.booking_type === 'scheduled' && (
             <GlassCard className="p-6 space-y-4">
               <h2 className="font-semibold flex items-center gap-2"><Calendar className="w-4 h-4 text-primary" /> Schedule</h2>
@@ -186,45 +254,82 @@ export default function CreateBooking() {
             </GlassCard>
           )}
 
+          {/* Service Location Type */}
           <GlassCard className="p-6 space-y-4">
-            <h2 className="font-semibold flex items-center gap-2"><MapPin className="w-4 h-4 text-primary" /> Location & Details</h2>
-            <div>
-              <label className="text-sm font-medium mb-1.5 block">Location / Address</label>
-              <Input value={form.location} onChange={e => update('location', e.target.value)} placeholder="Where should the avatar go?" className="bg-muted/50 border-white/5" />
+            <h2 className="font-semibold flex items-center gap-2">
+              {form.service_location_type === 'onsite' ? <MapPin className="w-4 h-4 text-primary" /> : <Wifi className="w-4 h-4 text-primary" />}
+              Service Location
+            </h2>
+            <div className="grid grid-cols-2 gap-2">
+              {[
+                { value: 'onsite', label: '📍 On-site', sub: 'Avatar physically attends' },
+                { value: 'remote', label: '🌐 Remote', sub: 'Virtual / online session' },
+              ].map(opt => (
+                <button
+                  key={opt.value}
+                  type="button"
+                  onClick={() => update('service_location_type', opt.value)}
+                  className={`p-4 rounded-xl border text-left transition-all ${
+                    form.service_location_type === opt.value
+                      ? 'bg-primary/10 border-primary/40 text-foreground'
+                      : 'bg-muted/30 border-white/5 text-muted-foreground hover:border-white/10'
+                  }`}
+                >
+                  <p className="font-medium text-sm">{opt.label}</p>
+                  <p className="text-xs mt-0.5 opacity-70">{opt.sub}</p>
+                </button>
+              ))}
             </div>
-            <div>
-              <label className="text-sm font-medium mb-1.5 block">Notes / Instructions</label>
-              <Textarea value={form.notes} onChange={e => update('notes', e.target.value)} placeholder="Any specific instructions..." className="bg-muted/50 border-white/5 h-20" />
-            </div>
-          </GlassCard>
 
-          {/* Transport */}
-          <GlassCard className="p-6 space-y-4">
-            <h2 className="font-semibold flex items-center gap-2"><Truck className="w-4 h-4 text-primary" /> Transport</h2>
-            <button
-              type="button"
-              onClick={() => update('transport_required', !form.transport_required)}
-              className={`w-full flex items-center justify-between px-4 py-3 rounded-xl border transition-all text-sm ${
-                form.transport_required ? 'bg-primary/10 border-primary/30 text-primary' : 'bg-muted/30 border-white/5 text-muted-foreground'
-              }`}
-            >
-              <span>Transport / travel required for the avatar</span>
-              <div className={`w-9 h-5 rounded-full transition-colors flex items-center px-0.5 ${form.transport_required ? 'bg-primary' : 'bg-muted'}`}>
-                <div className={`w-4 h-4 rounded-full bg-white shadow transition-transform ${form.transport_required ? 'translate-x-4' : 'translate-x-0'}`} />
-              </div>
-            </button>
-            {form.transport_required && (
+            {form.service_location_type === 'onsite' ? (
               <div>
-                <label className="text-sm font-medium mb-1.5 block">Transport details</label>
-                <Input value={form.transport_notes} onChange={e => update('transport_notes', e.target.value)} placeholder="e.g. Need to drive to location, uber provided, public transport ok..." className="bg-muted/50 border-white/5" />
+                <label className="text-sm font-medium mb-1.5 block">Address / Location</label>
+                <Input value={form.location} onChange={e => update('location', e.target.value)} placeholder="e.g. 12 Baker St, London, W1U 3BW" className="bg-muted/50 border-white/5" />
+                <p className="text-xs text-muted-foreground mt-1">Full address where the avatar should be present.</p>
+              </div>
+            ) : (
+              <div>
+                <label className="text-sm font-medium mb-1.5 block">Meeting Platform</label>
+                <Select value={form.meeting_platform} onValueChange={v => update('meeting_platform', v)}>
+                  <SelectTrigger className="bg-muted/50 border-white/5"><SelectValue placeholder="Select platform" /></SelectTrigger>
+                  <SelectContent>
+                    {MEETING_PLATFORMS.map(p => <SelectItem key={p} value={p}>{p}</SelectItem>)}
+                  </SelectContent>
+                </Select>
+                <p className="text-xs text-muted-foreground mt-1">The avatar will connect via this platform at the scheduled time.</p>
               </div>
             )}
           </GlassCard>
 
+          {/* Transport — only relevant for on-site */}
+          {form.service_location_type === 'onsite' && (
+            <GlassCard className="p-6 space-y-4">
+              <h2 className="font-semibold flex items-center gap-2"><Truck className="w-4 h-4 text-primary" /> Transport</h2>
+              <button
+                type="button"
+                onClick={() => update('transport_required', !form.transport_required)}
+                className={`w-full flex items-center justify-between px-4 py-3 rounded-xl border transition-all text-sm ${
+                  form.transport_required ? 'bg-primary/10 border-primary/30 text-primary' : 'bg-muted/30 border-white/5 text-muted-foreground'
+                }`}
+              >
+                <span>Transport / travel required for this avatar</span>
+                <div className={`w-9 h-5 rounded-full transition-colors flex items-center px-0.5 ${form.transport_required ? 'bg-primary' : 'bg-muted'}`}>
+                  <div className={`w-4 h-4 rounded-full bg-white shadow transition-transform ${form.transport_required ? 'translate-x-4' : 'translate-x-0'}`} />
+                </div>
+              </button>
+              {form.transport_required && (
+                <div>
+                  <label className="text-sm font-medium mb-1.5 block">Transport details</label>
+                  <Input value={form.transport_notes} onChange={e => update('transport_notes', e.target.value)} placeholder="e.g. Uber provided, public transport from Zone 1, parking available…" className="bg-muted/50 border-white/5" />
+                </div>
+              )}
+            </GlassCard>
+          )}
+
           {/* Equipment & Tools */}
           <GlassCard className="p-6 space-y-4">
-            <h2 className="font-semibold flex items-center gap-2"><Wrench className="w-4 h-4 text-primary" /> Equipment & Tools Needed</h2>
-            <p className="text-xs text-muted-foreground">List any devices, tools or items the avatar should bring or have access to.</p>
+            <h2 className="font-semibold flex items-center gap-2"><Wrench className="w-4 h-4 text-primary" /> Equipment & Tools</h2>
+            <p className="text-xs text-muted-foreground">List any specific devices, tools or items the avatar should bring or have access to.</p>
             <div className="flex gap-2">
               <Input
                 value={newEquipment}
@@ -236,7 +341,7 @@ export default function CreateBooking() {
                     setNewEquipment('');
                   }
                 }}
-                placeholder="e.g. smartphone, 360 camera, laptop..."
+                placeholder="e.g. smartphone, 360 camera, drill…"
                 className="bg-muted/50 border-white/5"
               />
               <Button type="button" variant="outline" className="border-white/10 shrink-0"
@@ -258,6 +363,23 @@ export default function CreateBooking() {
             )}
           </GlassCard>
 
+          {/* Notes */}
+          <GlassCard className="p-6 space-y-3">
+            <h2 className="font-semibold">Task Instructions</h2>
+            {form.category && CATEGORY_PROMPTS[form.category] && (
+              <div className="bg-white/5 border border-white/10 rounded-xl px-4 py-3">
+                <p className="text-xs text-muted-foreground mb-1 font-medium">💡 Tip for "{form.category}":</p>
+                <p className="text-xs text-muted-foreground italic">{CATEGORY_PROMPTS[form.category]}</p>
+              </div>
+            )}
+            <Textarea
+              value={form.notes}
+              onChange={e => update('notes', e.target.value)}
+              placeholder={form.category ? `Describe your task in detail…` : 'Select a category above to see guiding tips, then describe your task here…'}
+              className="bg-muted/50 border-white/5 h-28"
+            />
+          </GlassCard>
+
           {/* Price Summary */}
           <GlassCard className="p-6">
             <h2 className="font-semibold mb-4">Price Summary</h2>
@@ -271,14 +393,12 @@ export default function CreateBooking() {
             </div>
           </GlassCard>
 
-          {/* Free test mode toggle */}
+          {/* Free test toggle */}
           <button
             type="button"
             onClick={() => setFreeTest(v => !v)}
             className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl border transition-all text-sm ${
-              freeTest
-                ? 'bg-yellow-500/10 border-yellow-500/30 text-yellow-400'
-                : 'bg-card/40 border-white/5 text-muted-foreground hover:border-white/10'
+              freeTest ? 'bg-yellow-500/10 border-yellow-500/30 text-yellow-400' : 'bg-card/40 border-white/5 text-muted-foreground hover:border-white/10'
             }`}
           >
             <FlaskConical className="w-4 h-4 shrink-0" />
@@ -294,21 +414,13 @@ export default function CreateBooking() {
           {error && <p className="text-sm text-red-400 bg-red-500/10 border border-red-500/20 rounded-xl px-4 py-3">{error}</p>}
 
           <Button
-            className={`w-full py-5 text-base gap-2 ${freeTest ? 'bg-yellow-600 hover:bg-yellow-700' : 'bg-primary hover:bg-primary/90 glow-primary-sm'}`}
-            onClick={createAndPay}
-            disabled={!form.category || checkoutLoading}
+            className="w-full py-5 text-base gap-2 bg-primary hover:bg-primary/90 glow-primary-sm"
+            onClick={handleReview}
+            disabled={!form.category}
           >
-            {checkoutLoading ? (
-              <><Loader2 className="w-4 h-4 animate-spin" /> Creating booking…</>
-            ) : freeTest ? (
-              <><FlaskConical className="w-4 h-4" /> Book Free (Test) — $0.00</>
-            ) : (
-              <><CreditCard className="w-4 h-4" /> Pay & Confirm — ${total.toFixed(2)}</>
-            )}
+            Review Booking →
           </Button>
-          <p className="text-xs text-center text-muted-foreground">
-            {freeTest ? 'Test mode — booking will be instantly accepted, no payment needed.' : 'Secured by Stripe. You\'ll be redirected to complete payment.'}
-          </p>
+          <p className="text-xs text-center text-muted-foreground">You'll review all details before payment.</p>
         </div>
       </div>
     </div>
