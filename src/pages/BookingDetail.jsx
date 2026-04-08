@@ -102,7 +102,7 @@ export default function BookingDetail() {
   const isClient = user?.email === booking.client_email;
   const canAccept = isAvatar && booking.status === 'pending';
   const canDecline = isAvatar && booking.status === 'pending';
-  const canStart = isAvatar && ['accepted', 'scheduled'].includes(booking.status);
+  const canStart = isAvatar && ['accepted', 'scheduled'].includes(booking.status) && booking.stream_mode === 'live_camera';
   const canComplete = isAvatar && booking.status === 'in_progress' && !booking.proof_url;
   const canUploadProof = isAvatar && booking.status === 'in_progress' && !booking.proof_url;
   const canCancel = isClient && ['pending', 'accepted', 'scheduled'].includes(booking.status);
@@ -173,10 +173,30 @@ export default function BookingDetail() {
             </div>
           </GlassCard>
 
-          {booking.notes && (
-            <GlassCard className="p-6">
-              <h3 className="font-semibold mb-2">Notes</h3>
-              <p className="text-sm text-muted-foreground">{booking.notes}</p>
+          {(booking.notes || booking.transport_required || (booking.equipment_needed || []).length > 0) && (
+            <GlassCard className="p-6 space-y-3">
+              {booking.notes && (
+                <div>
+                  <h3 className="font-semibold mb-1">Notes</h3>
+                  <p className="text-sm text-muted-foreground">{booking.notes}</p>
+                </div>
+              )}
+              {booking.transport_required && (
+                <div>
+                  <h3 className="font-semibold mb-1 text-sm flex items-center gap-1.5">🚗 Transport Required</h3>
+                  {booking.transport_notes && <p className="text-sm text-muted-foreground">{booking.transport_notes}</p>}
+                </div>
+              )}
+              {(booking.equipment_needed || []).length > 0 && (
+                <div>
+                  <h3 className="font-semibold mb-2 text-sm">🔧 Equipment / Tools Needed</h3>
+                  <div className="flex flex-wrap gap-2">
+                    {booking.equipment_needed.map((eq, i) => (
+                      <span key={i} className="bg-white/5 border border-white/10 text-xs px-3 py-1 rounded-full">{eq}</span>
+                    ))}
+                  </div>
+                </div>
+              )}
             </GlassCard>
           )}
 

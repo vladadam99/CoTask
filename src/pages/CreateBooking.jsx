@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { ArrowLeft, Calendar, MapPin, CreditCard, Loader2, FlaskConical } from 'lucide-react';
+import { ArrowLeft, Calendar, MapPin, CreditCard, Loader2, FlaskConical, Truck, Wrench, Plus, X } from 'lucide-react';
 import CameraOptionPicker from '@/components/bookings/CameraOptionPicker';
 
 const CATEGORIES = [
@@ -38,8 +38,10 @@ export default function CreateBooking() {
   const [form, setForm] = useState({
     category: '', booking_type: 'scheduled', scheduled_date: '', scheduled_time: '',
     duration_minutes: 60, location: '', notes: '', custom_request: '',
-    stream_mode: 'no_camera',
+    stream_mode: 'no_camera', transport_required: false, transport_notes: '',
+    equipment_needed: [],
   });
+  const [newEquipment, setNewEquipment] = useState('');
 
   const update = (k, v) => setForm(prev => ({ ...prev, [k]: v }));
 
@@ -74,6 +76,9 @@ export default function CreateBooking() {
         notes: form.notes,
         custom_request: form.custom_request,
         stream_mode: form.stream_mode,
+        transport_required: form.transport_required,
+        transport_notes: form.transport_notes,
+        equipment_needed: form.equipment_needed,
         live_premium: freeTest ? 0 : livePremium,
         amount: freeTest ? 0 : amount,
         service_fee: freeTest ? 0 : serviceFee,
@@ -191,6 +196,66 @@ export default function CreateBooking() {
               <label className="text-sm font-medium mb-1.5 block">Notes / Instructions</label>
               <Textarea value={form.notes} onChange={e => update('notes', e.target.value)} placeholder="Any specific instructions..." className="bg-muted/50 border-white/5 h-20" />
             </div>
+          </GlassCard>
+
+          {/* Transport */}
+          <GlassCard className="p-6 space-y-4">
+            <h2 className="font-semibold flex items-center gap-2"><Truck className="w-4 h-4 text-primary" /> Transport</h2>
+            <button
+              type="button"
+              onClick={() => update('transport_required', !form.transport_required)}
+              className={`w-full flex items-center justify-between px-4 py-3 rounded-xl border transition-all text-sm ${
+                form.transport_required ? 'bg-primary/10 border-primary/30 text-primary' : 'bg-muted/30 border-white/5 text-muted-foreground'
+              }`}
+            >
+              <span>Transport / travel required for the avatar</span>
+              <div className={`w-9 h-5 rounded-full transition-colors flex items-center px-0.5 ${form.transport_required ? 'bg-primary' : 'bg-muted'}`}>
+                <div className={`w-4 h-4 rounded-full bg-white shadow transition-transform ${form.transport_required ? 'translate-x-4' : 'translate-x-0'}`} />
+              </div>
+            </button>
+            {form.transport_required && (
+              <div>
+                <label className="text-sm font-medium mb-1.5 block">Transport details</label>
+                <Input value={form.transport_notes} onChange={e => update('transport_notes', e.target.value)} placeholder="e.g. Need to drive to location, uber provided, public transport ok..." className="bg-muted/50 border-white/5" />
+              </div>
+            )}
+          </GlassCard>
+
+          {/* Equipment & Tools */}
+          <GlassCard className="p-6 space-y-4">
+            <h2 className="font-semibold flex items-center gap-2"><Wrench className="w-4 h-4 text-primary" /> Equipment & Tools Needed</h2>
+            <p className="text-xs text-muted-foreground">List any devices, tools or items the avatar should bring or have access to.</p>
+            <div className="flex gap-2">
+              <Input
+                value={newEquipment}
+                onChange={e => setNewEquipment(e.target.value)}
+                onKeyDown={e => {
+                  if (e.key === 'Enter' && newEquipment.trim()) {
+                    e.preventDefault();
+                    update('equipment_needed', [...form.equipment_needed, newEquipment.trim()]);
+                    setNewEquipment('');
+                  }
+                }}
+                placeholder="e.g. smartphone, 360 camera, laptop..."
+                className="bg-muted/50 border-white/5"
+              />
+              <Button type="button" variant="outline" className="border-white/10 shrink-0"
+                onClick={() => { if (newEquipment.trim()) { update('equipment_needed', [...form.equipment_needed, newEquipment.trim()]); setNewEquipment(''); } }}>
+                <Plus className="w-4 h-4" />
+              </Button>
+            </div>
+            {form.equipment_needed.length > 0 && (
+              <div className="flex flex-wrap gap-2">
+                {form.equipment_needed.map((eq, i) => (
+                  <span key={i} className="flex items-center gap-1.5 bg-white/5 border border-white/10 text-sm px-3 py-1 rounded-full">
+                    {eq}
+                    <button type="button" onClick={() => update('equipment_needed', form.equipment_needed.filter((_, idx) => idx !== i))}>
+                      <X className="w-3 h-3 text-muted-foreground hover:text-foreground" />
+                    </button>
+                  </span>
+                ))}
+              </div>
+            )}
           </GlassCard>
 
           {/* Price Summary */}

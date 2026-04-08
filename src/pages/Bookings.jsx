@@ -33,6 +33,9 @@ export default function Bookings() {
     enabled: !!user,
   });
 
+  // Regular bookings for client (from CreateBooking flow, not job marketplace)
+  const clientBookings = isClient ? bookings : [];
+
   const { data: myJobs = [], isLoading: jobsLoading } = useQuery({
     queryKey: ['my-jobs', user?.email],
     queryFn: () => base44.entities.JobPost.filter({ posted_by_email: user.email }, '-created_date', 50),
@@ -85,6 +88,31 @@ export default function Bookings() {
                   t === tab ? 'bg-primary text-primary-foreground' : 'bg-muted/50 text-muted-foreground hover:bg-muted'
                 }`}>{t}</button>
             ))}
+          </div>
+        )}
+
+        {isClient && clientBookings.length > 0 && (
+          <div className="mb-8">
+            <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-3">Direct Bookings</h2>
+            <div className="space-y-3">
+              {clientBookings.map(b => (
+                <Link key={b.id} to={`/BookingDetail?id=${b.id}`}>
+                  <GlassCard className="p-5" hover>
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="font-medium">{b.category}</p>
+                        <p className="text-sm text-muted-foreground mt-1">{b.avatar_name} · {b.scheduled_date || 'Immediate'} {b.scheduled_time || ''}</p>
+                        {b.location && <p className="text-xs text-muted-foreground mt-1">{b.location}</p>}
+                      </div>
+                      <div className="text-right">
+                        <StatusBadge status={b.status} />
+                        <p className="text-sm font-medium mt-2">${b.total_amount || 0}</p>
+                      </div>
+                    </div>
+                  </GlassCard>
+                </Link>
+              ))}
+            </div>
           </div>
         )}
 
