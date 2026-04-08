@@ -54,6 +54,7 @@ import SafetyAgent from './pages/SafetyAgent';
 import AvatarWallet from './pages/AvatarWallet';
 import AvatarBookingDetail from './pages/AvatarBookingDetail';
 import UserWallet from './pages/UserWallet';
+import UserBookingDetail from './pages/UserBookingDetail';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -101,6 +102,7 @@ const AuthenticatedApp = () => {
       <Route path="/Bookings" element={<Bookings />} />
       <Route path="/BookingDetail" element={<BookingDetail />} />
       <Route path="/AvatarBookingDetail" element={<AvatarBookingDetail />} />
+      <Route path="/UserBookingDetail" element={<UserBookingDetail />} />
       <Route path="/Messages" element={<Messages />} />
       <Route path="/LiveSessions" element={<LiveSessions />} />
       <Route path="/Saved" element={<Saved />} />
