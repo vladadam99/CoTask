@@ -40,8 +40,17 @@ export default function SuggestedForYou({ user }) {
                   </div>
                 </div>
               </div>
-              {avatar.suggestion_reason && (
-                <p className="text-xs text-primary/80 italic mb-2 line-clamp-2">{avatar.suggestion_reason}</p>
+              {(avatar.bio || (avatar.skills?.length > 0)) && (
+                <p className="text-xs text-muted-foreground mb-2 line-clamp-2">
+                  {avatar.bio || avatar.skills?.join(', ')}
+                </p>
+              )}
+              {avatar.skills?.length > 0 && avatar.bio && (
+                <div className="flex flex-wrap gap-1 mb-2">
+                  {avatar.skills.slice(0, 2).map(s => (
+                    <span key={s} className="text-[10px] bg-white/5 border border-white/5 rounded px-1.5 py-0.5">{s}</span>
+                  ))}
+                </div>
               )}
               <div className="flex items-center justify-between">
                 <span className="text-sm font-bold text-primary">${avatar.hourly_rate || 30}/hr</span>
