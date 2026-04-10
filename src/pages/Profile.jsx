@@ -19,7 +19,7 @@ export default function Profile() {
     if (user?.profile_picture_url) setProfilePicUrl(user.profile_picture_url);
   }, [user?.profile_picture_url]);
 
-  const dashPath = user?.role === 'avatar' ? '/AvatarDashboard' : user?.role === 'enterprise' ? '/EnterpriseDashboard' : '/UserDashboard';
+  const dashPath = user?.selected_role === 'avatar' ? '/AvatarDashboard' : user?.selected_role === 'enterprise' ? '/EnterpriseDashboard' : '/UserDashboard';
 
   const handleProfilePictureUpload = async (file) => {
     if (!file) return;
@@ -35,10 +35,10 @@ export default function Profile() {
   };
 
   const handleSwitchRole = async (targetRole) => {
-    if (targetRole === user?.role) return;
+    if (targetRole === user?.selected_role) return;
     setSwitchingRole(true);
     try {
-      await base44.auth.updateMe({ role: targetRole });
+      await base44.auth.updateMe({ selected_role: targetRole });
       if (targetRole === 'avatar') {
         const profiles = await base44.entities.AvatarProfile.filter({ user_email: user.email });
         navigate(profiles.length > 0 ? '/AvatarDashboard' : '/Onboarding?role=avatar');
@@ -76,7 +76,7 @@ export default function Profile() {
           </div>
           <h1 className="text-2xl font-bold">{user?.full_name || 'User'}</h1>
           <p className="text-muted-foreground text-sm">{user?.email}</p>
-          <Badge className="mt-2 bg-primary/10 text-primary border-primary/20 capitalize">{user?.role || 'user'}</Badge>
+          <Badge className="mt-2 bg-primary/10 text-primary border-primary/20 capitalize">{user?.selected_role || user?.role || 'user'}</Badge>
         </div>
 
         <div className="space-y-3">
@@ -109,7 +109,7 @@ export default function Profile() {
           <GlassCard className="p-4">
             <h3 className="font-semibold mb-3">Switch Role</h3>
             <div className="space-y-2">
-              {user?.role !== 'user' && (
+              {user?.selected_role !== 'user' && (
                  <button onClick={() => handleSwitchRole('user')} disabled={switchingRole} className="w-full text-left disabled:opacity-50">
                   <div className="p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors text-sm flex items-center gap-3">
                     <ArrowRightLeft className="w-4 h-4 text-muted-foreground" />
@@ -117,7 +117,7 @@ export default function Profile() {
                   </div>
                 </button>
               )}
-              {user?.role !== 'avatar' && (
+              {user?.selected_role !== 'avatar' && (
                  <button onClick={() => handleSwitchRole('avatar')} disabled={switchingRole} className="w-full text-left disabled:opacity-50">
                   <div className="p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors text-sm flex items-center gap-3">
                     <ArrowRightLeft className="w-4 h-4 text-muted-foreground" />
@@ -125,7 +125,7 @@ export default function Profile() {
                   </div>
                 </button>
               )}
-              {user?.role !== 'enterprise' && (
+              {user?.selected_role !== 'enterprise' && (
                  <button onClick={() => handleSwitchRole('enterprise')} disabled={switchingRole} className="w-full text-left disabled:opacity-50">
                   <div className="p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors text-sm flex items-center gap-3">
                     <ArrowRightLeft className="w-4 h-4 text-muted-foreground" />
