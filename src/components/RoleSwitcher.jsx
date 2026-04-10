@@ -14,14 +14,13 @@ export default function RoleSwitcher({ user }) {
     if (user?.selected_role === role) return;
     try {
       await base44.auth.updateMe({ selected_role: role });
-      const updated = await refreshUser();
+      await refreshUser();
       queryClient.invalidateQueries();
-      const sr = updated.selected_role;
-      if (sr === 'avatar') {
-        const profiles = await base44.entities.AvatarProfile.filter({ user_email: updated.email });
+      if (role === 'avatar') {
+        const profiles = await base44.entities.AvatarProfile.filter({ user_email: user.email });
         navigate(profiles.length > 0 ? '/AvatarDashboard' : '/Onboarding?role=avatar');
-      } else if (sr === 'enterprise') {
-        const profiles = await base44.entities.EnterpriseProfile.filter({ user_email: updated.email });
+      } else if (role === 'enterprise') {
+        const profiles = await base44.entities.EnterpriseProfile.filter({ user_email: user.email });
         navigate(profiles.length > 0 ? '/EnterpriseDashboard' : '/Onboarding?role=enterprise');
       } else {
         navigate('/UserDashboard');
