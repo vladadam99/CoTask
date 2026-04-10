@@ -51,10 +51,9 @@ export default function AvatarDashboard() {
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['avatar-profile'] }),
   });
 
-  // Guard: redirect if user role is not 'avatar' — wait until loading is done to avoid stale-state redirect
   useEffect(() => {
-    if (!userLoading && user && user.role !== 'avatar') {
-      const dest = user.role === 'user' ? '/UserDashboard' : '/EnterpriseDashboard';
+    if (!userLoading && user && user.selected_role !== 'avatar') {
+      const dest = user.selected_role === 'enterprise' ? '/EnterpriseDashboard' : '/UserDashboard';
       navigate(dest, { replace: true });
     }
   }, [user, userLoading, navigate]);
@@ -66,14 +65,14 @@ export default function AvatarDashboard() {
   );
 
   if (!user) return null;
-  if (user.role !== 'avatar') return null;
+  if (user.selected_role !== 'avatar') return null;
   const pendingBookings = bookings.filter(b => b.status === 'pending');
   const upcomingBookings = bookings.filter(b => ['accepted', 'scheduled'].includes(b.status));
   const completedCount = bookings.filter(b => b.status === 'completed').length;
   const firstName = user?.full_name?.split(' ')[0] || 'Avatar';
 
   return (
-    <AppShell navItems={getNavItems(user?.role)} user={user}>
+    <AppShell navItems={getNavItems(user?.selected_role)} user={user}>
       {/* Header */}
       <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="flex items-center justify-between mb-8">
         <div>

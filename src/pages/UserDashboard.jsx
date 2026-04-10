@@ -50,10 +50,9 @@ export default function UserDashboard() {
   const navigate = useNavigate();
   const { user, loading: userLoading } = useCurrentUser();
 
-  // Guard: redirect if user role is not 'user' — wait until loading is done to avoid stale-state redirect
   useEffect(() => {
-    if (!userLoading && user && user.role !== 'user') {
-      const dest = user.role === 'avatar' ? '/AvatarDashboard' : '/EnterpriseDashboard';
+    if (!userLoading && user && user.selected_role !== 'user') {
+      const dest = user.selected_role === 'avatar' ? '/AvatarDashboard' : '/EnterpriseDashboard';
       navigate(dest, { replace: true });
     }
   }, [user, userLoading, navigate]);
@@ -81,11 +80,11 @@ export default function UserDashboard() {
   );
 
   if (!user) return null;
-  if (user.role !== 'user') return null;
+  if (user.selected_role !== 'user') return null;
   const firstName = user?.full_name?.split(' ')[0] || '';
 
   return (
-    <AppShell navItems={getNavItems(user?.role)} user={user}>
+    <AppShell navItems={getNavItems(user?.selected_role)} user={user}>
       {/* Header */}
       <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="mb-8">
         <h1 className="text-2xl lg:text-3xl font-black mb-1">

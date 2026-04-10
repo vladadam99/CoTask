@@ -1,0 +1,27 @@
+{
+  "name": "User",
+  "type": "object",
+  "properties": {
+    "role": {
+      "type": "string",
+      "enum": [
+        "admin",
+        "user"
+      ],
+      "default": "user"
+    },
+    "selected_role": {
+      "type": "string",
+      "enum": [
+        "user",
+        "avatar",
+        "enterprise"
+      ],
+      "description": "The app role chosen by the user (client, avatar, or enterprise)"
+    },
+    "onboarding_complete": {
+      "type": "boolean",
+      "default": false
+    }
+  }
+}

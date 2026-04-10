@@ -44,10 +44,9 @@ export default function EnterpriseDashboard() {
     enabled: !!user,
   });
 
-  // Guard: wait until loading is done to avoid stale-state redirect
   useEffect(() => {
-    if (!userLoading && user && user.role !== 'enterprise') {
-      const dest = user.role === 'user' ? '/UserDashboard' : '/AvatarDashboard';
+    if (!userLoading && user && user.selected_role !== 'enterprise') {
+      const dest = user.selected_role === 'avatar' ? '/AvatarDashboard' : '/UserDashboard';
       navigate(dest, { replace: true });
     }
   }, [user, userLoading, navigate]);
@@ -63,7 +62,7 @@ export default function EnterpriseDashboard() {
   );
 
   if (!user) return null;
-  if (user.role !== 'enterprise') return null;
+  if (user.selected_role !== 'enterprise') return null;
   const activeBookings = bookings.filter(b => ['accepted', 'scheduled', 'in_progress', 'live'].includes(b.status));
   const totalSpend = bookings.filter(b => b.payment_status === 'paid').reduce((sum, b) => sum + (b.total_amount || 0), 0);
   const pendingCount = bookings.filter(b => b.status === 'pending').length;

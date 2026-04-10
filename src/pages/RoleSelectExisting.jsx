@@ -58,8 +58,7 @@ export default function RoleSelectExisting() {
     setSelecting(roleKey);
     try {
       if (roleKey === 'user') {
-        // User profile always exists once logged in
-        await base44.auth.updateMe({ role: 'user' });
+        await base44.auth.updateMe({ selected_role: 'user' });
         window.location.href = '/UserDashboard';
         return;
       }
@@ -67,10 +66,9 @@ export default function RoleSelectExisting() {
       if (roleKey === 'avatar') {
         const profiles = await base44.entities.AvatarProfile.filter({ user_email: user.email });
         if (profiles.length > 0) {
-          await base44.auth.updateMe({ role: 'avatar' });
+          await base44.auth.updateMe({ selected_role: 'avatar' });
           window.location.href = '/AvatarDashboard';
         } else {
-          // No avatar profile yet — go create one
           window.location.href = '/Onboarding?role=avatar';
         }
         return;
@@ -79,10 +77,9 @@ export default function RoleSelectExisting() {
       if (roleKey === 'enterprise') {
         const profiles = await base44.entities.EnterpriseProfile.filter({ user_email: user.email });
         if (profiles.length > 0) {
-          await base44.auth.updateMe({ role: 'enterprise' });
+          await base44.auth.updateMe({ selected_role: 'enterprise' });
           window.location.href = '/EnterpriseDashboard';
         } else {
-          // No enterprise profile yet — go create one
           window.location.href = '/Onboarding?role=enterprise';
         }
         return;

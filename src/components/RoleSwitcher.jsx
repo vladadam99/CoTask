@@ -11,27 +11,24 @@ export default function RoleSwitcher({ user }) {
   const queryClient = useQueryClient();
 
   const switchRole = async (role) => {
-    if (user?.role === role) return;
+    if (user?.selected_role === role) return;
     try {
-      // Update role on backend
-      await base44.auth.updateMe({ role });
-      // Refresh user globally and wait for all listeners to update
+      await base44.auth.updateMe({ selected_role: role });
       const updated = await refreshUser();
-      // Invalidate queries after user is refreshed
       queryClient.invalidateQueries();
-      // Navigate based on updated role
-      if (updated.role === 'avatar') {
+      const sr = updated.selected_role;
+      if (sr === 'avatar') {
         const profiles = await base44.entities.AvatarProfile.filter({ user_email: updated.email });
         navigate(profiles.length > 0 ? '/AvatarDashboard' : '/Onboarding?role=avatar');
-      } else if (updated.role === 'enterprise') {
+      } else if (sr === 'enterprise') {
         const profiles = await base44.entities.EnterpriseProfile.filter({ user_email: updated.email });
         navigate(profiles.length > 0 ? '/EnterpriseDashboard' : '/Onboarding?role=enterprise');
       } else {
         navigate('/UserDashboard');
       }
-      } catch (err) {
+    } catch (err) {
       console.error('Failed to switch role:', err);
-      }
+    }
   };
 
   return (
@@ -40,7 +37,7 @@ export default function RoleSwitcher({ user }) {
       <div className="flex flex-col gap-2">
         <Button
           size="sm"
-          variant={user?.role === 'user' ? 'default' : 'ghost'}
+          variant={user?.selected_role === 'user' ? 'default' : 'ghost'}
           className="w-full justify-start"
           onClick={() => switchRole('user')}
         >
@@ -48,7 +45,7 @@ export default function RoleSwitcher({ user }) {
         </Button>
         <Button
           size="sm"
-          variant={user?.role === 'avatar' ? 'default' : 'ghost'}
+          variant={user?.selected_role === 'avatar' ? 'default' : 'ghost'}
           className="w-full justify-start"
           onClick={() => switchRole('avatar')}
         >
@@ -56,7 +53,7 @@ export default function RoleSwitcher({ user }) {
         </Button>
         <Button
           size="sm"
-          variant={user?.role === 'enterprise' ? 'default' : 'ghost'}
+          variant={user?.selected_role === 'enterprise' ? 'default' : 'ghost'}
           className="w-full justify-start"
           onClick={() => switchRole('enterprise')}
         >

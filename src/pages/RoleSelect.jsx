@@ -64,8 +64,8 @@ export default function RoleSelect() {
     if (!user) return;
     setLoading(role);
     try {
-      // Always update the role first so dashboard guards see the correct value
-      await updateUser({ role });
+      // Store selected role in a custom field (platform 'role' is admin-only)
+      await updateUser({ selected_role: role });
 
       if (role === 'avatar') {
         const profiles = await base44.entities.AvatarProfile.filter({ user_email: user.email });

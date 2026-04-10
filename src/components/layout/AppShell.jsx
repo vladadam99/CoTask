@@ -29,13 +29,13 @@ export default function AppShell({ children, navItems = [], user }) {
     const load = async () => {
       try {
         const list = await base44.entities.Notification.filter({ user_email: user.email, is_read: false }, '-created_date', 100);
-        setUnreadNotifs(list.filter(n => n.target_role === user.role));
+        setUnreadNotifs(list.filter(n => n.target_role === user.selected_role));
       } catch (e) {}
     };
     load();
     const unsub = base44.entities.Notification.subscribe((event) => {
       if (event.data?.user_email === user.email) {
-        if (event.type === 'create' && event.data?.target_role === user.role && !event.data?.is_read) {
+        if (event.type === 'create' && event.data?.target_role === user.selected_role && !event.data?.is_read) {
           setUnreadNotifs(prev => [event.data, ...prev]);
         } else if (event.type === 'update') {
           setUnreadNotifs(prev => event.data?.is_read ? prev.filter(n => n.id !== event.id) : prev.map(n => n.id === event.id ? event.data : n));
@@ -47,9 +47,8 @@ export default function AppShell({ children, navItems = [], user }) {
     return unsub;
   }, [user?.email]);
 
-  const homePath = user?.role
- === 'avatar' ? '/AvatarDashboard' : user?.role === 'enterprise' ? '/EnterpriseDashboard' : '/UserDashboard';
-  const settingsPath = user?.role === 'avatar' ? '/AvatarSettings' : user?.role === 'enterprise' ? '/EnterpriseSettings' : '/Profile';
+  const homePath = user?.selected_role === 'avatar' ? '/AvatarDashboard' : user?.selected_role === 'enterprise' ? '/EnterpriseDashboard' : '/UserDashboard';
+  const settingsPath = user?.selected_role === 'avatar' ? '/AvatarSettings' : user?.selected_role === 'enterprise' ? '/EnterpriseSettings' : '/Profile';
 
   return (
     <div className="min-h-screen flex overflow-x-hidden">
@@ -57,8 +56,8 @@ export default function AppShell({ children, navItems = [], user }) {
       <aside className="hidden lg:flex flex-col w-64 glass-strong border-r border-white/5 fixed inset-y-0 left-0 z-40">
         <div className="h-16 flex items-center px-6 border-b border-white/5">
           <Link to={
-            user?.role === 'avatar' ? '/AvatarDashboard'
-            : user?.role === 'enterprise' ? '/EnterpriseDashboard'
+            user?.selected_role === 'avatar' ? '/AvatarDashboard'
+            : user?.selected_role === 'enterprise' ? '/EnterpriseDashboard'
             : '/UserDashboard'
           } className="text-xl font-bold tracking-tight flex-1 py-3 px-2 rounded-lg hover:bg-white/5 transition-colors">
             Co<span className="text-primary">Task</span>
@@ -80,7 +79,7 @@ export default function AppShell({ children, navItems = [], user }) {
         </nav>
         <div className="p-4 border-t border-white/5 space-y-4">
           <div className="hidden lg:flex justify-end mb-2">
-            <NotificationBell userEmail={user?.email} userRole={user?.role} />
+            <NotificationBell userEmail={user?.email} userRole={user?.selected_role} />
           </div>
           <div className="flex items-center gap-3">
             <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center text-sm font-medium text-primary">
@@ -102,7 +101,7 @@ export default function AppShell({ children, navItems = [], user }) {
       <div className="lg:hidden fixed top-0 left-0 right-0 z-50 h-14 glass-strong border-b border-white/5 flex items-center justify-between px-4">
         <Link to={homePath} className="text-lg font-bold">Co<span className="text-primary">Task</span></Link>
         <div className="flex items-center gap-2">
-          <NotificationBell userEmail={user?.email} userRole={user?.role} />
+          <NotificationBell userEmail={user?.email} userRole={user?.selected_role} />
           <button onClick={() => setDrawerOpen(true)} className="p-3 -mr-1 rounded-lg hover:bg-white/10 transition-colors">
             <Menu className="w-5 h-5" />
           </button>
@@ -150,7 +149,7 @@ export default function AppShell({ children, navItems = [], user }) {
                 <ChevronRight className="w-4 h-4 text-muted-foreground ml-auto" />
               </Link>
               <Link
-                to={user?.role === 'avatar' ? '/AvatarWallet' : '/UserWallet'}
+                to={user?.selected_role === 'avatar' ? '/AvatarWallet' : '/UserWallet'}
                 onClick={() => setDrawerOpen(false)}
                 className="flex items-center gap-3 px-3 py-3 rounded-xl hover:bg-white/5 transition-colors text-sm">
                 <Wallet className="w-4 h-4 text-muted-foreground" />
