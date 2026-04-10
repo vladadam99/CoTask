@@ -448,7 +448,13 @@ export default function AvatarOnboarding({ user, onComplete, submitting }) {
                     <Toggle label="Smartphone" description="Can receive calls and stream video" value={data.has_smartphone} onChange={v => update('has_smartphone', v)} />
                     <Toggle label="Reliable Mobile Data" description="4G/5G connection for live streaming" value={data.has_data_connection} onChange={v => update('has_data_connection', v)} />
                     <Toggle label="Vehicle" description="Car, motorbike or other transport" value={data.has_vehicle} onChange={v => update('has_vehicle', v)} />
-                    <Toggle label="360° Camera" description="Offer immersive view experiences" value={data.has_360_camera} onChange={v => update('has_360_camera', v)} />
+                    <div className="flex items-center justify-between p-3 bg-muted/30 rounded-lg opacity-50 cursor-not-allowed">
+                      <div>
+                        <p className="text-sm font-medium">360° Camera</p>
+                        <p className="text-xs text-muted-foreground mt-0.5">Offer immersive view experiences</p>
+                      </div>
+                      <span className="text-[10px] font-semibold bg-yellow-500/20 text-yellow-400 border border-yellow-500/30 px-2 py-0.5 rounded-full">Coming Soon</span>
+                    </div>
                     <Toggle label="Headset / Earpiece" description="Hands-free comms during jobs" value={data.has_headset} onChange={v => update('has_headset', v)} />
                     <Toggle label="Available for Live Jobs" description="Willing to stream live via camera" value={data.does_live_jobs} onChange={v => update('does_live_jobs', v)} />
                     <Toggle label="Enterprise Ready" description="Can handle large-scale business deployments" value={data.is_enterprise_ready} onChange={v => update('is_enterprise_ready', v)} />
