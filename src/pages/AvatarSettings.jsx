@@ -66,7 +66,7 @@ export default function AvatarSettings() {
 
   const equipmentItems = [
     { key: 'has_smartphone', icon: Smartphone, label: '360° Smartphone', desc: 'Can stream via smartphone' },
-    { key: 'has_360_camera', icon: Camera, label: '360° Camera', desc: 'Have a dedicated 360° camera' },
+    { key: 'has_360_camera', icon: Camera, label: '360° Camera', desc: 'Have a dedicated 360° camera', comingSoon: true },
     { key: 'has_data_connection', icon: Radio, label: 'Data Connection', desc: 'Reliable mobile data connection' },
     { key: 'has_headset', icon: Headphones, label: 'Headset / Earpiece', desc: 'Can use voice/AR headset' },
     { key: 'has_vehicle', icon: Car, label: 'Vehicle', desc: 'Can travel by vehicle for sessions' },
@@ -90,7 +90,7 @@ export default function AvatarSettings() {
             <h2 className="font-semibold text-sm mb-4">Equipment & Capabilities</h2>
             <div className="space-y-4">
               {equipmentItems.map(item => (
-                <div key={item.key} className="flex items-center justify-between gap-4">
+                <div key={item.key} className={`flex items-center justify-between gap-4 ${item.comingSoon ? 'opacity-50' : ''}`}>
                   <div className="flex items-center gap-3">
                     <item.icon className="w-4 h-4 text-muted-foreground" />
                     <div>
@@ -98,7 +98,9 @@ export default function AvatarSettings() {
                       <p className="text-xs text-muted-foreground">{item.desc}</p>
                     </div>
                   </div>
-                  <Switch checked={equipment[item.key]} onCheckedChange={() => toggle(item.key)} />
+                  {item.comingSoon
+                    ? <span className="text-[10px] font-semibold bg-yellow-500/20 text-yellow-400 border border-yellow-500/30 px-2 py-0.5 rounded-full">Coming Soon</span>
+                    : <Switch checked={equipment[item.key]} onCheckedChange={() => toggle(item.key)} />}
                 </div>
               ))}
             </div>
