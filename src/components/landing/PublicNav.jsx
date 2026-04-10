@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import { Menu, X } from 'lucide-react';
+import { Link, useLocation } from 'react-router-dom';
+import { Menu, X, ArrowLeft } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 
 export default function PublicNav() {
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const location = useLocation();
+  const isSubPage = ['/HowItWorks', '/Pricing', '/FAQ'].includes(location.pathname);
 
   useEffect(() => {
     const fn = () => setScrolled(window.scrollY > 30);
@@ -39,10 +41,16 @@ export default function PublicNav() {
           </Link>
         </div>
 
-        {/* Mobile toggle */}
-        <button onClick={() => setOpen(!open)} className="md:hidden p-2 rounded-xl hover:bg-white/5 text-white">
-          {open ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-        </button>
+        {/* Mobile toggle / back */}
+        {isSubPage ? (
+          <Link to="/Landing" className="md:hidden flex items-center gap-1.5 text-sm font-semibold text-white/70 hover:text-white transition-colors">
+            <ArrowLeft className="w-4 h-4" /> Back
+          </Link>
+        ) : (
+          <button onClick={() => setOpen(!open)} className="md:hidden p-2 rounded-xl hover:bg-white/5 text-white">
+            {open ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+          </button>
+        )}
       </div>
 
       {/* Mobile drawer */}
