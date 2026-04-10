@@ -6,7 +6,9 @@
       "type": "string",
       "enum": [
         "admin",
-        "user"
+        "user",
+        "avatar",
+        "enterprise"
       ],
       "default": "user"
     },
@@ -16,12 +18,21 @@
         "user",
         "avatar",
         "enterprise"
-      ],
-      "description": "The app role chosen by the user (client, avatar, or enterprise)"
+      ]
     },
-    "onboarding_complete": {
+    "identity_verified": {
       "type": "boolean",
       "default": false
+    },
+    "identity_verification_status": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "submitted",
+        "verified",
+        "rejected"
+      ],
+      "default": "pending"
     }
   }
 }
