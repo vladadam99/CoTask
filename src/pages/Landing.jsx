@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Zap, Shield, Globe, ArrowRight, Menu, X, Video, TrendingUp } from 'lucide-react';
+import { Zap, Shield, Globe, ArrowRight, Menu, X, Video, TrendingUp, MapPin, Home, ShoppingBag, Plane, Wrench, Building2 } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 
 const STATS = [
@@ -12,12 +12,12 @@ const STATS = [
 ];
 
 const CATEGORIES = [
-  { icon: '🌆', label: 'City Tours' },
-  { icon: '🏠', label: 'Property' },
-  { icon: '🛍️', label: 'Shopping' },
-  { icon: '✈️', label: 'Travel' },
-  { icon: '🔧', label: 'Repair' },
-  { icon: '🏢', label: 'Business' },
+  { icon: MapPin, label: 'City Tours', color: 'text-blue-400' },
+  { icon: Home, label: 'Property', color: 'text-green-400' },
+  { icon: ShoppingBag, label: 'Shopping', color: 'text-pink-400' },
+  { icon: Plane, label: 'Travel', color: 'text-sky-400' },
+  { icon: Wrench, label: 'Repair', color: 'text-orange-400' },
+  { icon: Building2, label: 'Business', color: 'text-purple-400' },
 ];
 
 const USE_CASES = [
@@ -144,8 +144,8 @@ export default function Landing() {
           </div>
           <div className="flex flex-wrap gap-3 justify-center mb-8">
             {CATEGORIES.map(cat => (
-              <span key={cat.label} className="px-5 py-2 glass border border-white/5 rounded-full text-sm flex items-center gap-2">
-                {cat.icon} {cat.label}
+              <span key={cat.label} className="px-5 py-2 glass border border-white/5 hover:border-white/15 rounded-full text-sm flex items-center gap-2 transition-all">
+                <cat.icon className={`w-4 h-4 ${cat.color}`} /> {cat.label}
               </span>
             ))}
           </div>
