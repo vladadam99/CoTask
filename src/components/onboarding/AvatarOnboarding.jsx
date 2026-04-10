@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import IdentityVerification from '@/components/verification/IdentityVerification';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { ArrowRight, ArrowLeft, Check, Loader2, Plus, X, Search, MapPin } from 'lucide-react';
+import { ArrowRight, ArrowLeft, Check, Loader2, Plus, X, Search, MapPin, FileText } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -66,6 +66,8 @@ export default function AvatarOnboarding({ user, onComplete, submitting }) {
   const [step, setStep] = useState(0);
   const [idVerified, setIdVerified] = useState(false);
   const [customSkill, setCustomSkill] = useState('');
+  const [cvUploading, setCvUploading] = useState(false);
+  const cvInputRef = useRef(null);
   const [extraCityInput, setExtraCityInput] = useState('');
   const [postcodeInput, setPostcodeInput] = useState('');
   const [postcodeLoading, setPostcodeLoading] = useState(false);
@@ -120,6 +122,19 @@ export default function AvatarOnboarding({ user, onComplete, submitting }) {
     if (customSkill.trim()) {
       toggle('skills', customSkill.trim());
       setCustomSkill('');
+    }
+  };
+
+  const handleCvUpload = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setCvUploading(true);
+    try {
+      const res = await base44.integrations.Core.UploadFile({ file });
+      update('cv_url', res.file_url);
+      update('cv_filename', file.name);
+    } finally {
+      setCvUploading(false);
     }
   };
 
@@ -209,6 +224,34 @@ export default function AvatarOnboarding({ user, onComplete, submitting }) {
                     placeholder="Tell clients about yourself — your personality, experience, what makes you a great avatar, and what kind of jobs you enjoy..."
                     className="bg-muted/50 border-white/5 h-28 resize-none" />
                   <p className="text-xs text-muted-foreground mt-1">{data.bio.length}/500 characters</p>
+                </div>
+
+                <div>
+                  <label className="text-sm font-medium mb-1.5 block">CV / Resume <span className="text-muted-foreground font-normal">(optional — PDF, DOC, DOCX)</span></label>
+                  <input ref={cvInputRef} type="file" accept=".pdf,.doc,.docx" className="hidden" onChange={handleCvUpload} />
+                  {data.cv_url ? (
+                    <div className="flex items-center gap-3 p-3 bg-green-500/10 border border-green-500/20 rounded-xl">
+                      <div className="w-8 h-8 rounded-lg bg-green-500/20 flex items-center justify-center shrink-0">
+                        <FileText className="w-4 h-4 text-green-400" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-medium text-green-400 truncate">{data.cv_filename || 'CV uploaded'}</p>
+                        <p className="text-xs text-muted-foreground">CV uploaded successfully</p>
+                      </div>
+                      <button type="button" onClick={() => { update('cv_url', ''); update('cv_filename', ''); }}
+                        className="text-xs text-muted-foreground hover:text-foreground shrink-0">Remove</button>
+                    </div>
+                  ) : (
+                    <button type="button" onClick={() => cvInputRef.current?.click()}
+                      disabled={cvUploading}
+                      className="w-full h-16 rounded-xl border-2 border-dashed border-white/10 flex items-center justify-center gap-2 text-muted-foreground hover:border-primary/40 hover:text-primary transition-all disabled:opacity-50">
+                      {cvUploading ? (
+                        <><Loader2 className="w-4 h-4 animate-spin" /><span className="text-sm">Uploading...</span></>
+                      ) : (
+                        <><Plus className="w-4 h-4" /><span className="text-sm">Upload your CV</span></>
+                      )}
+                    </button>
+                  )}
                 </div>
                 <div>
                   <label className="text-sm font-medium mb-2 block">Languages you speak</label>
