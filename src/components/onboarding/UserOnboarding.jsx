@@ -154,27 +154,6 @@ export default function UserOnboarding({ user, onComplete, submitting }) {
                     </Button>
                   </div>
                 </div>
-                <div>
-                  <label className="text-sm font-medium mb-2 block">How soon do you typically need help?</label>
-                  <div className="grid grid-cols-2 gap-2">
-                    {[
-                      { val: 'right_now', label: '⚡ Right Now', desc: 'I need someone immediately' },
-                      { val: 'today', label: '📅 Same Day', desc: 'Within the next few hours' },
-                      { val: 'this_week', label: '🗓 This Week', desc: 'Plan a few days ahead' },
-                      { val: 'flexible', label: '🌀 Flexible', desc: 'No rush, I plan ahead' },
-                    ].map(({ val, label, desc }) => (
-                      <button key={val} type="button" onClick={() => update('what_need_help_with', val)}
-                        className={`p-3 rounded-xl border text-left transition-all ${
-                          data.what_need_help_with === val
-                            ? 'bg-primary/10 border-primary/40 text-primary'
-                            : 'bg-muted/30 border-white/5 hover:bg-muted/50'
-                        }`}>
-                        <p className="text-sm font-semibold">{label}</p>
-                        <p className={`text-xs mt-0.5 ${data.what_need_help_with === val ? 'text-primary/70' : 'text-muted-foreground'}`}>{desc}</p>
-                      </button>
-                    ))}
-                  </div>
-                </div>
               </div>
             )}
 
