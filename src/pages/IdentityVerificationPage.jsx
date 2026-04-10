@@ -11,10 +11,12 @@ export default function IdentityVerificationPage() {
   const [profileId, setProfileId] = useState(null);
   const [done, setDone] = useState(false);
 
+  const urlParams = new URLSearchParams(window.location.search);
+  const isMobileSession = urlParams.get('mobile') === '1';
+
   useEffect(() => {
     base44.auth.me().then(async (u) => {
       setUser(u);
-      // Try to find their avatar profile
       if (u?.email) {
         try {
           const avatars = await base44.entities.AvatarProfile.filter({ user_email: u.email });
@@ -40,8 +42,12 @@ export default function IdentityVerificationPage() {
             <ShieldCheck className="w-8 h-8 text-green-400" />
           </div>
           <h2 className="text-2xl font-bold text-foreground">You're Verified!</h2>
-          <p className="text-muted-foreground">Your identity has been successfully confirmed. You can now access all features.</p>
-          <Button className="w-full" onClick={handleBack}>Go to Dashboard</Button>
+          <p className="text-muted-foreground">
+            {isMobileSession
+              ? 'Verification complete. You can close this tab and return to your computer.'
+              : 'Your identity has been successfully confirmed. You can now access all features.'}
+          </p>
+          {!isMobileSession && <Button className="w-full" onClick={handleBack}>Go to Dashboard</Button>}
         </div>
       </div>
     );

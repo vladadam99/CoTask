@@ -1,0 +1,15 @@
+{
+  "name": "VerificationSession",
+  "type": "object",
+  "properties": {
+    "session_id": {
+      "type": "string"
+    },
+    "result": {
+      "type": "object"
+    }
+  },
+  "required": [
+    "session_id"
+  ]
+}

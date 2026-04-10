@@ -8,7 +8,7 @@ Deno.serve(async (req) => {
     return Response.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
-  const { id_photo_url, selfie_url, profile_id, profile_type } = await req.json();
+  const { id_photo_url, selfie_url, profile_id, profile_type, session_id } = await req.json();
 
   if (!id_photo_url || !selfie_url) {
     return Response.json({ error: 'Both id_photo_url and selfie_url are required' }, { status: 400 });
@@ -68,7 +68,7 @@ Be strict but fair. Minor lighting differences are acceptable. Return your analy
     identity_verification_status: verificationStatus
   });
 
-  return Response.json({
+  const finalResult = {
     success: passed,
     status: verificationStatus,
     confidence: result.confidence,
@@ -76,5 +76,15 @@ Be strict but fair. Minor lighting differences are acceptable. Return your analy
     document_type: result.document_type,
     rejection_reasons: result.rejection_reasons || [],
     notes: result.notes
-  });
+  };
+
+  // If this was triggered from a mobile QR session, store result so desktop can poll it
+  if (session_id) {
+    await base44.asServiceRole.entities.VerificationSession.create({
+      session_id,
+      result: finalResult
+    });
+  }
+
+  return Response.json(finalResult);
 });

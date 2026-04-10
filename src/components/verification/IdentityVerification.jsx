@@ -1,55 +1,29 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { base44 } from '@/api/base44Client';
-import { Upload, Camera, CheckCircle, XCircle, Loader2, ShieldCheck, AlertTriangle, FileText, User } from 'lucide-react';
+import { CheckCircle, XCircle, Loader2, ShieldCheck, AlertTriangle, FileText, User } from 'lucide-react';
+import CameraCapture from './CameraCapture';
+import QRVerification from './QRVerification';
 
-const UploadBox = ({ label, icon: Icon, file, onFileChange, preview, hint }) => {
-  const inputRef = useRef();
-  return (
-    <div className="flex-1">
-      <p className="text-sm font-medium text-foreground mb-2 flex items-center gap-2">
-        <Icon className="w-4 h-4 text-primary" /> {label}
-      </p>
-      <div
-        onClick={() => inputRef.current?.click()}
-        className={`relative border-2 border-dashed rounded-xl cursor-pointer transition-all overflow-hidden
-          ${preview ? 'border-primary/40 bg-primary/5' : 'border-border hover:border-primary/40 hover:bg-white/5'}
-        `}
-        style={{ minHeight: 160 }}
-      >
-        {preview ? (
-          <img src={preview} alt={label} className="w-full h-full object-cover rounded-xl" style={{ maxHeight: 200 }} />
-        ) : (
-          <div className="flex flex-col items-center justify-center h-full p-6 gap-2 text-center">
-            <Upload className="w-8 h-8 text-muted-foreground" />
-            <p className="text-sm text-muted-foreground">{hint}</p>
-            <p className="text-xs text-muted-foreground/60">JPG, PNG up to 10MB</p>
-          </div>
-        )}
-        <input
-          ref={inputRef}
-          type="file"
-          accept="image/*"
-          className="hidden"
-          onChange={e => onFileChange(e.target.files[0])}
-        />
-      </div>
-      {file && (
-        <p className="text-xs text-muted-foreground mt-1 truncate">{file.name}</p>
-      )}
-    </div>
-  );
-};
-
-const ResultBadge = ({ success, children }) => (
-  <span className={`inline-flex items-center gap-1 text-xs font-medium px-2 py-0.5 rounded-full
-    ${success ? 'bg-green-500/10 text-green-400' : 'bg-red-500/10 text-red-400'}`}>
-    {success ? <CheckCircle className="w-3 h-3" /> : <XCircle className="w-3 h-3" />}
-    {children}
-  </span>
-);
+function useHasCamera() {
+  const [status, setStatus] = useState('checking'); // 'checking' | 'available' | 'unavailable'
+  useEffect(() => {
+    if (!navigator.mediaDevices?.getUserMedia) {
+      setStatus('unavailable');
+      return;
+    }
+    navigator.mediaDevices.getUserMedia({ video: true, audio: false })
+      .then(stream => {
+        stream.getTracks().forEach(t => t.stop());
+        setStatus('available');
+      })
+      .catch(() => setStatus('unavailable'));
+  }, []);
+  return status;
+}
 
 export default function IdentityVerification({ profileId, profileType, onComplete }) {
+  const cameraStatus = useHasCamera();
   const [idFile, setIdFile] = useState(null);
   const [selfieFile, setSelfieFile] = useState(null);
   const [idPreview, setIdPreview] = useState(null);
@@ -59,14 +33,12 @@ export default function IdentityVerification({ profileId, profileType, onComplet
   const [result, setResult] = useState(null);
   const [error, setError] = useState(null);
 
-  const handleFileSet = (file, setFile, setPreview) => {
-    setFile(file);
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => setPreview(reader.result);
-      reader.readAsDataURL(file);
-    }
-  };
+  // Generate a stable session ID for QR flow
+  const [sessionId] = useState(() => `verify_${Date.now()}_${Math.random().toString(36).slice(2)}`);
+
+  // Check if coming from mobile QR flow
+  const urlParams = new URLSearchParams(window.location.search);
+  const isMobileSession = urlParams.get('mobile') === '1';
 
   const handleSubmit = async () => {
     if (!idFile || !selfieFile) return;
@@ -87,6 +59,7 @@ export default function IdentityVerification({ profileId, profileType, onComplet
         selfie_url: selfieUpload.file_url,
         profile_id: profileId,
         profile_type: profileType,
+        session_id: isMobileSession ? urlParams.get('session') : null,
       });
 
       setResult(response.data);
@@ -103,6 +76,33 @@ export default function IdentityVerification({ profileId, profileType, onComplet
 
   const canSubmit = idFile && selfieFile && !loading;
 
+  // If camera unavailable and not in mobile flow, show QR code
+  if (cameraStatus === 'unavailable' && !isMobileSession) {
+    return (
+      <div className="space-y-4">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
+            <ShieldCheck className="w-5 h-5 text-primary" />
+          </div>
+          <div>
+            <h3 className="font-semibold text-foreground">Identity Verification</h3>
+            <p className="text-sm text-muted-foreground">Camera not available on this device</p>
+          </div>
+        </div>
+        <QRVerification sessionId={sessionId} onComplete={onComplete} />
+      </div>
+    );
+  }
+
+  if (cameraStatus === 'checking') {
+    return (
+      <div className="flex items-center justify-center py-12 gap-3 text-muted-foreground">
+        <Loader2 className="w-5 h-5 animate-spin" />
+        <span className="text-sm">Checking camera availability...</span>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -112,33 +112,30 @@ export default function IdentityVerification({ profileId, profileType, onComplet
         </div>
         <div>
           <h3 className="font-semibold text-foreground">Identity Verification</h3>
-          <p className="text-sm text-muted-foreground">Upload your ID and a selfie for AI-powered verification</p>
+          <p className="text-sm text-muted-foreground">Take a photo of your ID and a selfie using your camera</p>
         </div>
       </div>
 
-      {/* Upload Area */}
+      {/* Camera capture area */}
       {!result && (
         <>
-          <div className="flex gap-4">
-            <UploadBox
+          <div className="flex gap-4 flex-col sm:flex-row">
+            <CameraCapture
               label="Identity Document"
               icon={FileText}
-              file={idFile}
-              onFileChange={f => handleFileSet(f, setIdFile, setIdPreview)}
-              preview={idPreview}
-              hint="Passport, driving licence or national ID"
+              facingMode="environment"
+              captured={idPreview}
+              onCapture={(file, preview) => { setIdFile(file); setIdPreview(preview); }}
             />
-            <UploadBox
+            <CameraCapture
               label="Selfie Photo"
               icon={User}
-              file={selfieFile}
-              onFileChange={f => handleFileSet(f, setSelfieFile, setSelfiePreview)}
-              preview={selfiePreview}
-              hint="Clear photo of your face, no sunglasses"
+              facingMode="user"
+              captured={selfiePreview}
+              onCapture={(file, preview) => { setSelfieFile(file); setSelfiePreview(preview); }}
             />
           </div>
 
-          {/* Tips */}
           <div className="rounded-xl bg-muted/30 border border-border p-4 space-y-1.5">
             <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Tips for best results</p>
             <ul className="text-xs text-muted-foreground space-y-1">
@@ -212,7 +209,11 @@ export default function IdentityVerification({ profileId, profileType, onComplet
           )}
 
           {!result.success && (
-            <Button variant="outline" className="w-full" onClick={() => { setResult(null); setIdFile(null); setSelfieFile(null); setIdPreview(null); setSelfiePreview(null); }}>
+            <Button variant="outline" className="w-full" onClick={() => {
+              setResult(null);
+              setIdFile(null); setSelfieFile(null);
+              setIdPreview(null); setSelfiePreview(null);
+            }}>
               Try Again
             </Button>
           )}
