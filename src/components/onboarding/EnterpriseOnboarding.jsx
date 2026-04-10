@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import IdentityVerification from '@/components/verification/IdentityVerification';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { ArrowRight, ArrowLeft, Check, Loader2, Plus, X } from 'lucide-react';
@@ -21,7 +22,7 @@ const CATEGORIES = [
   'Campus Help', 'Security', 'DIY & Repairs', 'Custom Request',
 ];
 
-const STEPS = ['Company Info', 'Contact & Locations', 'Operations & Services'];
+const STEPS = ['Company Info', 'Contact & Locations', 'Operations & Services', 'Identity Verification'];
 
 const Chip = ({ label, active, onClick }) => (
   <button type="button" onClick={onClick}
@@ -32,6 +33,7 @@ const Chip = ({ label, active, onClick }) => (
 
 export default function EnterpriseOnboarding({ user, onComplete, submitting }) {
   const [step, setStep] = useState(0);
+  const [idVerified, setIdVerified] = useState(false);
   const [cityInput, setCityInput] = useState('');
 
   const [data, setData] = useState(() => {
@@ -208,6 +210,15 @@ export default function EnterpriseOnboarding({ user, onComplete, submitting }) {
               </div>
             )}
 
+            {/* Step 3: Identity Verification */}
+            {step === 3 && (
+              <IdentityVerification
+                profileId={null}
+                profileType="enterprise"
+                onComplete={() => setIdVerified(true)}
+              />
+            )}
+
           </motion.div>
         </AnimatePresence>
 
@@ -221,7 +232,7 @@ export default function EnterpriseOnboarding({ user, onComplete, submitting }) {
               Next <ArrowRight className="w-4 h-4 ml-2" />
             </Button>
           ) : (
-            <Button onClick={() => onComplete(data)} disabled={submitting} className="bg-primary hover:bg-primary/90">
+            <Button onClick={() => onComplete(data)} disabled={submitting || !idVerified} className="bg-primary hover:bg-primary/90 disabled:opacity-50">
               {submitting ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Check className="w-4 h-4 mr-2" />}
               Complete Setup
             </Button>

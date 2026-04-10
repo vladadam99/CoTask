@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import IdentityVerification from '@/components/verification/IdentityVerification';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -39,7 +40,7 @@ const HOURS = [
 ];
 const CURRENCIES = ['GBP', 'USD', 'EUR', 'CAD', 'AUD', 'AED', 'JPY', 'INR'];
 
-const STEPS = ['Your Profile', 'Location & Travel', 'Services & Skills', 'Availability & Equipment', 'Pricing'];
+const STEPS = ['Your Profile', 'Location & Travel', 'Services & Skills', 'Availability & Equipment', 'Pricing', 'Identity Verification'];
 
 const Chip = ({ label, active, onClick }) => (
   <button type="button" onClick={onClick}
@@ -63,6 +64,7 @@ const Toggle = ({ label, description, value, onChange }) => (
 
 export default function AvatarOnboarding({ user, onComplete, submitting }) {
   const [step, setStep] = useState(0);
+  const [idVerified, setIdVerified] = useState(false);
   const [customSkill, setCustomSkill] = useState('');
   const [extraCityInput, setExtraCityInput] = useState('');
   const [postcodeInput, setPostcodeInput] = useState('');
@@ -153,6 +155,7 @@ export default function AvatarOnboarding({ user, onComplete, submitting }) {
     if (step === 0) return !!(data.legal_name.trim() && data.date_of_birth);
     if (step === 1) return !!(data.full_address && data.postcode);
     if (step === 2) return data.categories.length > 0;
+    if (step === 5) return idVerified;
     return true;
   };
 
@@ -519,6 +522,15 @@ export default function AvatarOnboarding({ user, onComplete, submitting }) {
                   </p>
                 </div>
               </div>
+            )}
+
+            {/* Step 5: Identity Verification */}
+            {step === 5 && (
+              <IdentityVerification
+                profileId={null}
+                profileType="avatar"
+                onComplete={() => setIdVerified(true)}
+              />
             )}
 
           </motion.div>

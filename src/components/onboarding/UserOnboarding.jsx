@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import IdentityVerification from '@/components/verification/IdentityVerification';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { ArrowRight, ArrowLeft, Check, Loader2, Plus, Search, MapPin } from 'lucide-react';
@@ -15,7 +16,7 @@ const CATEGORIES = [
   'Carers & Companionship', 'DIY & Repairs', 'Custom Request',
 ];
 
-const STEPS = ['What You Need', 'Your Details'];
+const STEPS = ['What You Need', 'Your Details', 'Identity Verification'];
 
 const Chip = ({ label, active, onClick }) => (
   <button type="button" onClick={onClick}
@@ -34,6 +35,7 @@ const OptionCard = ({ label, description, selected, onClick }) => (
 
 export default function UserOnboarding({ user, onComplete, submitting }) {
   const [step, setStep] = useState(0);
+  const [idVerified, setIdVerified] = useState(false);
   const [customInterest, setCustomInterest] = useState('');
   const [postcodeInput, setPostcodeInput] = useState('');
   const [postcodeLoading, setPostcodeLoading] = useState(false);
@@ -94,8 +96,8 @@ export default function UserOnboarding({ user, onComplete, submitting }) {
     setPostcodeLoading(false);
   };
 
-  const canComplete = !!(data.full_address && data.postcode);
-  const canGoNext = !!(data.legal_name.trim() && data.date_of_birth);
+  const canComplete = idVerified;
+  const canGoNext = step === 0 ? !!(data.legal_name.trim() && data.date_of_birth) : !!(data.full_address && data.postcode);
 
   return (
     <div>
@@ -248,13 +250,16 @@ export default function UserOnboarding({ user, onComplete, submitting }) {
                     placeholder="e.g. I prefer avatars who speak French, have experience with property inspections, and are based in Paris..."
                     className="w-full h-24 px-3 py-2 bg-muted/50 border border-white/5 rounded-md text-sm resize-none text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary/50" />
                 </div>
-                <div className="p-4 bg-blue-500/5 border border-blue-500/15 rounded-xl text-sm">
-                  <p className="font-medium text-blue-400 mb-1">🎯 What happens next</p>
-                  <p className="text-muted-foreground text-xs leading-relaxed">
-                    You'll be taken to your dashboard where you can browse avatars, post jobs, and book sessions. Your preferences are saved and can be updated anytime.
-                  </p>
-                </div>
               </div>
+            )}
+
+            {/* Step 2: Identity Verification */}
+            {step === 2 && (
+              <IdentityVerification
+                profileId={null}
+                profileType={null}
+                onComplete={() => setIdVerified(true)}
+              />
             )}
 
           </motion.div>
