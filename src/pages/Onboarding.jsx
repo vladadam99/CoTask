@@ -47,7 +47,7 @@ export default function Onboarding() {
     try {
       // Save base user data
       await updateUser({
-        role,
+        selected_role: role,
         onboarding_complete: true,
         city: data.city || '',
         country: data.country || '',
