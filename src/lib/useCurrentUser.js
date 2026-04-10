@@ -4,6 +4,7 @@ import { base44 } from '@/api/base44Client';
 // Shared state so all components using useCurrentUser stay in sync
 let _user = null;
 let _listeners = [];
+let _lastNotifiedAt = 0; // timestamp of last notify() call
 
 // Refresh user from server and update all listeners
 export async function refreshUser() {
@@ -19,6 +20,7 @@ export async function refreshUser() {
 
 function notify(newUser) {
   _user = newUser;
+  _lastNotifiedAt = Date.now();
   _listeners.forEach(fn => fn(newUser));
 }
 
@@ -30,10 +32,15 @@ export function useCurrentUser() {
     const listener = (u) => setUser(u);
     _listeners.push(listener);
 
-    // Always fetch fresh to avoid stale cached role from previous session
-    base44.auth.me()
-      .then(u => { notify(u); setLoading(false); })
-      .catch(() => { notify(null); setLoading(false); });
+    // Fetch fresh, but skip if user was just updated (< 5s ago) to avoid overwriting with stale JWT
+    const timeSinceLastNotify = Date.now() - _lastNotifiedAt;
+    if (_user && timeSinceLastNotify < 5000) {
+      setLoading(false);
+    } else {
+      base44.auth.me()
+        .then(u => { notify(u); setLoading(false); })
+        .catch(() => { notify(null); setLoading(false); });
+    }
 
     return () => { _listeners = _listeners.filter(fn => fn !== listener); };
   }, []);
