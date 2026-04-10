@@ -69,7 +69,7 @@ export default function AvatarDashboard() {
   const pendingBookings = bookings.filter(b => b.status === 'pending');
   const upcomingBookings = bookings.filter(b => ['accepted', 'scheduled'].includes(b.status));
   const completedCount = bookings.filter(b => b.status === 'completed').length;
-  const firstName = user?.full_name?.split(' ')[0] || 'Avatar';
+  const firstName = (user?.legal_name || user?.full_name)?.split(' ')[0] || 'Avatar';
 
   return (
     <AppShell navItems={getNavItems(user?.selected_role)} user={user}>

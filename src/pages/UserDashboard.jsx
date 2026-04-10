@@ -81,7 +81,7 @@ export default function UserDashboard() {
 
   if (!user) return null;
   if (user.selected_role !== 'user') return null;
-  const firstName = user?.full_name?.split(' ')[0] || '';
+  const firstName = (user?.legal_name || user?.full_name)?.split(' ')[0] || '';
 
   return (
     <AppShell navItems={getNavItems(user?.selected_role)} user={user}>
