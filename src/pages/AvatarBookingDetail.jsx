@@ -77,7 +77,7 @@ export default function AvatarBookingDetail() {
   return (
     <div className="min-h-screen bg-background p-4 lg:p-8">
       <div className="max-w-2xl mx-auto">
-        <button onClick={() => navigate('/AvatarRequests')} className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground mb-6">
+        <button onClick={() => navigate(-1)} className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground mb-6">
           <ArrowLeft className="w-4 h-4" /> Back to Requests
         </button>
 
