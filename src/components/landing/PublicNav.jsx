@@ -23,7 +23,6 @@ export default function PublicNav() {
         {/* Desktop */}
         <div className="hidden md:flex items-center gap-10">
           <Link to="/HowItWorks" className="text-sm text-white/50 hover:text-white transition-colors font-medium">How it works</Link>
-          <Link to="/Explore" className="text-sm text-white/50 hover:text-white transition-colors font-medium">Explore</Link>
           <Link to="/Pricing" className="text-sm text-white/50 hover:text-white transition-colors font-medium">Pricing</Link>
           <Link to="/FAQ" className="text-sm text-white/50 hover:text-white transition-colors font-medium">FAQ</Link>
         </div>
@@ -49,7 +48,7 @@ export default function PublicNav() {
       {/* Mobile drawer */}
       {open && (
         <div className="md:hidden bg-background border-t border-white/5 px-6 py-6 space-y-4">
-          {[{label:'How it works', to:'/HowItWorks'},{label:'Explore',to:'/Explore'},{label:'Pricing',to:'/Pricing'},{label:'FAQ',to:'/FAQ'}].map(l => (
+          {[{label:'How it works', to:'/HowItWorks'},{label:'Pricing',to:'/Pricing'},{label:'FAQ',to:'/FAQ'}].map(l => (
             <Link key={l.to} to={l.to} onClick={() => setOpen(false)} className="block py-2 text-white/60 font-medium text-sm hover:text-white transition-colors">
               {l.label}
             </Link>
