@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import {
   ArrowLeft, MapPin, Star, Shield, Clock, Globe, Radio, Smartphone,
-  Wifi, Headphones, Car, Calendar, MessageSquare, Heart, Loader2
+  Wifi, Headphones, Car, Calendar, MessageSquare, Heart, Loader2, FileText, Download
 } from 'lucide-react';
 
 function PostCard({ post }) {
@@ -351,7 +351,7 @@ export default function AvatarView() {
 
         {/* Tab Navigation */}
         <div className="flex gap-2 px-4 mb-4 overflow-x-auto pb-1">
-          {['About', 'Posts', 'Reviews', 'Services'].map(tab => (
+          {['About', 'Posts', 'Reviews', 'Services'].concat(avatar.cv_url ? ['CV'] : []).map(tab => (
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
@@ -468,6 +468,30 @@ export default function AvatarView() {
               ) : (
                 <p className="text-sm text-muted-foreground text-center py-8">No services listed</p>
               )}
+            </GlassCard>
+          )}
+
+          {activeTab === 'CV' && avatar.cv_url && (
+            <GlassCard className="p-6 space-y-4">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
+                  <FileText className="w-5 h-5 text-primary" />
+                </div>
+                <div>
+                  <p className="font-semibold">CV / Resume</p>
+                  <p className="text-sm text-muted-foreground">{avatar.cv_filename || 'Curriculum Vitae'}</p>
+                </div>
+              </div>
+              <a
+                href={avatar.cv_url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center justify-center gap-2 w-full py-3 rounded-xl bg-primary/10 border border-primary/20 text-primary hover:bg-primary/20 transition-colors text-sm font-medium"
+              >
+                <Download className="w-4 h-4" /> Download CV
+              </a>
+            </GlassCard>
+          )}
             </GlassCard>
           )}
         </div>

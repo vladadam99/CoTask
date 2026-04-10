@@ -30,7 +30,13 @@ Deno.serve(async (req) => {
       willing_to_travel: a.willing_to_travel || false,
       travel_radius_km: a.travel_radius_km || 0,
       hourly_rate: a.hourly_rate,
+      has_cv: !!a.cv_url,
     }));
+
+    // Collect CV URLs to include in AI analysis
+    const avatarCvMap = {};
+    avatars.forEach(a => { if (a.cv_url) avatarCvMap[a.user_email] = a.cv_url; });
+    const cvFileUrls = Object.values(avatarCvMap).slice(0, 10); // cap at 10 for API limits
 
     const prompt = `You are a job matching engine for CoTask marketplace.
 
@@ -45,35 +51,40 @@ New Job Posted:
 Available Avatars:
 ${JSON.stringify(avatarSummaries, null, 2)}
 
+${cvFileUrls.length ? `CV Documents: The attached files are CVs from avatars who have uploaded them. Use them to better assess skills, experience, and suitability for this job. Match each CV to the avatar by cross-referencing the names and emails listed above.` : ''}
+
 STRICT matching rules:
 1. Location MUST match — only select avatars whose city/area is in or near the job location. 
    - Same city = always eligible
    - Different city but willing_to_travel = true AND same country/region = eligible
    - Different country or clearly different region = NEVER eligible
 2. Category must be in the avatar's categories list
-3. Skills overlap is a bonus but not required
+3. Skills overlap is a bonus — use CV content when available to verify real experience
+4. If a CV is provided, analyse it for relevant experience, qualifications and suitability
 
 Return JSON with matched avatar emails and a short personalised reason for each:
 {
   "matches": [
-    { "email": "avatar@email.com", "name": "Avatar Name", "reason": "Based in London, skilled in Photography, matches perfectly" }
+    { "email": "avatar@email.com", "name": "Avatar Name", "reason": "Based in London, skilled in Photography, CV shows 3 years experience" }
   ]
 }
 Only include genuine matches. Empty array if none.`;
 
     const matchResult = await base44.asServiceRole.integrations.Core.InvokeLLM({
       prompt,
+      file_urls: cvFileUrls.length ? cvFileUrls : undefined,
+      model: 'claude_sonnet_4_6',
       response_json_schema: {
-        type: "object",
+        type: 'object',
         properties: {
           matches: {
-            type: "array",
+            type: 'array',
             items: {
-              type: "object",
+              type: 'object',
               properties: {
-                email: { type: "string" },
-                name: { type: "string" },
-                reason: { type: "string" }
+                email: { type: 'string' },
+                name: { type: 'string' },
+                reason: { type: 'string' }
               }
             }
           }
