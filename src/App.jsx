@@ -8,6 +8,7 @@ import UserNotRegisteredError from '@/components/UserNotRegisteredError';
 import { Navigate } from 'react-router-dom';
 // Pages
 import IdentityVerificationPage from './pages/IdentityVerificationPage';
+import MobileVerify from './pages/MobileVerify';
 import Landing from './pages/Landing';
 import RoleSelect from './pages/RoleSelect';
 import Onboarding from './pages/Onboarding';
@@ -133,6 +134,7 @@ const AuthenticatedApp = () => {
       <Route path="/AvatarWallet" element={<AvatarWallet />} />
       <Route path="/UserWallet" element={<UserWallet />} />
       <Route path="/IdentityVerification" element={<IdentityVerificationPage />} />
+      <Route path="/MobileVerify" element={<MobileVerify />} />
       <Route path="*" element={<PageNotFound />} />
     </Routes>
   );

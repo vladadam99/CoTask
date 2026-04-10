@@ -10,7 +10,7 @@ export default function QRVerification({ sessionId, onComplete }) {
   const [polling, setPolling] = useState(true);
   const [done, setDone] = useState(false);
 
-  const mobileUrl = `${window.location.origin}/IdentityVerification?session=${sessionId}&mobile=1`;
+  const mobileUrl = `${window.location.origin}/MobileVerify?session=${sessionId}`;
 
   useEffect(() => {
     if (!polling) return;
