@@ -61,6 +61,8 @@ export default function Onboarding() {
           user_email: user.email,
           display_name: data.display_name || user.full_name,
           bio: data.bio || '',
+          postcode: data.postcode || '',
+          full_address: data.full_address || '',
           city: data.city || '',
           country: data.country || '',
           categories: data.categories || [],

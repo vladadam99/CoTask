@@ -19,6 +19,14 @@
       "type": "string",
       "description": "Cover/banner photo for profile card"
     },
+    "postcode": {
+      "type": "string",
+      "description": "UK postcode"
+    },
+    "full_address": {
+      "type": "string",
+      "description": "Full address selected from postcode lookup"
+    },
     "city": {
       "type": "string"
     },
