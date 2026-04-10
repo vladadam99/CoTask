@@ -46,7 +46,9 @@ export default function Profile() {
         const profiles = await base44.entities.EnterpriseProfile.filter({ user_email: user.email });
         navigate(profiles.length > 0 ? '/EnterpriseDashboard' : '/Onboarding?role=enterprise');
       } else {
-        navigate('/UserDashboard');
+        // Check if user has completed user onboarding
+        const hasUserProfile = user?.interests?.length > 0 || user?.what_need_help_with;
+        navigate(hasUserProfile ? '/UserDashboard' : '/Onboarding?role=user');
       }
     } catch (error) {
       console.error('Failed to switch role:', error);
