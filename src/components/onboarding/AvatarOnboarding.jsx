@@ -75,6 +75,8 @@ export default function AvatarOnboarding({ user, onComplete, submitting }) {
     const reg = JSON.parse(localStorage.getItem('cotask_registration') || '{}');
     return {
       display_name: user?.full_name || reg.full_name || '',
+      legal_name: '',
+      date_of_birth: '',
       bio: '',
       languages: ['English'],
       postcode: '',
@@ -148,6 +150,7 @@ export default function AvatarOnboarding({ user, onComplete, submitting }) {
   };
 
   const canGoNextStep = () => {
+    if (step === 0) return !!(data.legal_name.trim() && data.date_of_birth);
     if (step === 1) return !!(data.full_address && data.postcode);
     if (step === 2) return data.categories.length > 0;
     return true;
@@ -173,6 +176,25 @@ export default function AvatarOnboarding({ user, onComplete, submitting }) {
             {step === 0 && (
               <div className="space-y-4">
                 <p className="text-sm text-muted-foreground">This is what clients see when they find you. Make it count!</p>
+
+                <div className="p-4 bg-primary/5 border border-primary/15 rounded-xl">
+                  <p className="text-sm font-semibold text-primary mb-0.5">Legal Identity</p>
+                  <p className="text-xs text-muted-foreground">Required for verification. Must match your government-issued ID.</p>
+                </div>
+                <div>
+                  <label className="text-sm font-medium mb-1.5 block">Full Legal Name <span className="text-primary">*</span></label>
+                  <Input value={data.legal_name} onChange={e => update('legal_name', e.target.value)}
+                    placeholder="As it appears on your ID" className="bg-muted/50 border-white/5" />
+                </div>
+                <div>
+                  <label className="text-sm font-medium mb-1.5 block">Date of Birth <span className="text-primary">*</span></label>
+                  <Input type="date" value={data.date_of_birth} onChange={e => update('date_of_birth', e.target.value)}
+                    className="bg-muted/50 border-white/5" />
+                </div>
+                {(!data.legal_name.trim() || !data.date_of_birth) && (
+                  <p className="text-xs text-yellow-400">Legal name and date of birth are required to continue.</p>
+                )}
+
                 <div>
                   <label className="text-sm font-medium mb-1.5 block">Display Name</label>
                   <Input value={data.display_name} onChange={e => update('display_name', e.target.value)}

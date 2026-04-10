@@ -44,6 +44,8 @@ export default function UserOnboarding({ user, onComplete, submitting }) {
   const [data, setData] = useState(() => {
     const reg = JSON.parse(localStorage.getItem('cotask_registration') || '{}');
     return {
+      legal_name: '',
+      date_of_birth: '',
       interests: [],
       what_looking_for: '',
       what_need_help_with: '',
@@ -93,6 +95,7 @@ export default function UserOnboarding({ user, onComplete, submitting }) {
   };
 
   const canComplete = !!(data.full_address && data.postcode);
+  const canGoNext = !!(data.legal_name.trim() && data.date_of_birth);
 
   return (
     <div>
@@ -113,6 +116,23 @@ export default function UserOnboarding({ user, onComplete, submitting }) {
             {/* Step 0: What you need */}
             {step === 0 && (
               <div className="space-y-5">
+                <div className="p-4 bg-primary/5 border border-primary/15 rounded-xl">
+                  <p className="text-sm font-semibold text-primary mb-0.5">Legal Identity</p>
+                  <p className="text-xs text-muted-foreground">Required for verification. Must match your government-issued ID.</p>
+                </div>
+                <div>
+                  <label className="text-sm font-medium mb-1.5 block">Full Legal Name <span className="text-primary">*</span></label>
+                  <Input value={data.legal_name} onChange={e => update('legal_name', e.target.value)}
+                    placeholder="As it appears on your ID" className="bg-muted/50 border-white/5" />
+                </div>
+                <div>
+                  <label className="text-sm font-medium mb-1.5 block">Date of Birth <span className="text-primary">*</span></label>
+                  <Input type="date" value={data.date_of_birth} onChange={e => update('date_of_birth', e.target.value)}
+                    className="bg-muted/50 border-white/5" />
+                </div>
+                {(!data.legal_name.trim() || !data.date_of_birth) && (
+                  <p className="text-xs text-yellow-400">Legal name and date of birth are required to continue.</p>
+                )}
                 <div>
                   <p className="text-sm text-muted-foreground mb-3">
                     What services are you looking for? We'll personalise your experience and suggest the best avatars for you.
@@ -267,7 +287,7 @@ export default function UserOnboarding({ user, onComplete, submitting }) {
             <ArrowLeft className="w-4 h-4 mr-2" /> Back
           </Button>
           {step < STEPS.length - 1 ? (
-            <Button onClick={() => setStep(s => s + 1)} className="bg-primary hover:bg-primary/90">
+            <Button onClick={() => canGoNext && setStep(s => s + 1)} disabled={!canGoNext} className="bg-primary hover:bg-primary/90 disabled:opacity-50">
               Next <ArrowRight className="w-4 h-4 ml-2" />
             </Button>
           ) : (

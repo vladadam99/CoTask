@@ -49,6 +49,8 @@ export default function Onboarding() {
       await updateUser({
         selected_role: role,
         onboarding_complete: true,
+        legal_name: data.legal_name || '',
+        date_of_birth: data.date_of_birth || '',
         postcode: data.postcode || '',
         full_address: data.full_address || '',
         city: data.city || '',
