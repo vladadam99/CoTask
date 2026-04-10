@@ -67,6 +67,7 @@ export default function Landing() {
           <div className="hidden md:flex items-center gap-6">
             <Link to="/HowItWorks" className="text-sm text-muted-foreground hover:text-foreground transition-colors">How it works</Link>
             <Link to="/Pricing" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Pricing</Link>
+            <Link to="/FAQ" className="text-sm text-muted-foreground hover:text-foreground transition-colors">FAQ</Link>
           </div>
           <button
             onClick={handleGetStarted}
@@ -82,6 +83,7 @@ export default function Landing() {
           <div className="md:hidden glass-strong border-b border-white/5 px-4 py-4 flex flex-col gap-4">
             <Link to="/HowItWorks" className="text-sm" onClick={() => setMobileMenuOpen(false)}>How it works</Link>
             <Link to="/Pricing" className="text-sm" onClick={() => setMobileMenuOpen(false)}>Pricing</Link>
+            <Link to="/FAQ" className="text-sm" onClick={() => setMobileMenuOpen(false)}>FAQ</Link>
             <button onClick={() => { handleGetStarted(); setMobileMenuOpen(false); }} className="px-4 py-2 bg-primary text-white text-sm font-semibold rounded-lg text-left flex items-center gap-2">
               Let's Go <ArrowRight className="w-4 h-4" />
             </button>
