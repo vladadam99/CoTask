@@ -30,9 +30,10 @@ Deno.serve(async (req) => {
 
     try {
       const base44 = createClientFromRequest(req);
+      // Mark as paid but keep status pending — avatar must still accept/decline
       await base44.asServiceRole.entities.Booking.update(bookingId, {
         payment_status: 'paid',
-        status: 'accepted',
+        status: 'pending',
       });
 
       // Auto-create conversation if none exists
@@ -53,20 +54,21 @@ Deno.serve(async (req) => {
         }
       }
 
-      // Notify avatar
+      // Notify avatar to accept or decline the paid booking
       const bookingList = await base44.asServiceRole.entities.Booking.filter({ id: bookingId });
       const booking = bookingList[0];
       if (booking) {
         await base44.asServiceRole.entities.Notification.create({
           user_email: booking.avatar_email,
-          title: 'Booking Paid!',
-          message: `${booking.client_name} paid for "${booking.category}" session.`,
-          type: 'payment',
+          title: 'New Booking Request — Payment Received!',
+          message: `${booking.client_name} has paid for a ${booking.category} booking. Please accept or decline in your requests.`,
+          type: 'booking_request',
+          link: '/AvatarRequests',
           reference_id: bookingId,
         });
       }
 
-      console.log(`Booking ${bookingId} marked as paid and accepted`);
+      console.log(`Booking ${bookingId} marked as paid, awaiting avatar acceptance`);
     } catch (err) {
       console.error('Failed to update booking after payment:', err.message);
     }

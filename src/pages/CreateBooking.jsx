@@ -137,7 +137,7 @@ Based on this, return:
         amount: freeTest ? 0 : amount,
         service_fee: freeTest ? 0 : serviceFee,
         total_amount: freeTest ? 0 : total,
-        status: freeTest ? 'accepted' : 'pending',
+        status: 'pending',
         payment_status: freeTest ? 'paid' : 'pending',
       });
 
