@@ -193,27 +193,20 @@ export default function AvatarProfileEdit() {
         {/* Cover Photo */}
         <div className="relative w-full h-48 md:h-64 rounded-2xl overflow-hidden mb-20 group cursor-pointer" onClick={() => coverInputRef.current?.click()}>
           {form.cover_url ? (
-            <>
-              <img src={form.cover_url} alt="Cover" className="w-full h-full object-cover" />
-              <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2 backdrop-blur-sm">
-                {uploadingCover ? (
-                  <Loader2 className="w-6 h-6 animate-spin text-white" />
-                ) : (
-                  <div className="flex items-center gap-2 bg-white/20 backdrop-blur px-4 py-2 rounded-full">
-                    <Camera className="w-4 h-4 text-white" />
-                    <span className="text-white text-sm font-semibold">Change Cover</span>
-                  </div>
-                )}
-              </div>
-            </>
+            <img src={form.cover_url} alt="Cover" className="w-full h-full object-cover" />
           ) : (
-            <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-primary/10 to-card flex flex-col items-center justify-center gap-3" onClick={() => coverInputRef.current?.click()}>
-              <div className="w-14 h-14 rounded-full bg-primary/30 flex items-center justify-center">
-                <Camera className="w-7 h-7 text-primary" />
-              </div>
-              <p className="text-sm font-semibold text-foreground">Add Cover Photo</p>
-            </div>
+            <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-primary/10 to-card" />
           )}
+          <div className="absolute inset-0 bg-black/40 flex items-center justify-center transition-opacity">
+            {uploadingCover ? (
+              <Loader2 className="w-6 h-6 animate-spin text-white" />
+            ) : (
+              <div className="flex items-center gap-2 bg-white/20 backdrop-blur px-4 py-2 rounded-full">
+                <Camera className="w-4 h-4 text-white" />
+                <span className="text-white text-sm font-semibold">{form.cover_url ? 'Change Banner' : 'Add Banner Photo'}</span>
+              </div>
+            )}
+          </div>
           <input ref={coverInputRef} type="file" accept="image/*" className="hidden" onChange={e => { const f = e.target.files?.[0]; if (f) handleCoverUpload(f); }} />
         </div>
 
@@ -221,7 +214,7 @@ export default function AvatarProfileEdit() {
         <div className="relative -mt-24 px-4 mb-6">
           <div className="flex flex-col md:flex-row items-start md:items-end gap-4">
             {/* Profile Picture */}
-            <div className="relative w-32 h-32 md:w-40 md:h-40 rounded-full bg-card border-4 border-card shadow-2xl flex-shrink-0 group cursor-pointer" onClick={() => fileInputRef.current?.click()}>
+            <div className="relative w-32 h-32 md:w-40 md:h-40 rounded-full bg-card border-4 border-card shadow-2xl flex-shrink-0 cursor-pointer" onClick={() => fileInputRef.current?.click()}>
               {form.photo_url ? (
                 <img src={form.photo_url} alt="Profile" className="w-full h-full object-cover rounded-full" />
               ) : (
@@ -229,7 +222,7 @@ export default function AvatarProfileEdit() {
                   {profile.display_name?.[0] || user?.full_name?.[0]}
                 </div>
               )}
-              <div className="absolute inset-0 rounded-full bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+              <div className="absolute inset-0 rounded-full bg-black/50 flex items-center justify-center">
                 {uploading ? <Loader2 className="w-6 h-6 animate-spin text-white" /> : <Camera className="w-6 h-6 text-white" />}
               </div>
               <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={e => { const f = e.target.files?.[0]; if (f) handlePhotoUpload(f); }} />
@@ -257,6 +250,12 @@ export default function AvatarProfileEdit() {
                       <span>Saved {lastSaved.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
                     </>
                   ) : null}
+                  <button
+                    onClick={() => navigate(`/AvatarView?id=${profile.id}`)}
+                    className="ml-2 px-3 py-1 rounded-full bg-white/10 border border-white/10 text-xs hover:bg-white/20 transition-colors"
+                  >
+                    Preview Profile →
+                  </button>
                 </div>
               </div>
             </div>
