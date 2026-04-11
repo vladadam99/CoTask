@@ -4,7 +4,7 @@ import { base44 } from '@/api/base44Client';
 import { Bell, X, CheckCheck } from 'lucide-react';
 
 // These types are handled by bottom nav icons — exclude from bell
-const EXCLUDED_FROM_BELL = ['message', 'booking_request', 'booking_accepted', 'booking_declined'];
+const EXCLUDED_FROM_BELL = ['message'];
 
 const TYPE_COLORS = {
 
@@ -30,7 +30,8 @@ export default function NotificationBell({ userEmail, userRole }) {
     const load = async () => {
       try {
         const list = await base44.entities.Notification.filter({ user_email: userEmail }, '-created_date', 50);
-        const filtered = list.filter(n => n.target_role === userRole && !EXCLUDED_FROM_BELL.includes(n.type));
+        // Show if no target_role restriction, or if it matches the user's role
+        const filtered = list.filter(n => (!n.target_role || n.target_role === userRole) && !EXCLUDED_FROM_BELL.includes(n.type));
         setNotifications(filtered);
       } catch (e) {}
     };
@@ -42,7 +43,7 @@ export default function NotificationBell({ userEmail, userRole }) {
     if (!userEmail) return;
     const unsub = base44.entities.Notification.subscribe((event) => {
       if (event.data?.user_email === userEmail) {
-        const matchesRole = event.data?.target_role === userRole;
+        const matchesRole = !event.data?.target_role || event.data?.target_role === userRole;
         const notExcluded = !EXCLUDED_FROM_BELL.includes(event.data?.type);
         if (event.type === 'create') {
           if (matchesRole && notExcluded) setNotifications(prev => [event.data, ...prev]);
