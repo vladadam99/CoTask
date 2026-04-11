@@ -2,6 +2,12 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { base44 } from '@/api/base44Client';
 import { Bell, X, CheckCheck } from 'lucide-react';
+import { formatDistanceToNow } from 'date-fns';
+
+const timeAgo = (date) => {
+  try { return formatDistanceToNow(new Date(date), { addSuffix: true }); }
+  catch { return ''; }
+};
 
 // These types are handled by bottom nav icons — exclude from bell
 const EXCLUDED_FROM_BELL = ['message'];
@@ -138,6 +144,7 @@ export default function NotificationBell({ userEmail, userRole }) {
                     <div className="flex-1 min-w-0">
                       <p className="text-sm font-medium leading-tight">{n.title}</p>
                       <p className="text-xs text-muted-foreground mt-0.5 leading-snug">{n.message}</p>
+                      <p className="text-[10px] text-muted-foreground/60 mt-1">{timeAgo(n.created_date)}</p>
                     </div>
                   </div>
                 </div>
