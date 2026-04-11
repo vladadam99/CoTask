@@ -143,6 +143,18 @@ Based on this, return:
 
       base44.functions.invoke('createConversation', { bookingId: booking.id }).catch(() => {});
 
+      // Notify avatar of new booking request
+      if (avatar?.user_email) {
+        base44.entities.Notification.create({
+          user_email: avatar.user_email,
+          title: 'New Booking Request!',
+          message: `${user.full_name} has requested a ${form.category} booking${form.scheduled_date ? ` on ${form.scheduled_date}` : ''}. Accept or decline in your requests.`,
+          type: 'booking_request',
+          link: '/AvatarRequests',
+          reference_id: booking.id,
+        }).catch(() => {});
+      }
+
       if (freeTest) {
         navigate(`/UserBookingDetail?id=${booking.id}`);
         return;
