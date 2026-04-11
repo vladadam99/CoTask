@@ -492,8 +492,6 @@ export default function AvatarView() {
               </a>
             </GlassCard>
           )}
-            </GlassCard>
-          )}
         </div>
       </div>
     </div>
