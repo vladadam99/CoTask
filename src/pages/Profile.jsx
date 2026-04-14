@@ -41,6 +41,8 @@ export default function Profile() {
     setSwitchingRole(true);
     try {
       await base44.auth.updateMe({ selected_role: targetRole });
+      // Small delay to allow auth state to propagate before navigating
+      await new Promise(resolve => setTimeout(resolve, 300));
       if (targetRole === 'avatar') {
         const profiles = await base44.entities.AvatarProfile.filter({ user_email: user.email });
         navigate(profiles.length > 0 ? '/AvatarDashboard' : '/Onboarding?role=avatar');
@@ -48,7 +50,6 @@ export default function Profile() {
         const profiles = await base44.entities.EnterpriseProfile.filter({ user_email: user.email });
         navigate(profiles.length > 0 ? '/EnterpriseDashboard' : '/Onboarding?role=enterprise');
       } else {
-        // Check if user has completed user onboarding
         const hasUserProfile = user?.interests?.length > 0 || user?.what_need_help_with;
         navigate(hasUserProfile ? '/UserDashboard' : '/Onboarding?role=user');
       }

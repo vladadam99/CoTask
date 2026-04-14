@@ -53,8 +53,14 @@ export default function AvatarDashboard() {
 
   useEffect(() => {
     if (!userLoading && user && user.selected_role !== 'avatar') {
-      const dest = user.selected_role === 'enterprise' ? '/EnterpriseDashboard' : '/UserDashboard';
-      navigate(dest, { replace: true });
+      // Add a small delay to avoid redirecting on stale cached role during role switch
+      const timer = setTimeout(() => {
+        if (user.selected_role !== 'avatar') {
+          const dest = user.selected_role === 'enterprise' ? '/EnterpriseDashboard' : '/UserDashboard';
+          navigate(dest, { replace: true });
+        }
+      }, 500);
+      return () => clearTimeout(timer);
     }
   }, [user, userLoading, navigate]);
 
