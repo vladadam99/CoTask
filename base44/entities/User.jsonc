@@ -33,6 +33,31 @@
         "rejected"
       ],
       "default": "pending"
+    },
+    "display_name": {
+      "type": "string",
+      "description": "Custom display name set by the user"
+    },
+    "profile_picture_url": {
+      "type": "string"
+    },
+    "city": {
+      "type": "string"
+    },
+    "preferred_language": {
+      "type": "string"
+    },
+    "interests": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "what_need_help_with": {
+      "type": "string"
     }
-  }
+  },
+  "required": [
+    "selected_role"
+  ]
 }

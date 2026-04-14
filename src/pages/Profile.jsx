@@ -30,7 +30,7 @@ export default function Profile() {
   const handleSaveName = async () => {
     if (!nameValue.trim()) return;
     setSavingName(true);
-    await updateUser({ full_name: nameValue.trim() });
+    await updateUser({ display_name: nameValue.trim() });
     setSavingName(false);
     setEditingName(false);
   };
@@ -118,7 +118,7 @@ export default function Profile() {
               {uploading ? <Loader2 className="w-5 h-5 animate-spin text-white" /> : <Upload className="w-5 h-5 text-white" />}
             </button>
           </div>
-          <h1 className="text-2xl font-bold">{user?.full_name || 'User'}</h1>
+          <h1 className="text-2xl font-bold">{user?.display_name || user?.full_name || 'User'}</h1>
           <p className="text-muted-foreground text-sm">{user?.email}</p>
           <Badge className="mt-2 bg-primary/10 text-primary border-primary/20 capitalize">{user?.selected_role || user?.role || 'user'}</Badge>
         </div>
@@ -148,8 +148,8 @@ export default function Profile() {
                   </div>
                 ) : (
                   <div className="ml-auto flex items-center gap-2">
-                    <span className="font-medium">{user?.full_name || 'Not set'}</span>
-                    <button onClick={() => { setNameValue(user?.full_name || ''); setEditingName(true); }} className="text-muted-foreground hover:text-primary">
+                    <span className="font-medium">{user?.display_name || user?.full_name || 'Not set'}</span>
+                    <button onClick={() => { setNameValue(user?.display_name || user?.full_name || ''); setEditingName(true); }} className="text-muted-foreground hover:text-primary">
                       <Pencil className="w-3.5 h-3.5" />
                     </button>
                   </div>
