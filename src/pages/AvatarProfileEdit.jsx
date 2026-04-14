@@ -15,7 +15,7 @@ import { getNavItems } from '@/lib/navItems';
 import { useNavigate } from 'react-router-dom';
 import {
   Home, Inbox, Calendar, Radio, MessageSquare, DollarSign,
-  Star, User, Settings, Camera, Upload, Loader2, Plus, Grid, MapPin, Pencil, Trash2, X, Navigation
+  Star, User, Settings, Camera, Upload, Loader2, Plus, Grid, MapPin, Pencil, Trash2, X, Navigation, FileText
 } from 'lucide-react';
 
 
@@ -29,6 +29,8 @@ export default function AvatarProfileEdit() {
   const coverInputRef = useRef(null);
   const [uploading, setUploading] = useState(false);
   const [uploadingCover, setUploadingCover] = useState(false);
+  const [uploadingCv, setUploadingCv] = useState(false);
+  const cvInputRef = useRef(null);
   const [showUpload, setShowUpload] = useState(false);
   const [editingPost, setEditingPost] = useState(null);
   const [deleteConfirm, setDeleteConfirm] = useState(null);
@@ -49,6 +51,7 @@ export default function AvatarProfileEdit() {
     hourly_rate: '', per_session_rate: '', currency: 'USD',
     languages: '', skills: '', categories: '', photo_url: '', cover_url: '',
     willing_to_travel: false, travel_radius_km: 0,
+    cv_url: '', cv_filename: '',
   });
 
   useEffect(() => {
@@ -68,6 +71,8 @@ export default function AvatarProfileEdit() {
         cover_url: profile.cover_url || '',
         willing_to_travel: profile.willing_to_travel || false,
         travel_radius_km: profile.travel_radius_km || 0,
+        cv_url: profile.cv_url || '',
+        cv_filename: profile.cv_filename || '',
       });
     }
   }, [profile]);
@@ -165,6 +170,28 @@ export default function AvatarProfileEdit() {
     if (deleteConfirm) {
       deletePost.mutate(deleteConfirm.id);
     }
+  };
+
+  const handleCvUpload = async (file) => {
+    if (!file) return;
+    setUploadingCv(true);
+    try {
+      const { file_url } = await base44.integrations.Core.UploadFile({ file });
+      setForm(f => ({ ...f, cv_url: file_url, cv_filename: file.name }));
+      await base44.entities.AvatarProfile.update(profile.id, { cv_url: file_url, cv_filename: file.name });
+      queryClient.invalidateQueries({ queryKey: ['avatar-profile-edit'] });
+      toast({ title: 'CV uploaded', description: 'Your CV has been saved to your profile.' });
+    } catch (error) {
+      toast({ title: 'Upload failed', description: 'Could not upload CV' });
+    }
+    setUploadingCv(false);
+  };
+
+  const removeCv = async () => {
+    setForm(f => ({ ...f, cv_url: '', cv_filename: '' }));
+    await base44.entities.AvatarProfile.update(profile.id, { cv_url: '', cv_filename: '' });
+    queryClient.invalidateQueries({ queryKey: ['avatar-profile-edit'] });
+    toast({ title: 'CV removed' });
   };
 
   const set = (key) => (e) => setForm(f => ({ ...f, [key]: e.target.value }));
@@ -425,6 +452,40 @@ export default function AvatarProfileEdit() {
                 />
               </div>
             </div>
+          </GlassCard>
+          {/* CV Upload */}
+          <GlassCard className="p-5">
+            <div className="flex items-center gap-2 mb-3">
+              <FileText className="w-4 h-4 text-primary" />
+              <h3 className="font-semibold text-sm">CV / Resume</h3>
+            </div>
+            <input ref={cvInputRef} type="file" accept=".pdf,.doc,.docx" className="hidden" onChange={e => { const f = e.target.files?.[0]; if (f) handleCvUpload(f); }} />
+            {form.cv_url ? (
+              <div className="flex items-center gap-3 p-3 bg-green-500/10 border border-green-500/20 rounded-xl">
+                <div className="w-8 h-8 rounded-lg bg-green-500/20 flex items-center justify-center shrink-0">
+                  <FileText className="w-4 h-4 text-green-400" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-medium text-green-400 truncate">{form.cv_filename || 'CV uploaded'}</p>
+                  <a href={form.cv_url} target="_blank" rel="noopener noreferrer" className="text-xs text-muted-foreground hover:text-primary">View CV →</a>
+                </div>
+                <div className="flex gap-2 shrink-0">
+                  <button onClick={() => cvInputRef.current?.click()} disabled={uploadingCv} className="text-xs text-primary hover:underline">
+                    {uploadingCv ? 'Uploading...' : 'Replace'}
+                  </button>
+                  <button onClick={removeCv} className="text-xs text-red-400 hover:underline">Remove</button>
+                </div>
+              </div>
+            ) : (
+              <button onClick={() => cvInputRef.current?.click()} disabled={uploadingCv}
+                className="w-full h-16 rounded-xl border-2 border-dashed border-white/10 flex items-center justify-center gap-2 text-muted-foreground hover:border-primary/40 hover:text-primary transition-all disabled:opacity-50">
+                {uploadingCv ? (
+                  <><Loader2 className="w-4 h-4 animate-spin" /><span className="text-sm">Uploading...</span></>
+                ) : (
+                  <><Upload className="w-4 h-4" /><span className="text-sm">Upload your CV (PDF, DOC, DOCX)</span></>
+                )}
+              </button>
+            )}
           </GlassCard>
         </div>
 
