@@ -9,7 +9,7 @@ import { useTheme } from '@/lib/ThemeContext';
 import { base44 } from '@/api/base44Client';
 
 export default function Profile() {
-  const { user } = useCurrentUser();
+  const { user, updateUser } = useCurrentUser();
   const navigate = useNavigate();
   const { theme, toggleTheme } = useTheme();
   const [uploading, setUploading] = useState(false);
@@ -30,7 +30,7 @@ export default function Profile() {
   const handleSaveName = async () => {
     if (!nameValue.trim()) return;
     setSavingName(true);
-    await base44.auth.updateMe({ full_name: nameValue.trim() });
+    await updateUser({ full_name: nameValue.trim() });
     setSavingName(false);
     setEditingName(false);
   };
@@ -139,10 +139,10 @@ export default function Profile() {
                       onChange={e => setNameValue(e.target.value)}
                       onKeyDown={e => { if (e.key === 'Enter') handleSaveName(); if (e.key === 'Escape') setEditingName(false); }}
                     />
-                    <button onClick={handleSaveName} disabled={savingName} className="text-primary hover:opacity-70">
+                    <button onMouseDown={e => { e.preventDefault(); handleSaveName(); }} disabled={savingName} className="text-primary hover:opacity-70">
                       {savingName ? <Loader2 className="w-4 h-4 animate-spin" /> : <Check className="w-4 h-4" />}
                     </button>
-                    <button onClick={() => setEditingName(false)} className="text-muted-foreground hover:opacity-70">
+                    <button onMouseDown={e => { e.preventDefault(); setEditingName(false); }} className="text-muted-foreground hover:opacity-70">
                       <X className="w-4 h-4" />
                     </button>
                   </div>
