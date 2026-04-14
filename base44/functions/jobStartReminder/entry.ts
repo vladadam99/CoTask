@@ -1,31 +1,37 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.25';
 
+// v2 - force redeploy
 Deno.serve(async (req) => {
   try {
     const base44 = createClientFromRequest(req);
 
-    // Fetch all accepted bookings (service role — no user session in scheduler)
     const bookings = await base44.asServiceRole.entities.Booking.filter({ status: 'accepted' });
+    console.log(`[v2] Fetched ${bookings.length} accepted bookings`);
 
     const now = new Date();
     let notified = 0;
 
     for (const booking of bookings) {
-      if (!booking.scheduled_date || !booking.scheduled_time) continue;
+      if (!booking.scheduled_date || !booking.scheduled_time) {
+        console.log(`[v2] Skipping booking ${booking.id} - missing date/time`);
+        continue;
+      }
 
-      const startDt = new Date(`${booking.scheduled_date}T${booking.scheduled_time}`);
-      if (isNaN(startDt.getTime())) continue;
+      // Parse as UTC explicitly
+      const startDt = new Date(`${booking.scheduled_date}T${booking.scheduled_time}:00Z`);
+      if (isNaN(startDt.getTime())) {
+        console.log(`[v2] Skipping booking ${booking.id} - invalid date`);
+        continue;
+      }
 
       const diffMins = (startDt.getTime() - now.getTime()) / 60000;
+      console.log(`[v2] Booking ${booking.id}: date=${booking.scheduled_date} time=${booking.scheduled_time} diffMins=${diffMins.toFixed(2)} now=${now.toISOString()}`);
 
-      // Window: job starts between 8 and 13 minutes from now
-      if (diffMins > 8 && diffMins <= 13) {
+      // Window: job starts between 5 and 15 minutes from now
+      if (diffMins > 5 && diffMins <= 15) {
         const reminderKey = `booking_10min_${booking.id}`;
 
-        // Deduplicate: skip if already sent
-        const existing = await base44.asServiceRole.entities.Notification.filter({
-          reference_id: reminderKey,
-        });
+        const existing = await base44.asServiceRole.entities.Notification.filter({ reference_id: reminderKey });
 
         if (existing.length === 0) {
           await base44.asServiceRole.entities.Notification.create({
@@ -39,15 +45,17 @@ Deno.serve(async (req) => {
             target_role: 'avatar',
           });
           notified++;
-          console.log(`10-min reminder sent for booking ${booking.id} to ${booking.avatar_email}`);
+          console.log(`[v2] Reminder sent for booking ${booking.id} to ${booking.avatar_email}`);
+        } else {
+          console.log(`[v2] Reminder already sent for booking ${booking.id}`);
         }
       }
     }
 
-    console.log(`Checked ${bookings.length} accepted bookings, sent ${notified} reminders`);
+    console.log(`[v2] Done: checked ${bookings.length}, notified ${notified}`);
     return Response.json({ success: true, checked: bookings.length, notified });
   } catch (error) {
-    console.error('jobStartReminder error:', error.message);
+    console.error('[v2] Error:', error.message);
     return Response.json({ error: error.message }, { status: 500 });
   }
 });
