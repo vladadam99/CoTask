@@ -8,33 +8,17 @@ Deno.serve(async (req) => {
 
     const now = new Date();
     let notified = 0;
-    const debugInfo = [];
 
     for (const booking of bookings) {
-      if (!booking.scheduled_date || !booking.scheduled_time) {
-        debugInfo.push({ id: booking.id, skip: 'missing date/time' });
-        continue;
-      }
+      if (!booking.scheduled_date || !booking.scheduled_time) continue;
 
       const startDt = new Date(`${booking.scheduled_date}T${booking.scheduled_time}:00Z`);
-      if (isNaN(startDt.getTime())) {
-        debugInfo.push({ id: booking.id, skip: 'invalid date' });
-        continue;
-      }
+      if (isNaN(startDt.getTime())) continue;
 
       const diffMins = (startDt.getTime() - now.getTime()) / 60000;
-      debugInfo.push({
-        id: booking.id,
-        date: booking.scheduled_date,
-        time: booking.scheduled_time,
-        startDt: startDt.toISOString(),
-        now: now.toISOString(),
-        diffMins: parseFloat(diffMins.toFixed(2)),
-        inWindow: diffMins > 5 && diffMins <= 25,
-      });
 
-      // Window: job starts between 5 and 25 minutes from now
-      if (diffMins > 5 && diffMins <= 25) {
+      // Window: job starts between 5 and 15 minutes from now
+      if (diffMins > 5 && diffMins <= 15) {
         const reminderKey = `booking_10min_${booking.id}`;
         const existing = await base44.asServiceRole.entities.Notification.filter({ reference_id: reminderKey });
 
@@ -50,13 +34,11 @@ Deno.serve(async (req) => {
             target_role: 'avatar',
           });
           notified++;
-        } else {
-          debugInfo.push({ id: booking.id, note: 'already notified' });
         }
       }
     }
 
-    return Response.json({ success: true, checked: bookings.length, notified, now: now.toISOString(), debug: debugInfo });
+    return Response.json({ success: true, checked: bookings.length, notified });
   } catch (error) {
     return Response.json({ error: error.message }, { status: 500 });
   }
