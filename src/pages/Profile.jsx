@@ -4,7 +4,7 @@ import { useCurrentUser } from '@/lib/useCurrentUser';
 import GlassCard from '@/components/ui/GlassCard';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { User, Mail, MapPin, Globe, LogOut, Upload, Loader2, ArrowLeft, ArrowRightLeft, Sun, Moon } from 'lucide-react';
+import { User, Mail, MapPin, Globe, LogOut, Upload, Loader2, ArrowLeft, ArrowRightLeft, Sun, Moon, FileText } from 'lucide-react';
 import { useTheme } from '@/lib/ThemeContext';
 import { base44 } from '@/api/base44Client';
 
@@ -15,11 +15,39 @@ export default function Profile() {
   const [uploading, setUploading] = useState(false);
   const [profilePicUrl, setProfilePicUrl] = useState('');
   const [switchingRole, setSwitchingRole] = useState(false);
+  const [uploadingCv, setUploadingCv] = useState(false);
+  const [avatarProfile, setAvatarProfile] = useState(null);
   const fileInputRef = useRef(null);
+  const cvInputRef = useRef(null);
 
   React.useEffect(() => {
     if (user?.profile_picture_url) setProfilePicUrl(user.profile_picture_url);
   }, [user?.profile_picture_url]);
+
+  React.useEffect(() => {
+    if (user?.email && user?.selected_role === 'avatar') {
+      base44.entities.AvatarProfile.filter({ user_email: user.email }).then(r => setAvatarProfile(r[0] || null));
+    }
+  }, [user?.email, user?.selected_role]);
+
+  const handleCvUpload = async (file) => {
+    if (!file || !avatarProfile) return;
+    setUploadingCv(true);
+    try {
+      const { file_url } = await base44.integrations.Core.UploadFile({ file });
+      await base44.entities.AvatarProfile.update(avatarProfile.id, { cv_url: file_url, cv_filename: file.name });
+      setAvatarProfile(p => ({ ...p, cv_url: file_url, cv_filename: file.name }));
+    } catch (e) {
+      console.error(e);
+    }
+    setUploadingCv(false);
+  };
+
+  const handleRemoveCv = async () => {
+    if (!avatarProfile) return;
+    await base44.entities.AvatarProfile.update(avatarProfile.id, { cv_url: '', cv_filename: '' });
+    setAvatarProfile(p => ({ ...p, cv_url: '', cv_filename: '' }));
+  };
 
   const dashPath = user?.selected_role === 'avatar' ? '/AvatarDashboard' : user?.selected_role === 'enterprise' ? '/EnterpriseDashboard' : '/UserDashboard';
 
@@ -140,6 +168,35 @@ export default function Profile() {
               )}
             </div>
           </GlassCard>
+
+          {user?.selected_role === 'avatar' && (
+            <GlassCard className="p-4">
+              <h3 className="font-semibold mb-3">CV / Resume</h3>
+              <input ref={cvInputRef} type="file" accept=".pdf,.doc,.docx" className="hidden" onChange={e => { const f = e.target.files?.[0]; if (f) handleCvUpload(f); }} />
+              {avatarProfile?.cv_url ? (
+                <div className="flex items-center gap-3 p-3 bg-green-500/10 border border-green-500/20 rounded-xl">
+                  <FileText className="w-5 h-5 text-green-400 shrink-0" />
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-medium text-green-400 truncate">{avatarProfile.cv_filename || 'CV uploaded'}</p>
+                    <a href={avatarProfile.cv_url} target="_blank" rel="noopener noreferrer" className="text-xs text-muted-foreground hover:text-primary">View CV →</a>
+                  </div>
+                  <div className="flex gap-3 shrink-0 text-xs">
+                    <button onClick={() => cvInputRef.current?.click()} disabled={uploadingCv} className="text-primary hover:underline">
+                      {uploadingCv ? 'Uploading...' : 'Replace'}
+                    </button>
+                    <button onClick={handleRemoveCv} className="text-red-400 hover:underline">Remove</button>
+                  </div>
+                </div>
+              ) : (
+                <button onClick={() => cvInputRef.current?.click()} disabled={uploadingCv}
+                  className="w-full h-14 rounded-xl border-2 border-dashed border-border flex items-center justify-center gap-2 text-muted-foreground hover:border-primary/40 hover:text-primary transition-all disabled:opacity-50">
+                  {uploadingCv
+                    ? <><Loader2 className="w-4 h-4 animate-spin" /><span className="text-sm">Uploading...</span></>
+                    : <><FileText className="w-4 h-4" /><span className="text-sm">Upload your CV (PDF, DOC, DOCX)</span></>}
+                </button>
+              )}
+            </GlassCard>
+          )}
 
           <GlassCard className="p-4">
             <h3 className="font-semibold mb-3">Appearance</h3>
