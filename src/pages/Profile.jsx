@@ -4,7 +4,7 @@ import { useCurrentUser } from '@/lib/useCurrentUser';
 import GlassCard from '@/components/ui/GlassCard';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { User, Mail, MapPin, Globe, LogOut, Upload, Loader2, ArrowLeft, ArrowRightLeft, Sun, Moon, FileText } from 'lucide-react';
+import { User, Mail, MapPin, Globe, LogOut, Upload, Loader2, ArrowLeft, ArrowRightLeft, Sun, Moon, FileText, Pencil, Check, X } from 'lucide-react';
 import { useTheme } from '@/lib/ThemeContext';
 import { base44 } from '@/api/base44Client';
 
@@ -17,12 +17,23 @@ export default function Profile() {
   const [switchingRole, setSwitchingRole] = useState(false);
   const [uploadingCv, setUploadingCv] = useState(false);
   const [avatarProfile, setAvatarProfile] = useState(null);
+  const [editingName, setEditingName] = useState(false);
+  const [nameValue, setNameValue] = useState('');
+  const [savingName, setSavingName] = useState(false);
   const fileInputRef = useRef(null);
   const cvInputRef = useRef(null);
 
   React.useEffect(() => {
     if (user?.profile_picture_url) setProfilePicUrl(user.profile_picture_url);
   }, [user?.profile_picture_url]);
+
+  const handleSaveName = async () => {
+    if (!nameValue.trim()) return;
+    setSavingName(true);
+    await base44.auth.updateMe({ full_name: nameValue.trim() });
+    setSavingName(false);
+    setEditingName(false);
+  };
 
   React.useEffect(() => {
     if (user?.email && user?.selected_role === 'avatar') {
@@ -117,9 +128,32 @@ export default function Profile() {
             <h3 className="font-semibold mb-4">Profile Details</h3>
             <div className="space-y-3 text-sm">
               <div className="flex items-center gap-3">
-                <User className="w-4 h-4 text-muted-foreground" />
-                <span className="text-muted-foreground">Name</span>
-                <span className="ml-auto font-medium">{user?.full_name || 'Not set'}</span>
+                <User className="w-4 h-4 text-muted-foreground shrink-0" />
+                <span className="text-muted-foreground shrink-0">Name</span>
+                {editingName ? (
+                  <div className="ml-auto flex items-center gap-2">
+                    <input
+                      autoFocus
+                      className="border border-input rounded-md px-2 py-1 text-sm bg-background w-36"
+                      value={nameValue}
+                      onChange={e => setNameValue(e.target.value)}
+                      onKeyDown={e => { if (e.key === 'Enter') handleSaveName(); if (e.key === 'Escape') setEditingName(false); }}
+                    />
+                    <button onClick={handleSaveName} disabled={savingName} className="text-primary hover:opacity-70">
+                      {savingName ? <Loader2 className="w-4 h-4 animate-spin" /> : <Check className="w-4 h-4" />}
+                    </button>
+                    <button onClick={() => setEditingName(false)} className="text-muted-foreground hover:opacity-70">
+                      <X className="w-4 h-4" />
+                    </button>
+                  </div>
+                ) : (
+                  <div className="ml-auto flex items-center gap-2">
+                    <span className="font-medium">{user?.full_name || 'Not set'}</span>
+                    <button onClick={() => { setNameValue(user?.full_name || ''); setEditingName(true); }} className="text-muted-foreground hover:text-primary">
+                      <Pencil className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
+                )}
               </div>
               <div className="flex items-center gap-3">
                 <Mail className="w-4 h-4 text-muted-foreground" />
