@@ -4,12 +4,14 @@ import { useCurrentUser } from '@/lib/useCurrentUser';
 import GlassCard from '@/components/ui/GlassCard';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { User, Mail, MapPin, Globe, LogOut, Upload, Loader2, ArrowLeft, ArrowRightLeft } from 'lucide-react';
+import { User, Mail, MapPin, Globe, LogOut, Upload, Loader2, ArrowLeft, ArrowRightLeft, Sun, Moon } from 'lucide-react';
+import { useTheme } from '@/lib/ThemeContext';
 import { base44 } from '@/api/base44Client';
 
 export default function Profile() {
   const { user } = useCurrentUser();
   const navigate = useNavigate();
+  const { theme, toggleTheme } = useTheme();
   const [uploading, setUploading] = useState(false);
   const [profilePicUrl, setProfilePicUrl] = useState('');
   const [switchingRole, setSwitchingRole] = useState(false);
@@ -135,6 +137,22 @@ export default function Profile() {
                   </div>
                 </button>
               )}
+            </div>
+          </GlassCard>
+
+          <GlassCard className="p-4">
+            <h3 className="font-semibold mb-3">Appearance</h3>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                {theme === 'dark' ? <Moon className="w-4 h-4 text-muted-foreground" /> : <Sun className="w-4 h-4 text-muted-foreground" />}
+                <span className="text-sm font-medium">{theme === 'dark' ? 'Dark Mode' : 'Light Mode'}</span>
+              </div>
+              <button
+                onClick={toggleTheme}
+                className={`relative w-11 h-6 rounded-full transition-colors ${theme === 'dark' ? 'bg-primary' : 'bg-muted'}`}
+              >
+                <span className={`absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform ${theme === 'dark' ? 'translate-x-5' : 'translate-x-0'}`} />
+              </button>
             </div>
           </GlassCard>
 

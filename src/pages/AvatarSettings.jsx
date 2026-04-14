@@ -9,8 +9,9 @@ import { Switch } from '@/components/ui/switch';
 import { useToast } from '@/components/ui/use-toast';
 import { getNavItems } from '@/lib/navItems';
 import {
-  Settings, Shield, Radio, Smartphone, Camera, Headphones, Car
+  Settings, Shield, Radio, Smartphone, Camera, Headphones, Car, Sun, Moon
 } from 'lucide-react';
+import { useTheme } from '@/lib/ThemeContext';
 
 
 
@@ -18,6 +19,7 @@ export default function AvatarSettings() {
   const { user, loading } = useCurrentUser();
   const queryClient = useQueryClient();
   const { toast } = useToast();
+  const { theme, toggleTheme } = useTheme();
 
   const { data: profile } = useQuery({
     queryKey: ['avatar-profile-settings', user?.email],
@@ -121,6 +123,26 @@ export default function AvatarSettings() {
             {profile.verification_status === 'verified' && (
               <p className="text-xs text-green-400">Your identity is verified. You may receive a verified badge.</p>
             )}
+          </GlassCard>
+
+          {/* Appearance */}
+          <GlassCard className="p-5">
+            <h2 className="font-semibold text-sm mb-4">Appearance</h2>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                {theme === 'dark' ? <Moon className="w-4 h-4 text-muted-foreground" /> : <Sun className="w-4 h-4 text-muted-foreground" />}
+                <div>
+                  <p className="text-sm font-medium">{theme === 'dark' ? 'Dark Mode' : 'Light Mode'}</p>
+                  <p className="text-xs text-muted-foreground">Switch between light and dark theme</p>
+                </div>
+              </div>
+              <button
+                onClick={toggleTheme}
+                className={`relative w-11 h-6 rounded-full transition-colors ${theme === 'dark' ? 'bg-primary' : 'bg-muted'}`}
+              >
+                <span className={`absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform ${theme === 'dark' ? 'translate-x-5' : 'translate-x-0'}`} />
+              </button>
+            </div>
           </GlassCard>
 
           {/* Account */}
