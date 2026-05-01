@@ -9,9 +9,10 @@ import { Switch } from '@/components/ui/switch';
 import { useToast } from '@/components/ui/use-toast';
 import { getNavItems } from '@/lib/navItems';
 import {
-  Settings, Shield, Radio, Smartphone, Camera, Headphones, Car, Sun, Moon
+  Settings, Shield, Radio, Smartphone, Camera, Headphones, Car, Sun, Moon, ArrowRightLeft, LogOut
 } from 'lucide-react';
 import { useTheme } from '@/lib/ThemeContext';
+import { useNavigate } from 'react-router-dom';
 
 
 
@@ -20,6 +21,31 @@ export default function AvatarSettings() {
   const queryClient = useQueryClient();
   const { toast } = useToast();
   const { theme, toggleTheme } = useTheme();
+  const navigate = useNavigate();
+  const [switchingRole, setSwitchingRole] = useState(false);
+
+  const handleSwitchRole = async (targetRole) => {
+    if (targetRole === user?.selected_role) return;
+    setSwitchingRole(true);
+    try {
+      await base44.auth.updateMe({ selected_role: targetRole });
+      await new Promise(resolve => setTimeout(resolve, 300));
+      if (targetRole === 'avatar') {
+        const profiles = await base44.entities.AvatarProfile.filter({ user_email: user.email });
+        navigate(profiles.length > 0 ? '/AvatarDashboard' : '/Onboarding?role=avatar');
+      } else if (targetRole === 'enterprise') {
+        const profiles = await base44.entities.EnterpriseProfile.filter({ user_email: user.email });
+        navigate(profiles.length > 0 ? '/EnterpriseDashboard' : '/Onboarding?role=enterprise');
+      } else {
+        const hasUserProfile = user?.interests?.length > 0 || user?.what_need_help_with;
+        navigate(hasUserProfile ? '/UserDashboard' : '/Onboarding?role=user');
+      }
+    } catch (error) {
+      console.error('Failed to switch role:', error);
+    } finally {
+      setSwitchingRole(false);
+    }
+  };
 
   const { data: profile } = useQuery({
     queryKey: ['avatar-profile-settings', user?.email],
@@ -151,17 +177,48 @@ export default function AvatarSettings() {
             <div className="space-y-2 text-sm text-muted-foreground">
               <p><span className="text-foreground font-medium">Email:</span> {user?.email}</p>
               <p><span className="text-foreground font-medium">Name:</span> {user?.full_name}</p>
-              <p><span className="text-foreground font-medium">Role:</span> {user?.role}</p>
+              <p><span className="text-foreground font-medium">Role:</span> {user?.selected_role || user?.role}</p>
             </div>
-            <Button
-              variant="destructive"
-              size="sm"
-              className="mt-4"
-              onClick={() => base44.auth.logout('/Landing')}
-            >
-              Sign Out
-            </Button>
           </GlassCard>
+
+          {/* Switch Role */}
+          <GlassCard className="p-5">
+            <h2 className="font-semibold text-sm mb-4">Switch Role</h2>
+            <div className="space-y-2">
+              {user?.selected_role !== 'user' && (
+                <button onClick={() => handleSwitchRole('user')} disabled={switchingRole} className="w-full text-left disabled:opacity-50">
+                  <div className="p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors text-sm flex items-center gap-3">
+                    <ArrowRightLeft className="w-4 h-4 text-muted-foreground" />
+                    <span>{switchingRole ? 'Switching...' : 'Switch to User'}</span>
+                  </div>
+                </button>
+              )}
+              {user?.selected_role !== 'avatar' && (
+                <button onClick={() => handleSwitchRole('avatar')} disabled={switchingRole} className="w-full text-left disabled:opacity-50">
+                  <div className="p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors text-sm flex items-center gap-3">
+                    <ArrowRightLeft className="w-4 h-4 text-muted-foreground" />
+                    <span>{switchingRole ? 'Switching...' : 'Switch to Avatar'}</span>
+                  </div>
+                </button>
+              )}
+              {user?.selected_role !== 'enterprise' && (
+                <button onClick={() => handleSwitchRole('enterprise')} disabled={switchingRole} className="w-full text-left disabled:opacity-50">
+                  <div className="p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors text-sm flex items-center gap-3">
+                    <ArrowRightLeft className="w-4 h-4 text-muted-foreground" />
+                    <span>{switchingRole ? 'Switching...' : 'Switch to Enterprise'}</span>
+                  </div>
+                </button>
+              )}
+            </div>
+          </GlassCard>
+
+          {/* Sign Out */}
+          <button onClick={() => base44.auth.logout('/Landing')} className="w-full text-left">
+            <GlassCard className="p-4 flex items-center gap-3" hover>
+              <LogOut className="w-5 h-5 text-red-400" />
+              <span className="font-medium text-sm text-red-400">Sign out</span>
+            </GlassCard>
+          </button>
         </div>
       )}
     </AppShell>

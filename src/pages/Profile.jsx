@@ -1,25 +1,26 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
 import { useCurrentUser } from '@/lib/useCurrentUser';
 import GlassCard from '@/components/ui/GlassCard';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { User, Mail, MapPin, Globe, LogOut, Upload, Loader2, ArrowLeft, ArrowRightLeft, FileText, Pencil, Check, X } from 'lucide-react';
+import { User, Mail, MapPin, Globe, Upload, Loader2, ArrowLeft, FileText, Pencil, Check, X } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 
 export default function Profile() {
   const { user, updateUser } = useCurrentUser();
   const navigate = useNavigate();
   const [uploading, setUploading] = useState(false);
-  const [profilePicUrl, setProfilePicUrl] = useState('');
-  const [coverUrl, setCoverUrl] = useState('');
+  const [profilePicUrl, setProfilePicUrl] = useState(() => user?.profile_picture_url || '');
+  const [coverUrl, setCoverUrl] = useState(() => user?.cover_picture_url || '');
   const [uploadingCover, setUploadingCover] = useState(false);
-  const [switchingRole, setSwitchingRole] = useState(false);
   const [uploadingCv, setUploadingCv] = useState(false);
   const [avatarProfile, setAvatarProfile] = useState(null);
   const [editingName, setEditingName] = useState(false);
   const [nameValue, setNameValue] = useState('');
   const [savingName, setSavingName] = useState(false);
+  const [activeTab, setActiveTab] = useState('about');
   const fileInputRef = useRef(null);
   const cvInputRef = useRef(null);
   const coverInputRef = useRef(null);
@@ -42,6 +43,12 @@ export default function Profile() {
       base44.entities.AvatarProfile.filter({ user_email: user.email }).then(r => setAvatarProfile(r[0] || null));
     }
   }, [user?.email, user?.selected_role]);
+
+  const { data: avatarPosts = [] } = useQuery({
+    queryKey: ['my-posts', user?.email],
+    queryFn: () => base44.entities.Post.filter({ avatar_email: user.email }, '-created_date', 50),
+    enabled: !!user?.email && user?.selected_role === 'avatar',
+  });
 
   const handleCvUpload = async (file) => {
     if (!file || !avatarProfile) return;
@@ -91,29 +98,7 @@ export default function Profile() {
     setUploading(false);
   };
 
-  const handleSwitchRole = async (targetRole) => {
-    if (targetRole === user?.selected_role) return;
-    setSwitchingRole(true);
-    try {
-      await base44.auth.updateMe({ selected_role: targetRole });
-      // Small delay to allow auth state to propagate before navigating
-      await new Promise(resolve => setTimeout(resolve, 300));
-      if (targetRole === 'avatar') {
-        const profiles = await base44.entities.AvatarProfile.filter({ user_email: user.email });
-        navigate(profiles.length > 0 ? '/AvatarDashboard' : '/Onboarding?role=avatar');
-      } else if (targetRole === 'enterprise') {
-        const profiles = await base44.entities.EnterpriseProfile.filter({ user_email: user.email });
-        navigate(profiles.length > 0 ? '/EnterpriseDashboard' : '/Onboarding?role=enterprise');
-      } else {
-        const hasUserProfile = user?.interests?.length > 0 || user?.what_need_help_with;
-        navigate(hasUserProfile ? '/UserDashboard' : '/Onboarding?role=user');
-      }
-    } catch (error) {
-      console.error('Failed to switch role:', error);
-    } finally {
-      setSwitchingRole(false);
-    }
-  };
+  const isAvatar = user?.selected_role === 'avatar';
 
   return (
     <div className="min-h-screen bg-background p-4 lg:p-8">
@@ -161,8 +146,27 @@ export default function Profile() {
           <Badge className="mt-2 bg-primary/10 text-primary border-primary/20 capitalize">{user?.selected_role || user?.role || 'user'}</Badge>
         </div>
 
+        {/* Tabs for avatar */}
+        {isAvatar && (
+          <div className="flex gap-2 mb-4 flex-wrap">
+            {['about', 'services', 'posts', 'cv'].map(tab => (
+              <button
+                key={tab}
+                onClick={() => setActiveTab(tab)}
+                className={`px-4 py-1.5 rounded-full text-sm font-medium capitalize transition-all border ${
+                  activeTab === tab
+                    ? 'bg-primary text-primary-foreground border-primary'
+                    : 'bg-card/50 text-muted-foreground border-white/10 hover:text-foreground'
+                }`}
+              >
+                {tab === 'posts' ? `Posts (${avatarPosts.length})` : tab === 'cv' ? 'CV' : tab === 'services' ? 'Services & Pricing' : 'Profile Details'}
+              </button>
+            ))}
+          </div>
+        )}
+
         <div className="space-y-3">
-          <GlassCard className="p-5">
+          {(!isAvatar || activeTab === 'about') && <GlassCard className="p-5">
             <h3 className="font-semibold mb-4">Profile Details</h3>
             <div className="space-y-3 text-sm">
               <div className="flex items-center gap-3">
@@ -209,9 +213,9 @@ export default function Profile() {
                 <span className="ml-auto font-medium">{user?.preferred_language || 'English'}</span>
               </div>
             </div>
-          </GlassCard>
+          </GlassCard>}
 
-          {user?.selected_role === 'avatar' && avatarProfile && (
+          {(!isAvatar || activeTab === 'services') && user?.selected_role === 'avatar' && avatarProfile && (
             <GlassCard className="p-4">
               <div className="flex items-center justify-between mb-3">
                 <h3 className="font-semibold">Services & Pricing</h3>
@@ -251,7 +255,34 @@ export default function Profile() {
             </GlassCard>
           )}
 
-          {user?.selected_role === 'avatar' && (
+          {isAvatar && activeTab === 'posts' && (
+            <GlassCard className="p-4">
+              <div className="flex items-center justify-between mb-3">
+                <h3 className="font-semibold">My Posts</h3>
+                <Link to="/AvatarProfileEdit" className="text-xs text-primary hover:underline">Manage →</Link>
+              </div>
+              {avatarPosts.length === 0 ? (
+                <p className="text-sm text-muted-foreground text-center py-8">No posts yet. Create some from your profile editor.</p>
+              ) : (
+                <div className="grid grid-cols-3 gap-1">
+                  {avatarPosts.map(post => (
+                    <div key={post.id} className="aspect-square rounded-lg overflow-hidden bg-muted relative">
+                      {post.type === 'video' ? (
+                        <video src={post.media_url} className="w-full h-full object-cover" />
+                      ) : (
+                        <img src={post.media_url} alt={post.caption} className="w-full h-full object-cover" />
+                      )}
+                      <div className="absolute bottom-1 right-1 flex gap-1.5 text-white text-[10px]">
+                        <span>♡ {post.likes_count || 0}</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </GlassCard>
+          )}
+
+          {(!isAvatar || activeTab === 'cv') && user?.selected_role === 'avatar' && (
             <GlassCard className="p-4">
               <h3 className="font-semibold mb-3">CV / Resume</h3>
               <input ref={cvInputRef} type="file" accept=".pdf,.doc,.docx" className="hidden" onChange={e => { const f = e.target.files?.[0]; if (f) handleCvUpload(f); }} />
@@ -280,42 +311,6 @@ export default function Profile() {
             </GlassCard>
           )}
 
-          <GlassCard className="p-4">
-            <h3 className="font-semibold mb-3">Switch Role</h3>
-            <div className="space-y-2">
-              {user?.selected_role !== 'user' && (
-                 <button onClick={() => handleSwitchRole('user')} disabled={switchingRole} className="w-full text-left disabled:opacity-50">
-                  <div className="p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors text-sm flex items-center gap-3">
-                    <ArrowRightLeft className="w-4 h-4 text-muted-foreground" />
-                    <span>{switchingRole ? 'Switching...' : 'Switch to User'}</span>
-                  </div>
-                </button>
-              )}
-              {user?.selected_role !== 'avatar' && (
-                 <button onClick={() => handleSwitchRole('avatar')} disabled={switchingRole} className="w-full text-left disabled:opacity-50">
-                  <div className="p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors text-sm flex items-center gap-3">
-                    <ArrowRightLeft className="w-4 h-4 text-muted-foreground" />
-                    <span>{switchingRole ? 'Switching...' : 'Switch to Avatar'}</span>
-                  </div>
-                </button>
-              )}
-              {user?.selected_role !== 'enterprise' && (
-                 <button onClick={() => handleSwitchRole('enterprise')} disabled={switchingRole} className="w-full text-left disabled:opacity-50">
-                  <div className="p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors text-sm flex items-center gap-3">
-                    <ArrowRightLeft className="w-4 h-4 text-muted-foreground" />
-                    <span>{switchingRole ? 'Switching...' : 'Switch to Enterprise'}</span>
-                  </div>
-                </button>
-              )}
-            </div>
-          </GlassCard>
-
-          <button onClick={() => base44.auth.logout('/Landing')} className="w-full text-left">
-            <GlassCard className="p-4 flex items-center gap-3" hover>
-              <LogOut className="w-5 h-5 text-red-400" />
-              <span className="font-medium text-sm text-red-400">Sign out</span>
-            </GlassCard>
-          </button>
         </div>
       </div>
     </div>
