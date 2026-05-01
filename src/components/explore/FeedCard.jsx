@@ -148,7 +148,7 @@ export default function FeedCard({ post, user, isActive = true, isNear = true })
                 <video
                    ref={i === mediaIndex ? videoRef : null}
                    src={media.url}
-                   className="w-full h-full object-cover lg:object-contain"
+                   className="w-full h-full object-contain"
                    loop
                    playsInline
                    muted
@@ -159,7 +159,7 @@ export default function FeedCard({ post, user, isActive = true, isNear = true })
                <SmartImage
                  src={media.url}
                  alt={post.caption || 'Post'}
-                 className="w-full h-full object-cover lg:object-contain"
+                 className="w-full h-full object-contain"
                />
               )}
             </div>
