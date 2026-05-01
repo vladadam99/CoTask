@@ -143,12 +143,13 @@ export default function FeedCard({ post, user, isActive = true, isNear = true })
           style={{ transform: `translateX(-${(mediaIndex / mediaList.length) * 100}%)`, width: `${mediaList.length * 100}%` }}
         >
           {mediaList.map((media, i) => (
-            <div key={i} className="h-full flex-shrink-0" style={{ width: `${100 / mediaList.length}%` }}>
+            <div key={i} className="h-full flex-shrink-0 flex items-center justify-center" style={{ width: `${100 / mediaList.length}%`, objectFit: 'contain' }}>
               {media.type === 'video' ? (
                 <video
                    ref={i === mediaIndex ? videoRef : null}
                    src={media.url}
-                   className="w-full h-full object-contain"
+                   className="w-full h-full"
+                   style={{ objectFit: 'contain' }}
                    loop
                    playsInline
                    muted
@@ -156,11 +157,12 @@ export default function FeedCard({ post, user, isActive = true, isNear = true })
                    onClick={togglePlay}
                  />
               ) : (
-               <SmartImage
-                 src={media.url}
-                 alt={post.caption || 'Post'}
-                 className="w-full h-full object-contain"
-               />
+                <SmartImage
+                  src={media.url}
+                  alt={post.caption || 'Post'}
+                  className="w-full h-full"
+                  style={{ objectFit: 'contain' }}
+                />
               )}
             </div>
           ))}
