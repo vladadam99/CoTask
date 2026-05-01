@@ -26,7 +26,7 @@ export default function SmartImage({ src, alt = '', className = '', width, style
   const optimizedSrc = getOptimizedUrl(src, { width: width || 800 });
 
   return (
-    <div className={`relative overflow-hidden ${className}`} style={style} onClick={onClick}>
+    <div className={`relative overflow-hidden bg-background ${className}`} style={style} onClick={onClick}>
       {/* Skeleton shown while loading */}
       {!loaded && !error && (
         <div className="absolute inset-0 bg-white/5 animate-pulse" />
