@@ -358,7 +358,7 @@ export default function AvatarView() {
 
         {/* Tab Navigation */}
         <div className="flex flex-wrap gap-2 px-4 mb-4">
-          {['About', 'Posts', 'Reviews', 'Services'].concat(avatar.cv_url ? ['CV'] : []).map(tab => (
+          {['Posts', 'Reviews', 'Services'].concat(avatar.cv_url ? ['CV'] : []).map(tab => (
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
@@ -375,54 +375,6 @@ export default function AvatarView() {
 
         {/* Tab Content */}
         <div className="px-4 pb-8">
-          {activeTab === 'About' && (
-            <GlassCard className="p-6 space-y-4">
-              <div className="space-y-2">
-                {(avatar.city || avatar.country) && (
-                  <div className="flex items-center gap-2 text-sm">
-                    <MapPin className="w-4 h-4 text-muted-foreground flex-shrink-0" />
-                    <span>{[avatar.city, avatar.country].filter(Boolean).join(', ')}</span>
-                  </div>
-                )}
-                {(avatar.languages || []).length > 0 && (
-                  <div className="flex items-center gap-2 text-sm">
-                    <Globe className="w-4 h-4 text-muted-foreground flex-shrink-0" />
-                    <span>{avatar.languages.join(', ')}</span>
-                  </div>
-                )}
-                {avatar.response_time_minutes && (
-                  <div className="flex items-center gap-2 text-sm">
-                    <Clock className="w-4 h-4 text-muted-foreground flex-shrink-0" />
-                    <span>Responds in ~{avatar.response_time_minutes} min</span>
-                  </div>
-                )}
-              </div>
-              {equipment.length > 0 && (
-                <div>
-                  <p className="text-sm font-semibold mb-2">Equipment</p>
-                  <div className="flex flex-wrap gap-3">
-                    {equipment.map(eq => (
-                      <div key={eq.key} className="flex items-center gap-1.5 text-sm text-muted-foreground">
-                        <eq.icon className="w-4 h-4 text-green-400" />
-                        {eq.label}
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-              {(avatar.skills || []).length > 0 && (
-                <div>
-                  <p className="text-sm font-semibold mb-2">Skills</p>
-                  <div className="flex flex-wrap gap-1.5">
-                    {avatar.skills.map(s => (
-                      <Badge key={s} variant="outline" className="text-xs border-white/10">{s}</Badge>
-                    ))}
-                  </div>
-                </div>
-              )}
-            </GlassCard>
-          )}
-
           {activeTab === 'Posts' && (
             <div>
               {posts.length > 0 ? (
