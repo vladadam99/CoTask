@@ -72,18 +72,23 @@ export default function Profile() {
     const { file_url } = await base44.integrations.Core.UploadFile({ file });
     await updateUser({ cover_picture_url: file_url });
     setCoverUrl(file_url);
+    // Sync to AvatarProfile if avatar role
+    if (avatarProfile?.id) {
+      await base44.entities.AvatarProfile.update(avatarProfile.id, { cover_url: file_url });
+    }
     setUploadingCover(false);
   };
 
   const handleProfilePictureUpload = async (file) => {
     if (!file) return;
     setUploading(true);
-    try {
-      const { file_url } = await base44.integrations.Core.UploadFile({ file });
-      await base44.auth.updateMe({ profile_picture_url: file_url });
-      setProfilePicUrl(file_url);
-    } catch (error) {
-      console.error('Failed to upload profile picture:', error);
+    const { file_url } = await base44.integrations.Core.UploadFile({ file });
+    await base44.auth.updateMe({ profile_picture_url: file_url });
+    setProfilePicUrl(file_url);
+    // Sync to AvatarProfile so it shows on FindAvatars / AvatarView
+    if (avatarProfile?.id) {
+      await base44.entities.AvatarProfile.update(avatarProfile.id, { photo_url: file_url });
+      setAvatarProfile(p => ({ ...p, photo_url: file_url }));
     }
     setUploading(false);
   };
