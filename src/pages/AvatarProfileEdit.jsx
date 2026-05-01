@@ -124,32 +124,29 @@ export default function AvatarProfileEdit() {
     },
   });
 
-  // Auto-save profile changes
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      if (profile && !updateProfile.isPending && !isSaving) {
-        setIsSaving(true);
-        updateProfile.mutate({
-          ...form,
-          hourly_rate: parseFloat(form.hourly_rate) || 0,
-          per_session_rate: parseFloat(form.per_session_rate) || 0,
-          travel_radius_km: parseInt(form.travel_radius_km) || 0,
-          languages: form.languages.split(',').map(s => s.trim()).filter(Boolean),
-          skills: form.skills.split(',').map(s => s.trim()).filter(Boolean),
-          categories: form.categories.split(',').map(s => s.trim()).filter(Boolean),
-        }, {
-          onSuccess: () => {
-            setIsSaving(false);
-            setLastSaved(new Date());
-          },
-          onError: () => {
-            setIsSaving(false);
-          }
-        });
+  const handleSave = () => {
+    if (!profile || isSaving) return;
+    setIsSaving(true);
+    updateProfile.mutate({
+      ...form,
+      hourly_rate: parseFloat(form.hourly_rate) || 0,
+      per_session_rate: parseFloat(form.per_session_rate) || 0,
+      travel_radius_km: parseInt(form.travel_radius_km) || 0,
+      languages: form.languages.split(',').map(s => s.trim()).filter(Boolean),
+      skills: form.skills.split(',').map(s => s.trim()).filter(Boolean),
+      categories: form.categories.split(',').map(s => s.trim()).filter(Boolean),
+    }, {
+      onSuccess: () => {
+        setIsSaving(false);
+        setLastSaved(new Date());
+        toast({ title: 'Profile saved!', description: 'Your changes have been saved successfully.' });
+      },
+      onError: () => {
+        setIsSaving(false);
+        toast({ title: 'Save failed', description: 'Could not save your profile. Please try again.' });
       }
-    }, 1500);
-    return () => clearTimeout(timer);
-  }, [form.display_name, form.bio, form.city, form.country, form.hourly_rate, form.per_session_rate, form.categories, form.skills, form.languages, form.willing_to_travel, form.travel_radius_km]);
+    });
+  };
 
   const deletePost = useMutation({
     mutationFn: (postId) => base44.entities.Post.delete(postId),
@@ -266,20 +263,9 @@ export default function AvatarProfileEdit() {
                   </p>
                 </div>
                 <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                  {isSaving ? (
-                    <>
-                      <Loader2 className="w-3 h-3 animate-spin" />
-                      <span>Saving...</span>
-                    </>
-                  ) : lastSaved ? (
-                    <>
-                      <span className="w-1.5 h-1.5 rounded-full bg-green-500" />
-                      <span>Saved {lastSaved.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
-                    </>
-                  ) : null}
                   <button
                     onClick={() => navigate(`/AvatarView?id=${profile.id}`)}
-                    className="ml-2 px-3 py-1 rounded-full bg-white/10 border border-white/10 text-xs hover:bg-white/20 transition-colors"
+                    className="px-3 py-1 rounded-full bg-white/10 border border-white/10 text-xs hover:bg-white/20 transition-colors"
                   >
                     Preview Profile →
                   </button>
@@ -487,6 +473,29 @@ export default function AvatarProfileEdit() {
               </button>
             )}
           </GlassCard>
+        </div>
+
+        {/* Save Button */}
+        <div className="px-4 pb-4">
+          <Button
+            onClick={handleSave}
+            disabled={isSaving}
+            className="w-full h-12 text-base font-semibold"
+            size="lg"
+          >
+            {isSaving ? (
+              <><Loader2 className="w-4 h-4 animate-spin mr-2" /> Saving...</>
+            ) : lastSaved ? (
+              '✓ Save Changes'
+            ) : (
+              'Save Changes'
+            )}
+          </Button>
+          {lastSaved && (
+            <p className="text-center text-xs text-muted-foreground mt-2">
+              Last saved at {lastSaved.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+            </p>
+          )}
         </div>
 
         {/* Posts Grid */}
