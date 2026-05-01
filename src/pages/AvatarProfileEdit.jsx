@@ -206,7 +206,7 @@ export default function AvatarProfileEdit() {
 
   if (!profile) {
     return (
-      <AppShell navItems={getNavItems(user?.role)} user={user}>
+      <AppShell navItems={getNavItems(user?.selected_role || user?.role)} user={user}>
         <GlassCard className="p-10 text-center max-w-md mx-auto mt-20">
           <p className="text-muted-foreground text-sm">No avatar profile found. Complete onboarding first.</p>
         </GlassCard>
@@ -215,7 +215,7 @@ export default function AvatarProfileEdit() {
   }
 
   return (
-    <AppShell navItems={getNavItems(user?.role)} user={user}>
+    <AppShell navItems={getNavItems(user?.selected_role || user?.role)} user={user}>
       <div className="max-w-4xl mx-auto">
         {/* Cover Photo */}
         <div className="relative w-full h-48 md:h-64 rounded-2xl overflow-hidden mb-20 group cursor-pointer" onClick={() => coverInputRef.current?.click()}>
