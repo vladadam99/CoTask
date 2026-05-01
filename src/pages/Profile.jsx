@@ -20,7 +20,6 @@ export default function Profile() {
   const [editingName, setEditingName] = useState(false);
   const [nameValue, setNameValue] = useState('');
   const [savingName, setSavingName] = useState(false);
-  const [activeTab, setActiveTab] = useState('about');
   const fileInputRef = useRef(null);
   const cvInputRef = useRef(null);
   const coverInputRef = useRef(null);
@@ -109,7 +108,6 @@ export default function Profile() {
 
         {/* Cover + Profile Picture */}
         <div className="relative mb-16">
-          {/* Banner */}
           <div className="relative w-full h-36 rounded-2xl bg-muted overflow-hidden group">
             {coverUrl
               ? <img src={coverUrl} alt="Cover" className="w-full h-full object-cover" />
@@ -123,8 +121,6 @@ export default function Profile() {
               {uploadingCover ? <Loader2 className="w-4 h-4 animate-spin" /> : <><Upload className="w-4 h-4" /> Change Cover</>}
             </button>
           </div>
-
-          {/* Profile Picture overlapping the banner */}
           <div className="absolute -bottom-12 left-1/2 -translate-x-1/2">
             <div className="relative w-24 h-24 rounded-2xl bg-primary/10 flex items-center justify-center text-3xl font-bold text-primary overflow-hidden group ring-4 ring-background">
               {profilePicUrl ? (
@@ -146,27 +142,9 @@ export default function Profile() {
           <Badge className="mt-2 bg-primary/10 text-primary border-primary/20 capitalize">{user?.selected_role || user?.role || 'user'}</Badge>
         </div>
 
-        {/* Tabs for avatar */}
-        {isAvatar && (
-          <div className="flex gap-2 mb-4 flex-wrap">
-            {['about', 'services', 'posts', 'cv'].map(tab => (
-              <button
-                key={tab}
-                onClick={() => setActiveTab(tab)}
-                className={`px-4 py-1.5 rounded-full text-sm font-medium capitalize transition-all border ${
-                  activeTab === tab
-                    ? 'bg-primary text-primary-foreground border-primary'
-                    : 'bg-card/50 text-muted-foreground border-white/10 hover:text-foreground'
-                }`}
-              >
-                {tab === 'posts' ? `Posts (${avatarPosts.length})` : tab === 'cv' ? 'CV' : tab === 'services' ? 'Services & Pricing' : 'Profile Details'}
-              </button>
-            ))}
-          </div>
-        )}
-
         <div className="space-y-3">
-          {(!isAvatar || activeTab === 'about') && <GlassCard className="p-5">
+          {/* Profile Details */}
+          <GlassCard className="p-5">
             <h3 className="font-semibold mb-4">Profile Details</h3>
             <div className="space-y-3 text-sm">
               <div className="flex items-center gap-3">
@@ -213,9 +191,10 @@ export default function Profile() {
                 <span className="ml-auto font-medium">{user?.preferred_language || 'English'}</span>
               </div>
             </div>
-          </GlassCard>}
+          </GlassCard>
 
-          {(!isAvatar || activeTab === 'services') && user?.selected_role === 'avatar' && avatarProfile && (
+          {/* Services & Pricing (avatar only) */}
+          {isAvatar && avatarProfile && (
             <GlassCard className="p-4">
               <div className="flex items-center justify-between mb-3">
                 <h3 className="font-semibold">Services & Pricing</h3>
@@ -255,34 +234,8 @@ export default function Profile() {
             </GlassCard>
           )}
 
-          {isAvatar && activeTab === 'posts' && (
-            <GlassCard className="p-4">
-              <div className="flex items-center justify-between mb-3">
-                <h3 className="font-semibold">My Posts</h3>
-                <Link to="/AvatarProfileEdit" className="text-xs text-primary hover:underline">Manage →</Link>
-              </div>
-              {avatarPosts.length === 0 ? (
-                <p className="text-sm text-muted-foreground text-center py-8">No posts yet. Create some from your profile editor.</p>
-              ) : (
-                <div className="grid grid-cols-3 gap-1">
-                  {avatarPosts.map(post => (
-                    <div key={post.id} className="aspect-square rounded-lg overflow-hidden bg-muted relative">
-                      {post.type === 'video' ? (
-                        <video src={post.media_url} className="w-full h-full object-cover" />
-                      ) : (
-                        <img src={post.media_url} alt={post.caption} className="w-full h-full object-cover" />
-                      )}
-                      <div className="absolute bottom-1 right-1 flex gap-1.5 text-white text-[10px]">
-                        <span>♡ {post.likes_count || 0}</span>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </GlassCard>
-          )}
-
-          {(!isAvatar || activeTab === 'cv') && user?.selected_role === 'avatar' && (
+          {/* CV (avatar only) */}
+          {isAvatar && (
             <GlassCard className="p-4">
               <h3 className="font-semibold mb-3">CV / Resume</h3>
               <input ref={cvInputRef} type="file" accept=".pdf,.doc,.docx" className="hidden" onChange={e => { const f = e.target.files?.[0]; if (f) handleCvUpload(f); }} />
@@ -307,6 +260,34 @@ export default function Profile() {
                     ? <><Loader2 className="w-4 h-4 animate-spin" /><span className="text-sm">Uploading...</span></>
                     : <><FileText className="w-4 h-4" /><span className="text-sm">Upload your CV (PDF, DOC, DOCX)</span></>}
                 </button>
+              )}
+            </GlassCard>
+          )}
+
+          {/* Posts (avatar only, always last) */}
+          {isAvatar && (
+            <GlassCard className="p-4">
+              <div className="flex items-center justify-between mb-3">
+                <h3 className="font-semibold">My Posts ({avatarPosts.length})</h3>
+                <Link to="/AvatarProfileEdit" className="text-xs text-primary hover:underline">Manage →</Link>
+              </div>
+              {avatarPosts.length === 0 ? (
+                <p className="text-sm text-muted-foreground text-center py-8">No posts yet. Create some from your profile editor.</p>
+              ) : (
+                <div className="grid grid-cols-3 gap-1">
+                  {avatarPosts.map(post => (
+                    <div key={post.id} className="aspect-square rounded-lg overflow-hidden bg-muted relative">
+                      {post.type === 'video' ? (
+                        <video src={post.media_url} className="w-full h-full object-cover" />
+                      ) : (
+                        <img src={post.media_url} alt={post.caption} className="w-full h-full object-cover" />
+                      )}
+                      <div className="absolute bottom-1 right-1 flex gap-1.5 text-white text-[10px]">
+                        <span>♡ {post.likes_count || 0}</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
               )}
             </GlassCard>
           )}
