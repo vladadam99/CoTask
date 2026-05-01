@@ -243,6 +243,46 @@ export default function Profile() {
             </div>
           </GlassCard>
 
+          {user?.selected_role === 'avatar' && avatarProfile && (
+            <GlassCard className="p-4">
+              <div className="flex items-center justify-between mb-3">
+                <h3 className="font-semibold">Services & Pricing</h3>
+                <a href="/AvatarProfileEdit" className="text-xs text-primary hover:underline">Edit →</a>
+              </div>
+              <div className="space-y-3 text-sm">
+                {avatarProfile.categories?.length > 0 && (
+                  <div>
+                    <p className="text-muted-foreground text-xs mb-1.5">Services</p>
+                    <div className="flex flex-wrap gap-1.5">
+                      {avatarProfile.categories.map(cat => (
+                        <span key={cat} className="px-2.5 py-1 rounded-full bg-primary/10 text-primary text-xs font-medium">{cat}</span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+                {(avatarProfile.hourly_rate > 0 || avatarProfile.per_session_rate > 0) && (
+                  <div className="flex gap-4 pt-1">
+                    {avatarProfile.hourly_rate > 0 && (
+                      <div className="flex-1 bg-muted/50 rounded-xl p-3 text-center">
+                        <p className="text-lg font-bold text-primary">${avatarProfile.hourly_rate}</p>
+                        <p className="text-xs text-muted-foreground">Per Hour</p>
+                      </div>
+                    )}
+                    {avatarProfile.per_session_rate > 0 && (
+                      <div className="flex-1 bg-muted/50 rounded-xl p-3 text-center">
+                        <p className="text-lg font-bold text-primary">${avatarProfile.per_session_rate}</p>
+                        <p className="text-xs text-muted-foreground">Per Session</p>
+                      </div>
+                    )}
+                  </div>
+                )}
+                {(!avatarProfile.categories?.length && !avatarProfile.hourly_rate && !avatarProfile.per_session_rate) && (
+                  <p className="text-muted-foreground text-xs">No services or pricing set yet. <a href="/AvatarProfileEdit" className="text-primary hover:underline">Add them →</a></p>
+                )}
+              </div>
+            </GlassCard>
+          )}
+
           {user?.selected_role === 'avatar' && (
             <GlassCard className="p-4">
               <h3 className="font-semibold mb-3">CV / Resume</h3>
