@@ -158,8 +158,8 @@ export default function AvatarSettings() {
               <div className="flex items-center gap-3">
                 {theme === 'dark' ? <Moon className="w-4 h-4 text-muted-foreground" /> : theme === 'loflo' ? <Palette className="w-4 h-4 text-muted-foreground" /> : <Sun className="w-4 h-4 text-muted-foreground" />}
                 <div>
-                  <p className="text-sm font-medium">{theme === 'dark' ? 'Dark Mode' : theme === 'loflo' ? 'LoFlo Theme' : 'Light Mode'}</p>
-                  <p className="text-xs text-muted-foreground">Cycle between Light, Dark & LoFlo themes</p>
+                  <p className="text-sm font-medium">{theme === 'dark' ? 'Dark Mode' : theme === 'loflo' ? 'Purple' : 'Light Mode'}</p>
+                  <p className="text-xs text-muted-foreground">Cycle between Light, Dark & Purple themes</p>
                 </div>
               </div>
               <button onClick={toggleTheme} className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-muted hover:bg-muted/80 transition-colors text-xs font-medium">
@@ -168,10 +168,10 @@ export default function AvatarSettings() {
             </div>
             <div className="flex gap-2 mt-4">
               {[
-                { id: 'light', label: 'Light', color: '#f5f5f5', dot: '#e8304a' },
-                { id: 'dark', label: 'Dark', color: '#161c26', dot: '#e8304a' },
-                { id: 'loflo', label: 'LoFlo', color: '#1e1530', dot: '#c44dff' },
-              ].map(t => (
+                 { id: 'light', label: 'Light', color: '#f5f5f5', dot: '#e8304a' },
+                 { id: 'dark', label: 'Dark', color: '#161c26', dot: '#e8304a' },
+                 { id: 'loflo', label: 'Purple', color: '#1e1530', dot: '#c44dff' },
+               ].map(t => (
                 <button key={t.id} onClick={() => setTheme(t.id)}
                   className={`flex-1 flex flex-col items-center gap-1.5 py-2 rounded-xl border-2 transition-all text-xs font-medium ${theme === t.id ? 'border-primary' : 'border-border'}`}
                   style={{ background: t.color }}>
