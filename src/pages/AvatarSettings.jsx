@@ -176,7 +176,7 @@ export default function AvatarSettings() {
                   className={`flex-1 flex flex-col items-center gap-1.5 py-2 rounded-xl border-2 transition-all text-xs font-medium ${theme === t.id ? 'border-primary' : 'border-border'}`}
                   style={{ background: t.color }}>
                   <span style={{ width: 10, height: 10, borderRadius: '50%', background: t.dot, display: 'block' }} />
-                  <span style={{ color: t.id === 'dark' ? '#fff' : '#111' }}>{t.label}</span>
+                  <span style={{ color: t.id === 'dark' || t.id === 'loflo' ? '#fff' : '#111' }}>{t.label}</span>
                 </button>
               ))}
             </div>
