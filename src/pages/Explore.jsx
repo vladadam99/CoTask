@@ -41,7 +41,7 @@ export default function Explore() {
     <AppShell navItems={getNavItems(user?.role)} user={user}>
       <div
         ref={containerRef}
-        className="fixed inset-0 lg:left-64 overflow-y-scroll snap-y snap-mandatory"
+        className="fixed top-14 lg:top-0 bottom-20 lg:bottom-0 left-0 lg:left-64 right-0 overflow-y-scroll snap-y snap-mandatory"
         style={{ scrollbarWidth: 'none' }}
       >
         {isLoading ? (
