@@ -14,6 +14,8 @@ export default function Profile() {
   const { theme, toggleTheme } = useTheme();
   const [uploading, setUploading] = useState(false);
   const [profilePicUrl, setProfilePicUrl] = useState('');
+  const [coverUrl, setCoverUrl] = useState('');
+  const [uploadingCover, setUploadingCover] = useState(false);
   const [switchingRole, setSwitchingRole] = useState(false);
   const [uploadingCv, setUploadingCv] = useState(false);
   const [avatarProfile, setAvatarProfile] = useState(null);
@@ -22,10 +24,12 @@ export default function Profile() {
   const [savingName, setSavingName] = useState(false);
   const fileInputRef = useRef(null);
   const cvInputRef = useRef(null);
+  const coverInputRef = useRef(null);
 
   React.useEffect(() => {
     if (user?.profile_picture_url) setProfilePicUrl(user.profile_picture_url);
-  }, [user?.profile_picture_url]);
+    if (user?.cover_picture_url) setCoverUrl(user.cover_picture_url);
+  }, [user?.profile_picture_url, user?.cover_picture_url]);
 
   const handleSaveName = async () => {
     if (!nameValue.trim()) return;
@@ -61,6 +65,15 @@ export default function Profile() {
   };
 
   const dashPath = user?.selected_role === 'avatar' ? '/AvatarDashboard' : user?.selected_role === 'enterprise' ? '/EnterpriseDashboard' : '/UserDashboard';
+
+  const handleCoverUpload = async (file) => {
+    if (!file) return;
+    setUploadingCover(true);
+    const { file_url } = await base44.integrations.Core.UploadFile({ file });
+    await updateUser({ cover_picture_url: file_url });
+    setCoverUrl(file_url);
+    setUploadingCover(false);
+  };
 
   const handleProfilePictureUpload = async (file) => {
     if (!file) return;
@@ -105,6 +118,21 @@ export default function Profile() {
         <Link to={dashPath} className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground mb-6">
           <ArrowLeft className="w-4 h-4" /> Dashboard
         </Link>
+
+        {/* Cover Photo */}
+        <div className="relative w-full h-32 rounded-2xl bg-muted overflow-hidden mb-4 group">
+          {coverUrl
+            ? <img src={coverUrl} alt="Cover" className="w-full h-full object-cover" />
+            : <div className="w-full h-full bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center">
+                <span className="text-xs text-muted-foreground">No cover photo</span>
+              </div>
+          }
+          <input ref={coverInputRef} type="file" accept="image/*" className="hidden" onChange={e => { const f = e.target.files?.[0]; if (f) handleCoverUpload(f); }} />
+          <button onClick={() => coverInputRef.current?.click()} disabled={uploadingCover}
+            className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2 text-white text-sm font-medium">
+            {uploadingCover ? <Loader2 className="w-4 h-4 animate-spin" /> : <><Upload className="w-4 h-4" /> Change Cover</>}
+          </button>
+        </div>
 
         <div className="text-center mb-8">
           <div className="relative w-20 h-20 rounded-2xl bg-primary/10 flex items-center justify-center text-3xl font-bold text-primary mx-auto mb-4 overflow-hidden group">

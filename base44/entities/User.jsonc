@@ -41,6 +41,10 @@
     "profile_picture_url": {
       "type": "string"
     },
+    "cover_picture_url": {
+      "type": "string",
+      "description": "Background/banner image for the user's profile"
+    },
     "city": {
       "type": "string"
     },
