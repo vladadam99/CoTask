@@ -134,7 +134,7 @@ export default function FeedCard({ post, user, isActive = true, isNear = true })
     setIsMuted(video.muted);
   };
 
-  const postUrl = `${window.location.origin}/AvatarView?id=${post.avatar_profile_id}#post-${post.id}`;
+  const postUrl = `${window.location.origin}/PublicPostView?id=${post.id}`;
 
   const handleShareToApp = (app) => {
     const text = `Check out this post from ${post.avatar_name}: ${post.caption || ''}`;

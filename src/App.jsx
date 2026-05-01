@@ -58,6 +58,7 @@ import AvatarWallet from './pages/AvatarWallet';
 import AvatarBookingDetail from './pages/AvatarBookingDetail';
 import UserWallet from './pages/UserWallet';
 import UserBookingDetail from './pages/UserBookingDetail';
+import PublicPostView from './pages/PublicPostView';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -85,6 +86,7 @@ const AuthenticatedApp = () => {
   // Render the main app
   return (
     <Routes>
+      <Route path="/PublicPostView" element={<PublicPostView />} />
       <Route path="/" element={<Landing />} />
       <Route path="/Landing" element={<Landing />} />
       <Route path="/RoleSelect" element={<RoleSelect />} />
