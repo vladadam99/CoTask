@@ -119,33 +119,40 @@ export default function Profile() {
           <ArrowLeft className="w-4 h-4" /> Dashboard
         </Link>
 
-        {/* Cover Photo */}
-        <div className="relative w-full h-32 rounded-2xl bg-muted overflow-hidden mb-4 group">
-          {coverUrl
-            ? <img src={coverUrl} alt="Cover" className="w-full h-full object-cover" />
-            : <div className="w-full h-full bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center">
-                <span className="text-xs text-muted-foreground">No cover photo</span>
-              </div>
-          }
-          <input ref={coverInputRef} type="file" accept="image/*" className="hidden" onChange={e => { const f = e.target.files?.[0]; if (f) handleCoverUpload(f); }} />
-          <button onClick={() => coverInputRef.current?.click()} disabled={uploadingCover}
-            className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2 text-white text-sm font-medium">
-            {uploadingCover ? <Loader2 className="w-4 h-4 animate-spin" /> : <><Upload className="w-4 h-4" /> Change Cover</>}
-          </button>
+        {/* Cover + Profile Picture */}
+        <div className="relative mb-16">
+          {/* Banner */}
+          <div className="relative w-full h-36 rounded-2xl bg-muted overflow-hidden group">
+            {coverUrl
+              ? <img src={coverUrl} alt="Cover" className="w-full h-full object-cover" />
+              : <div className="w-full h-full bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center">
+                  <span className="text-xs text-muted-foreground">No cover photo</span>
+                </div>
+            }
+            <input ref={coverInputRef} type="file" accept="image/*" className="hidden" onChange={e => { const f = e.target.files?.[0]; if (f) handleCoverUpload(f); }} />
+            <button onClick={() => coverInputRef.current?.click()} disabled={uploadingCover}
+              className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2 text-white text-sm font-medium">
+              {uploadingCover ? <Loader2 className="w-4 h-4 animate-spin" /> : <><Upload className="w-4 h-4" /> Change Cover</>}
+            </button>
+          </div>
+
+          {/* Profile Picture overlapping the banner */}
+          <div className="absolute -bottom-12 left-1/2 -translate-x-1/2">
+            <div className="relative w-24 h-24 rounded-2xl bg-primary/10 flex items-center justify-center text-3xl font-bold text-primary overflow-hidden group ring-4 ring-background">
+              {profilePicUrl ? (
+                <img src={profilePicUrl} alt="Profile" className="w-full h-full object-cover" />
+              ) : (
+                user?.full_name?.[0] || 'U'
+              )}
+              <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={e => { const f = e.target.files?.[0]; if (f) handleProfilePictureUpload(f); }} />
+              <button onClick={() => fileInputRef.current?.click()} disabled={uploading} className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                {uploading ? <Loader2 className="w-5 h-5 animate-spin text-white" /> : <Upload className="w-5 h-5 text-white" />}
+              </button>
+            </div>
+          </div>
         </div>
 
         <div className="text-center mb-8">
-          <div className="relative w-20 h-20 rounded-2xl bg-primary/10 flex items-center justify-center text-3xl font-bold text-primary mx-auto mb-4 overflow-hidden group">
-            {profilePicUrl ? (
-              <img src={profilePicUrl} alt="Profile" className="w-full h-full object-cover" />
-            ) : (
-              user?.full_name?.[0] || 'U'
-            )}
-            <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={e => { const f = e.target.files?.[0]; if (f) handleProfilePictureUpload(f); }} />
-            <button onClick={() => fileInputRef.current?.click()} disabled={uploading} className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-              {uploading ? <Loader2 className="w-5 h-5 animate-spin text-white" /> : <Upload className="w-5 h-5 text-white" />}
-            </button>
-          </div>
           <h1 className="text-2xl font-bold">{user?.display_name || user?.full_name || 'User'}</h1>
           <p className="text-muted-foreground text-sm">{user?.email}</p>
           <Badge className="mt-2 bg-primary/10 text-primary border-primary/20 capitalize">{user?.selected_role || user?.role || 'user'}</Badge>
