@@ -38,25 +38,25 @@ export default function Explore() {
   }, [posts]);
 
   return (
-    <AppShell navItems={getNavItems(user?.role)} user={user}>
+    <AppShell navItems={getNavItems(user?.role)} user={user} fullBleed>
       <div
         ref={containerRef}
         className="fixed top-14 lg:top-0 bottom-20 lg:bottom-0 left-0 lg:left-64 right-0 overflow-y-scroll snap-y snap-mandatory"
         style={{ scrollbarWidth: 'none' }}
       >
         {isLoading ? (
-          <div className="h-screen flex items-center justify-center">
+          <div className="h-full flex items-center justify-center">
             <div className="w-8 h-8 border-4 border-white/20 border-t-primary rounded-full animate-spin" />
           </div>
         ) : posts.length === 0 ? (
-          <div className="h-screen flex flex-col items-center justify-center text-center px-6">
+          <div className="h-full flex flex-col items-center justify-center text-center px-6">
             <p className="text-5xl mb-4">📸</p>
             <h3 className="font-bold text-lg">No posts yet</h3>
             <p className="text-sm text-muted-foreground mt-1">Be the first to post in this category!</p>
           </div>
         ) : (
           posts.map((post, idx) => (
-            <div key={post.id} data-idx={idx} className="h-screen w-full snap-start">
+            <div key={post.id} data-idx={idx} className="w-full snap-start h-[calc(100vh-136px)] lg:h-screen">
               <FeedCard
                 post={post}
                 user={user}

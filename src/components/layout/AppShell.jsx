@@ -20,7 +20,7 @@ function getNavBadgeCount(path, unreadNotifs) {
   }).length;
 }
 
-export default function AppShell({ children, navItems = [], user }) {
+export default function AppShell({ children, navItems = [], user, fullBleed = false }) {
   const [unreadNotifs, setUnreadNotifs] = useState([]);
   const [drawerOpen, setDrawerOpen] = useState(false);
 
@@ -209,10 +209,12 @@ export default function AppShell({ children, navItems = [], user }) {
       </nav>
 
       {/* Main Content */}
-      <main className="flex-1 min-w-0 overflow-x-hidden lg:ml-64 pt-14 lg:pt-0 pb-20 lg:pb-0">
-        <div className="w-full min-w-0 px-4 py-4 lg:p-8 lg:max-w-7xl lg:mx-auto">
-          {children}
-        </div>
+      <main className={`flex-1 min-w-0 lg:ml-64 ${fullBleed ? '' : 'overflow-x-hidden pt-14 lg:pt-0 pb-20 lg:pb-0'}`}>
+        {fullBleed ? children : (
+          <div className="w-full min-w-0 px-4 py-4 lg:p-8 lg:max-w-7xl lg:mx-auto">
+            {children}
+          </div>
+        )}
       </main>
     </div>
   );
