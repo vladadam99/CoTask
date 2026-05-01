@@ -309,6 +309,13 @@ export default function AvatarView() {
           </div>
         </div>
 
+        {/* Bio under profile picture */}
+        {avatar.bio && (
+          <div className="px-4 mb-4">
+            <p className="text-sm text-muted-foreground leading-relaxed">{avatar.bio}</p>
+          </div>
+        )}
+
         {/* Stats Row */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3 px-4 mb-6">
           <div className="bg-card/50 rounded-xl p-4 text-center border border-white/5">
@@ -370,10 +377,7 @@ export default function AvatarView() {
         <div className="px-4 pb-8">
           {activeTab === 'About' && (
             <GlassCard className="p-6 space-y-4">
-              <p className="text-sm text-muted-foreground leading-relaxed">
-                {avatar.bio || 'This avatar is available for bookings. Contact them to learn more about their services.'}
-              </p>
-              <div className="space-y-2 pt-2">
+              <div className="space-y-2">
                 {(avatar.city || avatar.country) && (
                   <div className="flex items-center gap-2 text-sm">
                     <MapPin className="w-4 h-4 text-muted-foreground flex-shrink-0" />
