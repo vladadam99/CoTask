@@ -151,8 +151,8 @@ export default function AvatarView() {
   const { data: avatar, isLoading } = useQuery({
     queryKey: ['avatar', id],
     queryFn: async () => {
-      const list = await base44.entities.AvatarProfile.list('-created_date', 200);
-      return list.find(a => a.id === id) || null;
+      const list = await base44.entities.AvatarProfile.filter({ id }, '-created_date', 1);
+      return list[0] || null;
     },
     enabled: !!id,
   });
