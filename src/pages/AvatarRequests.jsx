@@ -11,6 +11,10 @@ import { getNavItems } from '@/lib/navItems';
 import {
   Inbox, Calendar, Clock, CheckCircle, XCircle, Eye, MapPin, Briefcase
 } from 'lucide-react';
+import {
+  Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter
+} from '@/components/ui/dialog';
+import { Textarea } from '@/components/ui/textarea';
 
 
 
@@ -26,6 +30,8 @@ export default function AvatarRequests() {
   const { user, loading: userLoading } = useCurrentUser();
   const queryClient = useQueryClient();
   const [activeTab, setActiveTab] = useState('accepted');
+  const [declineModal, setDeclineModal] = useState(null); // { bookingId, clientEmail, category }
+  const [declineReason, setDeclineReason] = useState('');
 
   const { data: bookings = [], isLoading: isLoadingBookings } = useQuery({
     queryKey: ['avatar-all-bookings', user?.email],
@@ -59,7 +65,7 @@ export default function AvatarRequests() {
   const isLoading = isLoadingBookings || isLoadingJobs;
 
   const updateBooking = useMutation({
-    mutationFn: async ({ id, status }) => {
+    mutationFn: async ({ id, status, reason }) => {
       await base44.entities.Booking.update(id, { status });
       const booking = bookings.find(b => b.id === id);
       if (status === 'accepted') {
@@ -79,7 +85,7 @@ export default function AvatarRequests() {
         await base44.entities.Notification.create({
           user_email: booking.client_email,
           title: 'Booking Declined',
-          message: `${user.full_name} declined your ${booking.category} booking request.`,
+          message: `${user.full_name} declined your ${booking.category} booking request.${reason ? ` Reason: ${reason}` : ''}`,
           type: 'booking_declined',
           link: `/UserBookingDetail?id=${id}`,
           reference_id: id,
@@ -88,6 +94,17 @@ export default function AvatarRequests() {
     },
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['avatar-all-bookings'] }),
   });
+
+  const handleDeclineClick = (booking) => {
+    setDeclineReason('');
+    setDeclineModal({ bookingId: booking.id, clientEmail: booking.client_email, category: booking.category });
+  };
+
+  const handleDeclineConfirm = () => {
+    if (!declineReason.trim()) return;
+    updateBooking.mutate({ id: declineModal.bookingId, status: 'declined', reason: declineReason.trim() });
+    setDeclineModal(null);
+  };
 
   if (userLoading) return (
     <div className="min-h-screen flex items-center justify-center">
@@ -248,7 +265,7 @@ export default function AvatarRequests() {
                           size="sm"
                           variant="destructive"
                           className="h-8 gap-1"
-                          onClick={() => updateBooking.mutate({ id: booking.id, status: 'declined' })}
+                          onClick={() => handleDeclineClick(booking)}
                           disabled={updateBooking.isPending}
                         >
                           <XCircle className="w-3 h-3" /> Decline
@@ -262,6 +279,31 @@ export default function AvatarRequests() {
           ))}
         </div>
       )}
+      {/* Decline Reason Modal */}
+      <Dialog open={!!declineModal} onOpenChange={(open) => !open && setDeclineModal(null)}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Reason for Declining</DialogTitle>
+          </DialogHeader>
+          <p className="text-sm text-muted-foreground">Please provide a reason — this will be sent to the client.</p>
+          <Textarea
+            placeholder="e.g. I'm unavailable on that date, schedule conflict..."
+            value={declineReason}
+            onChange={e => setDeclineReason(e.target.value)}
+            className="min-h-[100px]"
+          />
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setDeclineModal(null)}>Cancel</Button>
+            <Button
+              variant="destructive"
+              onClick={handleDeclineConfirm}
+              disabled={!declineReason.trim() || updateBooking.isPending}
+            >
+              Decline Booking
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </AppShell>
   );
 }
