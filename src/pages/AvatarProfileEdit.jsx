@@ -140,6 +140,7 @@ export default function AvatarProfileEdit() {
         setIsSaving(false);
         setLastSaved(new Date());
         toast({ title: 'Profile saved!', description: 'Your changes have been saved successfully.' });
+        navigate('/Profile');
       },
       onError: () => {
         setIsSaving(false);
