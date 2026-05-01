@@ -45,42 +45,42 @@
     --glass-border: 220 15% 86%;
   }
 
-  /* LoFlo theme — warm cream bg, bold red primary, indigo sidebar, light blue accents */
+  /* LoFlo theme — deep violet bg, vivid purple primary, teal accents, coral highlights */
   .loflo {
-    --background: 40 30% 95%;
-    --foreground: 225 44% 20%;
-    --card: 225 44% 45%;
-    --card-foreground: 0 0% 98%;
-    --popover: 225 44% 45%;
-    --popover-foreground: 0 0% 98%;
-    --primary: 8 89% 53%;
+    --background: 258 35% 11%;
+    --foreground: 270 20% 94%;
+    --card: 258 30% 17%;
+    --card-foreground: 270 20% 94%;
+    --popover: 258 30% 17%;
+    --popover-foreground: 270 20% 94%;
+    --primary: 280 85% 65%;
     --primary-foreground: 0 0% 100%;
-    --secondary: 225 44% 55%;
-    --secondary-foreground: 0 0% 98%;
-    --muted: 225 44% 38%;
-    --muted-foreground: 220 30% 75%;
-    --accent: 35 65% 50%;
-    --accent-foreground: 0 0% 100%;
+    --secondary: 258 28% 24%;
+    --secondary-foreground: 270 20% 90%;
+    --muted: 258 25% 20%;
+    --muted-foreground: 265 20% 60%;
+    --accent: 172 80% 45%;
+    --accent-foreground: 172 80% 10%;
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 98%;
-    --border: 225 44% 55%;
-    --input: 225 44% 55%;
-    --ring: 8 89% 53%;
-    --chart-1: 8 89% 53%;
-    --chart-2: 35 65% 50%;
-    --chart-3: 225 44% 70%;
-    --chart-4: 40 55% 55%;
-    --chart-5: 225 44% 80%;
-    --sidebar-background: 225 44% 30%;
-    --sidebar-foreground: 0 0% 96%;
-    --sidebar-primary: 8 89% 53%;
+    --border: 258 28% 26%;
+    --input: 258 28% 22%;
+    --ring: 280 85% 65%;
+    --chart-1: 280 85% 65%;
+    --chart-2: 172 80% 45%;
+    --chart-3: 340 85% 62%;
+    --chart-4: 45 95% 58%;
+    --chart-5: 210 85% 62%;
+    --sidebar-background: 258 38% 8%;
+    --sidebar-foreground: 270 20% 92%;
+    --sidebar-primary: 280 85% 65%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 225 44% 22%;
-    --sidebar-accent-foreground: 0 0% 96%;
-    --sidebar-border: 225 44% 25%;
-    --sidebar-ring: 8 89% 53%;
-    --glass: 225 44% 45%;
-    --glass-border: 225 44% 55%;
+    --sidebar-accent: 258 35% 14%;
+    --sidebar-accent-foreground: 270 20% 92%;
+    --sidebar-border: 258 30% 16%;
+    --sidebar-ring: 280 85% 65%;
+    --glass: 258 30% 17%;
+    --glass-border: 258 28% 28%;
   }
 
   /* Dark theme */

@@ -170,7 +170,7 @@ export default function AvatarSettings() {
               {[
                 { id: 'light', label: 'Light', color: '#f5f5f5', dot: '#e8304a' },
                 { id: 'dark', label: 'Dark', color: '#161c26', dot: '#e8304a' },
-                { id: 'loflo', label: 'LoFlo', color: '#EFE2BA', dot: '#F13C20' },
+                { id: 'loflo', label: 'LoFlo', color: '#1e1530', dot: '#c44dff' },
               ].map(t => (
                 <button key={t.id} onClick={() => setTheme(t.id)}
                   className={`flex-1 flex flex-col items-center gap-1.5 py-2 rounded-xl border-2 transition-all text-xs font-medium ${theme === t.id ? 'border-primary' : 'border-border'}`}
