@@ -146,21 +146,21 @@ export default function FeedCard({ post, user, isActive = true, isNear = true })
             <div key={i} className="h-full flex-shrink-0" style={{ width: `${100 / mediaList.length}%` }}>
               {media.type === 'video' ? (
                 <video
-                  ref={i === mediaIndex ? videoRef : null}
-                  src={media.url}
-                  className="w-full h-full object-cover"
-                  loop
-                  playsInline
-                  muted
-                  preload={isNear ? 'auto' : 'none'}
-                  onClick={togglePlay}
-                />
+                   ref={i === mediaIndex ? videoRef : null}
+                   src={media.url}
+                   className="w-full h-full object-cover lg:object-contain"
+                   loop
+                   playsInline
+                   muted
+                   preload={isNear ? 'auto' : 'none'}
+                   onClick={togglePlay}
+                 />
               ) : (
-                <SmartImage
-                  src={media.url}
-                  alt={post.caption || 'Post'}
-                  className="w-full h-full"
-                />
+               <SmartImage
+                 src={media.url}
+                 alt={post.caption || 'Post'}
+                 className="w-full h-full object-cover lg:object-contain"
+               />
               )}
             </div>
           ))}
