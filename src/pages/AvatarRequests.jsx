@@ -17,6 +17,7 @@ import {
 const TABS = [
   { key: 'accepted', label: 'Accepted', icon: CheckCircle },
   { key: 'pending', label: 'Pending', icon: Clock },
+  { key: 'declined', label: 'Declined', icon: XCircle },
   { key: 'jobs', label: 'My Jobs', icon: Briefcase },
   { key: 'all', label: 'All', icon: Inbox },
 ];
