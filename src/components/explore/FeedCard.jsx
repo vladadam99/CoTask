@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import SmartImage from '@/components/media/SmartImage';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
-import { Heart, MessageCircle, Send, X, Play, Volume2, VolumeX, Loader2 } from 'lucide-react';
+import { Heart, MessageCircle, Send, X, Play, Volume2, VolumeX, Loader2, Share2, Copy, MessageSquare, Send as SendIcon } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 export default function FeedCard({ post, user, isActive = true, isNear = true }) {
@@ -17,6 +17,7 @@ export default function FeedCard({ post, user, isActive = true, isNear = true })
   const [commentText, setCommentText] = useState('');
   const [mediaIndex, setMediaIndex] = useState(0);
   const [videoLoading, setVideoLoading] = useState(false);
+  const [showShareMenu, setShowShareMenu] = useState(false);
 
   const mediaList = (post.media_urls && post.media_urls.length > 0)
     ? post.media_urls.map((url, i) => ({ url, type: post.media_types?.[i] || 'photo' }))
@@ -131,6 +132,24 @@ export default function FeedCard({ post, user, isActive = true, isNear = true })
     if (!video) return;
     video.muted = !video.muted;
     setIsMuted(video.muted);
+  };
+
+  const postUrl = `${window.location.origin}/AvatarView?id=${post.avatar_profile_id}#post-${post.id}`;
+
+  const handleShareToApp = (app) => {
+    const text = `Check out this post from ${post.avatar_name}: ${post.caption || ''}`;
+    const shareUrls = {
+      whatsapp: `https://wa.me/?text=${encodeURIComponent(text + ' ' + postUrl)}`,
+      telegram: `https://t.me/share/url?url=${encodeURIComponent(postUrl)}&text=${encodeURIComponent(text)}`,
+      instagram: `https://www.instagram.com/`, // Instagram doesn't have direct sharing
+    };
+    if (app === 'copy') {
+      navigator.clipboard.writeText(postUrl);
+      alert('Link copied to clipboard!');
+    } else if (shareUrls[app]) {
+      window.open(shareUrls[app], '_blank', 'width=600,height=400');
+    }
+    setShowShareMenu(false);
   };
 
   return (
@@ -260,6 +279,41 @@ export default function FeedCard({ post, user, isActive = true, isNear = true })
             {isMuted ? <VolumeX className="w-5 h-5 text-white" /> : <Volume2 className="w-5 h-5 text-white" />}
           </button>
         )}
+
+        <div className="relative">
+          <button
+            onClick={() => setShowShareMenu(!showShareMenu)}
+            className="w-11 h-11 rounded-full bg-black/40 backdrop-blur flex items-center justify-center"
+          >
+            <Share2 className="w-5 h-5 text-white" />
+          </button>
+
+          {showShareMenu && (
+            <div className="absolute bottom-14 right-0 bg-card border border-white/10 rounded-xl shadow-xl z-30 min-w-[160px] overflow-hidden">
+              <button
+                onClick={() => handleShareToApp('copy')}
+                className="w-full flex items-center gap-3 px-4 py-3 text-sm text-foreground hover:bg-primary/10 transition-colors border-b border-white/5"
+              >
+                <Copy className="w-4 h-4 text-muted-foreground" />
+                Copy Link
+              </button>
+              <button
+                onClick={() => handleShareToApp('whatsapp')}
+                className="w-full flex items-center gap-3 px-4 py-3 text-sm text-foreground hover:bg-primary/10 transition-colors border-b border-white/5"
+              >
+                <MessageSquare className="w-4 h-4 text-green-400" />
+                WhatsApp
+              </button>
+              <button
+                onClick={() => handleShareToApp('telegram')}
+                className="w-full flex items-center gap-3 px-4 py-3 text-sm text-foreground hover:bg-primary/10 transition-colors"
+              >
+                <SendIcon className="w-4 h-4 text-blue-400" />
+                Telegram
+              </button>
+            </div>
+          )}
+        </div>
       </div>
 
       {/* Bottom: Caption */}
