@@ -134,7 +134,7 @@ export default function FeedCard({ post, user, isActive = true, isNear = true })
   };
 
   return (
-    <div ref={cardRef} className="relative w-full h-full bg-black overflow-hidden">
+    <div ref={cardRef} className="relative w-full h-full bg-background overflow-hidden">
 
       {/* Media carousel */}
       <div className="absolute inset-0">
