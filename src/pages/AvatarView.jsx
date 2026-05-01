@@ -350,7 +350,7 @@ export default function AvatarView() {
 
 
         {/* Tab Navigation */}
-        <div className="flex gap-2 px-4 mb-4 overflow-x-auto pb-1">
+        <div className="flex flex-wrap gap-2 px-4 mb-4">
           {['About', 'Posts', 'Reviews', 'Services'].concat(avatar.cv_url ? ['CV'] : []).map(tab => (
             <button
               key={tab}
