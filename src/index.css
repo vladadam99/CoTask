@@ -45,6 +45,44 @@
     --glass-border: 220 15% 86%;
   }
 
+  /* LoFlo theme — warm ochre, cream, bold red, indigo blue */
+  .loflo {
+    --background: 40 30% 95%;
+    --foreground: 220 30% 12%;
+    --card: 42 40% 97%;
+    --card-foreground: 220 30% 12%;
+    --popover: 42 40% 97%;
+    --popover-foreground: 220 30% 12%;
+    --primary: 8 89% 53%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 40 55% 85%;
+    --secondary-foreground: 220 30% 15%;
+    --muted: 40 30% 90%;
+    --muted-foreground: 220 15% 40%;
+    --accent: 35 65% 50%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 40 25% 82%;
+    --input: 40 25% 82%;
+    --ring: 8 89% 53%;
+    --chart-1: 8 89% 53%;
+    --chart-2: 35 65% 50%;
+    --chart-3: 225 44% 45%;
+    --chart-4: 40 55% 55%;
+    --chart-5: 225 44% 70%;
+    --sidebar-background: 225 44% 45%;
+    --sidebar-foreground: 0 0% 96%;
+    --sidebar-primary: 8 89% 53%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 225 44% 38%;
+    --sidebar-accent-foreground: 0 0% 96%;
+    --sidebar-border: 225 44% 38%;
+    --sidebar-ring: 8 89% 53%;
+    --glass: 42 40% 97%;
+    --glass-border: 40 25% 80%;
+  }
+
   /* Dark theme */
   .dark {
     --background: 220 15% 8%;

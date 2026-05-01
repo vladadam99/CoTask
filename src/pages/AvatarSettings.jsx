@@ -9,7 +9,7 @@ import { Switch } from '@/components/ui/switch';
 import { useToast } from '@/components/ui/use-toast';
 import { getNavItems } from '@/lib/navItems';
 import {
-  Settings, Shield, Radio, Smartphone, Camera, Headphones, Car, Sun, Moon, ArrowRightLeft, LogOut
+  Settings, Shield, Radio, Smartphone, Camera, Headphones, Car, Sun, Moon, Palette, ArrowRightLeft, LogOut
 } from 'lucide-react';
 import { useTheme } from '@/lib/ThemeContext';
 import { useNavigate } from 'react-router-dom';
@@ -20,7 +20,7 @@ export default function AvatarSettings() {
   const { user, loading } = useCurrentUser();
   const queryClient = useQueryClient();
   const { toast } = useToast();
-  const { theme, toggleTheme } = useTheme();
+  const { theme, setTheme, toggleTheme } = useTheme();
   const navigate = useNavigate();
   const [switchingRole, setSwitchingRole] = useState(false);
 
@@ -156,18 +156,29 @@ export default function AvatarSettings() {
             <h2 className="font-semibold text-sm mb-4">Appearance</h2>
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
-                {theme === 'dark' ? <Moon className="w-4 h-4 text-muted-foreground" /> : <Sun className="w-4 h-4 text-muted-foreground" />}
+                {theme === 'dark' ? <Moon className="w-4 h-4 text-muted-foreground" /> : theme === 'loflo' ? <Palette className="w-4 h-4 text-muted-foreground" /> : <Sun className="w-4 h-4 text-muted-foreground" />}
                 <div>
-                  <p className="text-sm font-medium">{theme === 'dark' ? 'Dark Mode' : 'Light Mode'}</p>
-                  <p className="text-xs text-muted-foreground">Switch between light and dark theme</p>
+                  <p className="text-sm font-medium">{theme === 'dark' ? 'Dark Mode' : theme === 'loflo' ? 'LoFlo Theme' : 'Light Mode'}</p>
+                  <p className="text-xs text-muted-foreground">Cycle between Light, Dark & LoFlo themes</p>
                 </div>
               </div>
-              <button
-                onClick={toggleTheme}
-                className={`relative w-11 h-6 rounded-full transition-colors ${theme === 'dark' ? 'bg-primary' : 'bg-muted'}`}
-              >
-                <span className={`absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform ${theme === 'dark' ? 'translate-x-5' : 'translate-x-0'}`} />
+              <button onClick={toggleTheme} className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-muted hover:bg-muted/80 transition-colors text-xs font-medium">
+                Next →
               </button>
+            </div>
+            <div className="flex gap-2 mt-4">
+              {[
+                { id: 'light', label: 'Light', color: '#f5f5f5', dot: '#e8304a' },
+                { id: 'dark', label: 'Dark', color: '#161c26', dot: '#e8304a' },
+                { id: 'loflo', label: 'LoFlo', color: '#EFE2BA', dot: '#F13C20' },
+              ].map(t => (
+                <button key={t.id} onClick={() => setTheme(t.id)}
+                  className={`flex-1 flex flex-col items-center gap-1.5 py-2 rounded-xl border-2 transition-all text-xs font-medium ${theme === t.id ? 'border-primary' : 'border-border'}`}
+                  style={{ background: t.color }}>
+                  <span style={{ width: 10, height: 10, borderRadius: '50%', background: t.dot, display: 'block' }} />
+                  <span style={{ color: t.id === 'dark' ? '#fff' : '#111' }}>{t.label}</span>
+                </button>
+              ))}
             </div>
           </GlassCard>
 
