@@ -1,5 +1,5 @@
 import React from 'react';
-import PublicNav from '@/components/landing/PublicNav';
+import InfoPageHeader from '@/components/layout/InfoPageHeader';
 import Footer from '@/components/landing/Footer';
 import GlassCard from '@/components/ui/GlassCard';
 import { Shield, UserCheck, Eye, Lock, AlertTriangle, Star } from 'lucide-react';
@@ -16,7 +16,7 @@ const features = [
 export default function Safety() {
   return (
     <div className="min-h-screen">
-      <PublicNav />
+      <InfoPageHeader />
       <div className="pt-24 pb-20 px-6 max-w-5xl mx-auto">
         <div className="text-center mb-16">
           <Shield className="w-12 h-12 text-primary mx-auto mb-4" />

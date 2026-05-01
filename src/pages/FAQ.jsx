@@ -1,5 +1,5 @@
 import React from 'react';
-import PublicNav from '@/components/landing/PublicNav';
+import InfoPageHeader from '@/components/layout/InfoPageHeader';
 import Footer from '@/components/landing/Footer';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 
@@ -19,7 +19,7 @@ const faqs = [
 export default function FAQ() {
   return (
     <div className="min-h-screen">
-      <PublicNav />
+      <InfoPageHeader />
       <div className="pt-24 pb-20 px-6 max-w-3xl mx-auto">
         <div className="text-center mb-12">
           <h1 className="text-4xl font-bold mb-4">Frequently Asked Questions</h1>

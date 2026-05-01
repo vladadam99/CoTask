@@ -1,5 +1,5 @@
 import React from 'react';
-import PublicNav from '@/components/landing/PublicNav';
+import InfoPageHeader from '@/components/layout/InfoPageHeader';
 import Footer from '@/components/landing/Footer';
 import HowItWorksSection from '@/components/landing/HowItWorks';
 import UseCases from '@/components/landing/UseCases';
@@ -10,7 +10,7 @@ import GlassCard from '@/components/ui/GlassCard';
 export default function HowItWorks() {
   return (
     <div className="min-h-screen">
-      <PublicNav />
+      <InfoPageHeader />
       <div className="pt-24 pb-12 px-6 max-w-5xl mx-auto text-center">
         <h1 className="text-4xl md:text-5xl font-bold mb-4">How CoTask Works</h1>
         <p className="text-lg text-muted-foreground max-w-2xl mx-auto mb-12">

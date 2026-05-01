@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import PublicNav from '@/components/landing/PublicNav';
+import InfoPageHeader from '@/components/layout/InfoPageHeader';
 import Footer from '@/components/landing/Footer';
 import GlassCard from '@/components/ui/GlassCard';
 import { Button } from '@/components/ui/button';
@@ -13,7 +13,7 @@ export default function Contact() {
 
   return (
     <div className="min-h-screen">
-      <PublicNav />
+      <InfoPageHeader />
       <div className="pt-24 pb-20 px-6 max-w-4xl mx-auto">
         <div className="text-center mb-12">
           <h1 className="text-4xl font-bold mb-4">Get in touch</h1>

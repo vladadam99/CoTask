@@ -1,5 +1,5 @@
 import React from 'react';
-import PublicNav from '@/components/landing/PublicNav';
+import InfoPageHeader from '@/components/layout/InfoPageHeader';
 import Footer from '@/components/landing/Footer';
 import GlassCard from '@/components/ui/GlassCard';
 import { Button } from '@/components/ui/button';
@@ -58,7 +58,7 @@ const plans = [
 export default function Pricing() {
   return (
     <div className="min-h-screen">
-      <PublicNav />
+      <InfoPageHeader />
       <div className="pt-24 pb-20 px-6 max-w-5xl mx-auto">
         <div className="text-center mb-16">
           <h1 className="text-4xl md:text-5xl font-bold mb-4">Simple, transparent pricing</h1>
