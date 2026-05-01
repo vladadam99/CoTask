@@ -5,7 +5,7 @@ import { useCurrentUser } from '@/lib/useCurrentUser';
 import GlassCard from '@/components/ui/GlassCard';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { User, Mail, MapPin, Globe, Upload, Loader2, ArrowLeft, FileText, Pencil, Check, X, Menu, ChevronRight, Settings, HelpCircle, LogOut, Wallet } from 'lucide-react';
+import { User, Mail, MapPin, Globe, Upload, Loader2, ArrowLeft, FileText, Pencil, Check, X, Menu, ChevronRight, Settings, HelpCircle, LogOut, Wallet, Heart, MessageCircle } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 
 export default function Profile() {
@@ -280,19 +280,47 @@ export default function Profile() {
               {avatarPosts.length === 0 ? (
                 <p className="text-sm text-muted-foreground text-center py-8">No posts yet. Create some from your profile editor.</p>
               ) : (
-                <div className="grid grid-cols-3 gap-1">
-                  {avatarPosts.map(post => (
-                    <div key={post.id} className="aspect-square rounded-lg overflow-hidden bg-muted relative">
-                      {post.type === 'video' ? (
-                        <video src={post.media_url} className="w-full h-full object-cover" />
-                      ) : (
-                        <img src={post.media_url} alt={post.caption} className="w-full h-full object-cover" />
-                      )}
-                      <div className="absolute bottom-1 right-1 flex gap-1.5 text-white text-[10px]">
-                        <span>♡ {post.likes_count || 0}</span>
+                <div className="space-y-4">
+                  {avatarPosts.map(post => {
+                    const mediaList = (post.media_urls?.length > 0)
+                      ? post.media_urls.map((url, i) => ({ url, type: post.media_types?.[i] || 'photo' }))
+                      : [{ url: post.media_url, type: post.type || 'photo' }];
+                    return (
+                      <div key={post.id} className="rounded-xl overflow-hidden bg-black">
+                        {/* Media */}
+                        <div className="relative w-full aspect-square">
+                          {mediaList[0].type === 'video' ? (
+                            <video src={mediaList[0].url} className="w-full h-full object-cover" controls playsInline />
+                          ) : (
+                            <img src={mediaList[0].url} alt={post.caption} className="w-full h-full object-cover" />
+                          )}
+                          {mediaList.length > 1 && (
+                            <span className="absolute top-2 right-2 bg-black/60 text-white text-xs px-2 py-0.5 rounded-full">1/{mediaList.length}</span>
+                          )}
+                        </div>
+                        {/* Caption & actions */}
+                        <div className="p-3 bg-card">
+                          <div className="flex items-center gap-4 mb-2">
+                            <div className="flex items-center gap-1 text-sm text-muted-foreground">
+                              <Heart className="w-4 h-4" />
+                              <span>{post.likes_count || 0}</span>
+                            </div>
+                            <div className="flex items-center gap-1 text-sm text-muted-foreground">
+                              <MessageCircle className="w-4 h-4" />
+                              <span>{post.comments_count || 0}</span>
+                            </div>
+                          </div>
+                          {post.caption && (
+                            <p className="text-sm leading-relaxed">
+                              <span className="font-semibold mr-1">{user?.display_name || user?.full_name}</span>
+                              {post.caption}
+                            </p>
+                          )}
+                          {post.category && <p className="text-xs text-muted-foreground mt-1">{post.category}</p>}
+                        </div>
                       </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               )}
             </GlassCard>
