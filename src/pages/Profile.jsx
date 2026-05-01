@@ -5,13 +5,14 @@ import { useCurrentUser } from '@/lib/useCurrentUser';
 import GlassCard from '@/components/ui/GlassCard';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { User, Mail, MapPin, Globe, Upload, Loader2, ArrowLeft, FileText, Pencil, Check, X } from 'lucide-react';
+import { User, Mail, MapPin, Globe, Upload, Loader2, ArrowLeft, FileText, Pencil, Check, X, Menu, ChevronRight, Settings, HelpCircle, LogOut, Wallet } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 
 export default function Profile() {
   const { user, updateUser } = useCurrentUser();
   const navigate = useNavigate();
   const [uploading, setUploading] = useState(false);
+  const [drawerOpen, setDrawerOpen] = useState(false);
   const [profilePicUrl, setProfilePicUrl] = useState(() => user?.profile_picture_url || '');
   const [coverUrl, setCoverUrl] = useState(() => user?.cover_picture_url || '');
   const [uploadingCover, setUploadingCover] = useState(false);
@@ -102,9 +103,14 @@ export default function Profile() {
   return (
     <div className="min-h-screen bg-background p-4 lg:p-8">
       <div className="max-w-2xl mx-auto">
-        <Link to={dashPath} className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground mb-6">
-          <ArrowLeft className="w-4 h-4" /> Dashboard
-        </Link>
+        <div className="flex items-center justify-between mb-6">
+          <Link to={dashPath} className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground">
+            <ArrowLeft className="w-4 h-4" /> Dashboard
+          </Link>
+          <button onClick={() => setDrawerOpen(true)} className="p-3 -mr-1 rounded-lg hover:bg-white/10 transition-colors">
+            <Menu className="w-5 h-5" />
+          </button>
+        </div>
 
         {/* Cover + Profile Picture */}
         <div className="relative mb-16">
@@ -294,6 +300,59 @@ export default function Profile() {
 
         </div>
       </div>
+
+      {/* Slide-out Drawer */}
+      {drawerOpen && (
+        <div className="fixed inset-0 z-[60]">
+          <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setDrawerOpen(false)} />
+          <aside className="absolute right-0 inset-y-0 w-72 glass-strong border-l border-white/10 flex flex-col">
+            <div className="h-14 flex items-center justify-between px-4 border-b border-white/5">
+              <span className="font-bold text-sm">Menu</span>
+              <button onClick={() => setDrawerOpen(false)} className="p-3 -mr-1 rounded-lg hover:bg-white/10">
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+            <div className="p-4 border-b border-white/5">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center text-base font-bold text-primary">
+                  {user?.full_name?.[0] || 'U'}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="font-semibold text-sm truncate">{user?.full_name || 'User'}</p>
+                  <p className="text-xs text-muted-foreground truncate">{user?.email}</p>
+                </div>
+              </div>
+            </div>
+            <nav className="flex-1 py-3 px-3 space-y-1 overflow-y-auto">
+              <Link to={user?.selected_role === 'avatar' ? '/AvatarSettings' : user?.selected_role === 'enterprise' ? '/EnterpriseSettings' : '/Profile'}
+                onClick={() => setDrawerOpen(false)}
+                className="flex items-center gap-3 px-3 py-3 rounded-xl hover:bg-white/5 transition-colors text-sm">
+                <Settings className="w-4 h-4 text-muted-foreground" />
+                <span>Settings</span>
+                <ChevronRight className="w-4 h-4 text-muted-foreground ml-auto" />
+              </Link>
+              <Link to={user?.selected_role === 'avatar' ? '/AvatarWallet' : '/UserWallet'}
+                onClick={() => setDrawerOpen(false)}
+                className="flex items-center gap-3 px-3 py-3 rounded-xl hover:bg-white/5 transition-colors text-sm">
+                <Wallet className="w-4 h-4 text-muted-foreground" />
+                <span>Wallet</span>
+                <ChevronRight className="w-4 h-4 text-muted-foreground ml-auto" />
+              </Link>
+              <Link to="/FAQ" onClick={() => setDrawerOpen(false)}
+                className="flex items-center gap-3 px-3 py-3 rounded-xl hover:bg-white/5 transition-colors text-sm">
+                <HelpCircle className="w-4 h-4 text-muted-foreground" />
+                <span>Help & FAQ</span>
+                <ChevronRight className="w-4 h-4 text-muted-foreground ml-auto" />
+              </Link>
+            </nav>
+            <div className="p-4 border-t border-white/5">
+              <button onClick={() => base44.auth.logout('/Landing')} className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/5 transition-colors text-sm text-muted-foreground">
+                <LogOut className="w-4 h-4" /> Sign out
+              </button>
+            </div>
+          </aside>
+        </div>
+      )}
     </div>
   );
 }
