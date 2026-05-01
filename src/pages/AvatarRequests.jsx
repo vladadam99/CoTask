@@ -15,8 +15,8 @@ import {
 
 
 const TABS = [
-  { key: 'pending', label: 'Pending', icon: Clock },
   { key: 'accepted', label: 'Accepted', icon: CheckCircle },
+  { key: 'pending', label: 'Pending', icon: Clock },
   { key: 'jobs', label: 'My Jobs', icon: Briefcase },
   { key: 'all', label: 'All', icon: Inbox },
 ];
@@ -24,7 +24,7 @@ const TABS = [
 export default function AvatarRequests() {
   const { user, loading: userLoading } = useCurrentUser();
   const queryClient = useQueryClient();
-  const [activeTab, setActiveTab] = useState('pending');
+  const [activeTab, setActiveTab] = useState('accepted');
 
   const { data: bookings = [], isLoading: isLoadingBookings } = useQuery({
     queryKey: ['avatar-all-bookings', user?.email],
