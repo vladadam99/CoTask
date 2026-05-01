@@ -4,14 +4,12 @@ import { useCurrentUser } from '@/lib/useCurrentUser';
 import GlassCard from '@/components/ui/GlassCard';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { User, Mail, MapPin, Globe, LogOut, Upload, Loader2, ArrowLeft, ArrowRightLeft, Sun, Moon, FileText, Pencil, Check, X } from 'lucide-react';
-import { useTheme } from '@/lib/ThemeContext';
+import { User, Mail, MapPin, Globe, LogOut, Upload, Loader2, ArrowLeft, ArrowRightLeft, FileText, Pencil, Check, X } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 
 export default function Profile() {
   const { user, updateUser } = useCurrentUser();
   const navigate = useNavigate();
-  const { theme, toggleTheme } = useTheme();
   const [uploading, setUploading] = useState(false);
   const [profilePicUrl, setProfilePicUrl] = useState('');
   const [coverUrl, setCoverUrl] = useState('');
@@ -213,36 +211,6 @@ export default function Profile() {
             </div>
           </GlassCard>
 
-          <GlassCard className="p-4">
-            <h3 className="font-semibold mb-3">Switch Role</h3>
-            <div className="space-y-2">
-              {user?.selected_role !== 'user' && (
-                 <button onClick={() => handleSwitchRole('user')} disabled={switchingRole} className="w-full text-left disabled:opacity-50">
-                  <div className="p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors text-sm flex items-center gap-3">
-                    <ArrowRightLeft className="w-4 h-4 text-muted-foreground" />
-                    <span>{switchingRole ? 'Switching...' : 'Switch to User'}</span>
-                  </div>
-                </button>
-              )}
-              {user?.selected_role !== 'avatar' && (
-                 <button onClick={() => handleSwitchRole('avatar')} disabled={switchingRole} className="w-full text-left disabled:opacity-50">
-                  <div className="p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors text-sm flex items-center gap-3">
-                    <ArrowRightLeft className="w-4 h-4 text-muted-foreground" />
-                    <span>{switchingRole ? 'Switching...' : 'Switch to Avatar'}</span>
-                  </div>
-                </button>
-              )}
-              {user?.selected_role !== 'enterprise' && (
-                 <button onClick={() => handleSwitchRole('enterprise')} disabled={switchingRole} className="w-full text-left disabled:opacity-50">
-                  <div className="p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors text-sm flex items-center gap-3">
-                    <ArrowRightLeft className="w-4 h-4 text-muted-foreground" />
-                    <span>{switchingRole ? 'Switching...' : 'Switch to Enterprise'}</span>
-                  </div>
-                </button>
-              )}
-            </div>
-          </GlassCard>
-
           {user?.selected_role === 'avatar' && avatarProfile && (
             <GlassCard className="p-4">
               <div className="flex items-center justify-between mb-3">
@@ -313,18 +281,32 @@ export default function Profile() {
           )}
 
           <GlassCard className="p-4">
-            <h3 className="font-semibold mb-3">Appearance</h3>
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                {theme === 'dark' ? <Moon className="w-4 h-4 text-muted-foreground" /> : <Sun className="w-4 h-4 text-muted-foreground" />}
-                <span className="text-sm font-medium">{theme === 'dark' ? 'Dark Mode' : 'Light Mode'}</span>
-              </div>
-              <button
-                onClick={toggleTheme}
-                className={`relative w-11 h-6 rounded-full transition-colors ${theme === 'dark' ? 'bg-primary' : 'bg-muted'}`}
-              >
-                <span className={`absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform ${theme === 'dark' ? 'translate-x-5' : 'translate-x-0'}`} />
-              </button>
+            <h3 className="font-semibold mb-3">Switch Role</h3>
+            <div className="space-y-2">
+              {user?.selected_role !== 'user' && (
+                 <button onClick={() => handleSwitchRole('user')} disabled={switchingRole} className="w-full text-left disabled:opacity-50">
+                  <div className="p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors text-sm flex items-center gap-3">
+                    <ArrowRightLeft className="w-4 h-4 text-muted-foreground" />
+                    <span>{switchingRole ? 'Switching...' : 'Switch to User'}</span>
+                  </div>
+                </button>
+              )}
+              {user?.selected_role !== 'avatar' && (
+                 <button onClick={() => handleSwitchRole('avatar')} disabled={switchingRole} className="w-full text-left disabled:opacity-50">
+                  <div className="p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors text-sm flex items-center gap-3">
+                    <ArrowRightLeft className="w-4 h-4 text-muted-foreground" />
+                    <span>{switchingRole ? 'Switching...' : 'Switch to Avatar'}</span>
+                  </div>
+                </button>
+              )}
+              {user?.selected_role !== 'enterprise' && (
+                 <button onClick={() => handleSwitchRole('enterprise')} disabled={switchingRole} className="w-full text-left disabled:opacity-50">
+                  <div className="p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors text-sm flex items-center gap-3">
+                    <ArrowRightLeft className="w-4 h-4 text-muted-foreground" />
+                    <span>{switchingRole ? 'Switching...' : 'Switch to Enterprise'}</span>
+                  </div>
+                </button>
+              )}
             </div>
           </GlassCard>
 
