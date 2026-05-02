@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Zap, Shield, Globe, ArrowRight, Menu, X, Video, TrendingUp, MapPin, Home, ShoppingBag, Plane, Wrench, Building2 } from 'lucide-react';
+import { Zap, Shield, Globe, ArrowRight, Menu, X, Video, TrendingUp, MapPin, Home, ShoppingBag, Plane, Wrench, Building2, Users, Check } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
+import GlassCard from '@/components/ui/GlassCard';
+import { Button } from '@/components/ui/button';
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 
 const STATS = [
   { value: '12K+', label: 'Active Avatars' },
@@ -44,6 +47,73 @@ const USE_CASES = [
   },
 ];
 
+const plans = [
+  {
+    name: 'Pay as you go',
+    subtitle: 'For individual users',
+    price: 'From $25/hr',
+    features: [
+      'Browse all available avatars',
+      'Book on-demand or scheduled',
+      'In-app messaging',
+      'Live session access',
+      'Secure payments',
+      'Rating & reviews',
+    ],
+    cta: 'Get Started',
+    featured: false,
+  },
+  {
+    name: 'Pro',
+    subtitle: 'For frequent users',
+    price: '$99/mo',
+    features: [
+      'Everything in Pay as you go',
+      'Priority avatar matching',
+      'Reduced platform fees (10%)',
+      'Saved preferences',
+      'Dedicated support',
+      'Session recordings (coming soon)',
+    ],
+    cta: 'Start Free Trial',
+    featured: true,
+  },
+  {
+    name: 'Enterprise',
+    subtitle: 'For businesses',
+    price: 'Custom',
+    features: [
+      'Everything in Pro',
+      'Bulk booking discounts',
+      'Custom invoicing',
+      'Team management',
+      'API access (coming soon)',
+      'Dedicated account manager',
+      'SLA guarantees',
+    ],
+    cta: 'Contact Sales',
+    featured: false,
+  },
+];
+
+const faqs = [
+  { q: 'What is CoTask?', a: 'CoTask is a live human presence marketplace. It connects people and businesses with local avatars who can physically go to a location and act as your remote eyes, hands, and guide in real time.' },
+  { q: 'How is this different from a video call?', a: "Unlike video calls, your CoTask avatar is physically at the location. They walk, interact, pick things up, ask questions, and stream everything live. It's real-world presence, not screen-to-screen communication." },
+  { q: 'What can I use CoTask for?', a: 'Live city tours, property walkthroughs, shopping assistance, event attendance, queue standing, campus tours, business site inspections, product demos, family support, and much more.' },
+  { q: 'How do I become an avatar?', a: 'Sign up, choose "Avatar" as your role, complete your profile, pass verification, and start accepting bookings. All you need is a smartphone and reliable internet connection.' },
+  { q: 'How much do avatars earn?', a: 'Avatars set their own rates and keep 85% of every booking. Rates vary by service type, location, and experience. Most avatars earn between $25–$100 per hour.' },
+  { q: 'Is CoTask safe?', a: 'Yes. All avatars go through identity verification. Every session is tracked. Both parties can rate and review. We have a dedicated trust and safety team.' },
+  { q: 'What equipment do avatars need?', a: 'At minimum, a smartphone with good data connection. For premium experiences, a headset, 360° camera, or specialized equipment may be beneficial.' },
+  { q: 'Does CoTask support businesses?', a: 'Absolutely. Our Enterprise plan offers bulk booking, custom invoicing, team management, and dedicated support for business use cases like site inspections and field operations.' },
+  { q: 'How do payments work?', a: 'Users pay securely through the platform when booking. Avatars receive payouts after sessions are completed. Enterprise clients can opt for monthly invoicing.' },
+  { q: 'What about live video streaming?', a: 'We are actively developing real-time video, audio, and 360° streaming capabilities. The current beta focuses on booking, coordination, and session management. Full live streaming is coming soon.' },
+];
+
+const scrollTo = (id) => {
+  const el = document.getElementById(id);
+  if (el) el.scrollIntoView({ behavior: 'smooth' });
+};
+
 export default function Landing() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
@@ -61,13 +131,13 @@ export default function Landing() {
       {/* Nav */}
       <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${scrolled ? 'glass-strong border-b border-white/5' : ''}`}>
         <div className="max-w-6xl mx-auto px-4 lg:px-6 h-16 flex items-center justify-between">
-          <Link to="/" className="text-xl font-bold tracking-tight">
+          <button onClick={() => scrollTo('hero')} className="text-xl font-bold tracking-tight">
             Co<span className="text-primary">Task</span>
-          </Link>
+          </button>
           <div className="hidden md:flex items-center gap-6">
-            <Link to="/HowItWorks" className="text-sm text-muted-foreground hover:text-foreground transition-colors">How it works</Link>
-            <Link to="/Pricing" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Pricing</Link>
-            <Link to="/FAQ" className="text-sm text-muted-foreground hover:text-foreground transition-colors">FAQ</Link>
+            <button onClick={() => scrollTo('how-it-works')} className="text-sm text-muted-foreground hover:text-foreground transition-colors">How it works</button>
+            <button onClick={() => scrollTo('pricing')} className="text-sm text-muted-foreground hover:text-foreground transition-colors">Pricing</button>
+            <button onClick={() => scrollTo('faq')} className="text-sm text-muted-foreground hover:text-foreground transition-colors">FAQ</button>
           </div>
           <button
             onClick={handleGetStarted}
@@ -81,9 +151,9 @@ export default function Landing() {
         </div>
         {mobileMenuOpen && (
           <div className="md:hidden glass-strong border-b border-white/5 px-4 py-4 flex flex-col gap-4">
-            <Link to="/HowItWorks" className="text-sm" onClick={() => setMobileMenuOpen(false)}>How it works</Link>
-            <Link to="/Pricing" className="text-sm" onClick={() => setMobileMenuOpen(false)}>Pricing</Link>
-            <Link to="/FAQ" className="text-sm" onClick={() => setMobileMenuOpen(false)}>FAQ</Link>
+            <button onClick={() => { scrollTo('how-it-works'); setMobileMenuOpen(false); }} className="text-sm text-left">How it works</button>
+            <button onClick={() => { scrollTo('pricing'); setMobileMenuOpen(false); }} className="text-sm text-left">Pricing</button>
+            <button onClick={() => { scrollTo('faq'); setMobileMenuOpen(false); }} className="text-sm text-left">FAQ</button>
             <button onClick={() => { handleGetStarted(); setMobileMenuOpen(false); }} className="px-4 py-2 bg-primary text-white text-sm font-semibold rounded-lg text-left flex items-center gap-2">
               Let's Go <ArrowRight className="w-4 h-4" />
             </button>
@@ -92,7 +162,7 @@ export default function Landing() {
       </nav>
 
       {/* Hero */}
-      <section className="relative min-h-screen flex items-center justify-center px-4 overflow-hidden pt-16">
+      <section id="hero" className="relative min-h-screen flex items-center justify-center px-4 overflow-hidden pt-16">
         <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-background to-background" />
         <div className="absolute top-1/4 right-0 w-96 h-96 bg-primary/10 rounded-full blur-3xl" />
         <div className="absolute bottom-1/4 left-0 w-64 h-64 bg-blue-500/8 rounded-full blur-3xl" />
@@ -122,7 +192,6 @@ export default function Landing() {
             </button>
           </div>
 
-          {/* Stats */}
           <motion.div
             initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.4, duration: 0.6 }}
             className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-2xl mx-auto"
@@ -160,13 +229,29 @@ export default function Landing() {
       </section>
 
       {/* How It Works */}
-      <section className="py-20 px-4 bg-card/30">
+      <section id="how-it-works" className="py-20 px-4 bg-card/30 scroll-mt-16">
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold mb-3">How CoTask Works</h2>
-            <p className="text-muted-foreground">Three steps to your live remote experience</p>
+            <p className="text-muted-foreground">CoTask bridges the gap between being somewhere and needing to be there. Real people, real places, real time.</p>
           </div>
-          <div className="grid md:grid-cols-3 gap-6">
+
+          <div className="grid md:grid-cols-2 gap-6 mb-16">
+            {[
+              { icon: Zap, title: 'Not a Video Call', desc: 'Unlike Zoom or FaceTime, CoTask gives you a trained local person who physically goes to a location and acts as your remote presence.' },
+              { icon: Globe, title: 'Not a YouTube Tour', desc: 'This is live, interactive, and personalized. You direct the experience in real time. Ask questions, zoom in, pivot direction.' },
+              { icon: Users, title: 'Not a Task App', desc: 'CoTask avatars are trained, verified, and equipped for live sessions. They are your eyes, hands, and guide — not just an errand runner.' },
+              { icon: Shield, title: 'Trust Built In', desc: 'Every avatar is verified, reviewed, and rated. Every session is tracked. Your safety and privacy are our top priority.' },
+            ].map(item => (
+              <GlassCard key={item.title} className="p-6">
+                <item.icon className="w-6 h-6 text-primary mb-3" />
+                <h3 className="font-semibold mb-2">{item.title}</h3>
+                <p className="text-sm text-muted-foreground">{item.desc}</p>
+              </GlassCard>
+            ))}
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-6 mb-16">
             {[
               { n: '01', title: 'Find an Avatar', desc: 'Search by category, location or availability. See real ratings and live previews before you book.' },
               { n: '02', title: 'Book & Connect', desc: 'Schedule ahead or book instantly. Pay securely and get connected via live stream with your avatar.' },
@@ -186,12 +271,8 @@ export default function Landing() {
               </motion.div>
             ))}
           </div>
-        </div>
-      </section>
 
-      {/* Use Cases */}
-      <section className="py-20 px-4">
-        <div className="max-w-5xl mx-auto">
+          {/* Use Cases */}
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold mb-3">What People Use CoTask For</h2>
           </div>
@@ -217,7 +298,7 @@ export default function Landing() {
       </section>
 
       {/* Avatar Earnings CTA */}
-      <section className="py-20 px-4 bg-card/30">
+      <section className="py-20 px-4">
         <div className="max-w-4xl mx-auto">
           <div className="glass rounded-3xl p-10 md:p-14 border border-primary/10 relative overflow-hidden">
             <div className="absolute top-0 right-0 w-72 h-72 bg-primary/5 rounded-full -translate-y-1/2 translate-x-1/2 blur-3xl" />
@@ -238,16 +319,89 @@ export default function Landing() {
         </div>
       </section>
 
+      {/* Pricing */}
+      <section id="pricing" className="py-20 px-4 bg-card/30 scroll-mt-16">
+        <div className="max-w-5xl mx-auto">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl md:text-5xl font-bold mb-4">Simple, transparent pricing</h2>
+            <p className="text-lg text-muted-foreground max-w-xl mx-auto">
+              Pay only for what you use. Avatars set their own rates. CoTask charges a small platform fee.
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-6">
+            {plans.map(plan => (
+              <GlassCard key={plan.name} className={`p-8 flex flex-col ${plan.featured ? 'border-primary/30 relative' : ''}`}>
+                {plan.featured && (
+                  <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-primary text-primary-foreground text-xs font-medium px-3 py-1 rounded-full">
+                    Most Popular
+                  </div>
+                )}
+                <div className="mb-6">
+                  <h3 className="text-xl font-bold">{plan.name}</h3>
+                  <p className="text-sm text-muted-foreground">{plan.subtitle}</p>
+                  <p className="text-3xl font-bold mt-4">{plan.price}</p>
+                </div>
+                <ul className="space-y-3 flex-1 mb-8">
+                  {plan.features.map(f => (
+                    <li key={f} className="flex items-start gap-2 text-sm">
+                      <Check className="w-4 h-4 text-primary flex-shrink-0 mt-0.5" />
+                      <span className="text-muted-foreground">{f}</span>
+                    </li>
+                  ))}
+                </ul>
+                <Button
+                  onClick={handleGetStarted}
+                  className={`w-full ${plan.featured ? 'bg-primary hover:bg-primary/90' : 'bg-muted hover:bg-muted/80 text-foreground'}`}
+                >
+                  {plan.cta}
+                </Button>
+              </GlassCard>
+            ))}
+          </div>
+
+          <div className="text-center mt-12">
+            <h3 className="font-semibold mb-2">Avatar earnings</h3>
+            <p className="text-sm text-muted-foreground max-w-lg mx-auto">
+              Avatars keep 85% of every booking. Set your own hourly or per-session rate.
+              Get paid directly to your account after each completed session.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* FAQ */}
+      <section id="faq" className="py-20 px-4 scroll-mt-16">
+        <div className="max-w-3xl mx-auto">
+          <div className="text-center mb-12">
+            <h2 className="text-4xl font-bold mb-4">Frequently Asked Questions</h2>
+            <p className="text-muted-foreground">Everything you need to know about CoTask</p>
+          </div>
+          <Accordion type="single" collapsible className="space-y-3">
+            {faqs.map((faq, i) => (
+              <AccordionItem key={i} value={`faq-${i}`} className="glass rounded-xl border-white/5 px-6">
+                <AccordionTrigger className="text-left text-sm font-medium hover:no-underline">
+                  {faq.q}
+                </AccordionTrigger>
+                <AccordionContent className="text-sm text-muted-foreground leading-relaxed">
+                  {faq.a}
+                </AccordionContent>
+              </AccordionItem>
+            ))}
+          </Accordion>
+        </div>
+      </section>
+
       {/* Footer */}
       <footer className="py-12 px-4 border-t border-white/5">
         <div className="max-w-6xl mx-auto">
           <div className="flex flex-col md:flex-row items-center justify-between gap-6">
-            <Link to="/" className="text-xl font-bold">Co<span className="text-primary">Task</span></Link>
+            <button onClick={() => scrollTo('hero')} className="text-xl font-bold">Co<span className="text-primary">Task</span></button>
             <div className="flex flex-wrap gap-6 text-sm text-muted-foreground">
-              <Link to="/HowItWorks" className="hover:text-foreground transition-colors">How it works</Link>
-              <Link to="/Pricing" className="hover:text-foreground transition-colors">Pricing</Link>
+              <button onClick={() => scrollTo('how-it-works')} className="hover:text-foreground transition-colors">How it works</button>
+              <button onClick={() => scrollTo('pricing')} className="hover:text-foreground transition-colors">Pricing</button>
+              <button onClick={() => scrollTo('faq')} className="hover:text-foreground transition-colors">FAQ</button>
               <Link to="/Safety" className="hover:text-foreground transition-colors">Safety</Link>
-              <Link to="/FAQ" className="hover:text-foreground transition-colors">FAQ</Link>
               <Link to="/Contact" className="hover:text-foreground transition-colors">Contact</Link>
             </div>
             <p className="text-xs text-muted-foreground">© 2026 CoTask. All rights reserved.</p>
