@@ -209,7 +209,7 @@ export default function AppShell({ children, navItems = [], user, fullBleed = fa
       </nav>
 
       {/* Main Content */}
-      <main className={`flex-1 min-w-0 lg:ml-64 ${fullBleed ? '' : 'overflow-x-hidden pt-14 lg:pt-0 pb-20 lg:pb-0'}`}>
+      <main className={`flex-1 min-w-0 lg:ml-64 ${fullBleed ? '' : 'overflow-x-hidden pt-14 lg:pt-0 pb-28 lg:pb-0'}`}>
         {fullBleed ? children : (
           <div className="w-full min-w-0 px-4 py-4 lg:p-8 lg:max-w-7xl lg:mx-auto">
             {children}
