@@ -1,8 +1,9 @@
-import { Search, Calendar, MessageSquare, Home, Heart, User, Zap, Inbox, DollarSign, Settings, Building2, Briefcase, Compass, Users, Wallet } from 'lucide-react';
+import { Search, Calendar, MessageSquare, Home, Heart, User, Zap, Inbox, DollarSign, Settings, Building2, Briefcase, Compass, Users, Wallet, Plus } from 'lucide-react';
 
 export const userNavItems = [
   { icon: Home, label: 'Home', path: '/UserDashboard' },
   { icon: Search, label: 'Explore', path: '/Explore' },
+  { icon: Plus, label: 'Post Job', path: '/PostJob' },
   { icon: Calendar, label: 'Bookings', path: '/Bookings' },
   { icon: MessageSquare, label: 'Messages', path: '/Messages' },
 ];
