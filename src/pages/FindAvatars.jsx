@@ -10,6 +10,7 @@ import { Search, MapPin, Star, Shield, Filter, X, Heart, ArrowLeft } from 'lucid
 import { motion } from 'framer-motion';
 import { getNavItems } from '@/lib/navItems';
 import AppShell from '@/components/layout/AppShell';
+import SuggestedForYou from '@/components/dashboard/SuggestedForYou';
 
 const CATEGORIES = [
   { label: 'All', icon: '🌐' },
@@ -92,6 +93,8 @@ export default function FindAvatars() {
             {city && <button onClick={() => setCity('')} className="text-xs text-muted-foreground hover:text-foreground"><X className="w-3.5 h-3.5" /></button>}
           </div>
         )}
+
+        <SuggestedForYou user={user} />
 
         <p className="text-xs text-muted-foreground mb-5">{isLoading ? 'Loading...' : `${sortedFiltered.length} avatars found`}</p>
 
