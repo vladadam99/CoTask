@@ -92,16 +92,7 @@ export default function UserDashboard() {
         </h1>
         <p className="text-muted-foreground text-sm mb-5">What do you need help with today?</p>
 
-        {/* Primary CTAs */}
-        <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap">
-          <Link to="/FindAvatars" className="min-w-0">
-            <Button className="w-full sm:w-auto bg-primary hover:bg-primary/90 glow-primary-sm font-bold">
-              <Zap className="w-4 h-4 flex-shrink-0" /> Book an Avatar
-            </Button>
-          </Link>
 
-
-        </div>
       </motion.div>
 
       <SuggestedForYou user={user} />
