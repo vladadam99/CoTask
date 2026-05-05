@@ -100,11 +100,7 @@ export default function UserDashboard() {
             </Button>
           </Link>
 
-          <Link to="/PostJob" className="min-w-0">
-            <Button variant="outline" className="w-full sm:w-auto border-primary/30 text-primary font-semibold">
-              <Briefcase className="w-4 h-4 flex-shrink-0" /> Post a Job
-            </Button>
-          </Link>
+
         </div>
       </motion.div>
 
