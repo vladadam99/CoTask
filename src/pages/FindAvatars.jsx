@@ -64,7 +64,7 @@ export default function FindAvatars() {
     : filtered;
 
   return (
-    <AppShell navItems={getNavItems(user?.role)} user={user}>
+    <AppShell navItems={getNavItems(user?.selected_role)} user={user}>
       <div className="max-w-5xl mx-auto">
         <div className="flex items-center justify-between mb-5">
           <h1 className="text-xl font-black">Find Avatars</h1>
