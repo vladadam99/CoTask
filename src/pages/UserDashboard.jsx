@@ -11,40 +11,7 @@ import {
   Search, Calendar, MessageSquare, Radio, Heart, User,
   ArrowRight, MapPin, Star, Play, Zap, Briefcase, Clock, AlertCircle, CheckCircle
 } from 'lucide-react';
-import SuggestedForYou from '@/components/dashboard/SuggestedForYou';
 import { motion } from 'framer-motion';
-
-
-
-const CATEGORIES = [
-  { name: 'City Guide', icon: '🌆' },
-  { name: 'Property Walkthrough', icon: '🏠' },
-  { name: 'Shopping Help', icon: '🛍️' },
-  { name: 'Event Attendance', icon: '🎫' },
-  { name: 'Queue & Errands', icon: '📦' },
-  { name: 'Business Inspection', icon: '🏢' },
-  { name: 'Travel Assistance', icon: '✈️' },
-  { name: 'Training & Coaching', icon: '🎓' },
-  { name: 'Pets & Animals', icon: '🐾' },
-  { name: 'Cars & Vehicles', icon: '🚗' },
-  { name: 'Mechanics', icon: '🔧' },
-  { name: 'Plumbing', icon: '🚿' },
-  { name: 'Electrical Work', icon: '⚡' },
-  { name: 'Medical & Health', icon: '🏥' },
-  { name: 'Outdoors & Nature', icon: '🌿' },
-  { name: 'Cleaning', icon: '🧹' },
-  { name: 'Gardening', icon: '🌱' },
-  { name: 'Pick Ups', icon: '📍' },
-  { name: 'Deliveries', icon: '📦' },
-  { name: 'Cooking & Food', icon: '🍳' },
-  { name: 'Dating & Social', icon: '💬' },
-  { name: 'Driving', icon: '🚕' },
-  { name: 'Show Me Around', icon: '🗺️' },
-  { name: 'Carers & Companionship', icon: '🤝' },
-  { name: 'DIY & Repairs', icon: '🛠️' },
-  { name: 'Family Support', icon: '👨‍👩‍👧' },
-  { name: 'Campus Help', icon: '🎓' },
-];
 
 export default function UserDashboard() {
   const navigate = useNavigate();
@@ -95,8 +62,6 @@ export default function UserDashboard() {
 
       </motion.div>
 
-      <SuggestedForYou user={user} />
-
       {/* Live Now Strip */}
       {liveAvatars.length > 0 && (
         <div className="mb-8 min-w-0">
@@ -135,27 +100,6 @@ export default function UserDashboard() {
           </div>
         </div>
       )}
-
-      {/* Categories */}
-      <div className="mb-8">
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-base font-bold">Browse by Category</h2>
-          <Link to="/Explore" className="text-sm text-primary hover:underline flex items-center gap-1">
-            See all <ArrowRight className="w-3 h-3" />
-          </Link>
-        </div>
-        <div className="grid grid-cols-4 sm:grid-cols-6 lg:grid-cols-8 gap-3">
-          {CATEGORIES.map((cat, i) => (
-            <motion.div key={cat.name} initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: i * 0.04 }}>
-              <Link to={`/Explore?category=${encodeURIComponent(cat.name)}`}
-                className="glass border border-white/5 hover:border-primary/30 rounded-2xl p-3 text-center block transition-all hover:scale-105">
-                <span className="text-2xl mb-1.5 block">{cat.icon}</span>
-                <span className="text-[10px] font-medium leading-tight text-muted-foreground">{cat.name}</span>
-              </Link>
-            </motion.div>
-          ))}
-        </div>
-      </div>
 
       {/* Featured Avatars */}
       <div className="mb-8">
