@@ -38,7 +38,7 @@ export default function Explore() {
   }, [posts]);
 
   return (
-    <AppShell navItems={getNavItems(user?.role)} user={user} fullBleed>
+    <AppShell navItems={getNavItems(user?.selected_role)} user={user} fullBleed>
       <div
         ref={containerRef}
         className="fixed top-14 lg:top-0 bottom-20 lg:bottom-0 left-0 lg:left-64 right-0 overflow-y-scroll snap-y snap-mandatory"

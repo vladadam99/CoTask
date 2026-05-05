@@ -61,7 +61,7 @@ export default function PostJob() {
   if (!user) return null;
 
   return (
-    <AppShell navItems={getNavItems(user?.role)} user={user}>
+    <AppShell navItems={getNavItems(user?.selected_role)} user={user}>
       <div className="max-w-2xl mx-auto space-y-6">
         <div className="flex items-center gap-3">
           <button onClick={() => navigate(-1)} className="w-9 h-9 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:border-primary/30 transition-colors">

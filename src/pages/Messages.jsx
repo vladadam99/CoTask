@@ -8,6 +8,8 @@ import { ArrowLeft, Send, MessageSquare, Camera, Loader2, Video } from 'lucide-r
 import JobActionCard from '@/components/jobs/JobActionCard';
 import JobStatusBanner from '@/components/jobs/JobStatusBanner';
 import { Link } from 'react-router-dom';
+import AppShell from '@/components/layout/AppShell';
+import { getNavItems } from '@/lib/navItems';
 
 export default function Messages() {
   const { user } = useCurrentUser();
@@ -182,7 +184,8 @@ export default function Messages() {
   };
 
   return (
-    <div className="flex h-screen bg-background overflow-hidden">
+    <AppShell navItems={getNavItems(user?.selected_role)} user={user} fullBleed>
+    <div className="flex h-[calc(100vh-56px)] lg:h-screen bg-background overflow-hidden">
       {/* Conversation List */}
       <div className={`w-full md:w-80 lg:w-96 border-r border-white/5 flex-shrink-0 ${activeConvo ? 'hidden md:flex' : 'flex'} flex-col`}>
         <div className="p-4 border-b border-white/5">
@@ -303,5 +306,6 @@ export default function Messages() {
         )}
       </div>
     </div>
+    </AppShell>
   );
 }
