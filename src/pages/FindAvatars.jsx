@@ -6,14 +6,13 @@ import { base44 } from '@/api/base44Client';
 import { useCurrentUser } from '@/lib/useCurrentUser';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { Search, MapPin, Star, Shield, Filter, X, Heart, ArrowLeft } from 'lucide-react';
+import { Search, MapPin, Star, Shield, Filter, X, Heart, ArrowLeft, Zap } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { getNavItems } from '@/lib/navItems';
 import AppShell from '@/components/layout/AppShell';
 import SuggestedForYou from '@/components/dashboard/SuggestedForYou';
 
 const CATEGORIES = [
-  { label: 'All', icon: '🌐' },
   { label: 'City Guide', icon: '🌆' },
   { label: 'Property Walkthrough', icon: '🏠' },
   { label: 'Shopping Help', icon: '🛍️' },
@@ -23,6 +22,24 @@ const CATEGORIES = [
   { label: 'Business Inspection', icon: '🏢' },
   { label: 'Training & Coaching', icon: '🎓' },
   { label: 'Travel Assistance', icon: '✈️' },
+  { label: 'Pets & Animals', icon: '🐾' },
+  { label: 'Cars & Vehicles', icon: '🚗' },
+  { label: 'Mechanics', icon: '🔧' },
+  { label: 'Plumbing', icon: '🚿' },
+  { label: 'Electrical Work', icon: '⚡' },
+  { label: 'Medical & Health', icon: '🏥' },
+  { label: 'Outdoors & Nature', icon: '🌿' },
+  { label: 'Cleaning', icon: '🧹' },
+  { label: 'Gardening', icon: '🌱' },
+  { label: 'Pick Ups', icon: '📍' },
+  { label: 'Deliveries', icon: '📦' },
+  { label: 'Cooking & Food', icon: '🍳' },
+  { label: 'Dating & Social', icon: '💬' },
+  { label: 'Driving', icon: '🚕' },
+  { label: 'Show Me Around', icon: '🗺️' },
+  { label: 'Carers & Companionship', icon: '🤝' },
+  { label: 'DIY & Repairs', icon: '🛠️' },
+  { label: 'Campus Help', icon: '🎓' },
 ];
 
 export default function FindAvatars() {
@@ -30,9 +47,9 @@ export default function FindAvatars() {
   const queryClient = useQueryClient();
   const [search, setSearch] = useState('');
   const [aiMatchedIds, setAiMatchedIds] = useState(null);
-  const [category, setCategory] = useState('All');
-  const [city, setCity] = useState('');
-  const [showFilters, setShowFilters] = useState(false);
+  const [onlineOnly, setOnlineOnly] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState(null);
+  const [showCategoryFilter, setShowCategoryFilter] = useState(false);
   const searchRef = useRef(null);
 
   const { data: avatars = [], isLoading } = useQuery({
@@ -53,9 +70,9 @@ export default function FindAvatars() {
     if (aiMatchedIds !== null) {
       if (!aiMatchedIds.includes(a.id)) return false;
     }
-    const matchCat = category === 'All' || (a.categories || []).includes(category);
-    const matchCity = !city || a.city?.toLowerCase().includes(city.toLowerCase());
-    return matchCat && matchCity;
+    if (onlineOnly && !a.is_available) return false;
+    if (selectedCategory && !(a.categories || []).includes(selectedCategory)) return false;
+    return true;
   });
 
   // If AI matched, sort by match order
@@ -70,27 +87,69 @@ export default function FindAvatars() {
           <h1 className="text-xl font-black">Find Avatars</h1>
         </div>
 
-        {/* Search + filter */}
-        <div className="flex items-center gap-3 mb-4">
-          <div className="flex-1">
-            <SmartSearchBar
-              items={avatars}
-              itemSummaryFn={avatarSummaryFn}
-              onResults={setAiMatchedIds}
-              placeholder="Search avatars, skills, tasks... (AI-powered)"
-              suggestions={suggestionList}
-            />
-          </div>
-          <button onClick={() => setShowFilters(v => !v)} className={`w-10 h-10 rounded-xl border flex items-center justify-center transition-all flex-shrink-0 ${showFilters ? 'bg-primary text-white border-primary' : 'bg-white/5 border-white/10'}`}>
-            <Filter className="w-4 h-4" />
+        {/* Search */}
+        <div className="mb-4">
+          <SmartSearchBar
+            items={avatars}
+            itemSummaryFn={avatarSummaryFn}
+            onResults={setAiMatchedIds}
+            placeholder="Search avatars, skills, tasks... (AI-powered)"
+            suggestions={suggestionList}
+          />
+        </div>
+
+        {/* Filters */}
+        <div className="flex items-center gap-2 mb-4 flex-wrap">
+          {/* Online Now toggle */}
+          <button
+            onClick={() => setOnlineOnly(v => !v)}
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold border transition-all ${
+              onlineOnly
+                ? 'bg-green-500/20 text-green-400 border-green-500/30'
+                : 'bg-white/5 text-muted-foreground border-white/10 hover:border-white/20'
+            }`}
+          >
+            <span className={`w-1.5 h-1.5 rounded-full ${onlineOnly ? 'bg-green-400 animate-pulse' : 'bg-muted-foreground'}`} />
+            Online Now
+          </button>
+
+          {/* Category filter */}
+          <button
+            onClick={() => setShowCategoryFilter(v => !v)}
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold border transition-all ${
+              selectedCategory
+                ? 'bg-primary/20 text-primary border-primary/30'
+                : 'bg-white/5 text-muted-foreground border-white/10 hover:border-white/20'
+            }`}
+          >
+            <Filter className="w-3 h-3" />
+            {selectedCategory || 'Category'}
+            {selectedCategory && (
+              <span onClick={e => { e.stopPropagation(); setSelectedCategory(null); }} className="ml-0.5">
+                <X className="w-3 h-3" />
+              </span>
+            )}
           </button>
         </div>
 
-        {showFilters && (
-          <div className="flex items-center gap-2 mb-4">
-            <MapPin className="w-4 h-4 text-muted-foreground flex-shrink-0" />
-            <Input value={city} onChange={e => setCity(e.target.value)} placeholder="Filter by city..." className="bg-white/5 border-white/10 h-9 text-sm max-w-xs" />
-            {city && <button onClick={() => setCity('')} className="text-xs text-muted-foreground hover:text-foreground"><X className="w-3.5 h-3.5" /></button>}
+        {/* Category picker */}
+        {showCategoryFilter && (
+          <div className="mb-5 p-3 rounded-2xl bg-card/40 border border-white/5">
+            <div className="flex flex-wrap gap-2">
+              {CATEGORIES.map(c => (
+                <button
+                  key={c.label}
+                  onClick={() => { setSelectedCategory(selectedCategory === c.label ? null : c.label); setShowCategoryFilter(false); }}
+                  className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs border transition-all ${
+                    selectedCategory === c.label
+                      ? 'bg-primary/20 text-primary border-primary/30'
+                      : 'bg-white/5 text-muted-foreground border-white/10 hover:border-white/20'
+                  }`}
+                >
+                  <span>{c.icon}</span> {c.label}
+                </button>
+              ))}
+            </div>
           </div>
         )}
 
@@ -106,7 +165,7 @@ export default function FindAvatars() {
           <div className="text-center py-20 space-y-3">
             <p className="text-3xl">🔍</p>
             <h3 className="font-bold">No avatars found</h3>
-            <Button variant="outline" className="border-white/10" onClick={() => { setSearch(''); setCategory('All'); setCity(''); }}>Clear filters</Button>
+            <Button variant="outline" className="border-white/10" onClick={() => { setOnlineOnly(false); setSelectedCategory(null); setAiMatchedIds(null); }}>Clear filters</Button>
           </div>
         ) : (
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
