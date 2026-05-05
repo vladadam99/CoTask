@@ -102,6 +102,7 @@ const AuthenticatedApp = () => {
       <Route path="/AvatarSettings" element={<AvatarSettings />} />
       <Route path="/EnterpriseDashboard" element={<EnterpriseDashboard />} />
       <Route path="/Explore" element={<Explore />} />
+      <Route path="/PostJob" element={<PostJob />} />
       <Route path="/AvatarView" element={<AvatarView />} />
       <Route path="/CreateBooking" element={<CreateBooking />} />
       <Route path="/Bookings" element={<Bookings />} />
@@ -125,7 +126,6 @@ const AuthenticatedApp = () => {
       <Route path="/EnterpriseSettings" element={<EnterpriseSettings />} />
       <Route path="/ReelFeed" element={<ReelFeed />} />
       <Route path="/JobMarketplace" element={<JobMarketplace />} />
-      <Route path="/PostJob" element={<PostJob />} />
       <Route path="/JobDetail" element={<JobDetail />} />
       <Route path="/FindAvatars" element={<FindAvatars />} />
       <Route path="/AvatarExplore" element={<AvatarExplore />} />
