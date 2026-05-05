@@ -163,14 +163,8 @@ export default function FindAvatars() {
         <p className="text-xs text-muted-foreground mb-5">{isLoading ? 'Loading...' : `${sortedFiltered.length} avatars found`}</p>
 
         {isLoading ? (
-          <div className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-6 gap-4">
-            {[1,2,3,4,5,6,7,8,9,10,11,12].map(i => (
-              <div key={i} className="flex flex-col items-center gap-2 p-2">
-                <div className="w-16 h-16 rounded-full bg-card/60 animate-pulse" />
-                <div className="w-12 h-2.5 rounded bg-card/60 animate-pulse" />
-                <div className="w-8 h-2 rounded bg-card/60 animate-pulse" />
-              </div>
-            ))}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
+            {[1,2,3,4,5,6,7,8].map(i => <div key={i} className="rounded-2xl bg-card/40 border border-white/5 h-32 animate-pulse" />)}
           </div>
         ) : filtered.length === 0 ? (
           <div className="text-center py-20 space-y-3">
@@ -179,7 +173,7 @@ export default function FindAvatars() {
             <Button variant="outline" className="border-white/10" onClick={() => { setOnlineOnly(false); setSelectedCategories([]); setAiMatchedIds(null); }}>Clear filters</Button>
           </div>
         ) : (
-          <div className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-6 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
             {sortedFiltered.map((avatar, i) => <AvatarCard key={avatar.id} avatar={avatar} i={i} user={user} queryClient={queryClient} />)}
           </div>
         )}
@@ -216,46 +210,54 @@ function AvatarCard({ avatar, i, user, queryClient }) {
   return (
     <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: Math.min(i * 0.04, 0.3) }}>
       <Link to={`/AvatarView?id=${avatar.id}`}>
-        <div className="group flex flex-col items-center gap-2 p-2 rounded-2xl hover:bg-card/60 transition-all duration-200">
-          {/* Avatar photo */}
-          <div className="relative">
-            <div className="w-16 h-16 rounded-full overflow-hidden border-2 border-white/10 group-hover:border-primary/40 transition-all bg-primary/20 flex items-center justify-center flex-shrink-0">
-              {avatar.photo_url
-                ? <img src={avatar.photo_url} alt={avatar.display_name} className="w-full h-full object-cover" />
-                : <span className="text-2xl font-black text-primary/60">{avatar.display_name?.[0] || 'A'}</span>}
-            </div>
-            {avatar.is_available && (
-              <span className="absolute bottom-0.5 right-0.5 w-3 h-3 rounded-full bg-green-400 border-2 border-background" />
-            )}
-            {avatar.is_verified && (
-              <span className="absolute top-0 right-0 w-4 h-4 rounded-full bg-blue-500 flex items-center justify-center">
-                <Shield className="w-2.5 h-2.5 text-white" />
-              </span>
-            )}
-            {user && (
-              <button onClick={e => { e.preventDefault(); toggleFav.mutate(); }} disabled={toggleFav.isPending}
-                className="absolute -top-1 -left-1 w-5 h-5 rounded-full bg-black/50 backdrop-blur flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                <Heart className={`w-2.5 h-2.5 ${isFavorited ? 'fill-primary text-primary' : 'text-white'}`} />
-              </button>
-            )}
-          </div>
-          {/* Name, rate, location, skills */}
-          <div className="text-center w-full">
-            <p className="text-xs font-semibold truncate leading-tight">{avatar.display_name}</p>
-            <p className="text-[10px] text-primary font-bold">${avatar.hourly_rate || 30}/hr</p>
-            {avatar.city && (
-              <div className="flex items-center justify-center gap-0.5 mt-0.5">
-                <MapPin className="w-2.5 h-2.5 text-muted-foreground" />
-                <span className="text-[10px] text-muted-foreground truncate">{avatar.city}</span>
+        <div className="glass border border-white/5 hover:border-primary/30 rounded-2xl p-4 transition-all hover:scale-[1.02] relative">
+          {user && (
+            <button onClick={e => { e.preventDefault(); toggleFav.mutate(); }} disabled={toggleFav.isPending}
+              className="absolute top-3 right-3 w-6 h-6 rounded-full bg-black/30 backdrop-blur flex items-center justify-center">
+              <Heart className={`w-3 h-3 ${isFavorited ? 'fill-primary text-primary' : 'text-white/60'}`} />
+            </button>
+          )}
+          <div className="flex items-center gap-3 mb-3">
+            <div className="relative flex-shrink-0">
+              <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center text-lg font-bold text-primary overflow-hidden">
+                {avatar.photo_url
+                  ? <img src={avatar.photo_url} alt={avatar.display_name} className="w-full h-full object-cover" />
+                  : avatar.display_name?.[0] || 'A'}
               </div>
-            )}
-            {(avatar.categories || []).length > 0 && (
-              <p className="text-[10px] text-muted-foreground/70 truncate mt-0.5">{(avatar.categories || []).slice(0, 2).join(', ')}</p>
-            )}
+              {avatar.is_available && (
+                <span className="absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full bg-green-400 border-2 border-background" />
+              )}
+              {avatar.is_verified && (
+                <span className="absolute -top-0.5 -right-0.5 w-4 h-4 rounded-full bg-blue-500 flex items-center justify-center">
+                  <Shield className="w-2.5 h-2.5 text-white" />
+                </span>
+              )}
+            </div>
+            <div className="min-w-0">
+              <p className="text-sm font-bold truncate">{avatar.display_name}</p>
+              <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                <MapPin className="w-3 h-3" /> {avatar.city || 'Remote'}
+              </div>
+            </div>
+          </div>
+          {(avatar.bio || (avatar.categories?.length > 0)) && (
+            <p className="text-xs text-muted-foreground mb-2 line-clamp-2">
+              {avatar.bio || (avatar.categories || []).join(', ')}
+            </p>
+          )}
+          {avatar.categories?.length > 0 && avatar.bio && (
+            <div className="flex flex-wrap gap-1 mb-2">
+              {(avatar.categories || []).slice(0, 2).map(c => (
+                <span key={c} className="text-[10px] bg-white/5 border border-white/5 rounded px-1.5 py-0.5">{c}</span>
+              ))}
+            </div>
+          )}
+          <div className="flex items-center justify-between">
+            <span className="text-sm font-bold text-primary">${avatar.hourly_rate || 30}/hr</span>
             {avatar.rating > 0 && (
-              <div className="flex items-center justify-center gap-0.5 mt-0.5">
-                <Star className="w-2.5 h-2.5 text-yellow-400 fill-yellow-400" />
-                <span className="text-[10px] text-muted-foreground">{avatar.rating.toFixed(1)}</span>
+              <div className="flex items-center gap-1">
+                <Star className="w-3 h-3 text-yellow-400 fill-yellow-400" />
+                <span className="text-xs">{avatar.rating.toFixed(1)}</span>
               </div>
             )}
           </div>
