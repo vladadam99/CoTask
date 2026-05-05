@@ -13,7 +13,6 @@ import MobileVerify from './pages/MobileVerify';
 import Landing from './pages/Landing';
 import RoleSelect from './pages/RoleSelect';
 import Onboarding from './pages/Onboarding';
-import UserDashboard from './pages/UserDashboard';
 import AvatarDashboard from './pages/AvatarDashboard';
 import AvatarRequests from './pages/AvatarRequests';
 import AvatarSchedule from './pages/AvatarSchedule';
@@ -91,7 +90,7 @@ const AuthenticatedApp = () => {
       <Route path="/Landing" element={<Landing />} />
       <Route path="/RoleSelect" element={<RoleSelect />} />
       <Route path="/Onboarding" element={<Onboarding />} />
-      <Route path="/UserDashboard" element={<UserDashboard />} />
+      <Route path="/UserDashboard" element={<FindAvatars />} />
       <Route path="/AvatarDashboard" element={<AvatarDashboard />} />
       <Route path="/AvatarRequests" element={<AvatarRequests />} />
       <Route path="/AvatarSchedule" element={<AvatarSchedule />} />
