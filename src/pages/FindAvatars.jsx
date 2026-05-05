@@ -48,7 +48,7 @@ export default function FindAvatars() {
   const [search, setSearch] = useState('');
   const [aiMatchedIds, setAiMatchedIds] = useState(null);
   const [onlineOnly, setOnlineOnly] = useState(false);
-  const [selectedCategory, setSelectedCategory] = useState(null);
+  const [selectedCategories, setSelectedCategories] = useState([]);
   const [showCategoryFilter, setShowCategoryFilter] = useState(false);
   const searchRef = useRef(null);
 
@@ -71,7 +71,7 @@ export default function FindAvatars() {
       if (!aiMatchedIds.includes(a.id)) return false;
     }
     if (onlineOnly && !a.is_available) return false;
-    if (selectedCategory && !(a.categories || []).includes(selectedCategory)) return false;
+    if (selectedCategories.length > 0 && !selectedCategories.some(c => (a.categories || []).includes(c))) return false;
     return true;
   });
 
@@ -117,15 +117,15 @@ export default function FindAvatars() {
           <button
             onClick={() => setShowCategoryFilter(v => !v)}
             className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold border transition-all ${
-              selectedCategory
+              selectedCategories.length > 0
                 ? 'bg-primary/20 text-primary border-primary/30'
                 : 'bg-white/5 text-muted-foreground border-white/10 hover:border-white/20'
             }`}
           >
             <Filter className="w-3 h-3" />
-            {selectedCategory || 'Category'}
-            {selectedCategory && (
-              <span onClick={e => { e.stopPropagation(); setSelectedCategory(null); }} className="ml-0.5">
+            {selectedCategories.length > 0 ? `${selectedCategories.length} selected` : 'Category'}
+            {selectedCategories.length > 0 && (
+              <span onClick={e => { e.stopPropagation(); setSelectedCategories([]); }} className="ml-0.5">
                 <X className="w-3 h-3" />
               </span>
             )}
@@ -136,19 +136,24 @@ export default function FindAvatars() {
         {showCategoryFilter && (
           <div className="mb-5 p-3 rounded-2xl bg-card/40 border border-white/5">
             <div className="flex flex-wrap gap-2">
-              {CATEGORIES.map(c => (
-                <button
-                  key={c.label}
-                  onClick={() => { setSelectedCategory(selectedCategory === c.label ? null : c.label); setShowCategoryFilter(false); }}
-                  className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs border transition-all ${
-                    selectedCategory === c.label
-                      ? 'bg-primary/20 text-primary border-primary/30'
-                      : 'bg-white/5 text-muted-foreground border-white/10 hover:border-white/20'
-                  }`}
-                >
-                  <span>{c.icon}</span> {c.label}
-                </button>
-              ))}
+              {CATEGORIES.map(c => {
+                const isSelected = selectedCategories.includes(c.label);
+                return (
+                  <button
+                    key={c.label}
+                    onClick={() => setSelectedCategories(prev =>
+                      isSelected ? prev.filter(x => x !== c.label) : [...prev, c.label]
+                    )}
+                    className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs border transition-all ${
+                      isSelected
+                        ? 'bg-primary/20 text-primary border-primary/30'
+                        : 'bg-white/5 text-muted-foreground border-white/10 hover:border-white/20'
+                    }`}
+                  >
+                    <span>{c.icon}</span> {c.label}
+                  </button>
+                );
+              })}
             </div>
           </div>
         )}
@@ -165,7 +170,7 @@ export default function FindAvatars() {
           <div className="text-center py-20 space-y-3">
             <p className="text-3xl">🔍</p>
             <h3 className="font-bold">No avatars found</h3>
-            <Button variant="outline" className="border-white/10" onClick={() => { setOnlineOnly(false); setSelectedCategory(null); setAiMatchedIds(null); }}>Clear filters</Button>
+            <Button variant="outline" className="border-white/10" onClick={() => { setOnlineOnly(false); setSelectedCategories([]); setAiMatchedIds(null); }}>Clear filters</Button>
           </div>
         ) : (
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
