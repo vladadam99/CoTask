@@ -239,10 +239,19 @@ function AvatarCard({ avatar, i, user, queryClient }) {
               </button>
             )}
           </div>
-          {/* Name & rate */}
+          {/* Name, rate, location, skills */}
           <div className="text-center w-full">
             <p className="text-xs font-semibold truncate leading-tight">{avatar.display_name}</p>
             <p className="text-[10px] text-primary font-bold">${avatar.hourly_rate || 30}/hr</p>
+            {avatar.city && (
+              <div className="flex items-center justify-center gap-0.5 mt-0.5">
+                <MapPin className="w-2.5 h-2.5 text-muted-foreground" />
+                <span className="text-[10px] text-muted-foreground truncate">{avatar.city}</span>
+              </div>
+            )}
+            {(avatar.categories || []).length > 0 && (
+              <p className="text-[10px] text-muted-foreground/70 truncate mt-0.5">{(avatar.categories || []).slice(0, 2).join(', ')}</p>
+            )}
             {avatar.rating > 0 && (
               <div className="flex items-center justify-center gap-0.5 mt-0.5">
                 <Star className="w-2.5 h-2.5 text-yellow-400 fill-yellow-400" />
