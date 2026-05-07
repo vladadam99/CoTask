@@ -4,7 +4,7 @@ import { useCurrentUser } from '@/lib/useCurrentUser';
 import AppShell from '@/components/layout/AppShell';
 import GlassCard from '@/components/ui/GlassCard';
 import { getNavItems } from '@/lib/navItems';
-import { ArrowLeft, Sun, Moon, Palette, ArrowRightLeft, LogOut, Shield } from 'lucide-react';
+import { ArrowLeft, Sun, Moon, Palette, ArrowRightLeft, LogOut, Shield, CheckCircle2 } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { useTheme } from '@/lib/ThemeContext';
 
@@ -105,9 +105,21 @@ export default function UserSettings() {
               <Shield className="w-4 h-4 text-primary" />
               <h2 className="font-semibold text-sm">Identity Verification</h2>
             </div>
-            <p className="text-xs text-muted-foreground mb-3">Verify your identity to build trust on the platform.</p>
-            <button onClick={() => navigate('/IdentityVerification')}
-              className="text-xs text-primary hover:underline">Start verification →</button>
+            {user?.identity_verified ? (
+              <div className="flex items-center gap-2 py-2 px-3 rounded-xl bg-green-500/10 border border-green-500/20">
+                <CheckCircle2 className="w-4 h-4 text-green-400 flex-shrink-0" />
+                <div>
+                  <p className="text-sm font-semibold text-green-400">Identity Verified ✓</p>
+                  <p className="text-xs text-muted-foreground">Your identity has been successfully confirmed.</p>
+                </div>
+              </div>
+            ) : (
+              <>
+                <p className="text-xs text-muted-foreground mb-3">Verify your identity to build trust and unlock posting & applying for jobs.</p>
+                <button onClick={() => navigate('/IdentityVerification')}
+                  className="text-xs text-primary hover:underline">Start verification →</button>
+              </>
+            )}
           </GlassCard>
 
           {/* Sign out */}

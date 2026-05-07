@@ -5,7 +5,7 @@ import { useCurrentUser } from '@/lib/useCurrentUser';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
-  ArrowLeft, MoreVertical, Star, MapPin, Briefcase, Pencil, FileText
+  ArrowLeft, MoreVertical, Star, MapPin, Briefcase, Pencil, FileText, ShieldCheck
 } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import AppShell from '@/components/layout/AppShell';
@@ -106,6 +106,11 @@ export default function UserProfile() {
               <span className="flex items-center gap-1 text-xs text-yellow-400">
                 <Star className="w-3 h-3 fill-yellow-400" /> {avgRating} ({reviews.length})
               </span>
+            )}
+            {user?.identity_verified && (
+              <Badge className="bg-blue-500/10 text-blue-400 border-blue-500/20 text-xs flex items-center gap-1">
+                <ShieldCheck className="w-3 h-3" /> Verified
+              </Badge>
             )}
           </div>
         </div>

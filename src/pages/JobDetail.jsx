@@ -10,7 +10,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import StatusBadge from '@/components/ui/StatusBadge';
 import JobPaymentModal from '@/components/jobs/JobPaymentModal';
-import { ArrowLeft, MapPin, Clock, DollarSign, Users, CheckCircle, XCircle, Star, Award, MessageCircle, Pencil, Calendar, AlertCircle } from 'lucide-react';
+import { ArrowLeft, MapPin, Clock, DollarSign, Users, CheckCircle, XCircle, Star, Award, MessageCircle, Pencil, Calendar, AlertCircle, ShieldAlert } from 'lucide-react';
 import JobNegotiationFlow from '@/components/jobs/JobNegotiationFlow';
 
 const DURATION_LABELS = { hourly: '/hr', daily: '/day', weekly: '/wk', monthly: '/mo', custom: '' };
@@ -398,9 +398,20 @@ export default function JobDetail() {
 
         {/* Apply Button / Form */}
         {canApply && !showApplyForm && (
-          <Button className="w-full h-11" onClick={() => setShowApplyForm(true)}>
-            Apply for this Job
-          </Button>
+          user?.identity_verified ? (
+            <Button className="w-full h-11" onClick={() => setShowApplyForm(true)}>
+              Apply for this Job
+            </Button>
+          ) : (
+            <div className="glass rounded-2xl p-5 border border-yellow-500/20 flex items-center gap-4">
+              <ShieldAlert className="w-6 h-6 text-yellow-400 flex-shrink-0" />
+              <div className="flex-1 min-w-0">
+                <p className="font-semibold text-sm">Identity Verification Required</p>
+                <p className="text-xs text-muted-foreground">You must verify your identity before applying to jobs.</p>
+              </div>
+              <Button size="sm" onClick={() => navigate('/IdentityVerification')}>Verify</Button>
+            </div>
+          )
         )}
 
         {showApplyForm && (

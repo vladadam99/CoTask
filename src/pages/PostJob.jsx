@@ -7,7 +7,7 @@ import AppShell from '@/components/layout/AppShell';
 import { getNavItems } from '@/lib/navItems';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { ArrowLeft, Plus, X } from 'lucide-react';
+import { ArrowLeft, Plus, X, ShieldAlert } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 const CATEGORIES = ['Shopping', 'Delivery', 'Real Estate', 'Tourism', 'Events', 'Inspection', 'Translation', 'Other'];
@@ -59,6 +59,25 @@ export default function PostJob() {
   });
 
   if (!user) return null;
+
+  if (!user.identity_verified) {
+    return (
+      <AppShell navItems={getNavItems(user?.selected_role)} user={user}>
+        <div className="max-w-2xl mx-auto flex flex-col items-center justify-center py-24 text-center gap-5">
+          <div className="w-16 h-16 rounded-full bg-yellow-500/10 flex items-center justify-center">
+            <ShieldAlert className="w-8 h-8 text-yellow-400" />
+          </div>
+          <div>
+            <h2 className="text-xl font-bold mb-2">Identity Verification Required</h2>
+            <p className="text-muted-foreground text-sm max-w-sm">You must verify your identity before posting a job. This keeps the platform safe and trustworthy for everyone.</p>
+          </div>
+          <Button onClick={() => navigate('/IdentityVerification')}>
+            Verify My Identity
+          </Button>
+        </div>
+      </AppShell>
+    );
+  }
 
   return (
     <AppShell navItems={getNavItems(user?.selected_role)} user={user}>
