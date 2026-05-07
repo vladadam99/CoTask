@@ -37,11 +37,16 @@ const toastVariants = cva(
   }
 );
 
-const Toast = React.forwardRef(({ className, variant, ...props }, ref) => {
+const Toast = React.forwardRef(({ className, variant, open, onOpenChange, ...props }, ref) => {
   return (
     <div
       ref={ref}
-      className={cn(toastVariants({ variant }), className)}
+      className={cn(
+        toastVariants({ variant }),
+        "transition-all duration-500",
+        open === false ? "opacity-0 translate-x-full pointer-events-none" : "opacity-100 translate-x-0",
+        className
+      )}
       {...props}
     />
   );
@@ -101,4 +106,4 @@ export {
   ToastDescription,
   ToastClose,
   ToastAction,
-}; 
+};
