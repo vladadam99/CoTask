@@ -20,6 +20,75 @@ Deno.serve(async (req) => {
     return new Response(`Webhook Error: ${err.message}`, { status: 400 });
   }
 
+  if (event.type === 'identity.verification_session.verified') {
+    const verificationSession = event.data.object;
+    const userEmail = verificationSession.metadata?.user_email;
+    const profileId = verificationSession.metadata?.profile_id;
+    const profileType = verificationSession.metadata?.profile_type;
+
+    if (userEmail) {
+      try {
+        const base44 = createClientFromRequest(req);
+
+        // Update user record
+        const users = await base44.asServiceRole.entities.User.filter({ email: userEmail });
+        if (users.length > 0) {
+          await base44.asServiceRole.entities.User.update(users[0].id, {
+            identity_verified: true,
+            identity_verification_status: 'verified',
+          });
+        }
+
+        // Update avatar or enterprise profile
+        if (profileId && profileType === 'avatar') {
+          await base44.asServiceRole.entities.AvatarProfile.update(profileId, {
+            is_verified: true,
+            verification_status: 'verified',
+          });
+        } else if (profileId && profileType === 'enterprise') {
+          await base44.asServiceRole.entities.EnterpriseProfile.update(profileId, {
+            is_verified: true,
+            verification_status: 'verified',
+          });
+        }
+
+        // Create notification
+        await base44.asServiceRole.entities.Notification.create({
+          user_email: userEmail,
+          title: 'Identity Verified!',
+          message: 'Your identity has been successfully verified. You now have full access to all platform features.',
+          type: 'system',
+          link: '/UserSettings',
+        });
+
+        console.log(`Identity verified for user: ${userEmail}`);
+      } catch (err) {
+        console.error('Failed to update verification status:', err.message);
+      }
+    }
+    return Response.json({ received: true });
+  }
+
+  if (event.type === 'identity.verification_session.requires_input') {
+    const verificationSession = event.data.object;
+    const userEmail = verificationSession.metadata?.user_email;
+    if (userEmail) {
+      try {
+        const base44 = createClientFromRequest(req);
+        const users = await base44.asServiceRole.entities.User.filter({ email: userEmail });
+        if (users.length > 0) {
+          await base44.asServiceRole.entities.User.update(users[0].id, {
+            identity_verification_status: 'rejected',
+          });
+        }
+        console.log(`Identity verification failed for user: ${userEmail}`);
+      } catch (err) {
+        console.error('Failed to update rejected status:', err.message);
+      }
+    }
+    return Response.json({ received: true });
+  }
+
   if (event.type === 'checkout.session.completed') {
     const session = event.data.object;
     const bookingId = session.metadata?.booking_id;

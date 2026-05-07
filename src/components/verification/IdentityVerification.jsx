@@ -1,83 +1,102 @@
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { base44 } from '@/api/base44Client';
-import { CheckCircle, XCircle, Loader2, ShieldCheck, AlertTriangle, FileText, User } from 'lucide-react';
-import CameraCapture from './CameraCapture';
-import QRVerification from './QRVerification';
-
-function useHasCamera() {
-  const [status, setStatus] = useState('checking'); // 'checking' | 'available' | 'unavailable'
-  useEffect(() => {
-    if (!navigator.mediaDevices?.getUserMedia) {
-      setStatus('unavailable');
-      return;
-    }
-    navigator.mediaDevices.getUserMedia({ video: true, audio: false })
-      .then(stream => {
-        stream.getTracks().forEach(t => t.stop());
-        setStatus('available');
-      })
-      .catch(() => setStatus('unavailable'));
-  }, []);
-  return status;
-}
+import { ShieldCheck, Loader2, CheckCircle, AlertTriangle, ExternalLink } from 'lucide-react';
 
 export default function IdentityVerification({ profileId, profileType, onComplete }) {
-  const cameraStatus = useHasCamera();
-  const [idFile, setIdFile] = useState(null);
-  const [selfieFile, setSelfieFile] = useState(null);
-  const [idPreview, setIdPreview] = useState(null);
-  const [selfiePreview, setSelfiePreview] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [loadingMsg, setLoadingMsg] = useState('');
-  const [result, setResult] = useState(null);
   const [error, setError] = useState(null);
+  const [status, setStatus] = useState('idle'); // idle | pending | verified | failed
+  const [pollingInterval, setPollingInterval] = useState(null);
 
-  // Generate a stable session ID for QR flow
-  const [sessionId] = useState(() => `verify_${Date.now()}_${Math.random().toString(36).slice(2)}`);
+  // On mount, check if already verified
+  useEffect(() => {
+    base44.auth.me().then(u => {
+      if (u?.identity_verified) setStatus('verified');
+      else if (u?.identity_verification_status === 'rejected') setStatus('failed');
+    });
+  }, []);
 
-  // Check if coming from mobile QR flow
-  const urlParams = new URLSearchParams(window.location.search);
-  const isMobileSession = urlParams.get('mobile') === '1';
+  // Poll for verification status after launching Stripe
+  const startPolling = () => {
+    const interval = setInterval(async () => {
+      try {
+        const u = await base44.auth.me();
+        if (u?.identity_verified) {
+          clearInterval(interval);
+          setPollingInterval(null);
+          setStatus('verified');
+          if (onComplete) onComplete({ success: true });
+        } else if (u?.identity_verification_status === 'rejected') {
+          clearInterval(interval);
+          setPollingInterval(null);
+          setStatus('failed');
+        }
+      } catch (e) {}
+    }, 3000);
+    setPollingInterval(interval);
+    return interval;
+  };
 
-  const handleSubmit = async () => {
-    if (!idFile || !selfieFile) return;
+  useEffect(() => {
+    return () => { if (pollingInterval) clearInterval(pollingInterval); };
+  }, [pollingInterval]);
+
+  const handleVerify = async () => {
     setLoading(true);
     setError(null);
-    setResult(null);
-
     try {
-      setLoadingMsg('Uploading documents...');
-      const [idUpload, selfieUpload] = await Promise.all([
-        base44.integrations.Core.UploadFile({ file: idFile }),
-        base44.integrations.Core.UploadFile({ file: selfieFile }),
-      ]);
-
-      setLoadingMsg('AI is analysing your identity...');
-      const response = await base44.functions.invoke('verifyIdentity', {
-        id_photo_url: idUpload.file_url,
-        selfie_url: selfieUpload.file_url,
-        profile_id: profileId,
-        profile_type: profileType,
-        session_id: isMobileSession ? urlParams.get('session') : null,
+      const res = await base44.functions.invoke('createStripeVerificationSession', {
+        profile_id: profileId || '',
+        profile_type: profileType || '',
       });
 
-      setResult(response.data);
-      if (response.data.success && onComplete) {
-        onComplete(response.data);
+      const { client_secret } = res.data;
+      if (!client_secret) throw new Error('Failed to create verification session');
+
+      // Load Stripe.js dynamically
+      if (!window.Stripe) {
+        await new Promise((resolve, reject) => {
+          const script = document.createElement('script');
+          script.src = 'https://js.stripe.com/v3/';
+          script.onload = resolve;
+          script.onerror = reject;
+          document.head.appendChild(script);
+        });
       }
-    } catch (e) {
-      setError(e.message || 'Verification failed. Please try again.');
-    } finally {
+
+      const stripeKeyRes = await base44.functions.invoke('getStripeKey', {});
+      const publishableKey = stripeKeyRes.data?.publishableKey || stripeKeyRes.data?.publishable_key;
+      if (!publishableKey) throw new Error('Could not load Stripe configuration');
+
+      const stripe = window.Stripe(publishableKey);
+
+      setStatus('pending');
       setLoading(false);
-      setLoadingMsg('');
+
+      // Start polling before opening modal
+      startPolling();
+
+      const { error: stripeError } = await stripe.verifyIdentity(client_secret);
+
+      if (stripeError) {
+        if (pollingInterval) clearInterval(pollingInterval);
+        if (stripeError.code === 'session_cancelled') {
+          setStatus('idle');
+        } else {
+          setError(stripeError.message);
+          setStatus('idle');
+        }
+      }
+      // If no error, polling will pick up the result via webhook
+    } catch (e) {
+      setError(e.message || 'Failed to start verification. Please try again.');
+      setLoading(false);
+      setStatus('idle');
     }
   };
 
-  const canSubmit = idFile && selfieFile && !loading;
-
-  // If camera unavailable and not in mobile flow, show QR code
-  if (cameraStatus === 'unavailable' && !isMobileSession) {
+  if (status === 'verified') {
     return (
       <div className="space-y-4">
         <div className="flex items-center gap-3">
@@ -86,19 +105,65 @@ export default function IdentityVerification({ profileId, profileType, onComplet
           </div>
           <div>
             <h3 className="font-semibold text-foreground">Identity Verification</h3>
-            <p className="text-sm text-muted-foreground">Camera not available on this device</p>
           </div>
         </div>
-        <QRVerification sessionId={sessionId} onComplete={onComplete} />
+        <div className="rounded-xl bg-green-500/5 border border-green-500/20 p-6 flex items-center gap-4">
+          <CheckCircle className="w-8 h-8 text-green-400 flex-shrink-0" />
+          <div>
+            <p className="font-semibold text-green-400 text-lg">Identity Verified!</p>
+            <p className="text-sm text-muted-foreground">You have full access to all platform features.</p>
+          </div>
+        </div>
       </div>
     );
   }
 
-  if (cameraStatus === 'checking') {
+  if (status === 'pending') {
     return (
-      <div className="flex items-center justify-center py-12 gap-3 text-muted-foreground">
-        <Loader2 className="w-5 h-5 animate-spin" />
-        <span className="text-sm">Checking camera availability...</span>
+      <div className="space-y-4">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
+            <ShieldCheck className="w-5 h-5 text-primary" />
+          </div>
+          <div>
+            <h3 className="font-semibold text-foreground">Identity Verification</h3>
+            <p className="text-sm text-muted-foreground">Complete the verification in the Stripe window</p>
+          </div>
+        </div>
+        <div className="rounded-xl bg-muted/30 border border-border p-6 flex flex-col items-center gap-4 text-center">
+          <Loader2 className="w-8 h-8 animate-spin text-primary" />
+          <div>
+            <p className="font-semibold">Verification in progress...</p>
+            <p className="text-sm text-muted-foreground mt-1">Complete the steps in the Stripe verification window. This page will update automatically.</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (status === 'failed') {
+    return (
+      <div className="space-y-4">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
+            <ShieldCheck className="w-5 h-5 text-primary" />
+          </div>
+          <div>
+            <h3 className="font-semibold text-foreground">Identity Verification</h3>
+          </div>
+        </div>
+        <div className="rounded-xl bg-red-500/5 border border-red-500/20 p-6 space-y-4">
+          <div className="flex items-center gap-3">
+            <AlertTriangle className="w-7 h-7 text-red-400 flex-shrink-0" />
+            <div>
+              <p className="font-semibold text-red-400">Verification Failed</p>
+              <p className="text-sm text-muted-foreground">Your documents could not be verified. Please try again with a clear, valid ID document.</p>
+            </div>
+          </div>
+          <Button variant="outline" className="w-full" onClick={() => setStatus('idle')}>
+            Try Again
+          </Button>
+        </div>
       </div>
     );
   }
@@ -112,113 +177,39 @@ export default function IdentityVerification({ profileId, profileType, onComplet
         </div>
         <div>
           <h3 className="font-semibold text-foreground">Identity Verification</h3>
-          <p className="text-sm text-muted-foreground">Take a photo of your ID and a selfie using your camera</p>
+          <p className="text-sm text-muted-foreground">Powered by Stripe Identity</p>
         </div>
       </div>
 
-      {/* Camera capture area */}
-      {!result && (
-        <>
-          <div className="flex gap-4 flex-col sm:flex-row">
-            <CameraCapture
-              label="Identity Document"
-              icon={FileText}
-              facingMode="environment"
-              captured={idPreview}
-              onCapture={(file, preview) => { setIdFile(file); setIdPreview(preview); }}
-            />
-            <CameraCapture
-              label="Selfie Photo"
-              icon={User}
-              facingMode="user"
-              captured={selfiePreview}
-              onCapture={(file, preview) => { setSelfieFile(file); setSelfiePreview(preview); }}
-            />
-          </div>
+      {/* Info */}
+      <div className="rounded-xl bg-muted/30 border border-border p-4 space-y-2">
+        <p className="text-sm font-medium">What you'll need:</p>
+        <ul className="text-sm text-muted-foreground space-y-1">
+          <li>• A government-issued photo ID (passport, driver's licence, or national ID)</li>
+          <li>• A device with a camera for a selfie</li>
+          <li>• Good lighting and a clear background</li>
+        </ul>
+      </div>
 
-          <div className="rounded-xl bg-muted/30 border border-border p-4 space-y-1.5">
-            <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Tips for best results</p>
-            <ul className="text-xs text-muted-foreground space-y-1">
-              <li>• Ensure the full document is visible and well-lit</li>
-              <li>• Your selfie should clearly show your face</li>
-              <li>• Avoid glare, blur, or heavy shadows</li>
-              <li>• Remove sunglasses or hats for the selfie</li>
-            </ul>
-          </div>
+      <div className="rounded-xl bg-blue-500/5 border border-blue-500/20 p-4">
+        <p className="text-xs text-muted-foreground">
+          <span className="font-medium text-foreground">Secure & Private:</span> Your identity documents are processed by Stripe — a trusted global payments and identity platform. CoTask does not store your document images.
+        </p>
+      </div>
 
-          {error && (
-            <div className="flex items-center gap-2 p-3 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-sm">
-              <AlertTriangle className="w-4 h-4 shrink-0" /> {error}
-            </div>
-          )}
-
-          <Button onClick={handleSubmit} disabled={!canSubmit} className="w-full" size="lg">
-            {loading ? (
-              <><Loader2 className="w-4 h-4 mr-2 animate-spin" />{loadingMsg || 'Verifying...'}</>
-            ) : (
-              <><ShieldCheck className="w-4 h-4 mr-2" />Verify My Identity</>
-            )}
-          </Button>
-        </>
-      )}
-
-      {/* Result */}
-      {result && (
-        <div className={`rounded-xl border p-6 space-y-4 ${result.success ? 'bg-green-500/5 border-green-500/20' : 'bg-red-500/5 border-red-500/20'}`}>
-          <div className="flex items-center gap-3">
-            {result.success ? (
-              <CheckCircle className="w-8 h-8 text-green-400" />
-            ) : (
-              <XCircle className="w-8 h-8 text-red-400" />
-            )}
-            <div>
-              <p className={`font-semibold text-lg ${result.success ? 'text-green-400' : 'text-red-400'}`}>
-                {result.success ? 'Identity Verified!' : 'Verification Failed'}
-              </p>
-              <p className="text-sm text-muted-foreground capitalize">Confidence: {result.confidence}</p>
-            </div>
-          </div>
-
-          {result.full_name && (
-            <p className="text-sm text-foreground">
-              <span className="text-muted-foreground">Name on document: </span>
-              <span className="font-medium">{result.full_name}</span>
-            </p>
-          )}
-
-          {result.document_type && (
-            <p className="text-sm text-foreground capitalize">
-              <span className="text-muted-foreground">Document type: </span>
-              <span className="font-medium">{result.document_type.replace(/_/g, ' ')}</span>
-            </p>
-          )}
-
-          {result.rejection_reasons?.length > 0 && (
-            <div className="space-y-1">
-              <p className="text-sm font-medium text-muted-foreground">Issues found:</p>
-              {result.rejection_reasons.map((r, i) => (
-                <p key={i} className="text-sm text-red-400 flex items-start gap-1.5">
-                  <XCircle className="w-3.5 h-3.5 mt-0.5 shrink-0" /> {r}
-                </p>
-              ))}
-            </div>
-          )}
-
-          {result.notes && (
-            <p className="text-sm text-muted-foreground italic">{result.notes}</p>
-          )}
-
-          {!result.success && (
-            <Button variant="outline" className="w-full" onClick={() => {
-              setResult(null);
-              setIdFile(null); setSelfieFile(null);
-              setIdPreview(null); setSelfiePreview(null);
-            }}>
-              Try Again
-            </Button>
-          )}
+      {error && (
+        <div className="flex items-center gap-2 p-3 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-sm">
+          <AlertTriangle className="w-4 h-4 shrink-0" /> {error}
         </div>
       )}
+
+      <Button onClick={handleVerify} disabled={loading} className="w-full" size="lg">
+        {loading ? (
+          <><Loader2 className="w-4 h-4 mr-2 animate-spin" />Setting up verification...</>
+        ) : (
+          <><ShieldCheck className="w-4 h-4 mr-2" />Start Identity Verification<ExternalLink className="w-3 h-3 ml-1" /></>
+        )}
+      </Button>
     </div>
   );
 }
