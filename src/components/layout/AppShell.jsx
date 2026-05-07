@@ -25,7 +25,6 @@ function ProfilePanel({ user, onClose }) {
   const walletPath = user?.selected_role === 'avatar' ? '/AvatarWallet' : '/UserWallet';
 
   const menuItems = [
-    { icon: User, label: 'Profile', path: '/Profile' },
     { icon: Settings, label: 'Settings', path: settingsPath },
     { icon: Wallet, label: 'Wallet', path: walletPath },
     { icon: Calendar, label: 'Bookings', path: bookingsPath },
@@ -44,7 +43,7 @@ function ProfilePanel({ user, onClose }) {
 
       <div className="flex-1 overflow-y-auto">
         {/* User card */}
-        <div className="mx-4 mt-4 mb-2 p-4 rounded-2xl bg-card border border-white/5 flex items-center gap-3">
+        <Link to="/Profile" onClick={onClose} className="mx-4 mt-4 mb-2 p-4 rounded-2xl bg-card border border-white/5 flex items-center gap-3 hover:bg-white/5 transition-colors">
           <div className="w-14 h-14 rounded-full bg-primary/20 flex items-center justify-center text-xl font-bold text-primary flex-shrink-0">
             {user?.full_name?.[0] || 'U'}
           </div>
@@ -52,7 +51,8 @@ function ProfilePanel({ user, onClose }) {
             <p className="font-bold text-base truncate">{user?.full_name || 'User'}</p>
             <p className="text-sm text-muted-foreground truncate">{user?.email}</p>
           </div>
-        </div>
+          <ChevronRight className="w-4 h-4 text-muted-foreground ml-auto flex-shrink-0" />
+        </Link>
 
         {/* Role switcher */}
         {user && (
