@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { LogOut, Menu, X, HelpCircle, Settings, User, ChevronRight, Wallet, Calendar } from 'lucide-react';
+import { LogOut, X, HelpCircle, Settings, User, ChevronRight, Wallet, Calendar } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import NotificationBell from '@/components/notifications/NotificationBell';
 import RoleSwitcher from '@/components/RoleSwitcher';
 
-// Types that map to bottom nav icons
 const MSG_TYPES = ['message'];
 const BOOKING_TYPES = ['booking_accepted', 'booking_declined'];
 const JOB_TYPES = ['booking_request'];
@@ -20,9 +19,85 @@ function getNavBadgeCount(path, unreadNotifs) {
   }).length;
 }
 
+function ProfilePanel({ user, onClose }) {
+  const settingsPath = user?.selected_role === 'avatar' ? '/AvatarSettings' : user?.selected_role === 'enterprise' ? '/EnterpriseSettings' : '/Profile';
+  const bookingsPath = user?.selected_role === 'avatar' ? '/AvatarRequests' : '/Bookings';
+  const walletPath = user?.selected_role === 'avatar' ? '/AvatarWallet' : '/UserWallet';
+
+  const menuItems = [
+    { icon: User, label: 'Profile', path: '/Profile' },
+    { icon: Settings, label: 'Settings', path: settingsPath },
+    { icon: Wallet, label: 'Wallet', path: walletPath },
+    { icon: Calendar, label: 'Bookings', path: bookingsPath },
+    { icon: HelpCircle, label: 'Help & FAQ', path: '/FAQ' },
+  ];
+
+  return (
+    <div className="fixed inset-0 z-[60] flex flex-col bg-background">
+      {/* Header */}
+      <div className="flex items-center justify-between px-4 h-14 border-b border-white/5 flex-shrink-0">
+        <h1 className="text-lg font-bold">Profile</h1>
+        <button onClick={onClose} className="p-2 rounded-lg hover:bg-white/10 transition-colors">
+          <X className="w-5 h-5" />
+        </button>
+      </div>
+
+      <div className="flex-1 overflow-y-auto">
+        {/* User card */}
+        <div className="mx-4 mt-4 mb-2 p-4 rounded-2xl bg-card border border-white/5 flex items-center gap-3">
+          <div className="w-14 h-14 rounded-full bg-primary/20 flex items-center justify-center text-xl font-bold text-primary flex-shrink-0">
+            {user?.full_name?.[0] || 'U'}
+          </div>
+          <div className="min-w-0">
+            <p className="font-bold text-base truncate">{user?.full_name || 'User'}</p>
+            <p className="text-sm text-muted-foreground truncate">{user?.email}</p>
+          </div>
+        </div>
+
+        {/* Role switcher */}
+        {user && (
+          <div className="mx-4 mb-4">
+            <RoleSwitcher user={user} />
+          </div>
+        )}
+
+        {/* Menu items */}
+        <div className="mx-4 rounded-2xl bg-card border border-white/5 overflow-hidden mb-4">
+          {menuItems.map((item, idx) => (
+            <Link
+              key={item.path}
+              to={item.path}
+              onClick={onClose}
+              className={`flex items-center gap-3 px-4 py-4 hover:bg-white/5 transition-colors text-sm ${
+                idx !== menuItems.length - 1 ? 'border-b border-white/5' : ''
+              }`}
+            >
+              <item.icon className="w-5 h-5 text-muted-foreground flex-shrink-0" />
+              <span className="flex-1 font-medium">{item.label}</span>
+              <ChevronRight className="w-4 h-4 text-muted-foreground" />
+            </Link>
+          ))}
+        </div>
+
+        {/* Sign out */}
+        <div className="mx-4 mb-8">
+          <button
+            onClick={() => base44.auth.logout('/Landing')}
+            className="w-full flex items-center gap-3 px-4 py-4 rounded-2xl bg-card border border-white/5 hover:bg-white/5 transition-colors text-sm text-destructive"
+          >
+            <LogOut className="w-5 h-5 flex-shrink-0" />
+            <span className="font-medium">Sign out</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function AppShell({ children, navItems = [], user, fullBleed = false }) {
   const [unreadNotifs, setUnreadNotifs] = useState([]);
-  const [drawerOpen, setDrawerOpen] = useState(false);
+  const [profileOpen, setProfileOpen] = useState(false);
+  const location = useLocation();
 
   useEffect(() => {
     if (!user?.email) return;
@@ -47,7 +122,7 @@ export default function AppShell({ children, navItems = [], user, fullBleed = fa
     return unsub;
   }, [user?.email]);
 
-  const homePath = user?.selected_role === 'avatar' ? '/AvatarDashboard' : user?.selected_role === 'enterprise' ? '/EnterpriseDashboard' : '/UserDashboard';
+  const homePath = user?.selected_role === 'avatar' ? '/AvatarDashboard' : user?.selected_role === 'enterprise' ? '/EnterpriseDashboard' : '/FindAvatars';
   const settingsPath = user?.selected_role === 'avatar' ? '/AvatarSettings' : user?.selected_role === 'enterprise' ? '/EnterpriseSettings' : '/Profile';
 
   return (
@@ -55,11 +130,7 @@ export default function AppShell({ children, navItems = [], user, fullBleed = fa
       {/* Desktop Sidebar */}
       <aside className="hidden lg:flex flex-col w-64 glass-strong border-r border-white/5 fixed inset-y-0 left-0 z-40">
         <div className="h-16 flex items-center px-6 border-b border-white/5">
-          <Link to={
-            user?.selected_role === 'avatar' ? '/AvatarDashboard'
-            : user?.selected_role === 'enterprise' ? '/EnterpriseDashboard'
-            : '/UserDashboard'
-          } className="text-xl font-bold tracking-tight flex-1 py-3 px-2 rounded-lg hover:bg-white/5 transition-colors">
+          <Link to={homePath} className="text-xl font-bold tracking-tight flex-1 py-3 px-2 rounded-lg hover:bg-white/5 transition-colors">
             Co<span className="text-primary">Task</span>
           </Link>
         </div>
@@ -71,7 +142,7 @@ export default function AppShell({ children, navItems = [], user, fullBleed = fa
                 className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-all ${
                   isActive ? 'bg-primary/10 text-primary font-medium' : 'text-muted-foreground hover:text-foreground hover:bg-white/5'
                 }`}>
-                <item.icon className="w-4.5 h-4.5" />
+                <item.icon className="w-4 h-4" />
                 {item.label}
               </Link>
             );
@@ -100,91 +171,15 @@ export default function AppShell({ children, navItems = [], user, fullBleed = fa
       {/* Mobile Top Bar */}
       <div className="lg:hidden fixed top-0 left-0 right-0 z-50 h-14 glass-strong border-b border-white/5 flex items-center justify-between px-4">
         <Link to={homePath} className="text-lg font-bold">Co<span className="text-primary">Task</span></Link>
-        <div className="flex items-center gap-2">
-          <NotificationBell userEmail={user?.email} userRole={user?.selected_role} />
-          <button onClick={() => setDrawerOpen(true)} className="p-3 -mr-1 rounded-lg hover:bg-white/10 transition-colors">
-            <Menu className="w-5 h-5" />
-          </button>
-        </div>
+        <NotificationBell userEmail={user?.email} userRole={user?.selected_role} />
       </div>
 
-      {/* Mobile Drawer */}
-      {drawerOpen && (
-        <div className="lg:hidden fixed inset-0 z-[60]">
-          <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setDrawerOpen(false)} />
-          <aside className="absolute right-0 inset-y-0 w-72 glass-strong border-l border-white/10 flex flex-col">
-            {/* Drawer Header */}
-            <div className="h-14 flex items-center justify-between px-4 border-b border-white/5">
-              <span className="font-bold text-sm">Menu</span>
-              <button onClick={() => setDrawerOpen(false)} className="p-3 -mr-1 rounded-lg hover:bg-white/10">
-                <X className="w-4 h-4" />
-              </button>
-            </div>
-
-            {/* User Info */}
-            <div className="p-4 border-b border-white/5">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center text-base font-bold text-primary">
-                  {user?.full_name?.[0] || 'U'}
-                </div>
-                <div className="flex-1 min-w-0">
-                  <p className="font-semibold text-sm truncate">{user?.full_name || 'User'}</p>
-                  <p className="text-xs text-muted-foreground truncate">{user?.email}</p>
-                </div>
-              </div>
-            </div>
-
-            {/* Drawer Links */}
-            <nav className="flex-1 py-3 px-3 space-y-1 overflow-y-auto">
-              <Link to="/Profile" onClick={() => setDrawerOpen(false)}
-                className="flex items-center gap-3 px-3 py-3 rounded-xl hover:bg-white/5 transition-colors text-sm">
-                <User className="w-4 h-4 text-muted-foreground" />
-                <span>Profile</span>
-                <ChevronRight className="w-4 h-4 text-muted-foreground ml-auto" />
-              </Link>
-              <Link to={settingsPath} onClick={() => setDrawerOpen(false)}
-                className="flex items-center gap-3 px-3 py-3 rounded-xl hover:bg-white/5 transition-colors text-sm">
-                <Settings className="w-4 h-4 text-muted-foreground" />
-                <span>Settings</span>
-                <ChevronRight className="w-4 h-4 text-muted-foreground ml-auto" />
-              </Link>
-              <Link
-                to={user?.selected_role === 'avatar' ? '/AvatarWallet' : '/UserWallet'}
-                onClick={() => setDrawerOpen(false)}
-                className="flex items-center gap-3 px-3 py-3 rounded-xl hover:bg-white/5 transition-colors text-sm">
-                <Wallet className="w-4 h-4 text-muted-foreground" />
-                <span>Wallet</span>
-                <ChevronRight className="w-4 h-4 text-muted-foreground ml-auto" />
-              </Link>
-              <Link
-                to={user?.selected_role === 'avatar' ? '/AvatarRequests' : '/Bookings'}
-                onClick={() => setDrawerOpen(false)}
-                className="flex items-center gap-3 px-3 py-3 rounded-xl hover:bg-white/5 transition-colors text-sm">
-                <Calendar className="w-4 h-4 text-muted-foreground" />
-                <span>Bookings</span>
-                <ChevronRight className="w-4 h-4 text-muted-foreground ml-auto" />
-              </Link>
-              <Link to="/FAQ" onClick={() => setDrawerOpen(false)}
-                className="flex items-center gap-3 px-3 py-3 rounded-xl hover:bg-white/5 transition-colors text-sm">
-                <HelpCircle className="w-4 h-4 text-muted-foreground" />
-                <span>Help & FAQ</span>
-                <ChevronRight className="w-4 h-4 text-muted-foreground ml-auto" />
-              </Link>
-            </nav>
-
-            {/* Sign Out */}
-            <div className="p-4 border-t border-white/5">
-              <Button variant="ghost" className="w-full justify-start text-muted-foreground" onClick={() => base44.auth.logout('/Landing')}>
-                <LogOut className="w-4 h-4 mr-2" /> Sign out
-              </Button>
-            </div>
-          </aside>
-        </div>
-      )}
+      {/* Profile Panel (full screen) */}
+      {profileOpen && <ProfilePanel user={user} onClose={() => setProfileOpen(false)} />}
 
       {/* Mobile Bottom Nav */}
       <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-50 glass-strong border-t border-white/5 flex items-center justify-around px-2 py-2 pb-safe">
-        {navItems.slice(0, 6).map(item => {
+        {navItems.slice(0, 5).map(item => {
           const isActive = location.pathname === item.path;
           const badgeCount = getNavBadgeCount(item.path, unreadNotifs);
           const handleNavClick = async () => {
@@ -214,6 +209,19 @@ export default function AppShell({ children, navItems = [], user, fullBleed = fa
             </Link>
           );
         })}
+
+        {/* Profile tab */}
+        <button
+          onClick={() => setProfileOpen(true)}
+          className={`relative flex flex-col items-center gap-1 px-3 py-1.5 rounded-xl transition-all ${
+            profileOpen ? 'text-primary' : 'text-muted-foreground'
+          }`}
+        >
+          <div className="w-5 h-5 rounded-full bg-primary/20 flex items-center justify-center text-[10px] font-bold text-primary">
+            {user?.full_name?.[0] || 'U'}
+          </div>
+          <span className="text-[10px] font-medium">Profile</span>
+        </button>
       </nav>
 
       {/* Main Content */}
