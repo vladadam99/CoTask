@@ -1,51 +1,25 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef } from 'react';
 import { ShieldCheck, Camera, RefreshCw, CheckCircle, Loader2, FileText, User, AlertTriangle } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 
 function CameraStep({ label, icon: Icon, facingMode, onCapture }) {
-  const videoRef = useRef(null);
-  const [streaming, setStreaming] = useState(false);
+  const inputRef = useRef(null);
   const [preview, setPreview] = useState(null);
-  const [error, setError] = useState(null);
 
-  const startCamera = async () => {
-    setError(null);
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode } });
-      videoRef.current.srcObject = stream;
-      videoRef.current.play();
-      setStreaming(true);
-    } catch (e) {
-      setError('Could not access camera. Please allow camera access and try again.');
-    }
-  };
-
-  const stopStream = () => {
-    const stream = videoRef.current?.srcObject;
-    if (stream) stream.getTracks().forEach(t => t.stop());
-  };
-
-  useEffect(() => () => stopStream(), []);
-
-  const capture = () => {
-    const canvas = document.createElement('canvas');
-    canvas.width = videoRef.current.videoWidth;
-    canvas.height = videoRef.current.videoHeight;
-    canvas.getContext('2d').drawImage(videoRef.current, 0, 0);
-    canvas.toBlob(blob => {
-      const file = new File([blob], `${label.replace(/\s/g,'_')}.jpg`, { type: 'image/jpeg' });
-      const url = URL.createObjectURL(blob);
-      setPreview(url);
-      setStreaming(false);
-      stopStream();
-      onCapture(file);
-    }, 'image/jpeg', 0.92);
+  const handleFileChange = (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const url = URL.createObjectURL(file);
+    setPreview(url);
+    onCapture(file);
   };
 
   const retake = () => {
     setPreview(null);
-    startCamera();
+    if (inputRef.current) inputRef.current.value = '';
   };
+
+  const captureAttr = facingMode === 'user' ? 'user' : 'environment';
 
   return (
     <div className="rounded-2xl border border-white/10 bg-white/5 p-4 space-y-3">
@@ -54,31 +28,22 @@ function CameraStep({ label, icon: Icon, facingMode, onCapture }) {
         <span className="text-sm font-medium text-white">{label}</span>
       </div>
 
-      {error && (
-        <div className="text-xs text-red-400 flex items-center gap-1.5">
-          <AlertTriangle className="w-3.5 h-3.5" /> {error}
-        </div>
-      )}
+      <input
+        ref={inputRef}
+        type="file"
+        accept="image/*"
+        capture={captureAttr}
+        onChange={handleFileChange}
+        className="hidden"
+      />
 
-      {!preview && !streaming && (
-        <button onClick={startCamera}
+      {!preview ? (
+        <button onClick={() => inputRef.current?.click()}
           className="w-full h-36 rounded-xl border-2 border-dashed border-white/20 flex flex-col items-center justify-center gap-2 text-white/50 hover:border-red-400/50 hover:text-red-400 transition-all">
           <Camera className="w-7 h-7" />
           <span className="text-xs">Tap to open camera</span>
         </button>
-      )}
-
-      {streaming && (
-        <div className="relative">
-          <video ref={videoRef} className="w-full rounded-xl object-cover aspect-[4/3]" playsInline muted />
-          <button onClick={capture}
-            className="absolute bottom-3 left-1/2 -translate-x-1/2 w-14 h-14 rounded-full bg-white border-4 border-red-500 flex items-center justify-center shadow-lg">
-            <div className="w-8 h-8 rounded-full bg-red-500" />
-          </button>
-        </div>
-      )}
-
-      {preview && (
+      ) : (
         <div className="relative">
           <img src={preview} className="w-full rounded-xl object-cover aspect-[4/3]" alt="captured" />
           <div className="absolute top-2 right-2 bg-green-500 rounded-full p-1">
