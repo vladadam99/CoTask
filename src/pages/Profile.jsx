@@ -301,21 +301,27 @@ export default function Profile() {
               <h2 className="text-xl font-bold mb-3">{user?.display_name || user?.full_name}</h2>
 
               {/* Bio */}
-              {avatarProfile?.bio ? (
-                <p className="text-sm text-muted-foreground leading-relaxed mb-5 whitespace-pre-line">{avatarProfile.bio}</p>
+              {(user?.selected_role === 'avatar' ? avatarProfile?.bio : user?.bio) ? (
+                <p className="text-sm text-muted-foreground leading-relaxed mb-5 whitespace-pre-line">
+                  {user?.selected_role === 'avatar' ? avatarProfile?.bio : user?.bio}
+                </p>
               ) : (
                 <p className="text-sm text-muted-foreground mb-5 italic">No bio yet.</p>
               )}
 
               {/* Details */}
               <div className="space-y-3">
-                {(avatarProfile?.city || user?.city) && (
+                {(user?.selected_role === 'avatar' ? (avatarProfile?.city || user?.city) : user?.city) && (
                   <div className="flex items-center gap-3 text-sm">
                     <MapPin className="w-4 h-4 text-muted-foreground flex-shrink-0" />
-                    <span>{avatarProfile?.city || user?.city}{avatarProfile?.country ? `, ${avatarProfile.country}` : ''}</span>
+                    <span>
+                      {user?.selected_role === 'avatar'
+                        ? `${avatarProfile?.city || user?.city}${avatarProfile?.country ? `, ${avatarProfile.country}` : ''}`
+                        : user?.city}
+                    </span>
                   </div>
                 )}
-                {avatarProfile?.languages?.length > 0 && (
+                {user?.selected_role === 'avatar' && avatarProfile?.languages?.length > 0 && (
                   <div className="text-sm">
                     <p className="text-muted-foreground text-xs mb-1.5">Languages</p>
                     <div className="flex flex-wrap gap-1.5">
@@ -325,7 +331,7 @@ export default function Profile() {
                     </div>
                   </div>
                 )}
-                {avatarProfile?.skills?.length > 0 && (
+                {user?.selected_role === 'avatar' && avatarProfile?.skills?.length > 0 && (
                   <div className="text-sm">
                     <p className="text-muted-foreground text-xs mb-1.5">Skills</p>
                     <div className="flex flex-wrap gap-1.5">
@@ -335,7 +341,7 @@ export default function Profile() {
                     </div>
                   </div>
                 )}
-                {avatarProfile?.categories?.length > 0 && (
+                {user?.selected_role === 'avatar' && avatarProfile?.categories?.length > 0 && (
                   <div className="text-sm">
                     <p className="text-muted-foreground text-xs mb-1.5">Services</p>
                     <div className="flex flex-wrap gap-1.5">
@@ -345,7 +351,7 @@ export default function Profile() {
                     </div>
                   </div>
                 )}
-                {avatarProfile?.cv_url && (
+                {user?.selected_role === 'avatar' && avatarProfile?.cv_url && (
                   <a href={avatarProfile.cv_url} target="_blank" rel="noopener noreferrer"
                     className="flex items-center gap-2 text-sm text-primary hover:underline">
                     <FileText className="w-4 h-4" /> View CV

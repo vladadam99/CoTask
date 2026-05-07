@@ -43,7 +43,7 @@ function ProfilePanel({ user, onClose }) {
 
       <div className="flex-1 overflow-y-auto">
         {/* User card */}
-        <Link to="/Profile" onClick={onClose} className="mx-4 mt-4 mb-2 p-4 rounded-2xl bg-card border border-white/5 flex items-center gap-3 hover:bg-white/5 transition-colors">
+        <Link to={user?.selected_role === 'avatar' ? '/AvatarProfileEdit' : user?.selected_role === 'enterprise' ? '/EnterpriseSettings' : '/UserProfileEdit'} onClick={onClose} className="mx-4 mt-4 mb-2 p-4 rounded-2xl bg-card border border-white/5 flex items-center gap-3 hover:bg-white/5 transition-colors">
           <div className="w-14 h-14 rounded-full bg-primary/20 flex items-center justify-center text-xl font-bold text-primary flex-shrink-0">
             {user?.full_name?.[0] || 'U'}
           </div>
