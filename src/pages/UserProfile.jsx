@@ -42,7 +42,7 @@ export default function UserProfile() {
 
   return (
     <AppShell navItems={getNavItems(user?.selected_role)} user={user}>
-      <div className="max-w-2xl mx-auto -mt-4 -mx-4 lg:mx-auto lg:mt-0">
+      <div className="max-w-2xl mx-auto -mt-4 -mx-4 lg:mx-auto lg:mt-0 pb-24 lg:pb-0">
 
         {/* Top bar */}
         <div className="flex items-center justify-between px-4 py-3 sticky top-14 z-20 bg-background/80 backdrop-blur-sm border-b border-white/5">
