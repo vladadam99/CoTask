@@ -19,7 +19,7 @@ function getNavBadgeCount(path, unreadNotifs) {
   }).length;
 }
 
-function ProfilePanel({ user, onClose }) {
+function ProfilePanel({ user, onClose, navItems = [] }) {
   const settingsPath = user?.selected_role === 'avatar' ? '/AvatarSettings' : user?.selected_role === 'enterprise' ? '/EnterpriseSettings' : '/UserSettings';
   const bookingsPath = user?.selected_role === 'avatar' ? '/AvatarRequests' : '/Bookings';
   const walletPath = user?.selected_role === 'avatar' ? '/AvatarWallet' : '/UserWallet';
@@ -41,7 +41,7 @@ function ProfilePanel({ user, onClose }) {
         </button>
       </div>
 
-      <div className="flex-1 overflow-y-auto">
+      <div className="flex-1 overflow-y-auto pb-24">
         {/* User card */}
         <Link to={user?.selected_role === 'avatar' ? '/AvatarProfileEdit' : user?.selected_role === 'enterprise' ? '/EnterpriseSettings' : '/UserProfile'} onClick={onClose} className="mx-4 mt-4 mb-2 p-4 rounded-2xl bg-card border border-white/5 flex items-center gap-3 hover:bg-white/5 transition-colors">
           <div className="w-14 h-14 rounded-full bg-primary/20 flex items-center justify-center text-xl font-bold text-primary flex-shrink-0">
@@ -90,6 +90,25 @@ function ProfilePanel({ user, onClose }) {
           </button>
         </div>
       </div>
+
+      {/* Bottom nav inside profile panel */}
+      <nav className="fixed bottom-0 left-0 right-0 z-50 glass-strong border-t border-white/5 flex items-center justify-around px-2 py-2">
+        {navItems.slice(0, 5).map(item => (
+          <Link key={item.path} to={item.path} onClick={onClose}
+            className="relative flex flex-col items-center gap-1 px-3 py-1.5 rounded-xl transition-all text-muted-foreground">
+            <item.icon className="w-5 h-5" />
+            <span className="text-[10px] font-medium">{item.label}</span>
+          </Link>
+        ))}
+        <button
+          className="relative flex flex-col items-center gap-1 px-3 py-1.5 rounded-xl transition-all text-primary"
+        >
+          <div className="w-5 h-5 rounded-full bg-primary/20 flex items-center justify-center text-[10px] font-bold text-primary">
+            {user?.full_name?.[0] || 'U'}
+          </div>
+          <span className="text-[10px] font-medium">Profile</span>
+        </button>
+      </nav>
     </div>
   );
 }
@@ -175,7 +194,7 @@ export default function AppShell({ children, navItems = [], user, fullBleed = fa
       </div>
 
       {/* Profile Panel (full screen) */}
-      {profileOpen && <ProfilePanel user={user} onClose={() => setProfileOpen(false)} />}
+      {profileOpen && <ProfilePanel user={user} onClose={() => setProfileOpen(false)} navItems={navItems} />}
 
       {/* Mobile Bottom Nav */}
       <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-50 glass-strong border-t border-white/5 flex items-center justify-around px-2 py-2 pb-safe">
