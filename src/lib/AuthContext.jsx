@@ -119,8 +119,8 @@ export const AuthProvider = ({ children }) => {
   };
 
   const navigateToLogin = () => {
-    // Use only the origin to avoid redirect loops from stacked from_url params
-    const nextUrl = window.location.origin + '/';
+    // Preserve current path so post-login redirect returns to the right page
+    const nextUrl = window.location.href;
     base44.auth.redirectToLogin(nextUrl);
   };
 
