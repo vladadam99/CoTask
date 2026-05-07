@@ -58,6 +58,8 @@ import AvatarBookingDetail from './pages/AvatarBookingDetail';
 import UserWallet from './pages/UserWallet';
 import UserBookingDetail from './pages/UserBookingDetail';
 import PublicPostView from './pages/PublicPostView';
+import UserProfileEdit from './pages/UserProfileEdit';
+import UserSettings from './pages/UserSettings';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -86,6 +88,8 @@ const AuthenticatedApp = () => {
   return (
     <Routes>
       <Route path="/PublicPostView" element={<PublicPostView />} />
+      <Route path="/UserProfileEdit" element={<UserProfileEdit />} />
+      <Route path="/UserSettings" element={<UserSettings />} />
       <Route path="/" element={<Landing />} />
       <Route path="/Landing" element={<Landing />} />
       <Route path="/RoleSelect" element={<RoleSelect />} />

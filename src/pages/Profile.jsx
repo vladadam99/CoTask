@@ -84,7 +84,9 @@ export default function Profile() {
     : user?.selected_role === 'enterprise' ? '/EnterpriseDashboard'
     : '/FindAvatars';
 
-  const editPath = user?.selected_role === 'avatar' ? '/AvatarProfileEdit' : '/AvatarSettings';
+  const editPath = user?.selected_role === 'avatar' ? '/AvatarProfileEdit'
+    : user?.selected_role === 'enterprise' ? '/EnterpriseSettings'
+    : '/UserProfileEdit';
 
   return (
     <AppShell navItems={getNavItems(user?.selected_role)} user={user}>

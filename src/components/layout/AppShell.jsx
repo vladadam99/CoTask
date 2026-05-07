@@ -20,7 +20,7 @@ function getNavBadgeCount(path, unreadNotifs) {
 }
 
 function ProfilePanel({ user, onClose }) {
-  const settingsPath = user?.selected_role === 'avatar' ? '/AvatarSettings' : user?.selected_role === 'enterprise' ? '/EnterpriseSettings' : '/Profile';
+  const settingsPath = user?.selected_role === 'avatar' ? '/AvatarSettings' : user?.selected_role === 'enterprise' ? '/EnterpriseSettings' : '/UserSettings';
   const bookingsPath = user?.selected_role === 'avatar' ? '/AvatarRequests' : '/Bookings';
   const walletPath = user?.selected_role === 'avatar' ? '/AvatarWallet' : '/UserWallet';
 
@@ -123,7 +123,7 @@ export default function AppShell({ children, navItems = [], user, fullBleed = fa
   }, [user?.email]);
 
   const homePath = user?.selected_role === 'avatar' ? '/AvatarDashboard' : user?.selected_role === 'enterprise' ? '/EnterpriseDashboard' : '/FindAvatars';
-  const settingsPath = user?.selected_role === 'avatar' ? '/AvatarSettings' : user?.selected_role === 'enterprise' ? '/EnterpriseSettings' : '/Profile';
+  const settingsPath = user?.selected_role === 'avatar' ? '/AvatarSettings' : user?.selected_role === 'enterprise' ? '/EnterpriseSettings' : '/UserSettings';
 
   return (
     <div className="min-h-screen flex overflow-x-hidden">
