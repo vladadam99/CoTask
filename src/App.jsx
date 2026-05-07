@@ -59,6 +59,7 @@ import UserWallet from './pages/UserWallet';
 import UserBookingDetail from './pages/UserBookingDetail';
 import PublicPostView from './pages/PublicPostView';
 import UserProfileEdit from './pages/UserProfileEdit';
+import UserProfile from './pages/UserProfile';
 import UserSettings from './pages/UserSettings';
 
 const AuthenticatedApp = () => {
@@ -89,6 +90,7 @@ const AuthenticatedApp = () => {
     <Routes>
       <Route path="/PublicPostView" element={<PublicPostView />} />
       <Route path="/UserProfileEdit" element={<UserProfileEdit />} />
+      <Route path="/UserProfile" element={<UserProfile />} />
       <Route path="/UserSettings" element={<UserSettings />} />
       <Route path="/" element={<Landing />} />
       <Route path="/Landing" element={<Landing />} />
