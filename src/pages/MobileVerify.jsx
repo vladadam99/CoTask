@@ -94,12 +94,28 @@ export default function MobileVerify() {
         base44.integrations.Core.UploadFile({ file: selfieFile }),
       ]);
 
+      // Try to get the user's registered name
+      let registeredName = '';
+      try {
+        const user = await base44.auth.me();
+        registeredName = user?.full_name || '';
+      } catch {}
+
       setLoadingMsg('Verifying your identity...');
-      await base44.functions.invoke('mobileVerifyIdentity', {
+      const res = await base44.functions.invoke('mobileVerifyIdentity', {
         id_photo_url: idUpload.file_url,
         selfie_url: selfieUpload.file_url,
         session_id: sessionId,
+        registered_name: registeredName,
       });
+
+      if (res.data?.result?.success === false) {
+        const reasons = res.data.result.rejection_reasons?.join(', ') || 'Verification failed';
+        setError(reasons);
+        setLoading(false);
+        setLoadingMsg('');
+        return;
+      }
 
       setDone(true);
     } catch (e) {
