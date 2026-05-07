@@ -4,7 +4,6 @@ export const userNavItems = [
   { icon: UserSearch, label: 'Avatars', path: '/FindAvatars' },
   { icon: Search, label: 'Explore', path: '/Explore' },
   { icon: Plus, label: 'Post Job', path: '/PostJob' },
-  { icon: Calendar, label: 'Bookings', path: '/Bookings' },
   { icon: MessageSquare, label: 'Messages', path: '/Messages' },
 ];
 
