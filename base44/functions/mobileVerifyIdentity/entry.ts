@@ -13,18 +13,30 @@ Deno.serve(async (req) => {
 
   // Run AI identity verification
   const result = await base44.asServiceRole.integrations.Core.InvokeLLM({
-    prompt: `You are an identity verification expert. You are given two images:
-1. An identity document (passport, driving licence, national ID card, etc.)
-2. A selfie photo of a person
+    prompt: `You are a strict identity verification system. You are given two images:
+- Image 1: should be a government-issued photo ID document (passport, driving licence, national ID card)
+- Image 2: should be a selfie of the person holding or presenting themselves
 
-Please perform the following checks:
-1. DOCUMENT CHECK: Is image 1 a valid-looking identity document?
-2. SELFIE CHECK: Is image 2 a clear selfie of a real person's face?
-3. FACE MATCH: Does the face in the selfie appear to match the face on the identity document?
-4. NAME EXTRACTION: If visible, what is the full name on the document?
-5. DOCUMENT TYPE: What type of document is it? (passport, driving_licence, national_id, other, unknown)
+You MUST apply ALL of the following strict rules and REJECT if ANY fail:
 
-Be strict but fair. Return your analysis.`,
+DOCUMENT CHECKS (Image 1):
+- REJECT if Image 1 is NOT a physical ID document (e.g. if it is a selfie, a face, a random object, a table, a wall, or anything other than an ID card/passport/licence)
+- REJECT if the document does not have visible text fields (name, date of birth, expiry, document number etc.)
+- REJECT if the document does not have a photo of a person embedded in it
+- REJECT if the document appears to be expired, damaged beyond readability, or clearly fake
+- The document MUST look like an official government-issued identity document
+
+SELFIE CHECKS (Image 2):
+- REJECT if Image 2 does not clearly show a human face looking at the camera
+- REJECT if it is blurry, dark, or the face is obstructed
+
+FACE MATCH:
+- REJECT if the face in Image 2 does not plausibly match the face printed on the ID document in Image 1
+- You must compare facial features: eye spacing, nose shape, jawline, overall structure
+
+If Image 1 is CLEARLY not an ID document (it looks like a selfie/face/random photo), set is_valid_document=false and add "Image 1 does not appear to be an identity document" to rejection_reasons.
+
+Be very strict. False positives are worse than false negatives.`,
     file_urls: [id_photo_url, selfie_url],
     model: 'claude_sonnet_4_6',
     response_json_schema: {
