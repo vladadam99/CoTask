@@ -12,7 +12,6 @@ export const avatarNavItems = [
   { icon: Briefcase, label: 'Jobs', path: '/JobMarketplace' },
   { icon: MessageSquare, label: 'Messages', path: '/AvatarMessages' },
   { icon: Inbox, label: 'Bookings', path: '/AvatarRequests' },
-  { icon: User, label: 'Profile', path: '/AvatarProfileEdit' },
 ];
 
 export const enterpriseNavItems = [
