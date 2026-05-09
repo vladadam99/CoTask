@@ -9,7 +9,6 @@ export const userNavItems = [
 
 export const avatarNavItems = [
   { icon: Home, label: 'Home', path: '/AvatarDashboard' },
-  { icon: Compass, label: 'Explore', path: '/AvatarExplore' },
   { icon: Briefcase, label: 'Jobs', path: '/JobMarketplace' },
   { icon: MessageSquare, label: 'Messages', path: '/AvatarMessages' },
   { icon: Inbox, label: 'Bookings', path: '/AvatarRequests' },
