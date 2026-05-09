@@ -56,8 +56,12 @@ const sections = [
     content: `These terms may change from time to time. We will inform you of any significant changes and ask you to agree to them. The most current version of the terms is always available on the CoTask platform. Continued use of the platform after changes constitutes acceptance of the updated terms.`,
   },
   {
-    title: '14. Governing Law',
-    content: `These terms and conditions are governed by and construed in accordance with the laws of England and Wales. Any disputes shall be subject to the exclusive jurisdiction of the courts of England and Wales.`,
+    title: '14. Data Protection & Privacy (UK GDPR / EU GDPR)',
+    content: `CoTask processes your personal data in accordance with the UK General Data Protection Regulation (UK GDPR), the Data Protection Act 2018, and the EU General Data Protection Regulation (GDPR 2016/679) where applicable. We collect only the data necessary to operate the platform (name, email, address, phone number, and identity verification data). Your data is stored securely and never sold to third parties. You have the right to access, rectify, erase, restrict, and port your data at any time by contacting us at privacy@cotask.com. Our lawful basis for processing is performance of contract (Article 6(1)(b)) and legitimate interests (Article 6(1)(f)). Identity verification data is processed by Stripe Identity under their own privacy policy. You may withdraw consent or request deletion of your account at any time.`,
+  },
+  {
+    title: '15. Governing Law',
+    content: `These terms and conditions are governed by and construed in accordance with the laws of England and Wales. Any disputes shall be subject to the exclusive jurisdiction of the courts of England and Wales. For users based in the European Union, nothing in these terms limits your rights under applicable EU consumer protection laws.`,
   },
 ];
 

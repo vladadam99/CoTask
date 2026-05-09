@@ -1,5 +1,4 @@
 import React, { useState, useRef } from 'react';
-import React, { useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -20,6 +19,8 @@ export default function Register() {
   const [step, setStep] = useState(0);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
+  const [termsAccepted, setTermsAccepted] = useState(false);
+  const [ageConfirmed, setAgeConfirmed] = useState(false);
 
   const [formData, setFormData] = useState({
     first_name: '', last_name: '', email: '', phone: '',
@@ -188,6 +189,14 @@ export default function Register() {
         setError('Please enter a valid email address.');
         return;
       }
+      if (!ageConfirmed) {
+        setError('You must confirm you are 18 or over to register.');
+        return;
+      }
+      if (!termsAccepted) {
+        setError('You must accept the Terms & Conditions and Privacy Policy to continue.');
+        return;
+      }
       setStep(1);
     } else if (step === 1) {
       if (!formData.address_line1.trim() || !formData.city.trim() || !formData.postcode.trim()) {
@@ -275,8 +284,34 @@ export default function Register() {
                   <Input type="tel" value={formData.phone} onChange={e => update('phone', e.target.value)}
                     placeholder="+44 7700 000000" className="bg-muted/50 border-white/5" />
                 </div>
+                {/* Age confirmation */}
+                <label className="flex items-start gap-3 cursor-pointer group">
+                  <div className={`mt-0.5 w-5 h-5 rounded flex items-center justify-center border-2 shrink-0 transition-colors ${ageConfirmed ? 'bg-primary border-primary' : 'border-white/20 group-hover:border-primary/50'}`}
+                    onClick={() => setAgeConfirmed(p => !p)}>
+                    {ageConfirmed && <Check className="w-3 h-3 text-white" />}
+                  </div>
+                  <span className="text-xs text-muted-foreground leading-relaxed" onClick={() => setAgeConfirmed(p => !p)}>
+                    I confirm I am <span className="font-semibold text-foreground">18 years of age or older</span>. CoTask is not available to anyone under 18.
+                  </span>
+                </label>
+
+                {/* T&C + Privacy + GDPR */}
+                <label className="flex items-start gap-3 cursor-pointer group">
+                  <div className={`mt-0.5 w-5 h-5 rounded flex items-center justify-center border-2 shrink-0 transition-colors ${termsAccepted ? 'bg-primary border-primary' : 'border-white/20 group-hover:border-primary/50'}`}
+                    onClick={() => setTermsAccepted(p => !p)}>
+                    {termsAccepted && <Check className="w-3 h-3 text-white" />}
+                  </div>
+                  <span className="text-xs text-muted-foreground leading-relaxed" onClick={() => setTermsAccepted(p => !p)}>
+                    I have read and agree to CoTask's{' '}
+                    <Link to="/Terms" className="text-primary hover:underline" onClick={e => e.stopPropagation()} target="_blank">Terms & Conditions</Link>
+                    {' '}and{' '}
+                    <Link to="/Terms" className="text-primary hover:underline" onClick={e => e.stopPropagation()} target="_blank">Privacy Policy</Link>
+                    . I understand that my personal data will be processed in accordance with UK GDPR and EU GDPR regulations.
+                  </span>
+                </label>
+
                 {error && <p className="text-sm text-red-400 bg-red-500/10 rounded-lg px-3 py-2">{error}</p>}
-                <Button onClick={nextStep} className="w-full bg-primary hover:bg-primary/90 h-11">
+                <Button onClick={nextStep} disabled={!termsAccepted || !ageConfirmed} className="w-full bg-primary hover:bg-primary/90 h-11 disabled:opacity-50 disabled:cursor-not-allowed">
                   Next <ArrowRight className="w-4 h-4 ml-2" />
                 </Button>
                 <p className="text-center text-sm text-muted-foreground">
@@ -284,10 +319,6 @@ export default function Register() {
                   <button onClick={() => base44.auth.redirectToLogin('/RoleSelectExisting')} className="text-primary hover:underline">
                     Sign in
                   </button>
-                </p>
-                <p className="text-center text-xs text-muted-foreground">
-                  By continuing, you agree to our{' '}
-                  <Link to="/Terms" className="text-primary hover:underline">Terms & Conditions</Link>
                 </p>
               </div>
             )}
