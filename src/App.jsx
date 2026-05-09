@@ -61,6 +61,8 @@ import PublicPostView from './pages/PublicPostView';
 import UserProfileEdit from './pages/UserProfileEdit';
 import UserProfile from './pages/UserProfile';
 import UserSettings from './pages/UserSettings';
+import TermsAndConditions from './pages/TermsAndConditions';
+import TermsBanner from './components/legal/TermsBanner';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -143,6 +145,7 @@ const AuthenticatedApp = () => {
       <Route path="/UserWallet" element={<UserWallet />} />
       <Route path="/IdentityVerification" element={<IdentityVerificationPage />} />
       <Route path="/MobileVerify" element={<MobileVerify />} />
+      <Route path="/Terms" element={<TermsAndConditions />} />
       <Route path="*" element={<PageNotFound />} />
     </Routes>
   );
@@ -158,6 +161,7 @@ function App() {
           <Router>
             <AuthenticatedApp />
           </Router>
+          <TermsBanner />
           <Toaster />
         </QueryClientProvider>
       </AuthProvider>

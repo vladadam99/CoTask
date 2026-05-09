@@ -1,8 +1,9 @@
 import React, { useState, useRef } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Link } from 'react-router-dom';
 import { ArrowRight, ArrowLeft, MapPin, Search, Check, Mail, Loader2 } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 
@@ -283,6 +284,10 @@ export default function Register() {
                   <button onClick={() => base44.auth.redirectToLogin('/RoleSelectExisting')} className="text-primary hover:underline">
                     Sign in
                   </button>
+                </p>
+                <p className="text-center text-xs text-muted-foreground">
+                  By continuing, you agree to our{' '}
+                  <Link to="/Terms" className="text-primary hover:underline">Terms & Conditions</Link>
                 </p>
               </div>
             )}

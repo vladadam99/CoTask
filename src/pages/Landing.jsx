@@ -403,6 +403,7 @@ export default function Landing() {
               <button onClick={() => scrollTo('faq')} className="hover:text-foreground transition-colors">FAQ</button>
               <Link to="/Safety" className="hover:text-foreground transition-colors">Safety</Link>
               <Link to="/Contact" className="hover:text-foreground transition-colors">Contact</Link>
+              <Link to="/Terms" className="hover:text-foreground transition-colors">Terms</Link>
             </div>
             <p className="text-xs text-muted-foreground">© 2026 CoTask. All rights reserved.</p>
           </div>
