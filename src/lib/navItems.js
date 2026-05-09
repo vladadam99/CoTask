@@ -11,8 +11,8 @@ export const avatarNavItems = [
   { icon: Home, label: 'Home', path: '/AvatarDashboard' },
   { icon: Briefcase, label: 'Jobs', path: '/JobMarketplace' },
   { icon: MessageSquare, label: 'Messages', path: '/AvatarMessages' },
+  { icon: DollarSign, label: 'Earnings', path: '/Profile' },
   { icon: Inbox, label: 'Bookings', path: '/AvatarRequests' },
-  { icon: DollarSign, label: 'Earnings', path: '/AvatarEarnings' },
   { icon: User, label: 'Profile', path: '/AvatarProfileEdit' },
 ];
 
