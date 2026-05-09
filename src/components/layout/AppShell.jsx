@@ -93,13 +93,21 @@ function ProfilePanel({ user, onClose, navItems = [] }) {
 
       {/* Bottom nav inside profile panel */}
       <nav className="fixed bottom-0 left-0 right-0 z-50 glass-strong border-t border-white/5 flex items-center justify-around px-2 py-2">
-        {navItems.map(item => (
+        {navItems.slice(0, 5).map(item => (
           <Link key={item.path} to={item.path} onClick={onClose}
             className="relative flex flex-col items-center gap-1 px-3 py-1.5 rounded-xl transition-all text-muted-foreground">
             <item.icon className="w-5 h-5" />
             <span className="text-[10px] font-medium">{item.label}</span>
           </Link>
         ))}
+        <button
+          className="relative flex flex-col items-center gap-1 px-3 py-1.5 rounded-xl transition-all text-primary"
+        >
+          <div className="w-5 h-5 rounded-full bg-primary/20 flex items-center justify-center text-[10px] font-bold text-primary">
+            {user?.full_name?.[0] || 'U'}
+          </div>
+          <span className="text-[10px] font-medium">Profile</span>
+        </button>
       </nav>
     </div>
   );
@@ -190,7 +198,7 @@ export default function AppShell({ children, navItems = [], user, fullBleed = fa
 
       {/* Mobile Bottom Nav */}
       <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-50 glass-strong border-t border-white/5 flex items-center justify-around px-2 py-2 pb-safe">
-        {navItems.map(item => {
+        {navItems.slice(0, 5).map(item => {
           const isActive = location.pathname === item.path;
           const badgeCount = getNavBadgeCount(item.path, unreadNotifs);
           const handleNavClick = async () => {
@@ -220,6 +228,19 @@ export default function AppShell({ children, navItems = [], user, fullBleed = fa
             </Link>
           );
         })}
+
+        {/* Profile tab */}
+        <button
+          onClick={() => setProfileOpen(true)}
+          className={`relative flex flex-col items-center gap-1 px-3 py-1.5 rounded-xl transition-all ${
+            profileOpen ? 'text-primary' : 'text-muted-foreground'
+          }`}
+        >
+          <div className="w-5 h-5 rounded-full bg-primary/20 flex items-center justify-center text-[10px] font-bold text-primary">
+            {user?.full_name?.[0] || 'U'}
+          </div>
+          <span className="text-[10px] font-medium">Profile</span>
+        </button>
       </nav>
 
       {/* Main Content */}
