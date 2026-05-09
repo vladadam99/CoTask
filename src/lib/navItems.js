@@ -1,4 +1,4 @@
-import { Search, Calendar, MessageSquare, Home, Heart, User, Zap, Inbox, DollarSign, Settings, Building2, Briefcase, Compass, Users, Wallet, Plus, UserSearch } from 'lucide-react';
+import { Search, Calendar, MessageSquare, Home, User, Inbox, DollarSign, Settings, Building2, Briefcase, Users, Wallet, Plus, UserSearch } from 'lucide-react';
 
 export const userNavItems = [
   { icon: UserSearch, label: 'Avatars', path: '/FindAvatars' },
