@@ -7,11 +7,11 @@ import AppShell from '@/components/layout/AppShell';
 import { getNavItems } from '@/lib/navItems';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { ArrowLeft, Plus, X, ShieldAlert, Calendar, CalendarRange, Shuffle } from 'lucide-react';
+import { ArrowLeft, ShieldAlert } from 'lucide-react';
+import DatePicker from '@/components/jobs/DatePicker';
 import { Link } from 'react-router-dom';
 
 const CATEGORIES = ['Shopping', 'Delivery', 'Real Estate', 'Tourism', 'Events', 'Inspection', 'Translation', 'Other'];
-const FLEXIBLE_WINDOWS = ['Within a week', 'Within 2 weeks', 'Within a month', 'Within 3 months', 'Anytime'];
 const EQUIPMENT_OPTIONS = ['Smartphone', '360° Camera', 'Drone', 'Laptop', 'Headset', 'Vehicle'];
 const LANGUAGES = ['English', 'Spanish', 'French', 'German', 'Mandarin', 'Arabic', 'Portuguese', 'Italian', 'Japanese', 'Other'];
 
@@ -23,10 +23,10 @@ export default function PostJob() {
     remote_ok: false, travel_required: false,
     budget_min: '', budget_max: '', negotiable: true,
     camera_required: false,
-    timing_mode: 'specific', // 'specific' | 'range' | 'flexible'
-    scheduled_date: '', scheduled_time: '',
-    date_range_start: '', date_range_end: '',
-    flexible_window: 'Within a month',
+    timing_mode: 'dates', // 'dates' | 'flexible'
+    scheduled_date: null, scheduled_time: '',
+    date_range_end: null,
+    flexibility: 0,
     skills_required: [], languages_required: [], equipment_needed: [],
   });
   const [skillInput, setSkillInput] = useState('');
@@ -50,8 +50,8 @@ export default function PostJob() {
         budget_min: form.budget_min ? Number(form.budget_min) : undefined,
         budget_max: form.budget_max ? Number(form.budget_max) : undefined,
         flexible_dates: form.timing_mode === 'flexible',
-        scheduled_date: form.timing_mode === 'specific' ? form.scheduled_date : form.timing_mode === 'range' ? form.date_range_start : undefined,
-        scheduled_time: form.timing_mode === 'specific' ? form.scheduled_time : undefined,
+        scheduled_date: form.scheduled_date ? form.scheduled_date.toISOString().split('T')[0] : undefined,
+        scheduled_time: form.scheduled_time || undefined,
         posted_by_email: user.email,
         posted_by_name: user.full_name,
         posted_by_type: user.role === 'enterprise' ? 'enterprise' : 'user',
@@ -122,66 +122,16 @@ export default function PostJob() {
         {/* When does this need to be done */}
         <div className="glass rounded-2xl p-6 border border-white/5 space-y-4">
           <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">When does this need to be done?</p>
-          <div className="grid grid-cols-3 gap-2">
-            {[
-              { mode: 'specific', icon: Calendar, label: 'Specific date', sub: 'Exact day & time' },
-              { mode: 'range', icon: CalendarRange, label: 'Date range', sub: 'Between two dates' },
-              { mode: 'flexible', icon: Shuffle, label: 'Flexible', sub: 'Approximate window' },
-            ].map(({ mode, icon: Icon, label, sub }) => (
-              <button key={mode} type="button" onClick={() => set('timing_mode', mode)}
-                className={`flex flex-col items-center gap-1.5 px-3 py-3 rounded-xl border text-center transition-all ${
-                  form.timing_mode === mode
-                    ? 'bg-primary/10 border-primary/40 text-primary'
-                    : 'bg-white/5 border-white/10 text-muted-foreground hover:border-white/20'
-                }`}>
-                <Icon className="w-5 h-5" />
-                <span className="text-xs font-semibold leading-tight">{label}</span>
-                <span className="text-[10px] leading-tight opacity-70">{sub}</span>
-              </button>
-            ))}
-          </div>
-
-          {form.timing_mode === 'specific' && (
-            <div className="grid grid-cols-2 gap-3">
-              <div>
-                <label className="text-xs text-muted-foreground mb-1.5 block">Date</label>
-                <Input type="date" value={form.scheduled_date} onChange={e => set('scheduled_date', e.target.value)} className="bg-white/5 border-white/10" />
-              </div>
-              <div>
-                <label className="text-xs text-muted-foreground mb-1.5 block">Time (optional)</label>
-                <Input type="time" value={form.scheduled_time} onChange={e => set('scheduled_time', e.target.value)} className="bg-white/5 border-white/10" />
-              </div>
-            </div>
-          )}
-
-          {form.timing_mode === 'range' && (
-            <div className="grid grid-cols-2 gap-3">
-              <div>
-                <label className="text-xs text-muted-foreground mb-1.5 block">From</label>
-                <Input type="date" value={form.date_range_start} onChange={e => set('date_range_start', e.target.value)} className="bg-white/5 border-white/10" />
-              </div>
-              <div>
-                <label className="text-xs text-muted-foreground mb-1.5 block">To</label>
-                <Input type="date" value={form.date_range_end} onChange={e => set('date_range_end', e.target.value)}
-                  min={form.date_range_start || undefined} className="bg-white/5 border-white/10" />
-              </div>
-            </div>
-          )}
-
-          {form.timing_mode === 'flexible' && (
-            <div className="flex flex-wrap gap-2">
-              {FLEXIBLE_WINDOWS.map(w => (
-                <button key={w} type="button" onClick={() => set('flexible_window', w)}
-                  className={`px-3 py-1.5 rounded-full text-xs font-medium border transition-all ${
-                    form.flexible_window === w
-                      ? 'bg-primary/10 text-primary border-primary/30'
-                      : 'bg-white/5 text-muted-foreground border-white/10 hover:border-white/20'
-                  }`}>
-                  {w}
-                </button>
-              ))}
-            </div>
-          )}
+          <DatePicker
+            mode={form.timing_mode}
+            onModeChange={v => set('timing_mode', v)}
+            startDate={form.scheduled_date}
+            endDate={form.date_range_end}
+            onStartDate={v => set('scheduled_date', v)}
+            onEndDate={v => set('date_range_end', v)}
+            flexibility={form.flexibility}
+            onFlexibility={v => set('flexibility', v)}
+          />
         </div>
 
         {/* Budget */}
