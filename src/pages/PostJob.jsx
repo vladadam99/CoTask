@@ -155,39 +155,6 @@ export default function PostJob() {
             </div>
           )}
 
-          {/* Skills */}
-          <div>
-            <label className="text-sm font-medium mb-2 block">Skills Required</label>
-            <div className="flex gap-2 mb-2">
-              <Input value={skillInput} onChange={e => setSkillInput(e.target.value)}
-                onKeyDown={e => e.key === 'Enter' && addSkill()}
-                placeholder="Type a skill and press Enter" className="bg-white/5 border-white/10" />
-              <Button size="sm" variant="outline" className="border-white/10" onClick={addSkill}><Plus className="w-4 h-4" /></Button>
-            </div>
-            <div className="flex flex-wrap gap-1.5">
-              {form.skills_required.map(s => (
-                <span key={s} className="flex items-center gap-1 text-xs bg-white/5 border border-white/10 rounded-full px-2.5 py-1">
-                  {s}
-                  <button onClick={() => setForm(p => ({ ...p, skills_required: p.skills_required.filter(x => x !== s) }))}>
-                    <X className="w-3 h-3" />
-                  </button>
-                </span>
-              ))}
-            </div>
-          </div>
-
-          {/* Languages */}
-          <div>
-            <label className="text-sm font-medium mb-2 block">Languages Needed</label>
-            <div className="flex flex-wrap gap-2">
-              {LANGUAGES.map(l => (
-                <button key={l} onClick={() => toggleArr('languages_required', l)}
-                  className={`px-2.5 py-1 rounded-full text-xs font-medium border transition-all ${form.languages_required.includes(l) ? 'bg-primary/10 text-primary border-primary/30' : 'bg-white/5 text-muted-foreground border-white/10'}`}>
-                  {l}
-                </button>
-              ))}
-            </div>
-          </div>
 
           {/* Equipment */}
           <div>
