@@ -90,15 +90,24 @@ export default function PostJob() {
   };
 
   const jobPayload = {
-    ...form,
+    title: form.title,
+    description: form.description,
+    category: form.category,
+    location: form.location,
+    remote_ok: form.remote_ok,
+    travel_required: form.travel_required,
+    camera_required: form.camera_required,
+    negotiable: form.negotiable,
+    skills_required: form.skills_required,
+    languages_required: form.languages_required,
+    equipment_needed: form.equipment_needed,
     budget_min: form.budget ? Number(form.budget) : undefined,
     budget_max: form.budget ? Number(form.budget) : undefined,
-    duration_type: 'hourly',
+    duration_type: form.budget_type === 'hourly' ? 'hourly' : 'custom',
     duration_value: form.time_mode === 'flexible' && form.scheduled_time_end ? Number(form.scheduled_time_end) : undefined,
     flexible_dates: form.timing_mode === 'flexible',
     scheduled_date: form.scheduled_date ? (form.scheduled_date instanceof Date ? form.scheduled_date.toISOString().split('T')[0] : form.scheduled_date) : undefined,
     scheduled_time: form.scheduled_time || undefined,
-    scheduled_time_end: form.scheduled_time_end || undefined,
     repeat: form.repeat || undefined,
   };
 
