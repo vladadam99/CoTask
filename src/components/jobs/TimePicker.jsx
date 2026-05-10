@@ -14,19 +14,24 @@ export default function TimePicker({ timeMode, onTimeMode, startTime, onStartTim
 
       {/* Time mode toggle */}
       <div className="flex rounded-xl border border-white/10 bg-white/5 p-1 gap-1">
-        <button type="button" onClick={() => onTimeMode('range')}
-          className={`flex-1 py-1.5 rounded-lg text-xs font-semibold transition-all ${
-            timeMode === 'range' ? 'bg-foreground text-background' : 'text-muted-foreground hover:text-foreground'
-          }`}>
-          Time range
-        </button>
+        {[
+          { key: 'range', label: 'Time range' },
+          { key: 'flexible', label: 'Flexible' },
+        ].map(({ key, label }) => (
+          <button key={key} type="button" onClick={() => onTimeMode(key)}
+            className={`flex-1 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+              timeMode === key ? 'bg-foreground text-background' : 'text-muted-foreground hover:text-foreground'
+            }`}>
+            {label}
+          </button>
+        ))}
       </div>
 
       {/* Time inputs */}
-      <div className="space-y-3">
-        {timeMode === 'specific' ? (
+      {timeMode === 'range' && (
+        <div className="grid grid-cols-2 gap-3">
           <div>
-            <label className="text-xs text-muted-foreground mb-1.5 block">Time</label>
+            <label className="text-xs text-muted-foreground mb-1.5 block">From</label>
             <div className="relative">
               <Clock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none" />
               <input
@@ -37,35 +42,23 @@ export default function TimePicker({ timeMode, onTimeMode, startTime, onStartTim
               />
             </div>
           </div>
-        ) : (
-          <div className="grid grid-cols-2 gap-3">
-            <div>
-              <label className="text-xs text-muted-foreground mb-1.5 block">From</label>
-              <div className="relative">
-                <Clock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none" />
-                <input
-                  type="time"
-                  value={startTime || ''}
-                  onChange={e => onStartTime(e.target.value)}
-                  className="w-full bg-white/5 border border-white/10 rounded-lg pl-9 pr-3 py-2 text-sm focus:outline-none focus:border-primary/50 text-foreground"
-                />
-              </div>
-            </div>
-            <div>
-              <label className="text-xs text-muted-foreground mb-1.5 block">To</label>
-              <div className="relative">
-                <Clock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none" />
-                <input
-                  type="time"
-                  value={endTime || ''}
-                  onChange={e => onEndTime(e.target.value)}
-                  className="w-full bg-white/5 border border-white/10 rounded-lg pl-9 pr-3 py-2 text-sm focus:outline-none focus:border-primary/50 text-foreground"
-                />
-              </div>
+          <div>
+            <label className="text-xs text-muted-foreground mb-1.5 block">To</label>
+            <div className="relative">
+              <Clock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none" />
+              <input
+                type="time"
+                value={endTime || ''}
+                onChange={e => onEndTime(e.target.value)}
+                className="w-full bg-white/5 border border-white/10 rounded-lg pl-9 pr-3 py-2 text-sm focus:outline-none focus:border-primary/50 text-foreground"
+              />
             </div>
           </div>
-        )}
-      </div>
+        </div>
+      )}
+      {timeMode === 'flexible' && (
+        <p className="text-xs text-muted-foreground py-2">No specific time required — avatars can work at any time.</p>
+      )}
 
       {/* Repeat */}
       <div className="space-y-2">
