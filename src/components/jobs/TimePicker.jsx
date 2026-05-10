@@ -57,7 +57,7 @@ export default function TimePicker({ timeMode, onTimeMode, startTime, onStartTim
         </div>
       )}
       {timeMode === 'flexible' && (
-        <p className="text-xs text-muted-foreground py-2">No specific time required — avatars can work at any time.</p>
+        <p className="text-xs text-muted-foreground py-2">This job can be done at any time of the day, or you can agree on a specific time with the avatar later.</p>
       )}
 
       {/* Repeat */}
