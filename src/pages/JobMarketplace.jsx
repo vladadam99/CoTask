@@ -8,7 +8,7 @@ import { getNavItems } from '@/lib/navItems';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
-import { Plus, Search, MapPin, Clock, DollarSign, Users, Filter, Briefcase } from 'lucide-react';
+import { Plus, MapPin, Clock, DollarSign, Users, Briefcase, Calendar, AlertCircle } from 'lucide-react';
 import SmartSearchBar from '@/components/search/SmartSearchBar';
 
 const CATEGORIES = ['All', 'Shopping', 'Delivery', 'Real Estate', 'Tourism', 'Events', 'Inspection', 'Translation', 'Other'];
@@ -118,37 +118,67 @@ export default function JobMarketplace() {
           <div className="space-y-3">
             {sortedFiltered.map(job => (
               <Link key={job.id} to={`/JobDetail?id=${job.id}`}>
-                <div className="glass border border-white/5 hover:border-primary/30 rounded-2xl p-5 transition-all hover:scale-[1.005]">
+                <div className="glass border border-white/5 hover:border-primary/30 rounded-2xl p-6 transition-all hover:scale-[1.005] space-y-4">
+                  {/* Title row */}
                   <div className="flex items-start justify-between gap-3">
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2 flex-wrap">
-                        <h3 className="font-bold text-sm">{job.title}</h3>
+                    <div>
+                      <div className="flex items-center gap-2 flex-wrap mb-1">
+                        <h3 className="font-bold text-base">{job.title}</h3>
                         <Badge variant="outline" className={`text-xs border ${job.status === 'open' ? 'bg-green-500/10 text-green-400 border-green-500/20' : 'bg-muted text-muted-foreground'}`}>
                           {job.status}
                         </Badge>
                         {job.camera_required && (
-                          <Badge variant="outline" className="text-xs bg-primary/10 text-primary border-primary/20">📷 Camera</Badge>
+                          <Badge variant="outline" className="text-xs bg-primary/10 text-primary border-primary/20">📷 Camera Required</Badge>
                         )}
                       </div>
-                      <p className="text-xs text-muted-foreground mt-1 line-clamp-2">{job.description}</p>
-                      <div className="flex flex-wrap gap-3 mt-3 text-xs text-muted-foreground">
-                        {job.location && <span className="flex items-center gap-1"><MapPin className="w-3 h-3" />{job.location}</span>}
-                        <span className="flex items-center gap-1"><Clock className="w-3 h-3" />{job.duration_value} {job.duration_type}</span>
-                        {job.budget_min && <span className="flex items-center gap-1"><DollarSign className="w-3 h-3" />${job.budget_min}{job.budget_max ? `–$${job.budget_max}` : '+'}{DURATION_LABELS[job.duration_type]}</span>}
-                        <span className="flex items-center gap-1"><Users className="w-3 h-3" />{job.application_count || 0} applicant{job.application_count !== 1 ? 's' : ''}</span>
-                      </div>
-                      {(job.skills_required || []).length > 0 && (
-                        <div className="flex flex-wrap gap-1 mt-2">
-                          {job.skills_required.slice(0, 4).map(s => (
-                            <span key={s} className="text-xs bg-white/5 border border-white/5 rounded px-2 py-0.5">{s}</span>
-                          ))}
-                        </div>
-                      )}
+                      <p className="text-xs text-muted-foreground">Posted by {job.posted_by_name}</p>
                     </div>
-                    <div className="text-right flex-shrink-0">
-                      <p className="text-xs text-muted-foreground">{job.posted_by_name}</p>
-                    </div>
+                    <Badge variant="outline" className="text-xs bg-white/5 border-white/10 text-muted-foreground flex-shrink-0">
+                      <Users className="w-3 h-3 mr-1" />{job.application_count || 0} applicant{job.application_count !== 1 ? 's' : ''}
+                    </Badge>
                   </div>
+
+                  {/* Description */}
+                  <p className="text-sm text-muted-foreground leading-relaxed line-clamp-2">{job.description}</p>
+
+                  {/* Meta row */}
+                  <div className="flex flex-wrap gap-4 text-sm text-muted-foreground">
+                    {job.location && <span className="flex items-center gap-1.5"><MapPin className="w-4 h-4" />{job.location}</span>}
+                    {job.duration_value && <span className="flex items-center gap-1.5"><Clock className="w-4 h-4" />{job.duration_value} {job.duration_value === 1 ? 'hour' : 'hours'}</span>}
+                    {job.budget_min && (
+                      <span className="text-primary font-semibold">
+                        ${job.budget_min}{DURATION_LABELS[job.duration_type]}{job.negotiable ? ' · negotiable' : ''}
+                      </span>
+                    )}
+                  </div>
+
+                  {/* Tags */}
+                  <div className="flex flex-wrap gap-2 text-xs">
+                    {job.remote_ok && <span className="px-2 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400">Remote OK</span>}
+                    {job.travel_required && <span className="px-2 py-1 rounded-full bg-orange-500/10 border border-orange-500/20 text-orange-400">Travel Required</span>}
+                    {job.flexible_dates
+                      ? <span className="px-2 py-1 rounded-full bg-green-500/10 border border-green-500/20 text-green-400">Flexible Dates</span>
+                      : job.scheduled_date && (
+                        <span className="px-2 py-1 rounded-full bg-white/5 border border-white/10 text-muted-foreground flex items-center gap-1.5">
+                          <Calendar className="w-3.5 h-3.5" />
+                          {job.scheduled_date}{job.scheduled_time ? ` at ${job.scheduled_time}` : ''}
+                        </span>
+                      )}
+                    {!job.flexible_dates && job.scheduled_date && job.scheduled_time && job.status === 'open' && (
+                      <span className="px-2 py-1 rounded-full bg-yellow-500/10 border border-yellow-500/20 text-yellow-400 flex items-center gap-1.5">
+                        <AlertCircle className="w-3 h-3" /> Expires if unclaimed by {job.scheduled_time}
+                      </span>
+                    )}
+                  </div>
+
+                  {/* Skills */}
+                  {(job.skills_required || []).length > 0 && (
+                    <div className="flex flex-wrap gap-1.5">
+                      {job.skills_required.slice(0, 5).map(s => (
+                        <span key={s} className="text-xs bg-white/5 border border-white/5 rounded-full px-2.5 py-1">{s}</span>
+                      ))}
+                    </div>
+                  )}
                 </div>
               </Link>
             ))}
