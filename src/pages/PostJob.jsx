@@ -7,11 +7,11 @@ import AppShell from '@/components/layout/AppShell';
 import { getNavItems } from '@/lib/navItems';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { ArrowLeft, Plus, X, ShieldAlert } from 'lucide-react';
+import { ArrowLeft, Plus, X, ShieldAlert, Calendar, CalendarRange, Shuffle } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 const CATEGORIES = ['Shopping', 'Delivery', 'Real Estate', 'Tourism', 'Events', 'Inspection', 'Translation', 'Other'];
-const DURATION_TYPES = ['hourly', 'daily', 'weekly', 'monthly', 'custom'];
+const FLEXIBLE_WINDOWS = ['Within a week', 'Within 2 weeks', 'Within a month', 'Within 3 months', 'Anytime'];
 const EQUIPMENT_OPTIONS = ['Smartphone', '360° Camera', 'Drone', 'Laptop', 'Headset', 'Vehicle'];
 const LANGUAGES = ['English', 'Spanish', 'French', 'German', 'Mandarin', 'Arabic', 'Portuguese', 'Italian', 'Japanese', 'Other'];
 
@@ -21,9 +21,12 @@ export default function PostJob() {
   const [form, setForm] = useState({
     title: '', description: '', category: 'Shopping', location: '',
     remote_ok: false, travel_required: false,
-    duration_type: 'hourly', duration_value: 1,
     budget_min: '', budget_max: '', negotiable: true,
-    camera_required: false, flexible_dates: true, scheduled_date: '', scheduled_time: '',
+    camera_required: false,
+    timing_mode: 'specific', // 'specific' | 'range' | 'flexible'
+    scheduled_date: '', scheduled_time: '',
+    date_range_start: '', date_range_end: '',
+    flexible_window: 'Within a month',
     skills_required: [], languages_required: [], equipment_needed: [],
   });
   const [skillInput, setSkillInput] = useState('');
@@ -46,7 +49,9 @@ export default function PostJob() {
         ...form,
         budget_min: form.budget_min ? Number(form.budget_min) : undefined,
         budget_max: form.budget_max ? Number(form.budget_max) : undefined,
-        duration_value: Number(form.duration_value),
+        flexible_dates: form.timing_mode === 'flexible',
+        scheduled_date: form.timing_mode === 'specific' ? form.scheduled_date : form.timing_mode === 'range' ? form.date_range_start : undefined,
+        scheduled_time: form.timing_mode === 'specific' ? form.scheduled_time : undefined,
         posted_by_email: user.email,
         posted_by_name: user.full_name,
         posted_by_type: user.role === 'enterprise' ? 'enterprise' : 'user',
@@ -112,22 +117,76 @@ export default function PostJob() {
             </div>
           </div>
 
-          {/* Duration & Budget */}
+          {/* When does this need to be done */}
           <div>
-            <label className="text-sm font-medium mb-2 block">Duration</label>
-            <div className="flex gap-2 items-center">
-              <Input type="number" min="1" value={form.duration_value} onChange={e => set('duration_value', e.target.value)}
-                className="bg-white/5 border-white/10 w-24" />
-              <div className="flex gap-1">
-                {DURATION_TYPES.map(d => (
-                  <button key={d} onClick={() => set('duration_type', d)}
-                    className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${form.duration_type === d ? 'bg-primary text-white' : 'bg-white/5 border border-white/10 text-muted-foreground'}`}>
-                    {d}
+            <label className="text-sm font-medium mb-3 block">When does this need to be done?</label>
+            {/* Mode selector */}
+            <div className="grid grid-cols-3 gap-2 mb-4">
+              {[
+                { mode: 'specific', icon: Calendar, label: 'Specific date', sub: 'Exact day & time' },
+                { mode: 'range', icon: CalendarRange, label: 'Date range', sub: 'Between two dates' },
+                { mode: 'flexible', icon: Shuffle, label: 'Flexible', sub: 'Approximate window' },
+              ].map(({ mode, icon: Icon, label, sub }) => (
+                <button key={mode} type="button" onClick={() => set('timing_mode', mode)}
+                  className={`flex flex-col items-center gap-1.5 px-3 py-3 rounded-xl border text-center transition-all ${
+                    form.timing_mode === mode
+                      ? 'bg-primary/10 border-primary/40 text-primary'
+                      : 'bg-white/5 border-white/10 text-muted-foreground hover:border-white/20'
+                  }`}>
+                  <Icon className="w-5 h-5" />
+                  <span className="text-xs font-semibold leading-tight">{label}</span>
+                  <span className="text-[10px] leading-tight opacity-70">{sub}</span>
+                </button>
+              ))}
+            </div>
+
+            {/* Specific date */}
+            {form.timing_mode === 'specific' && (
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="text-xs text-muted-foreground mb-1.5 block">Date</label>
+                  <Input type="date" value={form.scheduled_date} onChange={e => set('scheduled_date', e.target.value)} className="bg-white/5 border-white/10" />
+                </div>
+                <div>
+                  <label className="text-xs text-muted-foreground mb-1.5 block">Time (optional)</label>
+                  <Input type="time" value={form.scheduled_time} onChange={e => set('scheduled_time', e.target.value)} className="bg-white/5 border-white/10" />
+                </div>
+              </div>
+            )}
+
+            {/* Date range */}
+            {form.timing_mode === 'range' && (
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="text-xs text-muted-foreground mb-1.5 block">From</label>
+                  <Input type="date" value={form.date_range_start} onChange={e => set('date_range_start', e.target.value)} className="bg-white/5 border-white/10" />
+                </div>
+                <div>
+                  <label className="text-xs text-muted-foreground mb-1.5 block">To</label>
+                  <Input type="date" value={form.date_range_end} onChange={e => set('date_range_end', e.target.value)}
+                    min={form.date_range_start || undefined} className="bg-white/5 border-white/10" />
+                </div>
+              </div>
+            )}
+
+            {/* Flexible */}
+            {form.timing_mode === 'flexible' && (
+              <div className="flex flex-wrap gap-2">
+                {FLEXIBLE_WINDOWS.map(w => (
+                  <button key={w} type="button" onClick={() => set('flexible_window', w)}
+                    className={`px-3 py-1.5 rounded-full text-xs font-medium border transition-all ${
+                      form.flexible_window === w
+                        ? 'bg-primary/10 text-primary border-primary/30'
+                        : 'bg-white/5 text-muted-foreground border-white/10 hover:border-white/20'
+                    }`}>
+                    {w}
                   </button>
                 ))}
               </div>
-            </div>
+            )}
           </div>
+
+          {/* Budget */}
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="text-sm font-medium mb-1.5 block">Budget Min ($)</label>
@@ -138,22 +197,6 @@ export default function PostJob() {
               <Input type="number" value={form.budget_max} onChange={e => set('budget_max', e.target.value)} placeholder="100" className="bg-white/5 border-white/10" />
             </div>
           </div>
-
-
-
-          {/* Date (if not flexible) */}
-          {!form.flexible_dates && (
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label className="text-sm font-medium mb-1.5 block">Scheduled Date</label>
-                <Input type="date" value={form.scheduled_date} onChange={e => set('scheduled_date', e.target.value)} className="bg-white/5 border-white/10" />
-              </div>
-              <div>
-                <label className="text-sm font-medium mb-1.5 block">Scheduled Time</label>
-                <Input type="time" value={form.scheduled_time} onChange={e => set('scheduled_time', e.target.value)} className="bg-white/5 border-white/10" />
-              </div>
-            </div>
-          )}
 
 
           {/* Equipment */}
