@@ -22,7 +22,7 @@ export default function PostJob() {
   const [form, setForm] = useState({
     title: '', description: '', category: 'Shopping', location: '',
     remote_ok: false, travel_required: false,
-    budget_min: '', budget_max: '', negotiable: true, budget_type: 'fixed',
+    budget: '', negotiable: false, budget_type: 'fixed',
     camera_required: false,
     timing_mode: 'dates',
     scheduled_date: null, scheduled_time: '',
@@ -51,8 +51,8 @@ export default function PostJob() {
     mutationFn: async () => {
       const job = await base44.entities.JobPost.create({
         ...form,
-        budget_min: form.budget_min ? Number(form.budget_min) : undefined,
-        budget_max: form.budget_max ? Number(form.budget_max) : undefined,
+        budget_min: form.budget ? Number(form.budget) : undefined,
+        budget_max: form.budget ? Number(form.budget) : undefined,
         duration_type: form.budget_type === 'hourly' ? 'hourly' : 'custom',
         flexible_dates: form.timing_mode === 'flexible',
         scheduled_date: form.scheduled_date ? form.scheduled_date.toISOString().split('T')[0] : undefined,
@@ -170,16 +170,21 @@ export default function PostJob() {
               </button>
             ))}
           </div>
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="text-sm font-medium mb-1.5 block">Min ($){form.budget_type === 'hourly' ? '/hr' : ''}</label>
-              <Input type="number" value={form.budget_min} onChange={e => set('budget_min', e.target.value)} placeholder="20" className="bg-white/5 border-white/10" />
-            </div>
-            <div>
-              <label className="text-sm font-medium mb-1.5 block">Max ($){form.budget_type === 'hourly' ? '/hr' : ''}</label>
-              <Input type="number" value={form.budget_max} onChange={e => set('budget_max', e.target.value)} placeholder="100" className="bg-white/5 border-white/10" />
-            </div>
+          <div>
+            <label className="text-sm font-medium mb-1.5 block">Price ($){form.budget_type === 'hourly' ? '/hr' : ''}</label>
+            <Input type="number" value={form.budget} onChange={e => set('budget', e.target.value)} placeholder="50" className="bg-white/5 border-white/10" />
           </div>
+          <button type="button" onClick={() => set('negotiable', !form.negotiable)}
+            className={`flex items-center gap-2 px-3 py-2 rounded-lg border text-xs font-medium transition-all w-fit ${
+              form.negotiable
+                ? 'bg-primary/10 text-primary border-primary/30'
+                : 'bg-white/5 text-muted-foreground border-white/10 hover:border-white/20'
+            }`}>
+            <span className={`w-3.5 h-3.5 rounded-full border-2 flex items-center justify-center flex-shrink-0 ${form.negotiable ? 'border-primary' : 'border-muted-foreground'}`}>
+              {form.negotiable && <span className="w-1.5 h-1.5 rounded-full bg-primary block" />}
+            </span>
+            Price is negotiable
+          </button>
         </div>
 
         {/* Equipment */}
