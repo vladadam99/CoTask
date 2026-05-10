@@ -203,7 +203,7 @@ export default function JobDetail() {
           {isOwner && (
             <div className="flex gap-2">
               {job.status === 'open' && (
-                <Button variant="outline" size="sm" className="border-white/10 text-xs gap-1" onClick={openEditForm}>
+                <Button variant="outline" size="sm" className="border-white/10 text-xs gap-1" onClick={() => navigate(`/PostJob?edit=${jobId}`)}>
                   <Pencil className="w-3 h-3" /> Edit
                 </Button>
               )}

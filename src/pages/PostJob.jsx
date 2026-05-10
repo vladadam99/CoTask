@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useMutation } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
@@ -27,6 +27,9 @@ const LANGUAGES = ['English', 'Spanish', 'French', 'German', 'Mandarin', 'Arabic
 export default function PostJob() {
   const { user } = useCurrentUser();
   const navigate = useNavigate();
+  const urlParams = new URLSearchParams(window.location.search);
+  const editJobId = urlParams.get('edit');
+
   const [form, setForm] = useState({
     title: '', description: '', category: '', location: '',
     remote_ok: false, travel_required: false,
@@ -43,6 +46,37 @@ export default function PostJob() {
   });
   const [skillInput, setSkillInput] = useState('');
 
+  useEffect(() => {
+    if (!editJobId) return;
+    base44.entities.JobPost.filter({ id: editJobId }).then(r => {
+      const job = r[0];
+      if (!job) return;
+      setForm({
+        title: job.title || '',
+        description: job.description || '',
+        category: job.category || '',
+        location: job.location || '',
+        remote_ok: job.remote_ok || false,
+        travel_required: job.travel_required || false,
+        budget: job.budget_min || '',
+        negotiable: job.negotiable || false,
+        budget_type: job.duration_type === 'hourly' ? 'hourly' : 'fixed',
+        camera_required: job.camera_required || false,
+        timing_mode: job.flexible_dates ? 'flexible' : 'dates',
+        scheduled_date: job.scheduled_date ? new Date(job.scheduled_date) : null,
+        scheduled_time: job.scheduled_time || '',
+        scheduled_time_end: job.scheduled_time_end || '',
+        time_mode: 'specific',
+        date_range_end: null,
+        flexibility: 0,
+        repeat: job.repeat || null,
+        skills_required: job.skills_required || [],
+        languages_required: job.languages_required || [],
+        equipment_needed: job.equipment_needed || [],
+      });
+    });
+  }, [editJobId]);
+
   const set = (k, v) => setForm(p => ({ ...p, [k]: v }));
   const toggleArr = (key, val) => setForm(p => ({
     ...p, [key]: p[key].includes(val) ? p[key].filter(x => x !== val) : [...p[key], val]
@@ -55,18 +89,26 @@ export default function PostJob() {
     }
   };
 
+  const jobPayload = {
+    ...form,
+    budget_min: form.budget ? Number(form.budget) : undefined,
+    budget_max: form.budget ? Number(form.budget) : undefined,
+    duration_type: form.budget_type === 'hourly' ? 'hourly' : 'custom',
+    flexible_dates: form.timing_mode === 'flexible',
+    scheduled_date: form.scheduled_date ? (form.scheduled_date instanceof Date ? form.scheduled_date.toISOString().split('T')[0] : form.scheduled_date) : undefined,
+    scheduled_time: form.scheduled_time || undefined,
+    scheduled_time_end: form.scheduled_time_end || undefined,
+    repeat: form.repeat || undefined,
+  };
+
   const submit = useMutation({
     mutationFn: async () => {
+      if (editJobId) {
+        await base44.entities.JobPost.update(editJobId, jobPayload);
+        return { id: editJobId };
+      }
       const job = await base44.entities.JobPost.create({
-        ...form,
-        budget_min: form.budget ? Number(form.budget) : undefined,
-        budget_max: form.budget ? Number(form.budget) : undefined,
-        duration_type: form.budget_type === 'hourly' ? 'hourly' : 'custom',
-        flexible_dates: form.timing_mode === 'flexible',
-        scheduled_date: form.scheduled_date ? form.scheduled_date.toISOString().split('T')[0] : undefined,
-        scheduled_time: form.scheduled_time || undefined,
-        scheduled_time_end: form.scheduled_time_end || undefined,
-        repeat: form.repeat || undefined,
+        ...jobPayload,
         posted_by_email: user.email,
         posted_by_name: user.full_name,
         posted_by_type: user.role === 'enterprise' ? 'enterprise' : 'user',
@@ -107,8 +149,8 @@ export default function PostJob() {
             <ArrowLeft className="w-4 h-4" />
           </button>
           <div>
-            <h1 className="text-2xl font-bold">Post a Job</h1>
-            <p className="text-muted-foreground text-sm">Find the perfect avatar for your task</p>
+            <h1 className="text-2xl font-bold">{editJobId ? 'Edit Job' : 'Post a Job'}</h1>
+            <p className="text-muted-foreground text-sm">{editJobId ? 'Update your job post details' : 'Find the perfect avatar for your task'}</p>
           </div>
         </div>
 
@@ -219,7 +261,7 @@ export default function PostJob() {
         </div>
 
         <Button className="w-full h-11" onClick={() => submit.mutate()} disabled={submit.isPending || !form.title || !form.description}>
-          {submit.isPending ? 'Posting...' : 'Post Job'}
+          {submit.isPending ? (editJobId ? 'Saving...' : 'Posting...') : (editJobId ? 'Save Changes' : 'Post Job')}
         </Button>
       </div>
     </AppShell>
