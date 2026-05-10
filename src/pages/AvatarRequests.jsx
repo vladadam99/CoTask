@@ -121,7 +121,7 @@ export default function AvatarRequests() {
   const pendingCount = bookings.filter(b => b.status === 'pending').length;
 
   return (
-    <AppShell navItems={getNavItems(user?.role)} user={user}>
+    <AppShell navItems={getNavItems(user?.selected_role)} user={user}>
       <div className="mb-8">
         <h1 className="text-2xl lg:text-3xl font-bold mb-1">Booking Requests</h1>
         <p className="text-muted-foreground text-sm">
