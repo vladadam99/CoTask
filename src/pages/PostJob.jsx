@@ -13,11 +13,12 @@ import TimePicker from '@/components/jobs/TimePicker';
 import { Link } from 'react-router-dom';
 
 const CATEGORIES = [
-  'City Guide', 'Property Walkthrough', 'Shopping Help', 'Event Attendance', 'Queue & Errands',
-  'Family Support', 'Business Inspection', 'Training & Coaching', 'Travel Assistance', 'Pets & Animals',
-  'Cars & Vehicles', 'Mechanics', 'Plumbing', 'Electrical Work', 'Medical & Health', 'Outdoors & Nature',
-  'Cleaning', 'Gardening', 'Pick Ups', 'Deliveries', 'Cooking & Food', 'Dating & Social', 'Driving',
-  'Show Me Around', 'Carers & Companionship', 'DIY & Repairs', 'Campus Help',
+  'Business Inspection', 'Campus Help', 'Carers & Companionship', 'Cars & Vehicles', 'City Guide',
+  'Cleaning', 'Cooking & Food', 'Dating & Social', 'Deliveries', 'DIY & Repairs',
+  'Driving', 'Electrical Work', 'Event Attendance', 'Family Support', 'Gardening',
+  'Medical & Health', 'Mechanics', 'Outdoors & Nature', 'Pets & Animals', 'Pick Ups',
+  'Plumbing', 'Property Walkthrough', 'Queue & Errands', 'Shopping Help', 'Show Me Around',
+  'Training & Coaching', 'Travel Assistance',
 ];
 const EQUIPMENT_OPTIONS = ['Smartphone', '360° Camera', 'Drone', 'Laptop', 'Headset', 'Vehicle'];
 const LANGUAGES = ['English', 'Spanish', 'French', 'German', 'Mandarin', 'Arabic', 'Portuguese', 'Italian', 'Japanese', 'Other'];
@@ -26,7 +27,7 @@ export default function PostJob() {
   const { user } = useCurrentUser();
   const navigate = useNavigate();
   const [form, setForm] = useState({
-    title: '', description: '', category: 'City Guide', location: '',
+    title: '', description: '', category: '', location: '',
     remote_ok: false, travel_required: false,
     budget: '', negotiable: false, budget_type: 'fixed',
     camera_required: false,
@@ -122,6 +123,7 @@ export default function PostJob() {
               <label className="text-sm font-medium mb-1.5 block">Category *</label>
               <select value={form.category} onChange={e => set('category', e.target.value)}
                 className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-primary/50 text-foreground">
+                <option value="" className="bg-card text-muted-foreground">Select a category</option>
                 {CATEGORIES.map(c => <option key={c} value={c} className="bg-card">{c}</option>)}
               </select>
             </div>
