@@ -139,21 +139,7 @@ export default function PostJob() {
             </div>
           </div>
 
-          {/* Toggles */}
-          <div className="flex flex-wrap gap-3">
-            {[
-              { key: 'negotiable', label: 'Price Negotiable' },
-              { key: 'remote_ok', label: 'Remote OK' },
-              { key: 'travel_required', label: 'Travel Required' },
-              { key: 'camera_required', label: 'Live Camera Required' },
-              { key: 'flexible_dates', label: 'Flexible Dates' },
-            ].map(({ key, label }) => (
-              <button key={key} onClick={() => set(key, !form[key])}
-                className={`px-3 py-1.5 rounded-full text-xs font-medium border transition-all ${form[key] ? 'bg-primary/10 text-primary border-primary/30' : 'bg-white/5 text-muted-foreground border-white/10'}`}>
-                {form[key] ? '✓ ' : ''}{label}
-              </button>
-            ))}
-          </div>
+
 
           {/* Date (if not flexible) */}
           {!form.flexible_dates && (
