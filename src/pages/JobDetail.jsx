@@ -10,7 +10,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import StatusBadge from '@/components/ui/StatusBadge';
 import JobPaymentModal from '@/components/jobs/JobPaymentModal';
-import { ArrowLeft, MapPin, Clock, DollarSign, Users, CheckCircle, XCircle, Star, Award, MessageCircle, Pencil, Calendar, AlertCircle, ShieldAlert } from 'lucide-react';
+import { ArrowLeft, MapPin, Clock, DollarSign, Users, CheckCircle, XCircle, Star, Award, MessageCircle, Pencil, Calendar, AlertCircle, ShieldAlert, Send } from 'lucide-react';
 import JobNegotiationFlow from '@/components/jobs/JobNegotiationFlow';
 
 const DURATION_LABELS = { hourly: '/hr', daily: '/day', weekly: '/wk', monthly: '/mo', custom: '' };
@@ -393,6 +393,30 @@ export default function JobDetail() {
               user={user}
             />
           </div>
+        )}
+
+        {/* Message Client Button (avatars only, before applying) */}
+        {isAvatar && job?.posted_by_email && (
+          <Button
+            variant="outline"
+            className="w-full h-11 gap-2 border-white/10"
+            onClick={async () => {
+              const existing = await base44.entities.Conversation.filter({ booking_id: `direct_${[user.email, job.posted_by_email].sort().join('_')}` });
+              let conv = existing[0];
+              if (!conv) {
+                conv = await base44.entities.Conversation.create({
+                  participant_emails: [user.email, job.posted_by_email],
+                  participant_names: [user.full_name, job.posted_by_name],
+                  booking_id: `direct_${[user.email, job.posted_by_email].sort().join('_')}`,
+                  last_message: '',
+                  unread_by: [job.posted_by_email],
+                });
+              }
+              navigate(`/Messages?conversation=${conv.id}`);
+            }}
+          >
+            <Send className="w-4 h-4" /> Message Client
+          </Button>
         )}
 
         {/* Apply Button / Form */}
