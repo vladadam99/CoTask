@@ -9,6 +9,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { ArrowLeft, ShieldAlert } from 'lucide-react';
 import DatePicker from '@/components/jobs/DatePicker';
+import TimePicker from '@/components/jobs/TimePicker';
 import { Link } from 'react-router-dom';
 
 const CATEGORIES = ['Shopping', 'Delivery', 'Real Estate', 'Tourism', 'Events', 'Inspection', 'Translation', 'Other'];
@@ -23,10 +24,13 @@ export default function PostJob() {
     remote_ok: false, travel_required: false,
     budget_min: '', budget_max: '', negotiable: true,
     camera_required: false,
-    timing_mode: 'dates', // 'dates' | 'flexible'
+    timing_mode: 'dates',
     scheduled_date: null, scheduled_time: '',
+    scheduled_time_end: '',
+    time_mode: 'specific',
     date_range_end: null,
     flexibility: 0,
+    repeat: null,
     skills_required: [], languages_required: [], equipment_needed: [],
   });
   const [skillInput, setSkillInput] = useState('');
@@ -52,6 +56,8 @@ export default function PostJob() {
         flexible_dates: form.timing_mode === 'flexible',
         scheduled_date: form.scheduled_date ? form.scheduled_date.toISOString().split('T')[0] : undefined,
         scheduled_time: form.scheduled_time || undefined,
+        scheduled_time_end: form.scheduled_time_end || undefined,
+        repeat: form.repeat || undefined,
         posted_by_email: user.email,
         posted_by_name: user.full_name,
         posted_by_type: user.role === 'enterprise' ? 'enterprise' : 'user',
@@ -120,18 +126,33 @@ export default function PostJob() {
         </div>
 
         {/* When does this need to be done */}
-        <div className="glass rounded-2xl p-6 border border-white/5 space-y-4">
-          <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">When does this need to be done?</p>
-          <DatePicker
-            mode={form.timing_mode}
-            onModeChange={v => set('timing_mode', v)}
-            startDate={form.scheduled_date}
-            endDate={form.date_range_end}
-            onStartDate={v => set('scheduled_date', v)}
-            onEndDate={v => set('date_range_end', v)}
-            flexibility={form.flexibility}
-            onFlexibility={v => set('flexibility', v)}
-          />
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="glass rounded-2xl p-6 border border-white/5 space-y-4">
+            <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Date</p>
+            <DatePicker
+              mode={form.timing_mode}
+              onModeChange={v => set('timing_mode', v)}
+              startDate={form.scheduled_date}
+              endDate={form.date_range_end}
+              onStartDate={v => set('scheduled_date', v)}
+              onEndDate={v => set('date_range_end', v)}
+              flexibility={form.flexibility}
+              onFlexibility={v => set('flexibility', v)}
+            />
+          </div>
+          <div className="glass rounded-2xl p-6 border border-white/5 space-y-4">
+            <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Time</p>
+            <TimePicker
+              timeMode={form.time_mode}
+              onTimeMode={v => set('time_mode', v)}
+              startTime={form.scheduled_time}
+              onStartTime={v => set('scheduled_time', v)}
+              endTime={form.scheduled_time_end}
+              onEndTime={v => set('scheduled_time_end', v)}
+              repeat={form.repeat}
+              onRepeat={v => set('repeat', v)}
+            />
+          </div>
         </div>
 
         {/* Budget */}
