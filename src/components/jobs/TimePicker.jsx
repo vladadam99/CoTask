@@ -57,7 +57,20 @@ export default function TimePicker({ timeMode, onTimeMode, startTime, onStartTim
         </div>
       )}
       {timeMode === 'flexible' && (
-        <p className="text-xs text-muted-foreground py-2">This job can be done at any time of the day, or you can agree on a specific time with the avatar later.</p>
+        <div>
+          <label className="text-xs text-muted-foreground mb-1.5 block">Estimated Duration (optional)</label>
+          <div className="flex items-center gap-2">
+            <input
+              type="number"
+              min="1"
+              placeholder="e.g. 2"
+              value={endTime || ''}
+              onChange={e => onEndTime(e.target.value)}
+              className="w-24 bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-primary/50 text-foreground placeholder:text-muted-foreground"
+            />
+            <span className="text-sm text-muted-foreground">hours</span>
+          </div>
+        </div>
       )}
 
       {/* Repeat */}
