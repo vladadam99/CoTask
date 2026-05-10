@@ -19,6 +19,12 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Amount must be at least $0.50' }, { status: 400 });
     }
 
+    // Fetch job first to verify it exists and get details
+    const jobs = await base44.asServiceRole.entities.JobPost.filter({ id: jobId });
+    if (!jobs || jobs.length === 0) {
+      return Response.json({ error: 'Job not found' }, { status: 404 });
+    }
+
     // Create a PaymentIntent with manual capture (escrow)
     const paymentIntent = await stripe.paymentIntents.create({
       amount: amountCents,
