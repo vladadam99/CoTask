@@ -5,7 +5,7 @@ import { useCurrentUser } from '@/lib/useCurrentUser';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
-  ArrowLeft, MoreVertical, Star, MapPin, Briefcase, Pencil, FileText, ShieldCheck
+  ArrowLeft, MoreVertical, Star, MapPin, Briefcase, Pencil, FileText, ShieldCheck, CalendarDays, Clock
 } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import AppShell from '@/components/layout/AppShell';
@@ -159,6 +159,25 @@ export default function UserProfile() {
                           }`}>{job.status}</span>
                         </div>
                         <p className="text-xs text-muted-foreground line-clamp-2 mb-3">{job.description}</p>
+                        <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted-foreground mb-2">
+                          {job.scheduled_date && (
+                            <span className="flex items-center gap-1">
+                              <CalendarDays className="w-3 h-3" />
+                              {new Date(job.scheduled_date).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}
+                            </span>
+                          )}
+                          {job.duration_value && (
+                            <span className="flex items-center gap-1">
+                              <Clock className="w-3 h-3" />
+                              {job.duration_value} {job.duration_value === 1 ? 'hour' : 'hours'}
+                            </span>
+                          )}
+                          {!job.scheduled_date && job.flexible_dates && (
+                            <span className="flex items-center gap-1">
+                              <CalendarDays className="w-3 h-3" /> Flexible dates
+                            </span>
+                          )}
+                        </div>
                         <div className="flex items-center justify-between text-xs text-muted-foreground">
                           <span>{job.category}</span>
                           {job.budget_min && (
