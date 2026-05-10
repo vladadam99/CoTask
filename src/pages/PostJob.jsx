@@ -113,7 +113,7 @@ export default function PostJob() {
         </div>
 
         {/* Basic Info */}
-        <div className="glass rounded-2xl p-6 border border-white/5 space-y-4">
+        <div className="glass rounded-2xl p-6 border border-white/5 space-y-4 relative z-10">
           <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Basic Info</p>
           <div>
             <label className="text-sm font-medium mb-1.5 block">Job Title *</label>
