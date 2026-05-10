@@ -247,9 +247,8 @@ export default function JobDetail() {
             {job.location && <span className="flex items-center gap-1.5"><MapPin className="w-4 h-4" />{job.location}</span>}
             <span className="flex items-center gap-1.5"><Clock className="w-4 h-4" />{job.duration_value} {job.duration_type}</span>
             {job.budget_min && (
-              <span className="flex items-center gap-1.5 text-primary font-semibold">
-                <DollarSign className="w-4 h-4" />${job.budget_min}{job.budget_max ? `–$${job.budget_max}` : '+'}{DURATION_LABELS[job.duration_type]}
-                {job.negotiable && <span className="text-xs text-muted-foreground font-normal">(negotiable)</span>}
+              <span className="text-primary font-semibold">
+                ${job.budget_min}{DURATION_LABELS[job.duration_type]}{job.negotiable ? ' · negotiable' : ''}
               </span>
             )}
           </div>
