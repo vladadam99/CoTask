@@ -147,7 +147,6 @@ export default function JobMarketplace() {
                     </div>
                     <div className="text-right flex-shrink-0">
                       <p className="text-xs text-muted-foreground">{job.posted_by_name}</p>
-                      <p className="text-xs text-muted-foreground capitalize">{job.posted_by_type}</p>
                     </div>
                   </div>
                 </div>
