@@ -20,7 +20,14 @@ Deno.serve(async (req) => {
     }
 
     // Fetch job first to verify it exists and get details
-    const jobs = await base44.asServiceRole.entities.JobPost.filter({ id: jobId });
+    let jobs;
+    try {
+      jobs = await base44.asServiceRole.entities.JobPost.filter({ id: jobId });
+    } catch (err) {
+      console.error('Failed to fetch job:', err.message, err.stack);
+      return Response.json({ error: `Failed to fetch job: ${err.message}` }, { status: 500 });
+    }
+    
     if (!jobs || jobs.length === 0) {
       return Response.json({ error: 'Job not found' }, { status: 404 });
     }
