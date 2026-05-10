@@ -14,17 +14,12 @@ export default function TimePicker({ timeMode, onTimeMode, startTime, onStartTim
 
       {/* Time mode toggle */}
       <div className="flex rounded-xl border border-white/10 bg-white/5 p-1 gap-1">
-        {[
-          { key: 'specific', label: 'Specific' },
-          { key: 'range', label: 'Time range' },
-        ].map(({ key, label }) => (
-          <button key={key} type="button" onClick={() => onTimeMode(key)}
-            className={`flex-1 py-1.5 rounded-lg text-xs font-semibold transition-all ${
-              timeMode === key ? 'bg-foreground text-background' : 'text-muted-foreground hover:text-foreground'
-            }`}>
-            {label}
-          </button>
-        ))}
+        <button type="button" onClick={() => onTimeMode('range')}
+          className={`flex-1 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+            timeMode === 'range' ? 'bg-foreground text-background' : 'text-muted-foreground hover:text-foreground'
+          }`}>
+          Time range
+        </button>
       </div>
 
       {/* Time inputs */}
