@@ -456,11 +456,7 @@ export default function JobDetail() {
                 <input type="number" value={applyForm.proposed_rate} onChange={e => setApplyForm(p => ({ ...p, proposed_rate: e.target.value }))}
                   placeholder="e.g. 35" className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-primary/50 text-foreground placeholder:text-muted-foreground" />
               </div>
-              <div>
-                <label className="text-sm font-medium mb-1.5 block">Available From</label>
-                <input type="date" value={applyForm.available_from} onChange={e => setApplyForm(p => ({ ...p, available_from: e.target.value }))}
-                  className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-primary/50 text-foreground" />
-              </div>
+
             </div>
             <div className="flex gap-3">
               <Button className="flex-1" onClick={() => applyMutation.mutate()} disabled={applyMutation.isPending || !applyForm.cover_message}>
