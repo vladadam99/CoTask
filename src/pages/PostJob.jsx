@@ -159,12 +159,13 @@ export default function PostJob() {
         {/* Budget */}
         <div className="glass rounded-2xl p-6 border border-white/5 space-y-4">
           <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Budget</p>
-          {/* Payment type toggle */}
-          <div className="flex rounded-xl border border-white/10 bg-white/5 p-1 gap-1">
-            {[{ key: 'fixed', label: 'Whole Job' }, { key: 'hourly', label: 'Hourly' }].map(({ key, label }) => (
+          {/* Payment type */}
+          <div className="flex items-center gap-2 text-sm">
+            <span className="text-muted-foreground">Charge</span>
+            {[{ key: 'fixed', label: 'for the whole job' }, { key: 'hourly', label: 'per hour' }].map(({ key, label }) => (
               <button key={key} type="button" onClick={() => set('budget_type', key)}
-                className={`flex-1 py-1.5 rounded-lg text-xs font-semibold transition-all ${
-                  form.budget_type === key ? 'bg-foreground text-background' : 'text-muted-foreground hover:text-foreground'
+                className={`px-2.5 py-1 rounded-full text-xs font-medium border transition-all ${
+                  form.budget_type === key ? 'bg-foreground text-background border-foreground' : 'bg-white/5 text-muted-foreground border-white/10 hover:border-white/20'
                 }`}>
                 {label}
               </button>
