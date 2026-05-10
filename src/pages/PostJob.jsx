@@ -98,12 +98,6 @@ export default function PostJob() {
             <label className="text-sm font-medium mb-1.5 block">Job Title *</label>
             <Input value={form.title} onChange={e => set('title', e.target.value)} placeholder="e.g. Check apartment in Paris" className="bg-white/5 border-white/10" />
           </div>
-          <div>
-            <label className="text-sm font-medium mb-1.5 block">Description *</label>
-            <textarea value={form.description} onChange={e => set('description', e.target.value)}
-              placeholder="Describe the job in detail — what needs to be done, any specific requirements, expected outcome..."
-              rows={4} className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm resize-none focus:outline-none focus:border-primary/50 text-foreground placeholder:text-muted-foreground" />
-          </div>
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="text-sm font-medium mb-1.5 block">Category *</label>
@@ -220,6 +214,14 @@ export default function PostJob() {
                 </button>
               ))}
             </div>
+          </div>
+
+          {/* Description */}
+          <div>
+            <label className="text-sm font-medium mb-1.5 block">Description *</label>
+            <textarea value={form.description} onChange={e => set('description', e.target.value)}
+              placeholder="Describe the job in detail — what needs to be done, any specific requirements, expected outcome..."
+              rows={4} className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm resize-none focus:outline-none focus:border-primary/50 text-foreground placeholder:text-muted-foreground" />
           </div>
         </div>
 
