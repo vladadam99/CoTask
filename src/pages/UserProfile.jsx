@@ -162,7 +162,9 @@ export default function UserProfile() {
                         <div className="flex items-center justify-between text-xs text-muted-foreground">
                           <span>{job.category}</span>
                           {job.budget_min && (
-                            <span className="font-semibold text-primary">${job.budget_min}</span>
+                            <span className="font-semibold text-primary">
+                              ${job.budget_min}<span className="font-normal text-muted-foreground">{job.duration_type === 'hourly' ? '/hr' : ' total'}</span>
+                            </span>
                           )}
                         </div>
                         {job.application_count > 0 && (
