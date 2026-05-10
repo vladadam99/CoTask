@@ -12,7 +12,13 @@ import DatePicker from '@/components/jobs/DatePicker';
 import TimePicker from '@/components/jobs/TimePicker';
 import { Link } from 'react-router-dom';
 
-const CATEGORIES = ['Shopping', 'Delivery', 'Real Estate', 'Tourism', 'Events', 'Inspection', 'Translation', 'Other'];
+const CATEGORIES = [
+  'City Guide', 'Property Walkthrough', 'Shopping Help', 'Event Attendance', 'Queue & Errands',
+  'Family Support', 'Business Inspection', 'Training & Coaching', 'Travel Assistance', 'Pets & Animals',
+  'Cars & Vehicles', 'Mechanics', 'Plumbing', 'Electrical Work', 'Medical & Health', 'Outdoors & Nature',
+  'Cleaning', 'Gardening', 'Pick Ups', 'Deliveries', 'Cooking & Food', 'Dating & Social', 'Driving',
+  'Show Me Around', 'Carers & Companionship', 'DIY & Repairs', 'Campus Help',
+];
 const EQUIPMENT_OPTIONS = ['Smartphone', '360° Camera', 'Drone', 'Laptop', 'Headset', 'Vehicle'];
 const LANGUAGES = ['English', 'Spanish', 'French', 'German', 'Mandarin', 'Arabic', 'Portuguese', 'Italian', 'Japanese', 'Other'];
 
@@ -20,7 +26,7 @@ export default function PostJob() {
   const { user } = useCurrentUser();
   const navigate = useNavigate();
   const [form, setForm] = useState({
-    title: '', description: '', category: 'Shopping', location: '',
+    title: '', description: '', category: 'City Guide', location: '',
     remote_ok: false, travel_required: false,
     budget: '', negotiable: false, budget_type: 'fixed',
     camera_required: false,
