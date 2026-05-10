@@ -97,8 +97,9 @@ export default function PostJob() {
           </div>
         </div>
 
-        <div className="glass rounded-2xl p-6 border border-white/5 space-y-5">
-          {/* Basic Info */}
+        {/* Basic Info */}
+        <div className="glass rounded-2xl p-6 border border-white/5 space-y-4">
+          <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Basic Info</p>
           <div>
             <label className="text-sm font-medium mb-1.5 block">Job Title *</label>
             <Input value={form.title} onChange={e => set('title', e.target.value)} placeholder="e.g. Check apartment in Paris" className="bg-white/5 border-white/10" />
@@ -116,109 +117,107 @@ export default function PostJob() {
               <Input value={form.location} onChange={e => set('location', e.target.value)} placeholder="City, Country" className="bg-white/5 border-white/10" />
             </div>
           </div>
+        </div>
 
-          {/* When does this need to be done */}
-          <div>
-            <label className="text-sm font-medium mb-3 block">When does this need to be done?</label>
-            {/* Mode selector */}
-            <div className="grid grid-cols-3 gap-2 mb-4">
-              {[
-                { mode: 'specific', icon: Calendar, label: 'Specific date', sub: 'Exact day & time' },
-                { mode: 'range', icon: CalendarRange, label: 'Date range', sub: 'Between two dates' },
-                { mode: 'flexible', icon: Shuffle, label: 'Flexible', sub: 'Approximate window' },
-              ].map(({ mode, icon: Icon, label, sub }) => (
-                <button key={mode} type="button" onClick={() => set('timing_mode', mode)}
-                  className={`flex flex-col items-center gap-1.5 px-3 py-3 rounded-xl border text-center transition-all ${
-                    form.timing_mode === mode
-                      ? 'bg-primary/10 border-primary/40 text-primary'
-                      : 'bg-white/5 border-white/10 text-muted-foreground hover:border-white/20'
+        {/* When does this need to be done */}
+        <div className="glass rounded-2xl p-6 border border-white/5 space-y-4">
+          <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">When does this need to be done?</p>
+          <div className="grid grid-cols-3 gap-2">
+            {[
+              { mode: 'specific', icon: Calendar, label: 'Specific date', sub: 'Exact day & time' },
+              { mode: 'range', icon: CalendarRange, label: 'Date range', sub: 'Between two dates' },
+              { mode: 'flexible', icon: Shuffle, label: 'Flexible', sub: 'Approximate window' },
+            ].map(({ mode, icon: Icon, label, sub }) => (
+              <button key={mode} type="button" onClick={() => set('timing_mode', mode)}
+                className={`flex flex-col items-center gap-1.5 px-3 py-3 rounded-xl border text-center transition-all ${
+                  form.timing_mode === mode
+                    ? 'bg-primary/10 border-primary/40 text-primary'
+                    : 'bg-white/5 border-white/10 text-muted-foreground hover:border-white/20'
+                }`}>
+                <Icon className="w-5 h-5" />
+                <span className="text-xs font-semibold leading-tight">{label}</span>
+                <span className="text-[10px] leading-tight opacity-70">{sub}</span>
+              </button>
+            ))}
+          </div>
+
+          {form.timing_mode === 'specific' && (
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <label className="text-xs text-muted-foreground mb-1.5 block">Date</label>
+                <Input type="date" value={form.scheduled_date} onChange={e => set('scheduled_date', e.target.value)} className="bg-white/5 border-white/10" />
+              </div>
+              <div>
+                <label className="text-xs text-muted-foreground mb-1.5 block">Time (optional)</label>
+                <Input type="time" value={form.scheduled_time} onChange={e => set('scheduled_time', e.target.value)} className="bg-white/5 border-white/10" />
+              </div>
+            </div>
+          )}
+
+          {form.timing_mode === 'range' && (
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <label className="text-xs text-muted-foreground mb-1.5 block">From</label>
+                <Input type="date" value={form.date_range_start} onChange={e => set('date_range_start', e.target.value)} className="bg-white/5 border-white/10" />
+              </div>
+              <div>
+                <label className="text-xs text-muted-foreground mb-1.5 block">To</label>
+                <Input type="date" value={form.date_range_end} onChange={e => set('date_range_end', e.target.value)}
+                  min={form.date_range_start || undefined} className="bg-white/5 border-white/10" />
+              </div>
+            </div>
+          )}
+
+          {form.timing_mode === 'flexible' && (
+            <div className="flex flex-wrap gap-2">
+              {FLEXIBLE_WINDOWS.map(w => (
+                <button key={w} type="button" onClick={() => set('flexible_window', w)}
+                  className={`px-3 py-1.5 rounded-full text-xs font-medium border transition-all ${
+                    form.flexible_window === w
+                      ? 'bg-primary/10 text-primary border-primary/30'
+                      : 'bg-white/5 text-muted-foreground border-white/10 hover:border-white/20'
                   }`}>
-                  <Icon className="w-5 h-5" />
-                  <span className="text-xs font-semibold leading-tight">{label}</span>
-                  <span className="text-[10px] leading-tight opacity-70">{sub}</span>
+                  {w}
                 </button>
               ))}
             </div>
+          )}
+        </div>
 
-            {/* Specific date */}
-            {form.timing_mode === 'specific' && (
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="text-xs text-muted-foreground mb-1.5 block">Date</label>
-                  <Input type="date" value={form.scheduled_date} onChange={e => set('scheduled_date', e.target.value)} className="bg-white/5 border-white/10" />
-                </div>
-                <div>
-                  <label className="text-xs text-muted-foreground mb-1.5 block">Time (optional)</label>
-                  <Input type="time" value={form.scheduled_time} onChange={e => set('scheduled_time', e.target.value)} className="bg-white/5 border-white/10" />
-                </div>
-              </div>
-            )}
-
-            {/* Date range */}
-            {form.timing_mode === 'range' && (
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="text-xs text-muted-foreground mb-1.5 block">From</label>
-                  <Input type="date" value={form.date_range_start} onChange={e => set('date_range_start', e.target.value)} className="bg-white/5 border-white/10" />
-                </div>
-                <div>
-                  <label className="text-xs text-muted-foreground mb-1.5 block">To</label>
-                  <Input type="date" value={form.date_range_end} onChange={e => set('date_range_end', e.target.value)}
-                    min={form.date_range_start || undefined} className="bg-white/5 border-white/10" />
-                </div>
-              </div>
-            )}
-
-            {/* Flexible */}
-            {form.timing_mode === 'flexible' && (
-              <div className="flex flex-wrap gap-2">
-                {FLEXIBLE_WINDOWS.map(w => (
-                  <button key={w} type="button" onClick={() => set('flexible_window', w)}
-                    className={`px-3 py-1.5 rounded-full text-xs font-medium border transition-all ${
-                      form.flexible_window === w
-                        ? 'bg-primary/10 text-primary border-primary/30'
-                        : 'bg-white/5 text-muted-foreground border-white/10 hover:border-white/20'
-                    }`}>
-                    {w}
-                  </button>
-                ))}
-              </div>
-            )}
-          </div>
-
-          {/* Budget */}
+        {/* Budget */}
+        <div className="glass rounded-2xl p-6 border border-white/5 space-y-4">
+          <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Budget</p>
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="text-sm font-medium mb-1.5 block">Budget Min ($)</label>
+              <label className="text-sm font-medium mb-1.5 block">Min ($)</label>
               <Input type="number" value={form.budget_min} onChange={e => set('budget_min', e.target.value)} placeholder="20" className="bg-white/5 border-white/10" />
             </div>
             <div>
-              <label className="text-sm font-medium mb-1.5 block">Budget Max ($)</label>
+              <label className="text-sm font-medium mb-1.5 block">Max ($)</label>
               <Input type="number" value={form.budget_max} onChange={e => set('budget_max', e.target.value)} placeholder="100" className="bg-white/5 border-white/10" />
             </div>
           </div>
+        </div>
 
-
-          {/* Equipment */}
-          <div>
-            <label className="text-sm font-medium mb-2 block">Equipment Needed</label>
-            <div className="flex flex-wrap gap-2">
-              {EQUIPMENT_OPTIONS.map(eq => (
-                <button key={eq} onClick={() => toggleArr('equipment_needed', eq)}
-                  className={`px-2.5 py-1 rounded-full text-xs font-medium border transition-all ${form.equipment_needed.includes(eq) ? 'bg-primary/10 text-primary border-primary/30' : 'bg-white/5 text-muted-foreground border-white/10'}`}>
-                  {eq}
-                </button>
-              ))}
-            </div>
+        {/* Equipment */}
+        <div className="glass rounded-2xl p-6 border border-white/5 space-y-4">
+          <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Equipment Needed</p>
+          <div className="flex flex-wrap gap-2">
+            {EQUIPMENT_OPTIONS.map(eq => (
+              <button key={eq} onClick={() => toggleArr('equipment_needed', eq)}
+                className={`px-2.5 py-1 rounded-full text-xs font-medium border transition-all ${form.equipment_needed.includes(eq) ? 'bg-primary/10 text-primary border-primary/30' : 'bg-white/5 text-muted-foreground border-white/10'}`}>
+                {eq}
+              </button>
+            ))}
           </div>
+        </div>
 
-          {/* Description */}
-          <div>
-            <label className="text-sm font-medium mb-1.5 block">Description *</label>
-            <textarea value={form.description} onChange={e => set('description', e.target.value)}
-              placeholder="Describe the job in detail — what needs to be done, any specific requirements, expected outcome..."
-              rows={4} className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm resize-none focus:outline-none focus:border-primary/50 text-foreground placeholder:text-muted-foreground" />
-          </div>
+        {/* Description */}
+        <div className="glass rounded-2xl p-6 border border-white/5 space-y-4">
+          <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Description</p>
+          <textarea value={form.description} onChange={e => set('description', e.target.value)}
+            placeholder="Describe the job in detail — what needs to be done, any specific requirements, expected outcome..."
+            rows={4} className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm resize-none focus:outline-none focus:border-primary/50 text-foreground placeholder:text-muted-foreground" />
         </div>
 
         <Button className="w-full h-11" onClick={() => submit.mutate()} disabled={submit.isPending || !form.title || !form.description}>
