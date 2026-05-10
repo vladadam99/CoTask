@@ -15,7 +15,7 @@ export default function TimePicker({ timeMode, onTimeMode, startTime, onStartTim
       {/* Time mode toggle */}
       <div className="flex rounded-xl border border-white/10 bg-white/5 p-1 gap-1">
         {[
-          { key: 'range', label: 'Time range' },
+          { key: 'range', label: 'Specific' },
           { key: 'flexible', label: 'Flexible' },
         ].map(({ key, label }) => (
           <button key={key} type="button" onClick={() => onTimeMode(key)}
