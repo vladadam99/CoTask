@@ -72,17 +72,7 @@ export default function DatePicker({ mode, onModeChange, startDate, endDate, onS
 
   return (
     <div className="space-y-4">
-      {/* Dates / Flexible toggle */}
-      <div className="flex rounded-full border border-white/10 bg-white/5 p-1">
-        {['dates', 'flexible'].map(m => (
-          <button key={m} type="button" onClick={() => onModeChange(m)}
-            className={`flex-1 py-1.5 rounded-full text-sm font-medium transition-all capitalize ${
-              mode === m ? 'bg-foreground text-background' : 'text-muted-foreground'
-            }`}>
-            {m === 'dates' ? 'Dates' : 'Flexible'}
-          </button>
-        ))}
-      </div>
+
 
       {/* Calendar */}
       <div>
