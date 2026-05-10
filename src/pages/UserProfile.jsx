@@ -161,10 +161,8 @@ export default function UserProfile() {
                         <p className="text-xs text-muted-foreground line-clamp-2 mb-3">{job.description}</p>
                         <div className="flex items-center justify-between text-xs text-muted-foreground">
                           <span>{job.category}</span>
-                          {(job.budget_min || job.budget_max) && (
-                            <span className="font-semibold text-primary">
-                              ${job.budget_min || 0}{job.budget_max ? ` – $${job.budget_max}` : '+'}
-                            </span>
+                          {job.budget_min && (
+                            <span className="font-semibold text-primary">${job.budget_min}</span>
                           )}
                         </div>
                         {job.application_count > 0 && (
