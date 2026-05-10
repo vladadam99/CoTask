@@ -22,7 +22,7 @@ export default function PostJob() {
   const [form, setForm] = useState({
     title: '', description: '', category: 'Shopping', location: '',
     remote_ok: false, travel_required: false,
-    budget_min: '', budget_max: '', negotiable: true,
+    budget_min: '', budget_max: '', negotiable: true, budget_type: 'fixed',
     camera_required: false,
     timing_mode: 'dates',
     scheduled_date: null, scheduled_time: '',
@@ -53,6 +53,7 @@ export default function PostJob() {
         ...form,
         budget_min: form.budget_min ? Number(form.budget_min) : undefined,
         budget_max: form.budget_max ? Number(form.budget_max) : undefined,
+        duration_type: form.budget_type === 'hourly' ? 'hourly' : 'custom',
         flexible_dates: form.timing_mode === 'flexible',
         scheduled_date: form.scheduled_date ? form.scheduled_date.toISOString().split('T')[0] : undefined,
         scheduled_time: form.scheduled_time || undefined,
@@ -158,13 +159,24 @@ export default function PostJob() {
         {/* Budget */}
         <div className="glass rounded-2xl p-6 border border-white/5 space-y-4">
           <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Budget</p>
+          {/* Payment type toggle */}
+          <div className="flex rounded-xl border border-white/10 bg-white/5 p-1 gap-1">
+            {[{ key: 'fixed', label: 'Whole Job' }, { key: 'hourly', label: 'Hourly' }].map(({ key, label }) => (
+              <button key={key} type="button" onClick={() => set('budget_type', key)}
+                className={`flex-1 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+                  form.budget_type === key ? 'bg-foreground text-background' : 'text-muted-foreground hover:text-foreground'
+                }`}>
+                {label}
+              </button>
+            ))}
+          </div>
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="text-sm font-medium mb-1.5 block">Min ($)</label>
+              <label className="text-sm font-medium mb-1.5 block">Min ($){form.budget_type === 'hourly' ? '/hr' : ''}</label>
               <Input type="number" value={form.budget_min} onChange={e => set('budget_min', e.target.value)} placeholder="20" className="bg-white/5 border-white/10" />
             </div>
             <div>
-              <label className="text-sm font-medium mb-1.5 block">Max ($)</label>
+              <label className="text-sm font-medium mb-1.5 block">Max ($){form.budget_type === 'hourly' ? '/hr' : ''}</label>
               <Input type="number" value={form.budget_max} onChange={e => set('budget_max', e.target.value)} placeholder="100" className="bg-white/5 border-white/10" />
             </div>
           </div>
