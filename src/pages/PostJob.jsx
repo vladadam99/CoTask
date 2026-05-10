@@ -10,6 +10,7 @@ import { Input } from '@/components/ui/input';
 import { ArrowLeft, ShieldAlert } from 'lucide-react';
 import DatePicker from '@/components/jobs/DatePicker';
 import TimePicker from '@/components/jobs/TimePicker';
+import LocationAutocomplete from '@/components/jobs/LocationAutocomplete';
 import { Link } from 'react-router-dom';
 
 const CATEGORIES = [
@@ -129,7 +130,7 @@ export default function PostJob() {
             </div>
             <div>
               <label className="text-sm font-medium mb-1.5 block">Location</label>
-              <Input value={form.location} onChange={e => set('location', e.target.value)} placeholder="City, Country" className="bg-white/5 border-white/10" />
+              <LocationAutocomplete value={form.location} onChange={v => set('location', v)} />
             </div>
           </div>
         </div>
