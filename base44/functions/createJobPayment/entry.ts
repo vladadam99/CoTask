@@ -19,21 +19,11 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Amount must be at least $0.50' }, { status: 400 });
     }
 
-    // Fetch job first to verify it exists and get details
-    let jobs;
-    try {
-      jobs = await base44.asServiceRole.entities.JobPost.filter({ id: jobId });
-      // If not found in production, try test database
-      if (!jobs || jobs.length === 0) {
-        jobs = await base44.asServiceRole.entities.JobPost.filter({ id: jobId }, undefined, undefined, { data_env: 'dev' });
-      }
-    } catch (err) {
-      console.error('Failed to fetch job:', err.message, err.stack);
-      return Response.json({ error: `Failed to fetch job: ${err.message}` }, { status: 500 });
-    }
-    
+    // Fetch job first to verify it exists
+    const jobs = await base44.asServiceRole.entities.JobPost.filter({ id: jobId });
     if (!jobs || jobs.length === 0) {
-      return Response.json({ error: 'Job not found in either database' }, { status: 404 });
+      console.error('Job not found:', jobId);
+      return Response.json({ error: 'Job not found' }, { status: 404 });
     }
 
     // Create a PaymentIntent with manual capture (escrow)
@@ -49,20 +39,11 @@ Deno.serve(async (req) => {
     });
 
     // Save the PaymentIntent ID on the job
-    try {
-      await base44.asServiceRole.entities.JobPost.update(jobId, {
-        stripe_payment_intent_id: paymentIntent.id,
-        escrow_amount: amountUSD,
-        escrow_status: 'pending',
-      });
-    } catch (err) {
-      // Try test database if production fails
-      await base44.asServiceRole.entities.JobPost.update(jobId, {
-        stripe_payment_intent_id: paymentIntent.id,
-        escrow_amount: amountUSD,
-        escrow_status: 'pending',
-      }, { data_env: 'dev' });
-    }
+    await base44.asServiceRole.entities.JobPost.update(jobId, {
+      stripe_payment_intent_id: paymentIntent.id,
+      escrow_amount: amountUSD,
+      escrow_status: 'pending',
+    });
 
     return Response.json({ clientSecret: paymentIntent.client_secret });
   } catch (error) {
