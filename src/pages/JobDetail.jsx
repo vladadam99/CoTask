@@ -145,7 +145,7 @@ export default function JobDetail() {
     enabled: !!jobId && job?.status !== 'open',
   });
 
-  const isAvatar = user?.role === 'avatar' || !!myAvatarProfile;
+  const isAvatar = user?.selected_role === 'avatar';
   const isOwner = user?.email === job?.posted_by_email && !isAvatar;
 
   const openEditForm = () => {
