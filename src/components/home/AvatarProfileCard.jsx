@@ -37,17 +37,17 @@ export default function AvatarProfileCard({ avatar, user, index }) {
       initial={{ opacity: 0, y: 16 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: Math.min(index * 0.05, 0.4) }}
-      className="mx-4 my-1"
+      className="border-b border-white/[0.05]"
     >
-      <div className="rounded-3xl overflow-hidden border border-white/5 bg-card relative">
-        {/* Cover banner */}
-        <div className="h-24 relative">
+      <div className="overflow-hidden bg-transparent relative">
+        {/* Cover banner — taller, full bleed */}
+        <div className="h-36 relative">
           {avatar.cover_url ? (
             <SmartImage src={avatar.cover_url} alt="" className="w-full h-full" style={{ objectFit: 'cover' }} />
           ) : (
             <div className="w-full h-full bg-gradient-to-br from-primary/30 via-red-500/10 to-purple-900/40" />
           )}
-          <div className="absolute inset-0 bg-gradient-to-b from-transparent to-card/80" />
+          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-card/30 to-card/90" />
           {/* Fav button */}
           {user && (
             <button
@@ -61,9 +61,9 @@ export default function AvatarProfileCard({ avatar, user, index }) {
 
         {/* Avatar photo overlapping cover */}
         <div className="px-4 pb-4">
-          <div className="flex items-end gap-3 -mt-8 mb-3">
+          <div className="flex items-end gap-3 -mt-10 mb-3">
             <div className="relative flex-shrink-0">
-              <div className="w-16 h-16 rounded-2xl overflow-hidden bg-primary/10 border-2 border-background flex items-center justify-center text-xl font-bold text-primary shadow-lg">
+              <div className="w-20 h-20 rounded-2xl overflow-hidden bg-primary/10 border-2 border-background flex items-center justify-center text-2xl font-bold text-primary shadow-xl">
                 {avatar.photo_url
                   ? <SmartImage src={avatar.photo_url} alt={avatar.display_name} className="w-full h-full" width={64} />
                   : avatar.display_name?.[0] || 'A'}
@@ -114,7 +114,7 @@ export default function AvatarProfileCard({ avatar, user, index }) {
           )}
 
           {/* Stats row */}
-          <div className="flex items-center justify-between pt-3 border-t border-white/5">
+          <div className="flex items-center justify-between pt-3 border-t border-white/[0.06]">
             <div className="flex gap-4 text-xs text-muted-foreground">
               {avatar.completed_jobs > 0 && <span><span className="text-foreground font-semibold">{avatar.completed_jobs}</span> jobs</span>}
               {avatar.review_count > 0 && <span><span className="text-foreground font-semibold">{avatar.review_count}</span> reviews</span>}

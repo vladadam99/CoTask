@@ -114,8 +114,8 @@ export default function MediaFeedCard({ item, itemType, user }) {
   const isSquare = !isVideo; // photos use a square/portrait format, videos use taller
 
   return (
-    <div ref={cardRef} className="mx-4 my-1">
-      <div className="rounded-3xl overflow-hidden border border-white/5 bg-card">
+    <div ref={cardRef} className="border-b border-white/[0.05]">
+      <div className="overflow-hidden bg-transparent">
         {/* Author bar */}
         <div className="flex items-center gap-3 px-4 py-3">
           <button onClick={() => navigate(`/AvatarView?id=${avatarProfileId}`)}>
@@ -134,8 +134,8 @@ export default function MediaFeedCard({ item, itemType, user }) {
           )}
         </div>
 
-        {/* Media */}
-        <div className={`relative bg-black overflow-hidden ${isVideo ? 'aspect-[4/5]' : 'aspect-square'}`}>
+        {/* Media — full bleed, no rounded corners */}
+        <div className={`relative bg-black overflow-hidden ${isVideo ? 'aspect-[4/5]' : 'aspect-[4/5]'}`}>
           {isVideo && mediaUrl ? (
             <video
               ref={videoRef}
@@ -169,7 +169,7 @@ export default function MediaFeedCard({ item, itemType, user }) {
         </div>
 
         {/* Actions + Caption */}
-        <div className="px-4 pt-3 pb-4">
+        <div className="px-4 pt-2.5 pb-4">
           <div className="flex items-center gap-4 mb-2">
             <motion.button whileTap={{ scale: 0.7 }} onClick={() => user && toggleLike.mutate()} className="flex items-center gap-1.5">
               <Heart className={`w-6 h-6 transition-colors ${(liked || (itemType === 'reel')) && localLikes > (item.likes_count || item.likes || 0) ? 'fill-primary text-primary' : liked ? 'fill-primary text-primary' : 'text-foreground'}`} />
