@@ -5,6 +5,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { Heart, MessageCircle, Share2, Play, Volume2, VolumeX, Loader2, MapPin, Star, Copy, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { formatDistanceToNow } from 'date-fns';
 
 export default function MediaFeedCard({ item, itemType, user }) {
   // item is either a Post or Reel
@@ -127,7 +128,7 @@ export default function MediaFeedCard({ item, itemType, user }) {
           </button>
           <div className="flex-1 min-w-0">
             <p className="text-sm font-semibold leading-tight">{avatarName}</p>
-            {category && <p className="text-xs text-muted-foreground">{category}</p>}
+            <p className="text-xs text-muted-foreground">{formatDistanceToNow(new Date(item.created_date), { addSuffix: true })}</p>
           </div>
           {itemType === 'reel' && (
             <span className="text-[10px] bg-primary/10 text-primary border border-primary/20 rounded-full px-2 py-0.5 font-semibold">REEL</span>
