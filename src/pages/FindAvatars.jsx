@@ -1,139 +1,268 @@
-import React, { useState, useMemo } from 'react';
-import { useQuery } from '@tanstack/react-query';
+import React, { useState, useRef, useMemo } from 'react';
+import SmartSearchBar from '@/components/search/SmartSearchBar';
+import { Link } from 'react-router-dom';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { useCurrentUser } from '@/lib/useCurrentUser';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+import { Search, MapPin, Star, Shield, Filter, X, Heart, ArrowLeft, Zap } from 'lucide-react';
+import { motion } from 'framer-motion';
 import { getNavItems } from '@/lib/navItems';
 import AppShell from '@/components/layout/AppShell';
-import AvatarStoryRing from '@/components/home/AvatarStoryRing';
-import AvatarProfileCard from '@/components/home/AvatarProfileCard';
-import MediaFeedCard from '@/components/home/MediaFeedCard';
-import { Search } from 'lucide-react';
-import { motion } from 'framer-motion';
+import SuggestedForYou from '@/components/dashboard/SuggestedForYou';
+
+const CATEGORIES = [
+  { label: 'City Guide', icon: '🌆' },
+  { label: 'Property Walkthrough', icon: '🏠' },
+  { label: 'Shopping Help', icon: '🛍️' },
+  { label: 'Event Attendance', icon: '🎫' },
+  { label: 'Queue & Errands', icon: '📦' },
+  { label: 'Family Support', icon: '👨‍👩‍👧' },
+  { label: 'Business Inspection', icon: '🏢' },
+  { label: 'Training & Coaching', icon: '🎓' },
+  { label: 'Travel Assistance', icon: '✈️' },
+  { label: 'Pets & Animals', icon: '🐾' },
+  { label: 'Cars & Vehicles', icon: '🚗' },
+  { label: 'Mechanics', icon: '🔧' },
+  { label: 'Plumbing', icon: '🚿' },
+  { label: 'Electrical Work', icon: '⚡' },
+  { label: 'Medical & Health', icon: '🏥' },
+  { label: 'Outdoors & Nature', icon: '🌿' },
+  { label: 'Cleaning', icon: '🧹' },
+  { label: 'Gardening', icon: '🌱' },
+  { label: 'Pick Ups', icon: '📍' },
+  { label: 'Deliveries', icon: '📦' },
+  { label: 'Cooking & Food', icon: '🍳' },
+  { label: 'Dating & Social', icon: '💬' },
+  { label: 'Driving', icon: '🚕' },
+  { label: 'Show Me Around', icon: '🗺️' },
+  { label: 'Carers & Companionship', icon: '🤝' },
+  { label: 'DIY & Repairs', icon: '🛠️' },
+  { label: 'Campus Help', icon: '🎓' },
+];
 
 export default function FindAvatars() {
   const { user } = useCurrentUser();
+  const queryClient = useQueryClient();
   const [search, setSearch] = useState('');
-  const [showSearch, setShowSearch] = useState(false);
+  const [aiMatchedIds, setAiMatchedIds] = useState(null);
+  const [onlineOnly, setOnlineOnly] = useState(false);
+  const [selectedCategories, setSelectedCategories] = useState([]);
+  const [showCategoryFilter, setShowCategoryFilter] = useState(false);
+  const searchRef = useRef(null);
 
-  const { data: avatars = [], isLoading: loadingAvatars } = useQuery({
+  const { data: avatars = [], isLoading } = useQuery({
     queryKey: ['explore-avatars'],
-    queryFn: () => base44.entities.AvatarProfile.filter({ status: 'active' }, '-rating', 40),
+    queryFn: () => base44.entities.AvatarProfile.filter({ status: 'active' }, '-rating', 50),
   });
 
-  const { data: posts = [] } = useQuery({
-    queryKey: ['home-posts'],
-    queryFn: () => base44.entities.Post.filter({ is_published: true }, '-created_date', 30),
-  });
+  const suggestionList = CATEGORIES.filter(c => c.label !== 'All').map(c => c.label);
 
-  const { data: reels = [] } = useQuery({
-    queryKey: ['home-reels'],
-    queryFn: () => base44.entities.Reel.filter({ is_published: true }, '-created_date', 20),
-  });
+  const avatarSummaryFn = (a) => [
+    a.display_name, a.bio, a.city, a.country,
+    (a.categories || []).join(', '),
+    (a.skills || []).join(', '),
+    (a.languages || []).join(', '),
+  ].filter(Boolean).join(' | ');
 
-  // Interleaved feed: media + avatar profile cards every ~4 items
-  const feedItems = useMemo(() => {
-    const mediaItems = [
-      ...posts.map(p => ({ ...p, _type: 'post' })),
-      ...reels.map(r => ({ ...r, _type: 'reel' })),
-    ].sort((a, b) => new Date(b.created_date) - new Date(a.created_date));
-
-    // Search filter
-    const searchLower = search.toLowerCase();
-    const filteredAvatars = search
-      ? avatars.filter(a =>
-          [a.display_name, a.bio, a.city, ...(a.categories || []), ...(a.skills || [])]
-            .join(' ').toLowerCase().includes(searchLower)
-        )
-      : avatars;
-    const filteredMedia = search
-      ? mediaItems.filter(m =>
-          [m.avatar_name, m.caption, m.description, m.title, m.category]
-            .join(' ').toLowerCase().includes(searchLower)
-        )
-      : mediaItems;
-
-    const shuffled = [...filteredAvatars].sort(() => Math.random() - 0.5);
-    let avatarIdx = 0;
-    const feed = [];
-
-    filteredMedia.forEach((item, i) => {
-      feed.push({ type: item._type, data: item });
-      if ((i + 1) % 4 === 0 && avatarIdx < shuffled.length) {
-        feed.push({ type: 'avatar', data: shuffled[avatarIdx++] });
-      }
-    });
-
-    // Append remaining avatars if no/few media
-    if (filteredMedia.length === 0) {
-      filteredAvatars.forEach(a => feed.push({ type: 'avatar', data: a }));
+  const filtered = avatars.filter(a => {
+    if (aiMatchedIds !== null) {
+      if (!aiMatchedIds.includes(a.id)) return false;
     }
+    if (onlineOnly && !a.is_available) return false;
+    if (selectedCategories.length > 0 && !selectedCategories.some(c => (a.categories || []).includes(c))) return false;
+    return true;
+  });
 
-    return feed;
-  }, [posts, reels, avatars, search]);
-
-  const liveAvatars = avatars.filter(a => a.is_available);
-  const otherAvatars = avatars.filter(a => !a.is_available).slice(0, 10);
+  // If AI matched, sort by match order
+  const sortedFiltered = aiMatchedIds
+    ? [...filtered].sort((a, b) => aiMatchedIds.indexOf(a.id) - aiMatchedIds.indexOf(b.id))
+    : filtered;
 
   return (
     <AppShell navItems={getNavItems(user?.selected_role)} user={user}>
-      {/* Sticky header */}
-      <div className="sticky top-0 z-30 bg-background/80 backdrop-blur-2xl border-b border-white/5 -mx-4 px-4 lg:-mx-8 lg:px-8">
-        <div className="max-w-2xl mx-auto flex items-center justify-between h-12">
-          <span className="text-lg font-black tracking-tight">Co<span className="text-primary">Task</span></span>
+      <div className="max-w-5xl mx-auto">
+        <div className="flex items-center justify-between mb-5">
+          <h1 className="text-xl font-black">Find Avatars</h1>
+        </div>
+
+        {/* Search */}
+        <div className="mb-4">
+          <SmartSearchBar
+            items={avatars}
+            itemSummaryFn={avatarSummaryFn}
+            onResults={setAiMatchedIds}
+            placeholder="Search avatars, skills, tasks... (AI-powered)"
+            suggestions={suggestionList}
+          />
+        </div>
+
+        {/* Filters */}
+        <div className="flex items-center gap-2 mb-4 flex-wrap">
+          {/* Online Now toggle */}
           <button
-            onClick={() => setShowSearch(v => !v)}
-            className={`w-9 h-9 rounded-full flex items-center justify-center transition-all ${showSearch ? 'bg-primary/20 text-primary' : 'bg-white/5 border border-white/10 text-muted-foreground hover:text-foreground'}`}
+            onClick={() => setOnlineOnly(v => !v)}
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold border transition-all ${
+              onlineOnly
+                ? 'bg-green-500/20 text-green-400 border-green-500/30'
+                : 'bg-white/5 text-muted-foreground border-white/10 hover:border-white/20'
+            }`}
           >
-            <Search className="w-4 h-4" />
+            <span className={`w-1.5 h-1.5 rounded-full ${onlineOnly ? 'bg-green-400 animate-pulse' : 'bg-muted-foreground'}`} />
+            Online Now
+          </button>
+
+          {/* Category filter */}
+          <button
+            onClick={() => setShowCategoryFilter(v => !v)}
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold border transition-all ${
+              selectedCategories.length > 0
+                ? 'bg-primary/20 text-primary border-primary/30'
+                : 'bg-white/5 text-muted-foreground border-white/10 hover:border-white/20'
+            }`}
+          >
+            <Filter className="w-3 h-3" />
+            {selectedCategories.length > 0 ? `${selectedCategories.length} selected` : 'Category'}
+            {selectedCategories.length > 0 && (
+              <span onClick={e => { e.stopPropagation(); setSelectedCategories([]); }} className="ml-0.5">
+                <X className="w-3 h-3" />
+              </span>
+            )}
           </button>
         </div>
-        {showSearch && (
-          <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} className="pb-3 max-w-2xl mx-auto">
-            <input
-              autoFocus
-              value={search}
-              onChange={e => setSearch(e.target.value)}
-              placeholder="Search avatars, skills, cities, content..."
-              className="w-full bg-white/5 border border-white/10 rounded-2xl px-4 py-2.5 text-sm focus:outline-none focus:border-primary/40 placeholder:text-muted-foreground"
-            />
-          </motion.div>
-        )}
-      </div>
 
-      {/* Full-width feed */}
-      <div className="max-w-2xl mx-auto -mx-4 lg:-mx-8">
-        {/* Stories strip */}
-        {!search && (liveAvatars.length > 0 || otherAvatars.length > 0) && (
-          <div className="px-4 pt-4 pb-3">
-            <div className="flex gap-4 overflow-x-auto pb-1" style={{ scrollbarWidth: 'none' }}>
-              {[...liveAvatars.slice(0, 10), ...otherAvatars].map(a => (
-                <AvatarStoryRing key={a.id} avatar={a} />
-              ))}
+        {/* Category picker */}
+        {showCategoryFilter && (
+          <div className="mb-5 p-3 rounded-2xl bg-card/40 border border-white/5">
+            <div className="flex flex-wrap gap-2">
+              {CATEGORIES.map(c => {
+                const isSelected = selectedCategories.includes(c.label);
+                return (
+                  <button
+                    key={c.label}
+                    onClick={() => setSelectedCategories(prev =>
+                      isSelected ? prev.filter(x => x !== c.label) : [...prev, c.label]
+                    )}
+                    className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs border transition-all ${
+                      isSelected
+                        ? 'bg-primary/20 text-primary border-primary/30'
+                        : 'bg-white/5 text-muted-foreground border-white/10 hover:border-white/20'
+                    }`}
+                  >
+                    <span>{c.icon}</span> {c.label}
+                  </button>
+                );
+              })}
             </div>
           </div>
         )}
 
-        {/* Feed */}
-        <div className="pb-10">
-          {loadingAvatars && feedItems.length === 0 ? (
-            <div className="space-y-1 pt-2">
-              {[1,2,3].map(i => <div key={i} className="bg-card/30 h-72 animate-pulse" />)}
-            </div>
-          ) : feedItems.length === 0 ? (
-            <div className="text-center py-24 space-y-3 px-6">
-              <p className="text-4xl">✨</p>
-              <h3 className="font-bold">Nothing here yet</h3>
-              <p className="text-sm text-muted-foreground">Avatars will post reels and content here soon.</p>
-            </div>
-          ) : (
-            feedItems.map((item, i) =>
-              item.type === 'avatar'
-                ? <AvatarProfileCard key={`a-${item.data.id}`} avatar={item.data} user={user} index={i} />
-                : <MediaFeedCard key={`m-${item.data.id}`} item={item.data} itemType={item.type} user={user} />
-            )
-          )}
-        </div>
+        <SuggestedForYou user={user} />
+
+        <p className="text-xs text-muted-foreground mb-5">{isLoading ? 'Loading...' : `${sortedFiltered.length} avatars found`}</p>
+
+        {isLoading ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
+            {[1,2,3,4,5,6,7,8].map(i => <div key={i} className="rounded-2xl bg-card/40 border border-white/5 h-32 animate-pulse" />)}
+          </div>
+        ) : filtered.length === 0 ? (
+          <div className="text-center py-20 space-y-3">
+            <p className="text-3xl">🔍</p>
+            <h3 className="font-bold">No avatars found</h3>
+            <Button variant="outline" className="border-white/10" onClick={() => { setOnlineOnly(false); setSelectedCategories([]); setAiMatchedIds(null); }}>Clear filters</Button>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
+            {sortedFiltered.map((avatar, i) => <AvatarCard key={avatar.id} avatar={avatar} i={i} user={user} queryClient={queryClient} />)}
+          </div>
+        )}
       </div>
     </AppShell>
+  );
+}
+
+function AvatarCard({ avatar, i, user, queryClient }) {
+  const { data: isFavorited = false } = useQuery({
+    queryKey: ['fav', user?.email, avatar.id],
+    queryFn: async () => {
+      const favs = await base44.entities.Favorite.filter({ user_email: user.email, avatar_profile_id: avatar.id });
+      return favs.length > 0;
+    },
+    enabled: !!user,
+  });
+
+  const toggleFav = useMutation({
+    mutationFn: async () => {
+      if (isFavorited) {
+        const favs = await base44.entities.Favorite.filter({ user_email: user.email, avatar_profile_id: avatar.id });
+        if (favs[0]) await base44.entities.Favorite.delete(favs[0].id);
+      } else {
+        await base44.entities.Favorite.create({ user_email: user.email, avatar_profile_id: avatar.id, avatar_name: avatar.display_name });
+      }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['fav', user?.email, avatar.id] });
+      queryClient.invalidateQueries({ queryKey: ['favorites'] });
+    },
+  });
+
+  return (
+    <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: Math.min(i * 0.04, 0.3) }}>
+      <Link to={`/AvatarView?id=${avatar.id}`}>
+        <div className="glass border border-white/5 hover:border-primary/30 rounded-2xl p-4 transition-all hover:scale-[1.02] relative">
+          {user && (
+            <button onClick={e => { e.preventDefault(); toggleFav.mutate(); }} disabled={toggleFav.isPending}
+              className="absolute top-3 right-3 w-6 h-6 rounded-full bg-black/30 backdrop-blur flex items-center justify-center">
+              <Heart className={`w-3 h-3 ${isFavorited ? 'fill-primary text-primary' : 'text-white/60'}`} />
+            </button>
+          )}
+          <div className="flex items-center gap-3 mb-3">
+            <div className="relative flex-shrink-0">
+              <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center text-lg font-bold text-primary overflow-hidden">
+                {avatar.photo_url
+                  ? <img src={avatar.photo_url} alt={avatar.display_name} className="w-full h-full object-cover" />
+                  : avatar.display_name?.[0] || 'A'}
+              </div>
+              {avatar.is_available && (
+                <span className="absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full bg-green-400 border-2 border-background" />
+              )}
+              {avatar.is_verified && (
+                <span className="absolute -top-0.5 -right-0.5 w-4 h-4 rounded-full bg-blue-500 flex items-center justify-center">
+                  <Shield className="w-2.5 h-2.5 text-white" />
+                </span>
+              )}
+            </div>
+            <div className="min-w-0">
+              <p className="text-sm font-bold truncate">{avatar.display_name}</p>
+              <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                <MapPin className="w-3 h-3" /> {avatar.city || 'Remote'}
+              </div>
+            </div>
+          </div>
+          {(avatar.bio || (avatar.categories?.length > 0)) && (
+            <p className="text-xs text-muted-foreground mb-2 line-clamp-2">
+              {avatar.bio || (avatar.categories || []).join(', ')}
+            </p>
+          )}
+          {avatar.categories?.length > 0 && avatar.bio && (
+            <div className="flex flex-wrap gap-1 mb-2">
+              {(avatar.categories || []).slice(0, 2).map(c => (
+                <span key={c} className="text-[10px] bg-white/5 border border-white/5 rounded px-1.5 py-0.5">{c}</span>
+              ))}
+            </div>
+          )}
+          <div className="flex items-center justify-between">
+            <span className="text-sm font-bold text-primary">${avatar.hourly_rate || 30}/hr</span>
+            {avatar.rating > 0 && (
+              <div className="flex items-center gap-1">
+                <Star className="w-3 h-3 text-yellow-400 fill-yellow-400" />
+                <span className="text-xs">{avatar.rating.toFixed(1)}</span>
+              </div>
+            )}
+          </div>
+        </div>
+      </Link>
+    </motion.div>
   );
 }
