@@ -39,9 +39,11 @@ export default function ConsultationBooking() {
 
   const { data: offering } = useQuery({
     queryKey: ['offering', offeringId],
-    queryFn: () => base44.entities.ExpertiseOffering.filter({ id: offeringId }),
+    queryFn: async () => {
+      const list = await base44.entities.ExpertiseOffering.list('-created_date', 200);
+      return list.find(o => o.id === offeringId) || null;
+    },
     enabled: !!offeringId,
-    select: d => d[0] || null,
   });
 
   const { data: avatar } = useQuery({
