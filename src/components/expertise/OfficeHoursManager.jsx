@@ -12,13 +12,18 @@ const DEFAULT_HOURS = DAYS.map(day => ({
 }));
 
 export default function OfficeHoursManager({ value, onChange }) {
-  const [slots, setSlots] = useState(() => {
-    if (value && value.length > 0) return value;
-    return DEFAULT_HOURS;
-  });
+  const initialSlots = (value && value.length > 0) ? value : DEFAULT_HOURS;
+  const [slots, setSlots] = useState(initialSlots);
 
+  // Sync when value prop changes (e.g. editing an existing offering)
   useEffect(() => {
-    if (value && value.length > 0) setSlots(value);
+    const incoming = (value && value.length > 0) ? value : DEFAULT_HOURS;
+    setSlots(incoming);
+  }, [JSON.stringify(value)]);
+
+  // Propagate initial value to parent on mount
+  useEffect(() => {
+    onChange(initialSlots);
   }, []);
 
   const update = (idx, patch) => {

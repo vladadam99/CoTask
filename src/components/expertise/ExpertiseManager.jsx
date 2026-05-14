@@ -23,9 +23,16 @@ const SESSION_TYPES = [
   { value: 'mentoring', label: 'Mentoring' },
 ];
 
+const DEFAULT_OFFICE_HOURS = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'].map(day => ({
+  day,
+  enabled: ['Monday','Tuesday','Wednesday','Thursday','Friday'].includes(day),
+  from: '09:00',
+  to: '17:00',
+}));
+
 const BLANK = {
   title: '', description: '', topic: 'Technology',
-  session_type: 'consultation', duration_minutes: 60, rate: '', office_hours: [],
+  session_type: 'consultation', duration_minutes: 60, rate: '', office_hours: DEFAULT_OFFICE_HOURS,
 };
 
 export default function ExpertiseManager({ profile, user }) {
