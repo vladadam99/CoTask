@@ -53,6 +53,7 @@ import RoleSelectExisting from './pages/RoleSelectExisting';
 import Register from './pages/Register';
 import AvatarMessages from './pages/AvatarMessages';
 import DisputeAgent from './pages/DisputeAgent';
+import ExpertConsult from './pages/ExpertConsult';
 import SafetyAgent from './pages/SafetyAgent';
 import AvatarWallet from './pages/AvatarWallet';
 import AvatarBookingDetail from './pages/AvatarBookingDetail';
@@ -142,6 +143,7 @@ const AuthenticatedApp = () => {
       <Route path="/Register" element={<Register />} />
       <Route path="/AvatarMessages" element={<AvatarMessages />} />
       <Route path="/DisputeAgent" element={<DisputeAgent />} />
+      <Route path="/ExpertConsult" element={<ExpertConsult />} />
       <Route path="/SafetyAgent" element={<SafetyAgent />} />
       <Route path="/AvatarWallet" element={<AvatarWallet />} />
       <Route path="/UserWallet" element={<UserWallet />} />

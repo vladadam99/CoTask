@@ -17,6 +17,7 @@ import {
   Home, Inbox, Calendar, Radio, MessageSquare, DollarSign,
   Star, User, Settings, Camera, Upload, Loader2, Plus, Grid, MapPin, Pencil, Trash2, X, Navigation, FileText
 } from 'lucide-react';
+import ExpertiseManager from '@/components/expertise/ExpertiseManager';
 
 
 
@@ -475,6 +476,9 @@ export default function AvatarProfileEdit() {
             )}
           </GlassCard>
         </div>
+
+          {/* Expert Offerings */}
+          <ExpertiseManager profile={profile} user={user} />
 
         {/* Save Button */}
         <div className="px-4 pb-4">

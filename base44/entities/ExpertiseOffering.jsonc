@@ -1,0 +1,61 @@
+{
+  "name": "ExpertiseOffering",
+  "type": "object",
+  "properties": {
+    "avatar_email": {
+      "type": "string"
+    },
+    "avatar_profile_id": {
+      "type": "string"
+    },
+    "avatar_name": {
+      "type": "string"
+    },
+    "avatar_photo_url": {
+      "type": "string"
+    },
+    "title": {
+      "type": "string",
+      "description": "e.g. '1-on-1 Python Tutoring' or 'Marketing Strategy Call'"
+    },
+    "description": {
+      "type": "string"
+    },
+    "topic": {
+      "type": "string",
+      "description": "Broad topic/category e.g. 'Technology', 'Business', 'Language Learning'"
+    },
+    "session_type": {
+      "type": "string",
+      "enum": [
+        "consultation",
+        "class",
+        "coaching",
+        "qa_session",
+        "mentoring"
+      ],
+      "default": "consultation"
+    },
+    "duration_minutes": {
+      "type": "number",
+      "default": 60
+    },
+    "rate": {
+      "type": "number",
+      "description": "Price per session"
+    },
+    "currency": {
+      "type": "string",
+      "default": "USD"
+    },
+    "is_active": {
+      "type": "boolean",
+      "default": true
+    }
+  },
+  "required": [
+    "avatar_email",
+    "title",
+    "rate"
+  ]
+}

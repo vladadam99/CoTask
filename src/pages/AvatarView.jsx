@@ -8,8 +8,9 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import {
   ArrowLeft, MapPin, Star, Shield, Clock, Globe, Radio, Smartphone,
-  Wifi, Headphones, Car, Calendar, MessageSquare, Heart, Loader2, FileText, Download
+  Wifi, Headphones, Car, Calendar, MessageSquare, Heart, Loader2, FileText, Download, BookOpen
 } from 'lucide-react';
+import ExpertiseOfferingsTab from '@/components/expertise/ExpertiseOfferingsTab';
 
 function PostCard({ post }) {
   return (
@@ -142,8 +143,9 @@ export default function AvatarView() {
   const queryClient = useQueryClient();
   const params = new URLSearchParams(window.location.search);
   const id = params.get('id');
+  const defaultTab = params.get('tab') || 'Posts';
   const [messaging, setMessaging] = useState(false);
-  const [activeTab, setActiveTab] = useState('About');
+  const [activeTab, setActiveTab] = useState(defaultTab);
   const [viewerIndex, setViewerIndex] = useState(null);
 
 
@@ -355,7 +357,7 @@ export default function AvatarView() {
 
         {/* Tab Navigation */}
         <div className="flex flex-wrap gap-2 px-4 mb-4">
-          {['Posts', 'Reviews', 'Services'].concat(avatar.cv_url ? ['CV'] : []).map(tab => (
+          {['Posts', 'Expertise', 'Reviews', 'Services'].concat(avatar.cv_url ? ['CV'] : []).map(tab => (
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
@@ -365,7 +367,7 @@ export default function AvatarView() {
                   : 'bg-card/50 text-muted-foreground border-white/10 hover:border-white/20 hover:text-foreground'
               }`}
             >
-              {tab}{tab === 'Posts' ? ` (${posts.length})` : tab === 'Reviews' ? ` (${reviews.length})` : ''}
+              {tab}{tab === 'Posts' ? ` (${posts.length})` : tab === 'Reviews' ? ` (${reviews.length})` : tab === 'Expertise' ? ' 🎓' : ''}
             </button>
           ))}
         </div>
@@ -384,6 +386,10 @@ export default function AvatarView() {
                 </div>
               )}
             </div>
+          )}
+
+          {activeTab === 'Expertise' && (
+            <ExpertiseOfferingsTab avatarEmail={avatar.user_email} avatarProfileId={avatar.id} />
           )}
 
           {activeTab === 'Reviews' && (
