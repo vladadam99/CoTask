@@ -48,6 +48,27 @@
       "type": "string",
       "default": "USD"
     },
+    "office_hours": {
+      "type": "array",
+      "description": "Expert office hours slots \u2014 separate from regular job availability",
+      "items": {
+        "type": "object",
+        "properties": {
+          "day": {
+            "type": "string"
+          },
+          "enabled": {
+            "type": "boolean"
+          },
+          "from": {
+            "type": "string"
+          },
+          "to": {
+            "type": "string"
+          }
+        }
+      }
+    },
     "is_active": {
       "type": "boolean",
       "default": true

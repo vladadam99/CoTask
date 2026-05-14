@@ -177,7 +177,7 @@ export default function ExpertConsult() {
 function OfferingCard({ offering, avatar, i }) {
   return (
     <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: Math.min(i * 0.04, 0.3) }}>
-      <Link to={`/AvatarView?id=${offering.avatar_profile_id}&tab=Expertise`}>
+      <Link to={`/ConsultationBooking?avatar=${offering.avatar_profile_id}&offering=${offering.id}`}>
         <div className="glass border border-white/5 hover:border-primary/30 rounded-2xl p-5 transition-all hover:scale-[1.02] flex flex-col gap-4">
           {/* Session type badge */}
           <div className="flex items-center justify-between">

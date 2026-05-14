@@ -7,6 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/components/ui/use-toast';
 import { Plus, Trash2, Pencil, BookOpen, Check, X } from 'lucide-react';
+import OfficeHoursManager from './OfficeHoursManager';
 
 const TOPICS = [
   'Technology', 'Business', 'Language Learning', 'Health & Wellness',
@@ -24,7 +25,7 @@ const SESSION_TYPES = [
 
 const BLANK = {
   title: '', description: '', topic: 'Technology',
-  session_type: 'consultation', duration_minutes: 60, rate: '',
+  session_type: 'consultation', duration_minutes: 60, rate: '', office_hours: [],
 };
 
 export default function ExpertiseManager({ profile, user }) {
@@ -109,6 +110,7 @@ export default function ExpertiseManager({ profile, user }) {
       title: o.title, description: o.description || '',
       topic: o.topic || 'Technology', session_type: o.session_type || 'consultation',
       duration_minutes: o.duration_minutes || 60, rate: o.rate || '',
+      office_hours: o.office_hours || [],
     });
     setEditingId(o.id);
     setShowForm(true);
@@ -197,6 +199,14 @@ export default function ExpertiseManager({ profile, user }) {
               />
             </div>
           </div>
+          {/* Office Hours */}
+          <div className="pt-2 border-t border-white/10">
+            <OfficeHoursManager
+              value={form.office_hours}
+              onChange={(hours) => setForm(f => ({ ...f, office_hours: hours }))}
+            />
+          </div>
+
           <div className="flex gap-2 pt-1">
             <Button type="button" size="sm" onClick={handleSubmit} disabled={createOffering.isPending || updateOffering.isPending} className="gap-1.5">
               <Check className="w-3.5 h-3.5" /> {editingId ? 'Update' : 'Save'}

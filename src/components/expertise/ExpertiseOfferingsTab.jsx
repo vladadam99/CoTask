@@ -58,7 +58,7 @@ export default function ExpertiseOfferingsTab({ avatarEmail, avatarProfileId }) 
             </div>
             <div className="flex flex-col items-end gap-3 flex-shrink-0">
               <p className="text-2xl font-black text-primary">${o.rate}</p>
-              <Link to={`/CreateBooking?avatar=${avatarProfileId}&offering=${o.id}`}>
+              <Link to={`/ConsultationBooking?avatar=${avatarProfileId}&offering=${o.id}`}>
                 <Button size="sm" className="gap-1.5">
                   <Calendar className="w-3.5 h-3.5" /> Book Session
                 </Button>
