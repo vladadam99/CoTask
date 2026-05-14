@@ -47,7 +47,10 @@ export default function ExpertiseManager({ profile, user }) {
       queryClient.invalidateQueries({ queryKey: ['expertise-offerings'] });
       setShowForm(false);
       setForm(BLANK);
-      toast({ title: 'Offering created!' });
+      toast({ title: '✅ Offering saved!', description: 'Your new offering is now live.' });
+    },
+    onError: (err) => {
+      toast({ title: 'Save failed', description: err?.message || 'Could not save offering.', variant: 'destructive' });
     },
   });
 
@@ -59,7 +62,10 @@ export default function ExpertiseManager({ profile, user }) {
       setEditingId(null);
       setShowForm(false);
       setForm(BLANK);
-      toast({ title: 'Offering updated!' });
+      toast({ title: '✅ Offering updated!' });
+    },
+    onError: (err) => {
+      toast({ title: 'Update failed', description: err?.message || 'Could not update offering.', variant: 'destructive' });
     },
   });
 
@@ -73,7 +79,14 @@ export default function ExpertiseManager({ profile, user }) {
   });
 
   const handleSubmit = () => {
-    if (!form.title || !form.rate) return;
+    if (!form.title) {
+      toast({ title: 'Title required', description: 'Please enter a title for your offering.', variant: 'destructive' });
+      return;
+    }
+    if (!form.rate) {
+      toast({ title: 'Rate required', description: 'Please enter a price per session.', variant: 'destructive' });
+      return;
+    }
     const data = {
       ...form,
       avatar_email: user.email,
@@ -128,10 +141,10 @@ export default function ExpertiseManager({ profile, user }) {
         <div className="bg-card/40 border border-white/10 rounded-xl p-4 mb-4 space-y-3">
           <h4 className="text-sm font-semibold">{editingId ? 'Edit Offering' : 'New Offering'}</h4>
           <Input
-            placeholder="Title e.g. Python for Beginners"
+            placeholder="Title e.g. Python for Beginners *"
             value={form.title}
             onChange={set('title')}
-            className="bg-transparent border-white/10"
+            className={`bg-transparent ${!form.title ? 'border-red-500/50' : 'border-white/10'}`}
           />
           <Textarea
             placeholder="What will you cover? What's the outcome?"
@@ -174,12 +187,12 @@ export default function ExpertiseManager({ profile, user }) {
               />
             </div>
             <div>
-              <label className="text-xs text-muted-foreground mb-1 block">Rate (USD per session)</label>
+              <label className="text-xs text-muted-foreground mb-1 block">Rate (USD per session) *</label>
               <Input
                 type="number"
                 value={form.rate}
                 onChange={set('rate')}
-                className="bg-transparent border-white/10"
+                className={`bg-transparent ${!form.rate ? 'border-red-500/50' : 'border-white/10'}`}
                 placeholder="50"
               />
             </div>
