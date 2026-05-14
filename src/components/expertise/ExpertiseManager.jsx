@@ -44,7 +44,16 @@ export default function ExpertiseManager({ profile, user }) {
 
   const { data: offerings = [] } = useQuery({
     queryKey: ['my-expertise-offerings', user?.email],
-    queryFn: () => base44.entities.ExpertiseOffering.filter({ avatar_email: user.email }, '-created_date', 50),
+    queryFn: async () => {
+      const list = await base44.entities.ExpertiseOffering.filter({ avatar_email: user.email }, '-created_date', 50);
+      // Back-fill office hours for any offering that was saved without them
+      for (const o of list) {
+        if (!o.office_hours || o.office_hours.length === 0) {
+          base44.entities.ExpertiseOffering.update(o.id, { office_hours: DEFAULT_OFFICE_HOURS }).catch(() => {});
+        }
+      }
+      return list;
+    },
     enabled: !!user,
   });
 
@@ -117,7 +126,7 @@ export default function ExpertiseManager({ profile, user }) {
       title: o.title, description: o.description || '',
       topic: o.topic || 'Technology', session_type: o.session_type || 'consultation',
       duration_minutes: o.duration_minutes || 60, rate: o.rate || '',
-      office_hours: o.office_hours || [],
+      office_hours: (o.office_hours && o.office_hours.length > 0) ? o.office_hours : DEFAULT_OFFICE_HOURS,
     });
     setEditingId(o.id);
     setShowForm(true);

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Clock } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 
@@ -12,19 +12,17 @@ const DEFAULT_HOURS = DAYS.map(day => ({
 }));
 
 export default function OfficeHoursManager({ value, onChange }) {
-  const initialSlots = (value && value.length > 0) ? value : DEFAULT_HOURS;
-  const [slots, setSlots] = useState(initialSlots);
+  const [slots, setSlots] = useState(() => (value && value.length > 0) ? value : DEFAULT_HOURS);
 
-  // Sync when value prop changes (e.g. editing an existing offering)
+  // Sync when editing a different offering (value identity changes)
+  const prevValueRef = useRef(value);
   useEffect(() => {
-    const incoming = (value && value.length > 0) ? value : DEFAULT_HOURS;
-    setSlots(incoming);
-  }, [JSON.stringify(value)]);
-
-  // Propagate initial value to parent on mount
-  useEffect(() => {
-    onChange(initialSlots);
-  }, []);
+    if (prevValueRef.current !== value) {
+      prevValueRef.current = value;
+      const incoming = (value && value.length > 0) ? value : DEFAULT_HOURS;
+      setSlots(incoming);
+    }
+  });
 
   const update = (idx, patch) => {
     const next = slots.map((s, i) => i === idx ? { ...s, ...patch } : s);
