@@ -118,7 +118,7 @@ export default function ExpertiseManager({ profile, user }) {
           <span className="text-xs text-muted-foreground">({offerings.length})</span>
         </div>
         {!showForm && (
-          <Button size="sm" className="gap-1.5 h-8" onClick={() => { setShowForm(true); setEditingId(null); setForm(BLANK); }}>
+          <Button type="button" size="sm" className="gap-1.5 h-8" onClick={() => { setShowForm(true); setEditingId(null); setForm(BLANK); }}>
             <Plus className="w-3.5 h-3.5" /> Add Offering
           </Button>
         )}
@@ -185,10 +185,10 @@ export default function ExpertiseManager({ profile, user }) {
             </div>
           </div>
           <div className="flex gap-2 pt-1">
-            <Button size="sm" onClick={handleSubmit} disabled={createOffering.isPending || updateOffering.isPending} className="gap-1.5">
+            <Button type="button" size="sm" onClick={handleSubmit} disabled={createOffering.isPending || updateOffering.isPending} className="gap-1.5">
               <Check className="w-3.5 h-3.5" /> {editingId ? 'Update' : 'Save'}
             </Button>
-            <Button size="sm" variant="outline" className="border-white/10" onClick={handleCancel}>
+            <Button type="button" size="sm" variant="outline" className="border-white/10" onClick={handleCancel}>
               <X className="w-3.5 h-3.5" /> Cancel
             </Button>
           </div>
