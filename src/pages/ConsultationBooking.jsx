@@ -108,7 +108,7 @@ export default function ConsultationBooking() {
         amount: freeTest ? 0 : rate,
         service_fee: freeTest ? 0 : serviceFee,
         total_amount: freeTest ? 0 : total,
-        status: freeTest ? 'accepted' : 'pending',
+        status: 'pending',
         payment_status: freeTest ? 'paid' : 'pending',
         session_id: null,
       });
@@ -177,10 +177,10 @@ export default function ConsultationBooking() {
             <CheckCircle2 className="w-10 h-10 text-green-400" />
           </div>
           <div>
-            <h1 className="text-2xl font-black mb-2">Session Booked! 🎉</h1>
+            <h1 className="text-2xl font-black mb-2">Request Sent! 🎉</h1>
             <p className="text-muted-foreground text-sm">
-              Your consultation is scheduled for <strong>{selectedDate}</strong> at <strong>{selectedTime}</strong>.
-              The avatar will confirm shortly.
+              Your consultation request for <strong>{selectedDate}</strong> at <strong>{selectedTime}</strong> has been sent.
+              The expert will confirm or decline shortly.
             </p>
           </div>
 
