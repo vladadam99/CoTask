@@ -91,53 +91,38 @@ export default function Bookings() {
           </div>
         )}
 
-        {isClient && clientBookings.length > 0 && (
+        {isClient && (
           <div className="mb-8">
             <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-3">Direct Bookings</h2>
-            <div className="space-y-3">
-              {clientBookings.map(b => (
-                <Link key={b.id} to={`/UserBookingDetail?id=${b.id}`}>
-                  <GlassCard className="p-5" hover>
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <p className="font-medium">{b.category}</p>
-                        <p className="text-sm text-muted-foreground mt-1">{b.avatar_name} · {b.scheduled_date || 'Immediate'} {b.scheduled_time || ''}</p>
-                        {b.location && <p className="text-xs text-muted-foreground mt-1">{b.location}</p>}
+            {isLoading ? (
+              <div className="space-y-3">
+                {[1,2,3].map(i => <div key={i} className="glass rounded-xl p-5 animate-pulse"><div className="h-4 bg-muted rounded w-1/2 mb-2" /><div className="h-3 bg-muted rounded w-1/3" /></div>)}
+              </div>
+            ) : clientBookings.filter(b => !search || b.category?.toLowerCase().includes(search.toLowerCase()) || b.avatar_name?.toLowerCase().includes(search.toLowerCase())).length > 0 ? (
+              <div className="space-y-3">
+                {clientBookings.filter(b => !search || b.category?.toLowerCase().includes(search.toLowerCase()) || b.avatar_name?.toLowerCase().includes(search.toLowerCase())).map(b => (
+                  <Link key={b.id} to={`/UserBookingDetail?id=${b.id}`}>
+                    <GlassCard className="p-5" hover>
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <p className="font-medium">{b.category}</p>
+                          <p className="text-sm text-muted-foreground mt-1">{b.avatar_name} · {b.scheduled_date || 'Immediate'} {b.scheduled_time || ''}</p>
+                          {b.location && <p className="text-xs text-muted-foreground mt-1">{b.location}</p>}
+                        </div>
+                        <div className="text-right">
+                          <StatusBadge status={b.status} />
+                          <p className="text-sm font-medium mt-2">${b.total_amount || 0}</p>
+                        </div>
                       </div>
-                      <div className="text-right">
-                        <StatusBadge status={b.status} />
-                        <p className="text-sm font-medium mt-2">${b.total_amount || 0}</p>
-                      </div>
-                    </div>
-                  </GlassCard>
-                </Link>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {isClient && clientBookings.length > 0 && (
-          <div className="mb-8">
-            <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-3">Direct Bookings</h2>
-            <div className="space-y-3">
-              {clientBookings.filter(b => !search || b.category?.toLowerCase().includes(search.toLowerCase()) || b.avatar_name?.toLowerCase().includes(search.toLowerCase())).map(b => (
-                <Link key={b.id} to={`/UserBookingDetail?id=${b.id}`}>
-                  <GlassCard className="p-5" hover>
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <p className="font-medium">{b.category}</p>
-                        <p className="text-sm text-muted-foreground mt-1">{b.avatar_name} · {b.scheduled_date || 'Immediate'} {b.scheduled_time || ''}</p>
-                        {b.location && <p className="text-xs text-muted-foreground mt-1">{b.location}</p>}
-                      </div>
-                      <div className="text-right">
-                        <StatusBadge status={b.status} />
-                        <p className="text-sm font-medium mt-2">${b.total_amount || 0}</p>
-                      </div>
-                    </div>
-                  </GlassCard>
-                </Link>
-              ))}
-            </div>
+                    </GlassCard>
+                  </Link>
+                ))}
+              </div>
+            ) : (
+              <GlassCard className="p-6 text-center">
+                <p className="text-sm text-muted-foreground">No direct bookings yet</p>
+              </GlassCard>
+            )}
           </div>
         )}
 
