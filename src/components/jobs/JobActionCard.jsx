@@ -153,12 +153,14 @@ export default function JobActionCard({ job, user, userRole, conversationId, onJ
   const handleSatisfied = async () => {
     setLoading(true);
     try {
-      // Capture escrow funds if held
+      // Release escrow (real or simulated)
       if (job.stripe_payment_intent_id && job.escrow_status === 'authorized') {
-        await base44.functions.invoke('captureJobPayment', { jobId: job.id });
+        if (!job.stripe_payment_intent_id.startsWith('sim_')) {
+          await base44.functions.invoke('captureJobPayment', { jobId: job.id });
+        }
       }
       await Promise.all([
-        base44.entities.JobPost.update(job.id, { status: 'completed' }),
+        base44.entities.JobPost.update(job.id, { status: 'completed', escrow_status: 'captured' }),
         postSystemMessage(`🎉 Client confirmed satisfaction! Job is complete and payment released to ${job.winner_email}. Thank you both!`),
         notify(job.winner_email, '💰 Payment Released!', `${user.full_name} is satisfied with your work. Payment released!`, 'payment'),
       ]);

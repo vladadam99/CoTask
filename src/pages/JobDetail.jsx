@@ -9,7 +9,7 @@ import { getNavItems } from '@/lib/navItems';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import StatusBadge from '@/components/ui/StatusBadge';
-import JobPaymentModal from '@/components/jobs/JobPaymentModal';
+import SimulatedPaymentModal from '@/components/jobs/SimulatedPaymentModal';
 import { ArrowLeft, MapPin, Clock, DollarSign, Users, CheckCircle, XCircle, Star, Award, MessageCircle, Pencil, Calendar, AlertCircle, ShieldAlert, Send } from 'lucide-react';
 import JobNegotiationFlow from '@/components/jobs/JobNegotiationFlow';
 
@@ -299,7 +299,7 @@ export default function JobDetail() {
 
         {/* Payment Modal (shown when selecting a winner) */}
         {showPaymentModal && pendingWinnerApp && (
-          <JobPaymentModal
+          <SimulatedPaymentModal
             job={{ ...job, escrow_amount: pendingWinnerApp.proposed_rate || job.budget_max || job.budget_min || 50 }}
             onSuccess={handlePaymentSuccess}
             onCancel={() => { setShowPaymentModal(false); setPendingWinnerApp(null); }}
@@ -313,8 +313,11 @@ export default function JobDetail() {
               <DollarSign className="w-4 h-4 text-yellow-400" />
             </div>
             <div>
-              <p className="text-sm font-semibold text-yellow-400">💰 ${job.escrow_amount} held in escrow</p>
-              <p className="text-xs text-muted-foreground">Funds will be released to the avatar once you approve their work.</p>
+              <p className="text-sm font-semibold text-yellow-400">
+                {job.stripe_payment_intent_id?.startsWith('sim_') ? '🧪 ' : '💰 '}
+                ${job.escrow_amount} held in escrow{job.stripe_payment_intent_id?.startsWith('sim_') ? ' (simulated)' : ''}
+              </p>
+              <p className="text-xs text-muted-foreground">Funds will be released to the avatar once you approve their work, or automatically after 24 hours.</p>
             </div>
           </div>
         )}
