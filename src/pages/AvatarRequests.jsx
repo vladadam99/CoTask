@@ -79,6 +79,7 @@ export default function AvatarRequests() {
             type: 'booking_accepted',
             link: `/UserBookingDetail?id=${id}`,
             reference_id: id,
+            target_role: 'user',
             });
             }
       } else if (status === 'declined' && booking?.client_email) {

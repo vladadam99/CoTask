@@ -19,7 +19,7 @@ export default function Bookings() {
   const [search, setSearch] = useState('');
   const [viewMode, setViewMode] = useState('list'); // 'list' | 'calendar'
 
-  const isAvatar = user?.role === 'avatar';
+  const isAvatar = user?.selected_role === 'avatar';
   const isClient = !isAvatar;
 
   const dashPath = isAvatar ? '/AvatarDashboard' : user?.role === 'enterprise' ? '/EnterpriseDashboard' : '/UserDashboard';
