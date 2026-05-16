@@ -116,6 +116,31 @@ export default function Bookings() {
           </div>
         )}
 
+        {isClient && clientBookings.length > 0 && (
+          <div className="mb-8">
+            <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-3">Direct Bookings</h2>
+            <div className="space-y-3">
+              {clientBookings.filter(b => !search || b.category?.toLowerCase().includes(search.toLowerCase()) || b.avatar_name?.toLowerCase().includes(search.toLowerCase())).map(b => (
+                <Link key={b.id} to={`/UserBookingDetail?id=${b.id}`}>
+                  <GlassCard className="p-5" hover>
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="font-medium">{b.category}</p>
+                        <p className="text-sm text-muted-foreground mt-1">{b.avatar_name} · {b.scheduled_date || 'Immediate'} {b.scheduled_time || ''}</p>
+                        {b.location && <p className="text-xs text-muted-foreground mt-1">{b.location}</p>}
+                      </div>
+                      <div className="text-right">
+                        <StatusBadge status={b.status} />
+                        <p className="text-sm font-medium mt-2">${b.total_amount || 0}</p>
+                      </div>
+                    </div>
+                  </GlassCard>
+                </Link>
+              ))}
+            </div>
+          </div>
+        )}
+
         {isClient ? (
           jobsLoading ? (
             <div className="space-y-3">
