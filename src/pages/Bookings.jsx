@@ -80,6 +80,31 @@ export default function Bookings() {
           <Input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search bookings..." className="pl-10 bg-muted/50 border-white/5" />
         </div>
 
+        {isAvatar && bookings.length > 0 && (
+          <div className="mb-8">
+            <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-3">Direct Bookings</h2>
+            <div className="space-y-3">
+              {bookings.map(b => (
+                <Link key={b.id} to={`/AvatarBookingDetail?id=${b.id}`}>
+                  <GlassCard className="p-5" hover>
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="font-medium">{b.category}</p>
+                        <p className="text-sm text-muted-foreground mt-1">{b.client_name} · {b.scheduled_date || 'Immediate'} {b.scheduled_time || ''}</p>
+                        {b.location && <p className="text-xs text-muted-foreground mt-1">{b.location}</p>}
+                      </div>
+                      <div className="text-right">
+                        <StatusBadge status={b.status} />
+                        <p className="text-sm font-medium mt-2">${b.total_amount || 0}</p>
+                      </div>
+                    </div>
+                  </GlassCard>
+                </Link>
+              ))}
+            </div>
+          </div>
+        )}
+
         {isAvatar && (
           <div className="flex gap-2 mb-6 overflow-x-auto">
             {TABS.map(t => (
