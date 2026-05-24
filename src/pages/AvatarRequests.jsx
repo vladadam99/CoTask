@@ -15,6 +15,7 @@ import {
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter
 } from '@/components/ui/dialog';
 import { Textarea } from '@/components/ui/textarea';
+import { useToast } from '@/components/ui/use-toast';
 
 
 
@@ -29,6 +30,7 @@ const TABS = [
 export default function AvatarRequests() {
   const { user, loading: userLoading } = useCurrentUser();
   const queryClient = useQueryClient();
+  const { toast } = useToast();
   const [activeTab, setActiveTab] = useState('accepted');
   const [declineModal, setDeclineModal] = useState(null); // { bookingId, clientEmail, category }
   const [declineReason, setDeclineReason] = useState('');
@@ -66,34 +68,20 @@ export default function AvatarRequests() {
 
   const updateBooking = useMutation({
     mutationFn: async ({ id, status, reason }) => {
-      await base44.entities.Booking.update(id, { status });
-      const booking = bookings.find(b => b.id === id);
-      if (status === 'accepted') {
-        await base44.functions.invoke('createConversation', { bookingId: id });
-        // Notify client
-        if (booking?.client_email) {
-          await base44.entities.Notification.create({
-            user_email: booking.client_email,
-            title: 'Booking Accepted!',
-            message: `${user.full_name} accepted your ${booking.category} booking request.`,
-            type: 'booking_accepted',
-            link: `/UserBookingDetail?id=${id}`,
-            reference_id: id,
-            target_role: 'user',
-            });
-            }
-      } else if (status === 'declined' && booking?.client_email) {
-        await base44.entities.Notification.create({
-          user_email: booking.client_email,
-          title: 'Booking Declined',
-          message: `${user.full_name} declined your ${booking.category} booking request.${reason ? ` Reason: ${reason}` : ''}`,
-          type: 'booking_declined',
-          link: `/UserBookingDetail?id=${id}`,
-          reference_id: id,
-        });
+      const res = await base44.functions.invoke('updateBookingStatus', { id, status, reason });
+      if (res.data?.error) {
+        throw new Error(res.data.error);
       }
+      return res.data;
     },
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['avatar-all-bookings'] }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['avatar-all-bookings'] });
+      toast({ title: 'Success', description: 'Booking updated successfully.' });
+    },
+    onError: (err) => {
+      console.error(err);
+      toast({ title: 'Error', description: err.message, variant: 'destructive' });
+    }
   });
 
   const handleDeclineClick = (booking) => {
