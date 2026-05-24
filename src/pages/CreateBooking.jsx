@@ -309,16 +309,29 @@ Based on this, return:
                 </div>
                 <div>
                   <label className="text-xs text-muted-foreground mb-1 block">Duration</label>
-                  <Select value={String(form.duration_minutes)} onValueChange={v => update('duration_minutes', parseInt(v))}>
-                    <SelectTrigger className="bg-muted/50 border-white/5 text-sm"><SelectValue /></SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="30">30 minutes</SelectItem>
-                      <SelectItem value="60">1 hour</SelectItem>
-                      <SelectItem value="90">1.5 hours</SelectItem>
-                      <SelectItem value="120">2 hours</SelectItem>
-                      <SelectItem value="180">3 hours</SelectItem>
-                    </SelectContent>
-                  </Select>
+                  <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2 flex-1">
+                      <Input
+                        type="number"
+                        min="0"
+                        value={Math.floor(form.duration_minutes / 60).toString()}
+                        onChange={e => update('duration_minutes', (parseInt(e.target.value) || 0) * 60 + (form.duration_minutes % 60))}
+                        className="bg-muted/50 border-white/5 text-sm"
+                      />
+                      <span className="text-sm text-muted-foreground">hrs</span>
+                    </div>
+                    <div className="flex items-center gap-2 flex-1">
+                      <Input
+                        type="number"
+                        min="0"
+                        max="59"
+                        value={(form.duration_minutes % 60).toString()}
+                        onChange={e => update('duration_minutes', Math.floor(form.duration_minutes / 60) * 60 + (parseInt(e.target.value) || 0))}
+                        className="bg-muted/50 border-white/5 text-sm"
+                      />
+                      <span className="text-sm text-muted-foreground">mins</span>
+                    </div>
+                  </div>
                 </div>
               </div>
             )}
