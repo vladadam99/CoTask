@@ -15,18 +15,9 @@ export default function JobApprovalFlow({ booking, user, onUpdate }) {
 
   const handleApprove = async () => {
     setLoading(true);
-    await base44.entities.Booking.update(booking.id, {
-      approval_status: 'approved',
-      status: 'completed',
-      payment_status: 'released',
-    });
-    // Notify avatar
-    await base44.entities.Notification.create({
-      user_email: booking.avatar_email,
-      title: '✅ Job Approved — Payment Released',
-      message: `${user.full_name} approved your work. Payment of $${booking.amount?.toFixed(2)} has been released.`,
-      type: 'payment',
-      reference_id: booking.id,
+    await base44.functions.invoke('approveJob', {
+      bookingId: booking.id,
+      action: 'approve'
     });
     setLoading(false);
     onUpdate?.();
@@ -36,18 +27,10 @@ export default function JobApprovalFlow({ booking, user, onUpdate }) {
     const amt = parseFloat(partialAmount);
     if (!amt || amt <= 0 || amt > (booking.total_amount || 0)) return;
     setLoading(true);
-    await base44.entities.Booking.update(booking.id, {
-      approval_status: 'partial',
-      status: 'completed',
-      payment_status: 'partial',
-      partial_amount: amt,
-    });
-    await base44.entities.Notification.create({
-      user_email: booking.avatar_email,
-      title: 'Partial Payment Offer',
-      message: `${user.full_name} has offered a partial payment of $${amt.toFixed(2)} for this job.`,
-      type: 'payment',
-      reference_id: booking.id,
+    await base44.functions.invoke('approveJob', {
+      bookingId: booking.id,
+      action: 'partial',
+      partialAmount: amt
     });
     setLoading(false);
     onUpdate?.();
@@ -56,18 +39,10 @@ export default function JobApprovalFlow({ booking, user, onUpdate }) {
   const handleDispute = async () => {
     if (!disputeReason.trim()) return;
     setLoading(true);
-    await base44.entities.Booking.update(booking.id, {
-      approval_status: 'disputed',
-      status: 'disputed',
-      payment_status: 'held',
-      dispute_reason: disputeReason,
-    });
-    await base44.entities.Notification.create({
-      user_email: booking.avatar_email,
-      title: '⚠️ Dispute Raised',
-      message: `${user.full_name} has raised a dispute: "${disputeReason.slice(0, 80)}"`,
-      type: 'system',
-      reference_id: booking.id,
+    await base44.functions.invoke('approveJob', {
+      bookingId: booking.id,
+      action: 'dispute',
+      disputeReason: disputeReason
     });
     setLoading(false);
     onUpdate?.();

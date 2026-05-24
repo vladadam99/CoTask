@@ -51,7 +51,11 @@ export default function UserBookingDetail() {
   });
 
   const updateStatus = useMutation({
-    mutationFn: (status) => base44.entities.Booking.update(id, { status }),
+    mutationFn: async (status) => {
+      const res = await base44.functions.invoke('updateBookingStatus', { id, status });
+      if (res.data?.error) throw new Error(res.data.error);
+      return res.data;
+    },
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['user-booking', id] }),
   });
 

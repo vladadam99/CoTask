@@ -14,8 +14,8 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Missing id or status' }, { status: 400 });
     }
 
-    // Get the booking
-    const bookings = await base44.asServiceRole.entities.Booking.filter({ id });
+    // Get the booking (using normal client so it inherits environment correctly and ensures read access)
+    const bookings = await base44.entities.Booking.filter({ id });
     const booking = bookings[0];
     
     if (!booking) {

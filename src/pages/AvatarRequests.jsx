@@ -46,14 +46,11 @@ export default function AvatarRequests() {
     queryKey: ['avatar-counter-offers', user?.email],
     queryFn: async () => {
       if (!bookings.length) return [];
-      const ids = bookings.map(b => b.id);
-      const results = await Promise.all(
-        ids.map(bid => base44.entities.CounterOffer.filter({ booking_id: bid }, '-created_date', 1).then(r => r[0] || null))
-      );
-      return results.filter(Boolean);
+      const results = await base44.entities.CounterOffer.list('-created_date', 300);
+      return results.filter(o => bookings.some(b => b.id === o.booking_id));
     },
     enabled: bookings.length > 0,
-    refetchInterval: 8000,
+    refetchInterval: 15000,
   });
 
   const getLatestOffer = (bookingId) => allOffers.find(o => o.booking_id === bookingId);
