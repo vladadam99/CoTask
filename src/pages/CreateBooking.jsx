@@ -33,10 +33,7 @@ export default function CreateBooking() {
 
   const { data: avatar } = useQuery({
     queryKey: ['booking-avatar', avatarId],
-    queryFn: async () => {
-      const list = await base44.entities.AvatarProfile.list('-created_date', 500);
-      return list.find(a => a.id === avatarId) || null;
-    },
+    queryFn: () => base44.entities.AvatarProfile.get(avatarId),
     enabled: !!avatarId,
   });
 
