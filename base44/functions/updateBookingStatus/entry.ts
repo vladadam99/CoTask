@@ -14,9 +14,24 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Missing id or status' }, { status: 400 });
     }
 
-    const bookings = await base44.asServiceRole.entities.Booking.filter({ id });
-    const booking = bookings[0];
+    let activeBase44 = base44;
+    let bookings = await activeBase44.asServiceRole.entities.Booking.filter({ id });
+    let booking = bookings[0];
     
+    if (!booking) {
+      const devHeaders = new Headers(req.headers);
+      devHeaders.set('x-base44-env', 'dev');
+      const devReq = new Request('http://localhost', { headers: devHeaders });
+      const devBase44 = createClientFromRequest(devReq);
+      
+      bookings = await devBase44.asServiceRole.entities.Booking.filter({ id });
+      booking = bookings[0];
+      
+      if (booking) {
+        activeBase44 = devBase44;
+      }
+    }
+
     if (!booking) {
       return Response.json({ error: 'Booking not found' }, { status: 404 });
     }
@@ -27,14 +42,14 @@ Deno.serve(async (req) => {
     }
 
     // Update the booking status
-    await base44.asServiceRole.entities.Booking.update(id, { status });
+    await activeBase44.asServiceRole.entities.Booking.update(id, { status });
 
     // Handle side effects (notifications, conversations)
     if (status === 'accepted') {
-      await base44.asServiceRole.functions.invoke('createConversation', { bookingId: id });
+      await activeBase44.asServiceRole.functions.invoke('createConversation', { bookingId: id });
       
       if (booking.client_email) {
-        await base44.asServiceRole.entities.Notification.create({
+        await activeBase44.asServiceRole.entities.Notification.create({
           user_email: booking.client_email,
           title: 'Booking Accepted!',
           message: `${user.full_name} accepted your ${booking.category} booking request.`,
@@ -45,7 +60,7 @@ Deno.serve(async (req) => {
         });
       }
     } else if (status === 'declined' && booking.client_email) {
-      await base44.asServiceRole.entities.Notification.create({
+      await activeBase44.asServiceRole.entities.Notification.create({
         user_email: booking.client_email,
         title: 'Booking Declined',
         message: `${user.full_name} declined your ${booking.category} booking request.${reason ? ` Reason: ${reason}` : ''}`,
