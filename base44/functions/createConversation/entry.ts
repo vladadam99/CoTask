@@ -2,7 +2,18 @@ import { createClientFromRequest } from 'npm:@base44/sdk@0.8.30';
 
 Deno.serve(async (req) => {
   try {
-    const base44 = createClientFromRequest(req);
+    const newReq = new Request(req.url, {
+      method: req.method,
+      headers: new Headers(req.headers),
+    });
+    try {
+      const originUrl = req.headers.get("X-Origin-URL") || req.url;
+      const url = new URL(originUrl);
+      const env = url.searchParams.get("base44_data_env");
+      if (env) newReq.headers.set("X-Base44-Data-Env", env);
+    } catch (e) {}
+
+    const base44 = createClientFromRequest(newReq);
     const user = await base44.auth.me();
     if (!user) return Response.json({ error: 'Unauthorized' }, { status: 401 });
 
