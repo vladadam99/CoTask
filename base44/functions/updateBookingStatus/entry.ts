@@ -14,7 +14,7 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Missing id or status' }, { status: 400 });
     }
     
-    let booking = await base44.entities.Booking.get(id);
+    let booking = await base44.asServiceRole.entities.Booking.get(id);
     
     if (!booking) {
       return Response.json({ error: 'Booking not found' }, { status: 404 });
@@ -26,14 +26,14 @@ Deno.serve(async (req) => {
     }
 
     // Update the booking status
-    await base44.entities.Booking.update(id, { status });
+    await base44.asServiceRole.entities.Booking.update(id, { status });
 
     // Handle side effects (notifications, conversations)
     if (status === 'accepted') {
       await base44.functions.invoke('createConversation', { bookingId: id });
       
       if (booking.client_email) {
-        await base44.entities.Notification.create({
+        await base44.asServiceRole.entities.Notification.create({
           user_email: booking.client_email,
           title: 'Booking Accepted!',
           message: `${user.full_name} accepted your ${booking.category} booking request.`,
@@ -44,7 +44,7 @@ Deno.serve(async (req) => {
         });
       }
     } else if (status === 'declined' && booking.client_email) {
-      await base44.entities.Notification.create({
+      await base44.asServiceRole.entities.Notification.create({
         user_email: booking.client_email,
         title: 'Booking Declined',
         message: `${user.full_name} declined your ${booking.category} booking request.${reason ? ` Reason: ${reason}` : ''}`,

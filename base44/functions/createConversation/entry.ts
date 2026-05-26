@@ -10,18 +10,18 @@ Deno.serve(async (req) => {
     if (!bookingId) return Response.json({ error: 'Missing bookingId' }, { status: 400 });
 
     // Get the booking
-    const bookings = await base44.entities.Booking.filter({ id: bookingId });
+    const bookings = await base44.asServiceRole.entities.Booking.filter({ id: bookingId });
     const booking = bookings[0];
     if (!booking) return Response.json({ error: 'Booking not found' }, { status: 404 });
 
     // Check if conversation already exists
-    const existing = await base44.entities.Conversation.filter({ booking_id: bookingId });
+    const existing = await base44.asServiceRole.entities.Conversation.filter({ booking_id: bookingId });
     if (existing.length > 0) {
       return Response.json({ conversation: existing[0] });
     }
 
     // Create new conversation
-    const conversation = await base44.entities.Conversation.create({
+    const conversation = await base44.asServiceRole.entities.Conversation.create({
       participant_emails: [booking.client_email, booking.avatar_email],
       participant_names: [booking.client_name, booking.avatar_name],
       booking_id: bookingId,
@@ -32,7 +32,7 @@ Deno.serve(async (req) => {
     });
 
     // Notify avatar of new booking request
-    await base44.entities.Notification.create({
+    await base44.asServiceRole.entities.Notification.create({
       user_email: booking.avatar_email,
       title: `New booking request from ${booking.client_name}`,
       message: `${booking.category} · ${booking.duration_minutes || 60} min · $${booking.total_amount || booking.amount || 0}`,
