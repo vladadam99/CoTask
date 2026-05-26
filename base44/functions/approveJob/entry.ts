@@ -14,8 +14,27 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Missing bookingId or action' }, { status: 400 });
     }
 
-    const bookings = await base44.asServiceRole.entities.Booking.filter({ id: bookingId });
-    const booking = bookings[0];
+    const devHeaders = new Headers(req.headers);
+    devHeaders.set('x-base44-env', 'dev');
+    const devBase44 = createClientFromRequest(new Request(req.url, { headers: devHeaders }));
+    
+    let booking;
+    let client = base44; // defaults to prod
+    
+    try {
+      booking = await base44.asServiceRole.entities.Booking.get(bookingId);
+    } catch (e) {
+      // Not in prod
+    }
+    
+    if (!booking) {
+      try {
+        booking = await devBase44.asServiceRole.entities.Booking.get(bookingId);
+        if (booking) {
+          client = devBase44; // switch to dev client for subsequent operations
+        }
+      } catch (err) {}
+    }
     
     if (!booking) {
       return Response.json({ error: 'Booking not found' }, { status: 404 });
@@ -27,12 +46,12 @@ Deno.serve(async (req) => {
     }
 
     if (action === 'approve') {
-      await base44.asServiceRole.entities.Booking.update(bookingId, {
+      await client.asServiceRole.entities.Booking.update(bookingId, {
         approval_status: 'approved',
         status: 'completed',
         payment_status: 'released',
       });
-      await base44.asServiceRole.entities.Notification.create({
+      await client.asServiceRole.entities.Notification.create({
         user_email: booking.avatar_email,
         title: '✅ Job Approved — Payment Released',
         message: `${user.full_name} approved your work. Payment of $${booking.amount?.toFixed(2)} has been released.`,
@@ -40,13 +59,13 @@ Deno.serve(async (req) => {
         reference_id: booking.id,
       });
     } else if (action === 'partial') {
-      await base44.asServiceRole.entities.Booking.update(bookingId, {
+      await client.asServiceRole.entities.Booking.update(bookingId, {
         approval_status: 'partial',
         status: 'completed',
         payment_status: 'partial',
         partial_amount: partialAmount,
       });
-      await base44.asServiceRole.entities.Notification.create({
+      await client.asServiceRole.entities.Notification.create({
         user_email: booking.avatar_email,
         title: 'Partial Payment Offer',
         message: `${user.full_name} has offered a partial payment of $${partialAmount.toFixed(2)} for this job.`,
@@ -54,13 +73,13 @@ Deno.serve(async (req) => {
         reference_id: booking.id,
       });
     } else if (action === 'dispute') {
-      await base44.asServiceRole.entities.Booking.update(bookingId, {
+      await client.asServiceRole.entities.Booking.update(bookingId, {
         approval_status: 'disputed',
         status: 'disputed',
         payment_status: 'held',
         dispute_reason: disputeReason,
       });
-      await base44.asServiceRole.entities.Notification.create({
+      await client.asServiceRole.entities.Notification.create({
         user_email: booking.avatar_email,
         title: '⚠️ Dispute Raised',
         message: `${user.full_name} has raised a dispute: "${disputeReason.slice(0, 80)}"`,

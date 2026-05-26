@@ -14,32 +14,29 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Missing id or status' }, { status: 400 });
     }
 
-    const env = req.headers.get('x-base44-env') === 'dev' ? 'dev' : 'prod';
-    const reqOptions = { data_env: env };
-
-    console.log("updateBookingStatus called with:", { id, status, reason, env });
+    const devHeaders = new Headers(req.headers);
+    devHeaders.set('x-base44-env', 'dev');
+    const devBase44 = createClientFromRequest(new Request(req.url, { headers: devHeaders }));
     
     let booking;
+    let client = base44; // defaults to prod
+    
     try {
-      booking = await base44.asServiceRole.entities.Booking.get(id, reqOptions);
-      console.log("Found booking:", booking?.id);
+      booking = await base44.asServiceRole.entities.Booking.get(id);
     } catch (e) {
-      console.error("Error getting booking:", e);
+      // Not in prod
     }
     
-    // Fallback: try searching in dev anyway if we couldn't find it
     if (!booking) {
       try {
-        booking = await base44.asServiceRole.entities.Booking.get(id, { data_env: 'dev' });
+        booking = await devBase44.asServiceRole.entities.Booking.get(id);
         if (booking) {
-          console.log("Found booking in dev as fallback:", booking.id);
-          reqOptions.data_env = 'dev'; // switch to dev context if found there
+          client = devBase44; // switch to dev client for subsequent operations
         }
       } catch (err) {}
     }
     
     if (!booking) {
-      console.log("Booking not found!");
       return Response.json({ error: 'Booking not found' }, { status: 404 });
     }
 
@@ -49,14 +46,14 @@ Deno.serve(async (req) => {
     }
 
     // Update the booking status
-    await base44.asServiceRole.entities.Booking.update(id, { status }, reqOptions);
+    await client.asServiceRole.entities.Booking.update(id, { status });
 
     // Handle side effects (notifications, conversations)
     if (status === 'accepted') {
-      await base44.asServiceRole.functions.invoke('createConversation', { bookingId: id });
+      await client.asServiceRole.functions.invoke('createConversation', { bookingId: id });
       
       if (booking.client_email) {
-        await base44.asServiceRole.entities.Notification.create({
+        await client.asServiceRole.entities.Notification.create({
           user_email: booking.client_email,
           title: 'Booking Accepted!',
           message: `${user.full_name} accepted your ${booking.category} booking request.`,
@@ -64,17 +61,17 @@ Deno.serve(async (req) => {
           link: `/UserBookingDetail?id=${id}`,
           reference_id: id,
           target_role: 'user',
-        }, reqOptions);
+        });
       }
     } else if (status === 'declined' && booking.client_email) {
-      await base44.asServiceRole.entities.Notification.create({
+      await client.asServiceRole.entities.Notification.create({
         user_email: booking.client_email,
         title: 'Booking Declined',
         message: `${user.full_name} declined your ${booking.category} booking request.${reason ? ` Reason: ${reason}` : ''}`,
         type: 'booking_declined',
         link: `/UserBookingDetail?id=${id}`,
         reference_id: id,
-      }, reqOptions);
+      });
     }
 
     return Response.json({ success: true, booking: { ...booking, status } });
