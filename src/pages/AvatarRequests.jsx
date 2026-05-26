@@ -65,7 +65,8 @@ export default function AvatarRequests() {
 
   const updateBooking = useMutation({
     mutationFn: async ({ id, status, reason }) => {
-      const res = await base44.functions.invoke('updateBookingStatus', { id, status, reason });
+      const env = new URLSearchParams(window.location.search).get('base44_data_env') || localStorage.getItem('base44_base44_data_env');
+      const res = await base44.functions.invoke('updateBookingStatus', { id, status, reason, env });
       if (res.data?.error) {
         throw new Error(res.data.error);
       }

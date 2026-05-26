@@ -5,22 +5,28 @@ const stripe = new Stripe(Deno.env.get('STRIPE_SECRET_KEY'));
 
 Deno.serve(async (req) => {
   try {
+    const reqClone = req.clone();
+    const payload = await reqClone.json();
+    const { jobId, amountUSD, env } = payload;
+
     const newReq = new Request(req.url, {
       method: req.method,
       headers: new Headers(req.headers),
     });
-    try {
-      const originUrl = req.headers.get("X-Origin-URL") || req.url;
-      const url = new URL(originUrl);
-      const env = url.searchParams.get("base44_data_env");
-      if (env) newReq.headers.set("X-Base44-Data-Env", env);
-    } catch (e) {}
+    if (env) {
+      newReq.headers.set("X-Base44-Data-Env", env);
+    } else {
+      try {
+        const originUrl = req.headers.get("X-Origin-URL") || req.url;
+        const url = new URL(originUrl);
+        const urlEnv = url.searchParams.get("base44_data_env");
+        if (urlEnv) newReq.headers.set("X-Base44-Data-Env", urlEnv);
+      } catch (e) {}
+    }
 
     const base44 = createClientFromRequest(newReq);
     const user = await base44.auth.me();
     if (!user) return Response.json({ error: 'Unauthorized' }, { status: 401 });
-
-    const { jobId, amountUSD } = await req.json();
     if (!jobId || !amountUSD) {
       return Response.json({ error: 'Missing jobId or amountUSD' }, { status: 400 });
     }

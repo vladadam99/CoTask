@@ -2,16 +2,26 @@ import { createClientFromRequest } from 'npm:@base44/sdk@0.8.30';
 
 Deno.serve(async (req) => {
   try {
+    // Clone request to allow multiple json() reads and header modifications
+    const reqClone = req.clone();
+    const payload = await reqClone.json();
+    const { id, status, reason, env } = payload;
+    
     const newReq = new Request(req.url, {
       method: req.method,
       headers: new Headers(req.headers),
     });
-    try {
-      const originUrl = req.headers.get("X-Origin-URL") || req.url;
-      const url = new URL(originUrl);
-      const env = url.searchParams.get("base44_data_env");
-      if (env) newReq.headers.set("X-Base44-Data-Env", env);
-    } catch (e) {}
+    
+    if (env) {
+      newReq.headers.set("X-Base44-Data-Env", env);
+    } else {
+      try {
+        const originUrl = req.headers.get("X-Origin-URL") || req.url;
+        const url = new URL(originUrl);
+        const urlEnv = url.searchParams.get("base44_data_env");
+        if (urlEnv) newReq.headers.set("X-Base44-Data-Env", urlEnv);
+      } catch (e) {}
+    }
 
     const base44 = createClientFromRequest(newReq);
     const user = await base44.auth.me();
@@ -19,8 +29,6 @@ Deno.serve(async (req) => {
     if (!user) {
       return Response.json({ error: 'Unauthorized' }, { status: 401 });
     }
-
-    const { id, status, reason } = await req.json();
     if (!id || !status) {
       return Response.json({ error: 'Missing id or status' }, { status: 400 });
     }
@@ -41,7 +49,7 @@ Deno.serve(async (req) => {
 
     // Handle side effects (notifications, conversations)
     if (status === 'accepted') {
-      await base44.functions.invoke('createConversation', { bookingId: id });
+      await base44.functions.invoke('createConversation', { bookingId: id, env });
       
       if (booking.client_email) {
         await base44.asServiceRole.entities.Notification.create({
