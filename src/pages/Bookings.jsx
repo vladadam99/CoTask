@@ -8,6 +8,7 @@ import StatusBadge from '@/components/ui/StatusBadge';
 import { Calendar, Search, ArrowLeft, Briefcase, Users, Clock, CheckCircle } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import AppShell from '@/components/layout/AppShell';
+import { Navigate } from 'react-router-dom';
 import { getNavItems } from '@/lib/navItems';
 import BookingCalendar from '@/components/bookings/BookingCalendar';
 
@@ -22,7 +23,7 @@ export default function Bookings() {
   const isAvatar = user?.selected_role === 'avatar' || user?.role === 'avatar';
   const isClient = !isAvatar;
 
-  const dashPath = isAvatar ? '/AvatarDashboard' : user?.role === 'enterprise' ? '/EnterpriseDashboard' : '/UserDashboard';
+  const dashPath = user?.role === 'enterprise' ? '/EnterpriseDashboard' : '/UserDashboard';
 
   const { data: bookings = [], isLoading } = useQuery({
     queryKey: ['all-bookings', user?.email, isAvatar],
@@ -65,6 +66,10 @@ export default function Bookings() {
       (isAvatar ? b.client_name : b.avatar_name)?.toLowerCase().includes(search.toLowerCase());
     return matchTab && matchSearch;
   });
+
+  if (isAvatar) {
+    return <Navigate to="/AvatarRequests" replace />;
+  }
 
   return (
     <AppShell navItems={getNavItems(user?.selected_role)} user={user}>

@@ -8,8 +8,9 @@ export const userNavItems = [
 ];
 
 export const avatarNavItems = [
-  { icon: Briefcase, label: 'Jobs', path: '/JobMarketplace' },
   { icon: Home, label: 'Home', path: '/AvatarDashboard' },
+  { icon: Briefcase, label: 'Jobs', path: '/JobMarketplace' },
+  { icon: Inbox, label: 'Requests', path: '/AvatarRequests' },
   { icon: MessageSquare, label: 'Messages', path: '/AvatarMessages' },
 ];
 

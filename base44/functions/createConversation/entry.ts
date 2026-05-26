@@ -1,4 +1,4 @@
-import { createClientFromRequest } from 'npm:@base44/sdk@0.8.21';
+import { createClientFromRequest } from 'npm:@base44/sdk@0.8.30';
 
 Deno.serve(async (req) => {
   try {
@@ -32,7 +32,7 @@ Deno.serve(async (req) => {
     });
 
     // Notify avatar of new booking request
-    await base44.asServiceRole.entities.Notification.create({
+    await base44.entities.Notification.create({
       user_email: booking.avatar_email,
       title: `New booking request from ${booking.client_name}`,
       message: `${booking.category} · ${booking.duration_minutes || 60} min · $${booking.total_amount || booking.amount || 0}`,
