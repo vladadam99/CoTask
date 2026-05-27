@@ -1,4 +1,4 @@
-import { createClientFromRequest } from 'npm:@base44/sdk@0.8.30';
+import { createClientFromRequest, createClient } from 'npm:@base44/sdk@0.8.30';
 
 Deno.serve(async (req) => {
   try {
@@ -6,25 +6,15 @@ Deno.serve(async (req) => {
     const reqClone = req.clone();
     const payload = await reqClone.json();
     const { id, status, reason, env } = payload;
+    console.info("===== STARTING UPDATE BOOKING STATUS =====");
+    console.info("PAYLOAD:", payload);
     
-    const newReq = new Request(req.url, {
-      method: req.method,
-      headers: new Headers(req.headers),
-    });
-    
-    if (env) {
-      newReq.headers.set("X-Base44-Data-Env", env);
-    } else {
-      try {
-        const originUrl = req.headers.get("X-Origin-URL") || req.url;
-        const url = new URL(originUrl);
-        const urlEnv = url.searchParams.get("base44_data_env");
-        if (urlEnv) newReq.headers.set("X-Base44-Data-Env", urlEnv);
-      } catch (e) {}
-    }
-
-    const base44 = createClientFromRequest(newReq);
+    const base44 = createClientFromRequest(req);
     const user = await base44.auth.me();
+    if (user) {
+      console.info("USER EMAIL:", user.email);
+      console.info("USER ID:", user.id);
+    }
     
     if (!user) {
       return Response.json({ error: 'Unauthorized' }, { status: 401 });
@@ -33,7 +23,13 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Missing id or status' }, { status: 400 });
     }
     
-    let booking = await base44.asServiceRole.entities.Booking.get(id);
+    let booking;
+    try {
+      booking = await base44.entities.Booking.get(id);
+    } catch(err) {
+      console.error("Failed to fetch", err);
+      throw err;
+    }
     
     if (!booking) {
       return Response.json({ error: 'Booking not found' }, { status: 404 });
@@ -45,7 +41,7 @@ Deno.serve(async (req) => {
     }
 
     // Update the booking status
-    await base44.asServiceRole.entities.Booking.update(id, { status });
+    await base44.entities.Booking.update(id, { status });
 
     // Handle side effects (notifications, conversations)
     if (status === 'accepted') {
