@@ -9,23 +9,31 @@ Deno.serve(async (req) => {
     console.info("===== STARTING UPDATE BOOKING STATUS =====");
     console.info("PAYLOAD:", payload);
     
-    const newReq = new Request(req.url, {
-      method: req.method,
-      headers: new Headers(req.headers),
-    });
-    if (env) {
-      newReq.headers.set("X-Base44-Data-Env", env);
-    } else {
+    let finalEnv = env;
+    if (!finalEnv) {
       try {
         const originUrl = req.headers.get("X-Origin-URL") || req.url;
         const url = new URL(originUrl);
-        const urlEnv = url.searchParams.get("base44_data_env");
-        if (urlEnv) newReq.headers.set("X-Base44-Data-Env", urlEnv);
+        finalEnv = url.searchParams.get("base44_data_env") || req.headers.get("x-base44-data-env");
       } catch (e) {}
     }
 
-    console.info("MODIFIED REQ HEADERS:", Object.fromEntries(newReq.headers.entries()));
-    const base44 = createClientFromRequest(newReq);
+    const proxiedReq = new Proxy(req, {
+      get(target, prop) {
+        if (prop === 'headers') {
+          const headers = new Headers(target.headers);
+          if (finalEnv) {
+            headers.set("x-base44-data-env", finalEnv);
+          }
+          return headers;
+        }
+        const val = target[prop];
+        return typeof val === 'function' ? val.bind(target) : val;
+      }
+    });
+
+    const base44 = createClientFromRequest(proxiedReq);
+    
     const user = await base44.auth.me();
     
     if (!user) {
@@ -37,7 +45,7 @@ Deno.serve(async (req) => {
     
     let booking;
     try {
-      booking = await base44.entities.Booking.get(id);
+      booking = await base44.asServiceRole.entities.Booking.get(id);
     } catch(err) {
       console.error("Failed to fetch", err);
       throw err;
