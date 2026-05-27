@@ -9,27 +9,31 @@ Deno.serve(async (req) => {
     const payload = await reqClone.json();
     const { jobId, env } = payload;
 
-    const newReq = new Request(req.url, {
-      method: req.method,
-      headers: new Headers(req.headers),
-    });
-    if (env) {
-      newReq.headers.set("X-Base44-Data-Env", env);
-    } else {
+    let finalEnv = env;
+    if (!finalEnv) {
       try {
         const originUrl = req.headers.get("X-Origin-URL") || req.url;
         const url = new URL(originUrl);
-        const urlEnv = url.searchParams.get("base44_data_env");
-        if (urlEnv) newReq.headers.set("X-Base44-Data-Env", urlEnv);
+        finalEnv = url.searchParams.get("base44_data_env") || req.headers.get("x-base44-data-env");
       } catch (e) {}
     }
 
-    const base44 = createClientFromRequest(newReq);
+    const token = req.headers.get("authorization");
+    const appId = Deno.env.get("BASE44_APP_ID") || "69b9596ede4b46ad27189dde";
+    const appBaseUrl = "https://app.base44.com";
+
+    const base44 = createClient({
+      appId,
+      token,
+      appBaseUrl,
+      dataEnv: finalEnv || "dev"
+    });
+    
     const user = await base44.auth.me();
     if (!user) return Response.json({ error: 'Unauthorized' }, { status: 401 });
     if (!jobId) return Response.json({ error: 'Missing jobId' }, { status: 400 });
 
-    const jobs = await base44.asServiceRole.entities.JobPost.filter({ id: jobId });
+    const jobs = await base44.entities.JobPost.filter({ id: jobId });
     const job = jobs[0];
     if (!job) return Response.json({ error: 'Job not found' }, { status: 404 });
 
@@ -45,7 +49,7 @@ Deno.serve(async (req) => {
     // Capture the held funds
     const paymentIntent = await stripe.paymentIntents.capture(job.stripe_payment_intent_id);
 
-    await base44.asServiceRole.entities.JobPost.update(jobId, {
+    await base44.entities.JobPost.update(jobId, {
       escrow_status: 'captured',
     });
 
