@@ -9,12 +9,24 @@ Deno.serve(async (req) => {
     console.info("===== STARTING UPDATE BOOKING STATUS =====");
     console.info("PAYLOAD:", payload);
     
-    const base44 = createClientFromRequest(req);
-    const user = await base44.auth.me();
-    if (user) {
-      console.info("USER EMAIL:", user.email);
-      console.info("USER ID:", user.id);
+    const newReq = new Request(req.url, {
+      method: req.method,
+      headers: new Headers(req.headers),
+    });
+    if (env) {
+      newReq.headers.set("X-Base44-Data-Env", env);
+    } else {
+      try {
+        const originUrl = req.headers.get("X-Origin-URL") || req.url;
+        const url = new URL(originUrl);
+        const urlEnv = url.searchParams.get("base44_data_env");
+        if (urlEnv) newReq.headers.set("X-Base44-Data-Env", urlEnv);
+      } catch (e) {}
     }
+
+    console.info("MODIFIED REQ HEADERS:", Object.fromEntries(newReq.headers.entries()));
+    const base44 = createClientFromRequest(newReq);
+    const user = await base44.auth.me();
     
     if (!user) {
       return Response.json({ error: 'Unauthorized' }, { status: 401 });
@@ -29,10 +41,6 @@ Deno.serve(async (req) => {
     } catch(err) {
       console.error("Failed to fetch", err);
       throw err;
-    }
-    
-    if (!booking) {
-      return Response.json({ error: 'Booking not found' }, { status: 404 });
     }
 
     // Verify that the user is the avatar for this booking
