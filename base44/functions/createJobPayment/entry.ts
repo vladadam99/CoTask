@@ -18,16 +18,21 @@ Deno.serve(async (req) => {
       } catch (e) {}
     }
 
-    const token = req.headers.get("authorization");
-    const appId = Deno.env.get("BASE44_APP_ID") || "69b9596ede4b46ad27189dde";
-    const appBaseUrl = "https://app.base44.com";
-
-    const base44 = createClient({
-      appId,
-      token,
-      appBaseUrl,
-      dataEnv: finalEnv || "dev"
+    const proxiedReq = new Proxy(req, {
+      get(target, prop) {
+        if (prop === 'headers') {
+          const headers = new Headers(target.headers);
+          if (finalEnv) {
+            headers.set("x-base44-data-env", finalEnv);
+          }
+          return headers;
+        }
+        const val = target[prop];
+        return typeof val === 'function' ? val.bind(target) : val;
+      }
     });
+
+    const base44 = createClientFromRequest(proxiedReq);
     
     const user = await base44.auth.me();
     if (!user) return Response.json({ error: 'Unauthorized' }, { status: 401 });

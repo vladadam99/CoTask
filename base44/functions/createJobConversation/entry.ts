@@ -1,4 +1,4 @@
-import { createClientFromRequest } from 'npm:@base44/sdk@0.8.23';
+import { createClientFromRequest } from 'npm:@base44/sdk@0.8.30';
 
 Deno.serve(async (req) => {
   try {
@@ -6,22 +6,30 @@ Deno.serve(async (req) => {
     const payload = await reqClone.json();
     const { jobId, jobTitle, clientEmail, clientName, avatarEmail, avatarName, scheduledDate, env } = payload;
 
-    const newReq = new Request(req.url, {
-      method: req.method,
-      headers: new Headers(req.headers),
-    });
-    if (env) {
-      newReq.headers.set("X-Base44-Data-Env", env);
-    } else {
+    let finalEnv = env;
+    if (!finalEnv) {
       try {
         const originUrl = req.headers.get("X-Origin-URL") || req.url;
         const url = new URL(originUrl);
-        const urlEnv = url.searchParams.get("base44_data_env");
-        if (urlEnv) newReq.headers.set("X-Base44-Data-Env", urlEnv);
+        finalEnv = url.searchParams.get("base44_data_env") || req.headers.get("x-base44-data-env");
       } catch (e) {}
     }
 
-    const base44 = createClientFromRequest(newReq);
+    const proxiedReq = new Proxy(req, {
+      get(target, prop) {
+        if (prop === 'headers') {
+          const headers = new Headers(target.headers);
+          if (finalEnv) {
+            headers.set("x-base44-data-env", finalEnv);
+          }
+          return headers;
+        }
+        const val = target[prop];
+        return typeof val === 'function' ? val.bind(target) : val;
+      }
+    });
+
+    const base44 = createClientFromRequest(proxiedReq);
 
     if (!jobId || !clientEmail || !avatarEmail) {
       return Response.json({ error: 'Missing required fields' }, { status: 400 });
