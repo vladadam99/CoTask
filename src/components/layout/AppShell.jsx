@@ -113,7 +113,7 @@ function ProfilePanel({ user, onClose, navItems = [] }) {
   );
 }
 
-export default function AppShell({ children, navItems = [], user, fullBleed = false }) {
+export default function AppShell({ children, navItems = [], user, fullBleed = false, title }) {
   const [unreadNotifs, setUnreadNotifs] = useState([]);
   const [profileOpen, setProfileOpen] = useState(false);
   const location = useLocation();
@@ -190,6 +190,7 @@ export default function AppShell({ children, navItems = [], user, fullBleed = fa
       {/* Mobile Top Bar */}
       <div className="lg:hidden fixed top-0 left-0 right-0 z-50 h-14 glass-strong border-b border-white/5 flex items-center justify-between px-4">
         {(() => {
+          if (title) return <span className="text-lg font-bold">{title}</span>;
           const currentNav = navItems.find(item => item.path === location.pathname);
           if (currentNav) {
             return <span className="text-lg font-bold">{currentNav.label}</span>;

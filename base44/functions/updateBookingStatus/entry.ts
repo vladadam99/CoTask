@@ -21,7 +21,10 @@ Deno.serve(async (req) => {
     const proxiedReq = new Proxy(req, {
       get(target, prop) {
         if (prop === 'headers') {
-          const headers = new Headers(target.headers);
+          const headers = new Headers();
+          for (const [key, value] of target.headers.entries()) {
+            headers.set(key, value);
+          }
           if (finalEnv) {
             headers.set("x-base44-data-env", finalEnv);
           }
