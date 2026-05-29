@@ -66,6 +66,7 @@ export default function AvatarOnboarding({ user, onComplete, submitting }) {
   const [step, setStep] = useState(0);
   const [idVerified, setIdVerified] = useState(false);
   const [customSkill, setCustomSkill] = useState('');
+  const [customCategory, setCustomCategory] = useState('');
   const [cvUploading, setCvUploading] = useState(false);
   const cvInputRef = useRef(null);
   const [extraCityInput, setExtraCityInput] = useState('');
@@ -122,6 +123,13 @@ export default function AvatarOnboarding({ user, onComplete, submitting }) {
     if (customSkill.trim()) {
       toggle('skills', customSkill.trim());
       setCustomSkill('');
+    }
+  };
+
+  const addCustomCategory = () => {
+    if (customCategory.trim()) {
+      toggle('categories', customCategory.trim());
+      setCustomCategory('');
     }
   };
 
@@ -403,11 +411,28 @@ export default function AvatarOnboarding({ user, onComplete, submitting }) {
                   <label className="text-sm font-medium mb-2 block">
                     Services you offer <span className="text-muted-foreground font-normal">(select all that apply)</span>
                   </label>
-                  <div className="flex flex-wrap gap-2 max-h-44 overflow-y-auto">
+                  <div className="flex flex-wrap gap-2 max-h-44 overflow-y-auto mb-3">
                     {CATEGORIES.map(cat => (
                       <Chip key={cat} label={cat} active={data.categories.includes(cat)} onClick={() => toggle('categories', cat)} />
                     ))}
                   </div>
+                  <div className="flex gap-2">
+                    <Input value={customCategory} onChange={e => setCustomCategory(e.target.value)}
+                      onKeyDown={e => e.key === 'Enter' && addCustomCategory()}
+                      placeholder="Add a custom service..." className="bg-muted/50 border-white/5 text-sm flex-1" />
+                    <Button type="button" variant="outline" onClick={addCustomCategory} className="border-white/10 shrink-0">
+                      <Plus className="w-4 h-4" />
+                    </Button>
+                  </div>
+                  {data.categories.filter(c => !CATEGORIES.includes(c)).length > 0 && (
+                    <div className="flex flex-wrap gap-2 mt-2">
+                      {data.categories.filter(c => !CATEGORIES.includes(c)).map(c => (
+                        <span key={c} className="flex items-center gap-1 px-3 py-1 bg-primary/10 text-primary rounded-lg text-sm">
+                          {c} <button type="button" onClick={() => toggle('categories', c)}><X className="w-3 h-3" /></button>
+                        </span>
+                      ))}
+                    </div>
+                  )}
                   {data.categories.length === 0 && (
                     <p className="text-xs text-yellow-400 mt-2">Select at least one service to continue.</p>
                   )}
