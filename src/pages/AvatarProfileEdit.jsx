@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/components/ui/use-toast';
+import TagInput from '@/components/ui/TagInput';
 import PostUpload from '@/components/explore/PostUpload';
 import EditPostModal from '@/components/posts/EditPostModal';
 import { AnimatePresence } from 'framer-motion';
@@ -50,7 +51,7 @@ export default function AvatarProfileEdit() {
   const [form, setForm] = useState({
     display_name: '', bio: '', city: '', country: '',
     hourly_rate: '', per_session_rate: '', currency: 'USD',
-    languages: '', skills: '', categories: '', photo_url: '', cover_url: '',
+    languages: [], skills: [], categories: [], photo_url: '', cover_url: '',
     willing_to_travel: false, travel_radius_km: 0,
     cv_url: '', cv_filename: '',
   });
@@ -65,9 +66,9 @@ export default function AvatarProfileEdit() {
         hourly_rate: profile.hourly_rate || '',
         per_session_rate: profile.per_session_rate || '',
         currency: profile.currency || 'USD',
-        languages: (profile.languages || []).join(', '),
-        skills: (profile.skills || []).join(', '),
-        categories: (profile.categories || []).join(', '),
+        languages: profile.languages || [],
+        skills: profile.skills || [],
+        categories: profile.categories || [],
         photo_url: profile.photo_url || '',
         cover_url: profile.cover_url || '',
         willing_to_travel: profile.willing_to_travel || false,
@@ -133,9 +134,9 @@ export default function AvatarProfileEdit() {
       hourly_rate: parseFloat(form.hourly_rate) || 0,
       per_session_rate: parseFloat(form.per_session_rate) || 0,
       travel_radius_km: parseInt(form.travel_radius_km) || 0,
-      languages: form.languages.split(',').map(s => s.trim()).filter(Boolean),
-      skills: form.skills.split(',').map(s => s.trim()).filter(Boolean),
-      categories: form.categories.split(',').map(s => s.trim()).filter(Boolean),
+      languages: form.languages,
+      skills: form.skills,
+      categories: form.categories,
     }, {
       onSuccess: () => {
         setIsSaving(false);
@@ -299,11 +300,11 @@ export default function AvatarProfileEdit() {
             <p className="text-xs text-muted-foreground mt-1">Per Session</p>
           </div>
           <div className="bg-card/50 rounded-xl p-4 text-center border border-white/5">
-            <p className="text-2xl font-bold text-primary">{(form.categories || '').split(',').filter(Boolean).length}</p>
+            <p className="text-2xl font-bold text-primary">{(form.categories || []).length}</p>
             <p className="text-xs text-muted-foreground mt-1">Categories</p>
           </div>
           <div className="bg-card/50 rounded-xl p-4 text-center border border-white/5">
-            <p className="text-2xl font-bold text-primary">{(form.skills || '').split(',').filter(Boolean).length}</p>
+            <p className="text-2xl font-bold text-primary">{(form.skills || []).length}</p>
             <p className="text-xs text-muted-foreground mt-1">Skills</p>
           </div>
         </div>
@@ -316,11 +317,10 @@ export default function AvatarProfileEdit() {
               <Grid className="w-4 h-4 text-primary" />
               <h3 className="font-semibold text-sm">Categories</h3>
             </div>
-            <Input 
-              value={form.categories} 
-              onChange={set('categories')} 
-              className="bg-transparent border-white/10"
-              placeholder="e.g. Tourism, Real Estate, Events"
+            <TagInput 
+              tags={form.categories} 
+              setTags={(tags) => setForm(f => ({ ...f, categories: tags }))} 
+              placeholder="Add category (press Enter)"
             />
           </GlassCard>
 
@@ -330,11 +330,10 @@ export default function AvatarProfileEdit() {
               <Star className="w-4 h-4 text-primary" />
               <h3 className="font-semibold text-sm">Skills</h3>
             </div>
-            <Input 
-              value={form.skills} 
-              onChange={set('skills')} 
-              className="bg-transparent border-white/10"
-              placeholder="e.g. Photography, Navigation, Hosting"
+            <TagInput 
+              tags={form.skills} 
+              setTags={(tags) => setForm(f => ({ ...f, skills: tags }))} 
+              placeholder="Add skill (press Enter)"
             />
           </GlassCard>
 
@@ -344,11 +343,10 @@ export default function AvatarProfileEdit() {
               <MessageSquare className="w-4 h-4 text-primary" />
               <h3 className="font-semibold text-sm">Languages</h3>
             </div>
-            <Input 
-              value={form.languages} 
-              onChange={set('languages')} 
-              className="bg-transparent border-white/10"
-              placeholder="e.g. English, Spanish, French"
+            <TagInput 
+              tags={form.languages} 
+              setTags={(tags) => setForm(f => ({ ...f, languages: tags }))} 
+              placeholder="Add language (press Enter)"
             />
           </GlassCard>
 
