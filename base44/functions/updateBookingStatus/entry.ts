@@ -1,56 +1,50 @@
-import { createClientFromRequest, createClient } from 'npm:@base44/sdk@0.8.30';
+import { createClientFromRequest } from 'npm:@base44/sdk@0.8.30';
 
 Deno.serve(async (req) => {
   try {
-    // Clone request to allow multiple json() reads and header modifications
     const reqClone = req.clone();
     const payload = await reqClone.json();
     const { id, status, reason, env } = payload;
     console.info("===== STARTING UPDATE BOOKING STATUS =====");
     console.info("PAYLOAD:", payload);
-    
+
+    // Resolve the data env from payload or headers
     let finalEnv = env;
     if (!finalEnv) {
       try {
         const originUrl = req.headers.get("X-Origin-URL") || req.url;
-        const url = new URL(originUrl);
-        finalEnv = url.searchParams.get("base44_data_env") || req.headers.get("x-base44-data-env");
+        const originParsed = new URL(originUrl);
+        finalEnv = originParsed.searchParams.get("base44_data_env") || req.headers.get("x-base44-data-env");
       } catch (e) {}
     }
+    console.info("FINAL ENV:", finalEnv);
 
-    const proxiedReq = new Proxy(req, {
-      get(target, prop) {
-        if (prop === 'headers') {
-          const headers = new Headers();
-          for (const [key, value] of target.headers.entries()) {
-            headers.set(key, value);
-          }
-          if (finalEnv) {
-            headers.set("x-base44-data-env", finalEnv);
-          }
-          return headers;
-        }
-        const val = target[prop];
-        return typeof val === 'function' ? val.bind(target) : val;
-      }
+    // Inject env into request URL so the SDK picks it up correctly
+    const reqUrl = new URL(req.url);
+    if (finalEnv) {
+      reqUrl.searchParams.set("base44_data_env", finalEnv);
+    }
+    const modifiedReq = new Request(reqUrl.toString(), {
+      method: req.method,
+      headers: req.headers
     });
 
-    const base44 = createClientFromRequest(proxiedReq);
-    
+    const base44 = createClientFromRequest(modifiedReq);
+
     const user = await base44.auth.me();
-    
+
     if (!user) {
       return Response.json({ error: 'Unauthorized' }, { status: 401 });
     }
     if (!id || !status) {
       return Response.json({ error: 'Missing id or status' }, { status: 400 });
     }
-    
+
     let booking;
     try {
-      booking = await base44.asServiceRole.entities.Booking.get(id);
+      booking = await base44.entities.Booking.get(id);
     } catch(err) {
-      console.error("Failed to fetch", err);
+      console.error("Failed to fetch booking:", err.message);
       throw err;
     }
 
@@ -64,10 +58,10 @@ Deno.serve(async (req) => {
 
     // Handle side effects (notifications, conversations)
     if (status === 'accepted') {
-      await base44.functions.invoke('createConversation', { bookingId: id, env });
-      
+      await base44.functions.invoke('createConversation', { bookingId: id, env: finalEnv });
+
       if (booking.client_email) {
-        await base44.asServiceRole.entities.Notification.create({
+        await base44.entities.Notification.create({
           user_email: booking.client_email,
           title: 'Booking Accepted!',
           message: `${user.full_name} accepted your ${booking.category} booking request.`,
@@ -78,7 +72,7 @@ Deno.serve(async (req) => {
         });
       }
     } else if (status === 'declined' && booking.client_email) {
-      await base44.asServiceRole.entities.Notification.create({
+      await base44.entities.Notification.create({
         user_email: booking.client_email,
         title: 'Booking Declined',
         message: `${user.full_name} declined your ${booking.category} booking request.${reason ? ` Reason: ${reason}` : ''}`,
