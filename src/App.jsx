@@ -47,13 +47,12 @@ import ReelFeed from './pages/ReelFeed';
 import JobMarketplace from './pages/JobMarketplace';
 import PostJob from './pages/PostJob';
 import JobDetail from './pages/JobDetail';
-import FindAvatars from './pages/FindAvatars';
+import FindProfessionals from './pages/FindProfessionals';
 import AvatarExplore from './pages/AvatarExplore';
 import RoleSelectExisting from './pages/RoleSelectExisting';
 import Register from './pages/Register';
 import AvatarMessages from './pages/AvatarMessages';
 import DisputeAgent from './pages/DisputeAgent';
-import ExpertConsult from './pages/ExpertConsult';
 import ConsultationBooking from './pages/ConsultationBooking';
 import SafetyAgent from './pages/SafetyAgent';
 import AvatarWallet from './pages/AvatarWallet';
@@ -102,7 +101,7 @@ const AuthenticatedApp = () => {
       <Route path="/Landing" element={<Landing />} />
       <Route path="/RoleSelect" element={<RoleSelect />} />
       <Route path="/Onboarding" element={<Onboarding />} />
-      <Route path="/UserDashboard" element={<FindAvatars />} />
+      <Route path="/UserDashboard" element={<FindProfessionals />} />
       <Route path="/AvatarDashboard" element={<AvatarDashboard />} />
       <Route path="/AvatarRequests" element={<AvatarRequests />} />
       <Route path="/AvatarSchedule" element={<AvatarSchedule />} />
@@ -138,13 +137,12 @@ const AuthenticatedApp = () => {
       <Route path="/ReelFeed" element={<ReelFeed />} />
       <Route path="/JobMarketplace" element={<JobMarketplace />} />
       <Route path="/JobDetail" element={<JobDetail />} />
-      <Route path="/FindAvatars" element={<FindAvatars />} />
+      <Route path="/FindProfessionals" element={<FindProfessionals />} />
       <Route path="/AvatarExplore" element={<AvatarExplore />} />
       <Route path="/RoleSelectExisting" element={<RoleSelectExisting />} />
       <Route path="/Register" element={<Register />} />
       <Route path="/AvatarMessages" element={<AvatarMessages />} />
       <Route path="/DisputeAgent" element={<DisputeAgent />} />
-      <Route path="/ExpertConsult" element={<ExpertConsult />} />
       <Route path="/ConsultationBooking" element={<ConsultationBooking />} />
       <Route path="/SafetyAgent" element={<SafetyAgent />} />
       <Route path="/AvatarWallet" element={<AvatarWallet />} />
