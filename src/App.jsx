@@ -47,7 +47,7 @@ import ReelFeed from './pages/ReelFeed';
 import JobMarketplace from './pages/JobMarketplace';
 import PostJob from './pages/PostJob';
 import JobDetail from './pages/JobDetail';
-import FindProfessionals from './pages/FindProfessionals';
+import FindPeople from './pages/FindPeople';
 import AvatarExplore from './pages/AvatarExplore';
 import RoleSelectExisting from './pages/RoleSelectExisting';
 import Register from './pages/Register';
@@ -101,7 +101,7 @@ const AuthenticatedApp = () => {
       <Route path="/Landing" element={<Landing />} />
       <Route path="/RoleSelect" element={<RoleSelect />} />
       <Route path="/Onboarding" element={<Onboarding />} />
-      <Route path="/UserDashboard" element={<FindProfessionals />} />
+      <Route path="/UserDashboard" element={<FindPeople />} />
       <Route path="/AvatarDashboard" element={<AvatarDashboard />} />
       <Route path="/AvatarRequests" element={<AvatarRequests />} />
       <Route path="/AvatarSchedule" element={<AvatarSchedule />} />
@@ -137,7 +137,7 @@ const AuthenticatedApp = () => {
       <Route path="/ReelFeed" element={<ReelFeed />} />
       <Route path="/JobMarketplace" element={<JobMarketplace />} />
       <Route path="/JobDetail" element={<JobDetail />} />
-      <Route path="/FindProfessionals" element={<FindProfessionals />} />
+      <Route path="/FindPeople" element={<FindPeople />} />
       <Route path="/AvatarExplore" element={<AvatarExplore />} />
       <Route path="/RoleSelectExisting" element={<RoleSelectExisting />} />
       <Route path="/Register" element={<Register />} />

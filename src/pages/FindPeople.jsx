@@ -6,14 +6,14 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import AvatarSearchSection from '@/components/professionals/AvatarSearchSection';
 import ExpertSearchSection from '@/components/professionals/ExpertSearchSection';
 
-export default function FindProfessionals() {
+export default function FindPeople() {
   const { user } = useCurrentUser();
 
   return (
     <AppShell navItems={getNavItems(user?.selected_role)} user={user}>
       <div className="max-w-5xl mx-auto">
         <div className="mb-6">
-          <h1 className="text-2xl font-black mb-1">Find Professionals</h1>
+          <h1 className="text-2xl font-black mb-1">Find People</h1>
           <p className="text-sm text-muted-foreground">Search for avatars to complete tasks or book expert consultations.</p>
         </div>
 
