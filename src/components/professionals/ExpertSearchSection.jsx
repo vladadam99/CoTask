@@ -162,22 +162,21 @@ function OfferingCard({ offering, avatar, i }) {
     <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: Math.min(i * 0.04, 0.3) }}>
       <Link to={`/ConsultationBooking?avatar=${offering.avatar_profile_id}&offering=${offering.id}`}>
         <div className="glass border border-white/5 hover:border-primary/30 rounded-2xl p-5 transition-all hover:scale-[1.02] flex flex-col gap-4">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-primary/10 text-primary border border-primary/20">
-              {SESSION_TYPE_ICONS[offering.session_type]} {SESSION_TYPE_LABELS[offering.session_type] || offering.session_type}
-            </span>
-            {avatar?.is_available && (
-              <span className="flex items-center gap-1 text-xs text-green-400 font-semibold">
-                <span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />
-                Available
-              </span>
-            )}
-          </div>
-
           <div>
-            <h3 className="font-bold text-sm leading-snug mb-1">{offering.title}</h3>
+            <h3 className="font-black text-lg leading-snug mb-2">{offering.title}</h3>
+            <div className="flex items-center justify-between gap-2">
+              <span className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-white/5 text-muted-foreground border border-white/10">
+                {SESSION_TYPE_ICONS[offering.session_type]} {SESSION_TYPE_LABELS[offering.session_type] || offering.session_type}
+              </span>
+              {avatar?.is_available && (
+                <span className="flex items-center gap-1 text-xs text-green-400 font-semibold">
+                  <span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />
+                  Available
+                </span>
+              )}
+            </div>
             {offering.description && (
-              <p className="text-xs text-muted-foreground line-clamp-2">{offering.description}</p>
+              <p className="text-xs text-muted-foreground line-clamp-2 mt-2">{offering.description}</p>
             )}
           </div>
 
