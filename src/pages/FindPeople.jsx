@@ -14,7 +14,7 @@ export default function FindPeople() {
       <div className="max-w-5xl mx-auto">
         <div className="mb-6">
           <h1 className="text-2xl font-black mb-1">Find People</h1>
-          <p className="text-sm text-muted-foreground">Search for avatars to complete tasks or book expert consultations.</p>
+          <p className="text-sm text-muted-foreground hidden">Search for avatars to complete tasks or book expert consultations.</p>
         </div>
 
         <Tabs defaultValue="avatars" className="w-full">
@@ -32,6 +32,6 @@ export default function FindPeople() {
           </TabsContent>
         </Tabs>
       </div>
-    </AppShell>
-  );
+    </AppShell>);
+
 }
