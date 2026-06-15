@@ -45,8 +45,10 @@ export default function JobReviewForm({ job, user, reviewerType, onDone }) {
     }
 
     // Mark review done on job
-    const field = reviewerType === 'avatar' ? 'review_left_by_avatar' : 'review_left_by_client';
-    await base44.entities.JobPost.update(job.id, { [field]: true });
+    await base44.functions.invoke('updateJobProgress', {
+      jobId: job.id,
+      action: 'review'
+    });
 
     setDone(true);
     setLoading(false);

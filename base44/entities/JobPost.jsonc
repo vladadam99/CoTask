@@ -173,6 +173,21 @@
           "user_condition": {
             "role": "admin"
           }
+        },
+        "read": {
+          "$or": [
+            {
+              "posted_by_email": "{{user.email}}"
+            },
+            {
+              "winner_email": "{{user.email}}"
+            },
+            {
+              "user_condition": {
+                "role": "admin"
+              }
+            }
+          ]
         }
       }
     },
@@ -183,6 +198,21 @@
           "user_condition": {
             "role": "admin"
           }
+        },
+        "read": {
+          "$or": [
+            {
+              "posted_by_email": "{{user.email}}"
+            },
+            {
+              "winner_email": "{{user.email}}"
+            },
+            {
+              "user_condition": {
+                "role": "admin"
+              }
+            }
+          ]
         }
       }
     },
@@ -199,6 +229,21 @@
           "user_condition": {
             "role": "admin"
           }
+        },
+        "read": {
+          "$or": [
+            {
+              "posted_by_email": "{{user.email}}"
+            },
+            {
+              "winner_email": "{{user.email}}"
+            },
+            {
+              "user_condition": {
+                "role": "admin"
+              }
+            }
+          ]
         }
       }
     }
@@ -210,7 +255,18 @@
     "category"
   ],
   "rls": {
-    "create": true,
+    "create": {
+      "$or": [
+        {
+          "posted_by_email": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
     "read": true,
     "update": {
       "$or": [

@@ -108,20 +108,12 @@ export default function LiveStreamStudio() {
         started_at: new Date().toISOString(),
         session_url: booking?._dailyRoomUrl || '',
       });
-      // Notify client that avatar is live
       if (booking?.client_email) {
-        await base44.entities.Notification.create({
-          user_email: booking.client_email,
-          title: `${user.full_name} is now LIVE!`,
-          message: `Your ${booking.category} session has started. Tap to join.`,
-          type: 'session_live',
-          link: `/ClientLiveView?session=${session.id}`,
-          reference_id: session.id,
+        await base44.functions.invoke('updateBookingStatus', {
+          id: booking.id,
+          action: 'start_session',
+          payload: { session_id: session.id }
         });
-        // Also update the booking status to in_progress
-        if (booking.id) {
-          await base44.entities.Booking.update(booking.id, { status: 'in_progress', session_id: session.id });
-        }
       }
       return session;
     },
@@ -140,27 +132,9 @@ export default function LiveStreamStudio() {
         duration_minutes: Math.round(elapsed / 60),
       });
       if (attachedBooking?.id) {
-        const bookingList = await base44.entities.Booking.filter({ id: attachedBooking.id });
-        const booking = bookingList[0];
-        if (booking) {
-          await base44.entities.Booking.update(booking.id, { status: 'completed', payment_status: 'paid' });
-          const avatarList = await base44.entities.AvatarProfile.filter({ user_email: user.email });
-          if (avatarList[0]) {
-            await base44.entities.AvatarProfile.update(avatarList[0].id, {
-              total_earnings: (avatarList[0].total_earnings || 0) + (booking.amount || 0),
-              completed_jobs: (avatarList[0].completed_jobs || 0) + 1,
-            });
-          }
-        }
-      }
-      if (attachedBooking?.client_email) {
-        await base44.entities.Notification.create({
-          user_email: attachedBooking.client_email,
-          title: 'Session Complete — Leave a Review',
-          message: `Your session with ${user.full_name} has ended. How was it?`,
-          type: 'review',
-          link: `/BookingDetail?id=${attachedBooking.id}`,
-          reference_id: attachedBooking.id,
+        await base44.functions.invoke('updateBookingStatus', {
+          id: attachedBooking.id,
+          action: 'complete_session'
         });
       }
     },

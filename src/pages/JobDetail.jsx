@@ -78,16 +78,20 @@ export default function JobDetail() {
         client_email: job.posted_by_email,
         status: 'pending',
       });
-      await base44.entities.JobPost.update(jobId, { application_count: (job.application_count || 0) + 1 });
-      await base44.entities.Notification.create({
-        user_email: job.posted_by_email,
-        title: 'New Job Application',
-        message: `${user.full_name} applied for your job: ${job.title}`,
-        type: 'booking_request',
-        link: `/JobDetail?id=${jobId}`,
-        reference_id: jobId,
-        target_role: 'user',
+      await base44.functions.invoke('updateJobProgress', {
+        jobId,
+        action: 'apply'
       });
+      await base44.functions.invoke('sendMessage', {
+        conversationId: 'system', // we just want notification
+        content: 'system_notification',
+        messageType: 'system',
+        notifyTitle: 'New Job Application',
+        notifyMessage: `${user.full_name} applied for your job: ${job.title}`,
+        notifyType: 'booking_request',
+        notifyLink: `/JobDetail?id=${jobId}`,
+        notifyTargetRole: 'user'
+      }).catch(() => {});
       return app;
     },
     onSuccess: () => {
@@ -99,16 +103,6 @@ export default function JobDetail() {
 
   // Called after payment is authorized — assigns winner and opens chat
   const proceedWithWinner = async (app) => {
-    await base44.entities.JobPost.update(jobId, {
-      status: 'in_progress',
-      winner_application_id: app.id,
-      winner_email: app.applicant_email,
-      escrow_status: 'authorized',
-    });
-    await base44.entities.JobApplication.update(app.id, { status: 'accepted' });
-    for (const other of applications.filter(a => a.id !== app.id)) {
-      await base44.entities.JobApplication.update(other.id, { status: 'rejected' });
-    }
     const res = await base44.functions.invoke('createJobConversation', {
       jobId,
       jobTitle: job.title,
@@ -117,6 +111,8 @@ export default function JobDetail() {
       avatarEmail: app.applicant_email,
       avatarName: app.applicant_name,
       scheduledDate: job.flexible_dates ? null : job.scheduled_date,
+      action: 'assign_winner',
+      winnerAppId: app.id,
     });
     return res.data?.conversation;
   };

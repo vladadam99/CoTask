@@ -48,25 +48,17 @@ export default function CounterOfferFlow({ booking, user, convId, onBookingUpdat
     });
 
     // Notify the other party
-    const targetEmail = isAvatar ? booking.client_email : booking.avatar_email;
     const targetRole = isAvatar ? 'user' : 'avatar';
-    await base44.entities.Notification.create({
-      user_email: targetEmail,
-      title: `${user.full_name} made a counter-offer`,
-      message: `New amount: $${parseFloat(amount).toFixed(2)}${note ? ` — "${note}"` : ''}`,
-      type: 'booking_request',
-      reference_id: booking.id,
-      link: isAvatar ? `/UserBookingDetail?id=${booking.id}` : `/AvatarBookingDetail?id=${booking.id}`,
-      target_role: targetRole,
-    });
-
     if (convId) {
-      await base44.entities.Message.create({
-        conversation_id: convId,
-        sender_email: user.email,
-        sender_name: user.full_name,
+      await base44.functions.invoke('sendMessage', {
+        conversationId: convId,
         content: `💬 Counter-offer: $${parseFloat(amount).toFixed(2)}${note ? ` — ${note}` : ''}`,
-        message_type: 'system',
+        messageType: 'system',
+        notifyTitle: `${user.full_name} made a counter-offer`,
+        notifyMessage: `New amount: $${parseFloat(amount).toFixed(2)}${note ? ` — "${note}"` : ''}`,
+        notifyType: 'booking_request',
+        notifyTargetRole: targetRole,
+        notifyLink: isAvatar ? `/UserBookingDetail?id=${booking.id}` : `/AvatarBookingDetail?id=${booking.id}`,
       });
     }
 
@@ -84,38 +76,46 @@ export default function CounterOfferFlow({ booking, user, convId, onBookingUpdat
       // Update booking amount
       const newAmount = latestOffer.amount;
       const fee = parseFloat((newAmount * 0.10).toFixed(2));
-      await base44.entities.Booking.update(booking.id, {
-        amount: newAmount,
-        service_fee: fee,
-        total_amount: parseFloat((newAmount + fee).toFixed(2)),
+      await base44.functions.invoke('updateBookingStatus', {
+        id: booking.id,
+        action: 'accept_counter_offer',
+        payload: {
+          amount: newAmount,
+          service_fee: fee,
+          total_amount: parseFloat((newAmount + fee).toFixed(2)),
+        }
       });
 
       // Notify
-      const targetEmail = isAvatar ? booking.client_email : booking.avatar_email;
       const targetRole = isAvatar ? 'user' : 'avatar';
-      await base44.entities.Notification.create({
-        user_email: targetEmail,
-        title: 'Counter-offer accepted!',
-        message: `${user.full_name} accepted the offer of $${newAmount.toFixed(2)}`,
-        type: 'payment',
-        reference_id: booking.id,
-        link: isAvatar ? `/UserBookingDetail?id=${booking.id}` : `/AvatarBookingDetail?id=${booking.id}`,
-        target_role: targetRole,
-      });
+      if (convId) {
+        await base44.functions.invoke('sendMessage', {
+          conversationId: convId,
+          content: `✅ Counter-offer of $${newAmount.toFixed(2)} accepted.`,
+          messageType: 'system',
+          notifyTitle: 'Counter-offer accepted!',
+          notifyMessage: `${user.full_name} accepted the offer of $${newAmount.toFixed(2)}`,
+          notifyType: 'payment',
+          notifyTargetRole: targetRole,
+          notifyLink: isAvatar ? `/UserBookingDetail?id=${booking.id}` : `/AvatarBookingDetail?id=${booking.id}`,
+        });
+      }
 
       onBookingUpdate?.();
     } else if (!accept && latestOffer) {
-      const targetEmail = isAvatar ? booking.client_email : booking.avatar_email;
       const targetRole = isAvatar ? 'user' : 'avatar';
-      await base44.entities.Notification.create({
-        user_email: targetEmail,
-        title: 'Counter-offer declined',
-        message: `${user.full_name} declined the offer. You can make a new offer.`,
-        type: 'booking_request',
-        reference_id: booking.id,
-        link: isAvatar ? `/UserBookingDetail?id=${booking.id}` : `/AvatarBookingDetail?id=${booking.id}`,
-        target_role: targetRole,
-      });
+      if (convId) {
+        await base44.functions.invoke('sendMessage', {
+          conversationId: convId,
+          content: `❌ Counter-offer declined.`,
+          messageType: 'system',
+          notifyTitle: 'Counter-offer declined',
+          notifyMessage: `${user.full_name} declined the offer. You can make a new offer.`,
+          notifyType: 'booking_request',
+          notifyTargetRole: targetRole,
+          notifyLink: isAvatar ? `/UserBookingDetail?id=${booking.id}` : `/AvatarBookingDetail?id=${booking.id}`,
+        });
+      }
     }
 
     queryClient.invalidateQueries({ queryKey: ['counter-offers', booking.id] });

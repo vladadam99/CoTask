@@ -9,11 +9,11 @@ export default function SimulatedPaymentModal({ job, onSuccess, onCancel }) {
 
   const handleConfirm = async () => {
     setLoading(true);
-    // Simulate escrow: just update the job record with fake escrow info
-    await base44.entities.JobPost.update(job.id, {
-      escrow_amount: amount,
-      escrow_status: 'authorized',
-      stripe_payment_intent_id: `sim_${job.id}_${Date.now()}`,
+    // Use secure function
+    await base44.functions.invoke('createJobPayment', {
+      jobId: job.id,
+      amountUSD: amount,
+      simulate: true,
     });
     setLoading(false);
     onSuccess();

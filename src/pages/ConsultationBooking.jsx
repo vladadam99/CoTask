@@ -117,17 +117,7 @@ export default function ConsultationBooking() {
       // Create conversation
       base44.functions.invoke('createConversation', { bookingId: newBooking.id }).catch(() => {});
 
-      // Notify avatar
-      if (avatar?.user_email || offering?.avatar_email) {
-        base44.entities.Notification.create({
-          user_email: avatar?.user_email || offering?.avatar_email,
-          title: '📅 New Consultation Request!',
-          message: `${user.full_name} wants to book "${offering?.title}" on ${selectedDate} at ${selectedTime}.`,
-          type: 'booking_request',
-          link: '/AvatarRequests',
-          reference_id: newBooking.id,
-        }).catch(() => {});
-      }
+      // Notification is handled securely by createConversation in the backend
 
       // Generate video call room
       if (freeTest) {

@@ -60,7 +60,18 @@
     "cover_message"
   ],
   "rls": {
-    "create": true,
+    "create": {
+      "$or": [
+        {
+          "applicant_email": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
     "read": {
       "$or": [
         {

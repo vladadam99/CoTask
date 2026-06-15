@@ -170,7 +170,18 @@
     "category"
   ],
   "rls": {
-    "create": true,
+    "create": {
+      "$or": [
+        {
+          "client_email": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
     "read": {
       "$or": [
         {

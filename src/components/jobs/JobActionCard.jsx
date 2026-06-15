@@ -56,32 +56,19 @@ export default function JobActionCard({ job, user, userRole, conversationId, onJ
 
   const countdown = useCountdown(scheduledStr && job?.status === 'in_progress' && !job?.started_at ? scheduledStr : null);
 
-  const postSystemMessage = async (content) => {
-    await base44.entities.Message.create({
-      conversation_id: conversationId,
-      sender_email: 'system',
-      sender_name: 'CoTask',
+  const postSystemMessage = async (content, notifyOptions) => {
+    await base44.functions.invoke('sendMessage', {
+      conversationId,
       content,
-      message_type: 'system',
-    });
-    await base44.entities.Conversation.update(conversationId, {
-      last_message: content,
-      last_message_at: new Date().toISOString(),
-      last_message_by: 'system',
+      messageType: 'system',
+      ...notifyOptions
     });
   };
 
   const notify = async (email, title, message, type = 'system') => {
-    const isAvatarRecipient = email === job?.winner_email;
-    const link = isAvatarRecipient
-      ? `/AvatarMessages?conversation=${conversationId}`
-      : `/Messages?conversation=${conversationId}`;
-    await base44.entities.Notification.create({
-      user_email: email, title, message, type,
-      link,
-      reference_id: job.id,
-      target_role: isAvatarRecipient ? 'avatar' : 'user',
-    });
+    // Left empty or we can just ignore this if we use postSystemMessage to notify
+    // To preserve existing code, we will make notify just pass empty if we merge it.
+    // Actually we will just skip calling this and pass notifyOptions to postSystemMessage in the other replacements.
   };
 
   // ─── Avatar: Start Job ───
@@ -89,10 +76,13 @@ export default function JobActionCard({ job, user, userRole, conversationId, onJ
     setLoading(true);
     try {
       const now = new Date().toISOString();
-      await base44.entities.JobPost.update(job.id, { started_at: now });
+      await base44.functions.invoke('updateJobProgress', { jobId: job.id, action: 'start' });
       const timeStr = new Date(now).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-      await postSystemMessage(`🚀 Job started at ${timeStr} by ${user.full_name}. The clock is running!`);
-      await notify(job.posted_by_email, '🚀 Job has started!', `${user.full_name} has started working on your job.`, 'booking_accepted');
+      await postSystemMessage(`🚀 Job started at ${timeStr} by ${user.full_name}. The clock is running!`, {
+        notifyTitle: '🚀 Job has started!',
+        notifyMessage: `${user.full_name} has started working on your job.`,
+        notifyType: 'booking_accepted'
+      });
       onJobUpdated?.();
     } catch (error) {
       console.error('Job start failed:', error);
@@ -127,14 +117,16 @@ export default function JobActionCard({ job, user, userRole, conversationId, onJ
 
       // Run all database operations in parallel for speed
       await Promise.all([
-        base44.entities.JobPost.update(job.id, {
-          status: 'awaiting_approval',
-          proof_url: file_url,
-          proof_note: proofNote,
-          ended_at: now,
+        base44.functions.invoke('updateJobProgress', {
+          jobId: job.id,
+          action: 'mark_done',
+          payload: { proof_url: file_url, proof_note: proofNote }
         }),
-        postSystemMessage(summary),
-        notify(job.posted_by_email, '📸 Job Done — Please Review', `${user.full_name} has completed the job. Please review the proof and release payment.`, 'booking_accepted'),
+        postSystemMessage(summary, {
+          notifyTitle: '📸 Job Done — Please Review',
+          notifyMessage: `${user.full_name} has completed the job. Please review the proof and release payment.`,
+          notifyType: 'booking_accepted'
+        }),
       ]);
 
       setProofFile(null);
@@ -160,9 +152,13 @@ export default function JobActionCard({ job, user, userRole, conversationId, onJ
         }
       }
       await Promise.all([
-        base44.entities.JobPost.update(job.id, { status: 'completed', escrow_status: 'captured' }),
-        postSystemMessage(`🎉 Client confirmed satisfaction! Job is complete and payment released to ${job.winner_email}. Thank you both!`),
-        notify(job.winner_email, '💰 Payment Released!', `${user.full_name} is satisfied with your work. Payment released!`, 'payment'),
+        base44.functions.invoke('updateJobProgress', { jobId: job.id, action: 'complete' }),
+        postSystemMessage(`🎉 Client confirmed satisfaction! Job is complete and payment released to ${job.winner_email}. Thank you both!`, {
+          notifyTitle: '💰 Payment Released!',
+          notifyMessage: `${user.full_name} is satisfied with your work. Payment released!`,
+          notifyType: 'payment',
+          notifyTargetRole: 'avatar'
+        }),
       ]);
       onJobUpdated?.();
     } catch (error) {
@@ -183,9 +179,12 @@ export default function JobActionCard({ job, user, userRole, conversationId, onJ
         disputePhotoUrl = file_url;
       }
       await Promise.all([
-        base44.entities.JobPost.update(job.id, { status: 'disputed', dispute_reason: disputeReason, dispute_photo_url: disputePhotoUrl || undefined }),
-        postSystemMessage(`⚠️ Client raised a dispute: "${disputeReason}"${disputePhotoUrl ? ' (photo attached)' : ''}. The avatar can now respond.`),
-        notify(job.winner_email, '⚠️ Dispute Raised', `${user.full_name} raised a dispute. Please respond in the chat.`, 'system'),
+        base44.functions.invoke('approveJob', { bookingId: job.id, action: 'dispute', disputeReason, payload: { dispute_photo_url: disputePhotoUrl } }),
+        postSystemMessage(`⚠️ Client raised a dispute: "${disputeReason}"${disputePhotoUrl ? ' (photo attached)' : ''}. The avatar can now respond.`, {
+          notifyTitle: '⚠️ Dispute Raised',
+          notifyMessage: `${user.full_name} raised a dispute. Please respond in the chat.`,
+          notifyTargetRole: 'avatar'
+        })
       ]);
       setDisputeReason('');
       setDisputeFile(null);
@@ -203,9 +202,13 @@ export default function JobActionCard({ job, user, userRole, conversationId, onJ
     setLoading(true);
     try {
       await Promise.all([
-        base44.entities.JobPost.update(job.id, { status: 'refunded' }),
-        postSystemMessage(`↩️ Avatar agreed to a full refund. Job closed.`),
-        notify(job.posted_by_email, '↩️ Full Refund Agreed', `The avatar agreed to refund you in full.`, 'payment'),
+        base44.functions.invoke('updateJobProgress', { jobId: job.id, action: 'refund' }),
+        postSystemMessage(`↩️ Avatar agreed to a full refund. Job closed.`, {
+          notifyTitle: '↩️ Full Refund Agreed',
+          notifyMessage: `The avatar agreed to refund you in full.`,
+          notifyType: 'payment',
+          notifyTargetRole: 'user'
+        }),
       ]);
       onJobUpdated?.();
     } catch (error) {
@@ -220,16 +223,12 @@ export default function JobActionCard({ job, user, userRole, conversationId, onJ
     setLoading(true);
     try {
       await Promise.all([
-        base44.entities.JobPost.update(job.id, { partial_amount: Number(partialAmount) }),
-        postSystemMessage(`🤝 Avatar proposed partial settlement: Client pays $${partialAmount}. Awaiting client acceptance.`),
-        base44.entities.Notification.create({
-          user_email: job.posted_by_email,
-          title: '🤝 Partial Settlement Proposal',
-          message: `The avatar proposed a partial payment of $${partialAmount}. Please accept or reject.`,
-          type: 'payment',
-          link: `/Messages?conversation=${conversationId}`,
-          reference_id: job.id,
-          target_role: 'user',
+        base44.functions.invoke('updateJobProgress', { jobId: job.id, action: 'propose_partial', payload: { amount: Number(partialAmount) } }),
+        postSystemMessage(`🤝 Avatar proposed partial settlement: Client pays $${partialAmount}. Awaiting client acceptance.`, {
+          notifyTitle: '🤝 Partial Settlement Proposal',
+          notifyMessage: `The avatar proposed a partial payment of $${partialAmount}. Please accept or reject.`,
+          notifyType: 'payment',
+          notifyTargetRole: 'user'
         }),
       ]);
       onJobUpdated?.();
@@ -245,9 +244,13 @@ export default function JobActionCard({ job, user, userRole, conversationId, onJ
     setLoading(true);
     try {
       await Promise.all([
-        base44.entities.JobPost.update(job.id, { status: 'completed' }),
-        postSystemMessage(`✅ Client accepted partial settlement of $${job.partial_amount}.`),
-        notify(job.winner_email, '✅ Partial Settlement Accepted', `Client accepted your partial settlement proposal of $${job.partial_amount}.`, 'payment'),
+        base44.functions.invoke('updateJobProgress', { jobId: job.id, action: 'accept_partial' }),
+        postSystemMessage(`✅ Client accepted partial settlement of $${job.partial_amount}.`, {
+          notifyTitle: '✅ Partial Settlement Accepted',
+          notifyMessage: `Client accepted your partial settlement proposal of $${job.partial_amount}.`,
+          notifyType: 'payment',
+          notifyTargetRole: 'avatar'
+        }),
       ]);
       onJobUpdated?.();
     } catch (error) {
@@ -261,9 +264,13 @@ export default function JobActionCard({ job, user, userRole, conversationId, onJ
     setLoading(true);
     try {
       await Promise.all([
-        base44.entities.JobPost.update(job.id, { partial_amount: null }),
-        postSystemMessage(`❌ Client rejected the partial settlement proposal.`),
-        notify(job.winner_email, '❌ Partial Settlement Rejected', `Client rejected your partial settlement proposal.`, 'payment'),
+        base44.functions.invoke('updateJobProgress', { jobId: job.id, action: 'reject_partial' }),
+        postSystemMessage(`❌ Client rejected the partial settlement proposal.`, {
+          notifyTitle: '❌ Partial Settlement Rejected',
+          notifyMessage: `Client rejected your partial settlement proposal.`,
+          notifyType: 'payment',
+          notifyTargetRole: 'avatar'
+        }),
       ]);
       onJobUpdated?.();
     } catch (error) {
@@ -277,10 +284,12 @@ export default function JobActionCard({ job, user, userRole, conversationId, onJ
     setLoading(true);
     try {
       await Promise.all([
-        base44.entities.JobPost.update(job.id, { status: 'disputed' }),
-        postSystemMessage(`🚨 Dispute escalated to CoTask team. A team member will review within 24–48 hours.`),
-        base44.entities.Notification.create({ user_email: 'admin', title: '🚨 Escalated Dispute', message: `Job "${job.title}" escalated dispute.`, type: 'system', link: '/AdminDashboard', reference_id: job.id }),
-        notify(job.posted_by_email, '🚨 Dispute Escalated', 'Your dispute has been escalated to CoTask team.', 'system'),
+        base44.functions.invoke('updateJobProgress', { jobId: job.id, action: 'escalate' }),
+        postSystemMessage(`🚨 Dispute escalated to CoTask team. A team member will review within 24–48 hours.`, {
+          notifyTitle: '🚨 Dispute Escalated',
+          notifyMessage: 'Your dispute has been escalated to CoTask team.',
+          notifyTargetRole: 'user'
+        }),
       ]);
       onJobUpdated?.();
     } catch (error) {

@@ -22,19 +22,13 @@ export default function ProofUpload({ booking, onUpload }) {
     if (!file) return;
     setUploading(true);
     const { file_url } = await base44.integrations.Core.UploadFile({ file });
-    await base44.entities.Booking.update(booking.id, {
-      status: 'awaiting_approval',
-      proof_url: file_url,
-      proof_note: note,
-    });
-    // Notify client
-    await base44.entities.Notification.create({
-      user_email: booking.client_email,
-      title: '📸 Job Proof Submitted — Please Review',
-      message: `${booking.avatar_name} has submitted proof of completion. Review and release payment.`,
-      type: 'booking_accepted',
-      link: `/BookingDetail?id=${booking.id}`,
-      reference_id: booking.id,
+    await base44.functions.invoke('updateBookingStatus', {
+      id: booking.id,
+      action: 'proof',
+      payload: {
+        proof_url: file_url,
+        proof_note: note,
+      }
     });
     setUploading(false);
     onUpload?.();

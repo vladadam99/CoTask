@@ -51,45 +51,13 @@ export default function AvatarLive() {
         status: 'ended',
         ended_at: new Date().toISOString(),
       });
-      // Complete the booking and release payment
+      // Complete the booking via backend to enforce permissions
       if (session.booking_id) {
-        const bookingList = await base44.entities.Booking.filter({ id: session.booking_id });
-        const booking = bookingList[0];
-        if (booking) {
-          await base44.entities.Booking.update(booking.id, {
-            status: 'completed',
-            payment_status: 'paid',
-          });
-          // Update avatar earnings
-          const avatarList = await base44.entities.AvatarProfile.filter({ user_email: user.email });
-          if (avatarList[0]) {
-            const earned = booking.amount || 0;
-            await base44.entities.AvatarProfile.update(avatarList[0].id, {
-              total_earnings: (avatarList[0].total_earnings || 0) + earned,
-              completed_jobs: (avatarList[0].completed_jobs || 0) + 1,
-            });
-          }
-        }
-      }
-      // Notify client to leave a review
-      if (session.client_email) {
-        await base44.entities.Notification.create({
-          user_email: session.client_email,
-          title: 'Session Complete — Leave a Review',
-          message: `Your session with ${user.full_name} has ended. How was it?`,
-          type: 'review',
-          link: `/BookingDetail?id=${session.booking_id}`,
-          reference_id: session.booking_id,
+        await base44.functions.invoke('updateBookingStatus', {
+          id: session.booking_id,
+          action: 'complete_session'
         });
       }
-      // Notify avatar too
-      await base44.entities.Notification.create({
-        user_email: user.email,
-        title: 'Session Ended',
-        message: `Your session with ${session.client_name} has been completed and payment released.`,
-        type: 'payment',
-        reference_id: session.booking_id,
-      });
     },
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['avatar-live-sessions'] }),
   });

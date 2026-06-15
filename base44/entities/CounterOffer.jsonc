@@ -46,7 +46,18 @@
     "amount"
   ],
   "rls": {
-    "create": true,
+    "create": {
+      "$or": [
+        {
+          "offered_by_email": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
     "read": {
       "$or": [
         {

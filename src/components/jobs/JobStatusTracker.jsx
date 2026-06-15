@@ -23,30 +23,20 @@ export default function JobStatusTracker({ job, user, conversationId, onJobUpdat
     const s = STATUSES.find(x => x.key === statusKey);
     const now = new Date().toISOString();
     await Promise.all([
-      base44.entities.JobPost.update(job.id, {
-        arrival_status: statusKey,
-        arrival_status_updated_at: now,
+      base44.functions.invoke('updateJobProgress', {
+        jobId: job.id,
+        action: 'arrival_status',
+        payload: { status: statusKey }
       }),
-      base44.entities.Message.create({
-        conversation_id: conversationId,
-        sender_email: 'system',
-        sender_name: 'CoTask',
+      base44.functions.invoke('sendMessage', {
+        conversationId,
         content: `${s.emoji} ${user.full_name} status update: **${s.label}**`,
-        message_type: 'system',
-      }),
-      base44.entities.Conversation.update(conversationId, {
-        last_message: `${s.emoji} ${s.label}`,
-        last_message_at: now,
-        last_message_by: 'system',
-      }),
-      base44.entities.Notification.create({
-        user_email: job.posted_by_email,
-        title: `${s.emoji} Avatar update: ${s.label}`,
-        message: `${user.full_name} is now: ${s.label}`,
-        type: 'session_live',
-        link: `/Messages?conversation=${conversationId}`,
-        reference_id: job.id,
-        target_role: 'user',
+        messageType: 'system',
+        notifyTitle: `${s.emoji} Avatar update: ${s.label}`,
+        notifyMessage: `${user.full_name} is now: ${s.label}`,
+        notifyType: 'session_live',
+        notifyLink: `/Messages?conversation=${conversationId}`,
+        notifyTargetRole: 'user'
       }),
     ]);
     onJobUpdated?.();
@@ -60,27 +50,20 @@ export default function JobStatusTracker({ job, user, conversationId, onJobUpdat
     const existing = job.progress_photos || [];
     const now = new Date().toISOString();
     await Promise.all([
-      base44.entities.JobPost.update(job.id, { progress_photos: [...existing, file_url] }),
-      base44.entities.Message.create({
-        conversation_id: conversationId,
-        sender_email: user.email,
-        sender_name: user.full_name,
+      base44.functions.invoke('updateJobProgress', {
+        jobId: job.id,
+        action: 'progress_photo',
+        payload: { photo_url: file_url }
+      }),
+      base44.functions.invoke('sendMessage', {
+        conversationId,
         content: file_url,
-        message_type: 'photo',
-      }),
-      base44.entities.Conversation.update(conversationId, {
-        last_message: '📸 Progress photo',
-        last_message_at: now,
-        last_message_by: user.email,
-      }),
-      base44.entities.Notification.create({
-        user_email: job.posted_by_email,
-        title: `📸 Progress photo from ${user.full_name}`,
-        message: 'Your avatar shared a progress update photo.',
-        type: 'message',
-        link: `/Messages?conversation=${conversationId}`,
-        reference_id: job.id,
-        target_role: 'user',
+        messageType: 'photo',
+        notifyTitle: `📸 Progress photo from ${user.full_name}`,
+        notifyMessage: 'Your avatar shared a progress update photo.',
+        notifyType: 'message',
+        notifyLink: `/Messages?conversation=${conversationId}`,
+        notifyTargetRole: 'user'
       }),
     ]);
     onJobUpdated?.();

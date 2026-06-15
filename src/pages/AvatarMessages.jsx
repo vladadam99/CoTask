@@ -79,30 +79,15 @@ export default function AvatarMessages() {
 
   const requestCamera = async () => {
     if (!activeConvo) return;
-    const otherEmail = (activeConvo.participant_emails || []).find(e => e !== user.email);
-    await base44.entities.Message.create({
-      conversation_id: activeConvo.id,
-      sender_email: user.email,
-      sender_name: user.full_name,
+    await base44.functions.invoke('sendMessage', {
+      conversationId: activeConvo.id,
       content: `📹 Camera upgrade request: I'd like to add Live Camera to this job (+$5/hr). Please reply to confirm.`,
-      message_type: 'system',
+      messageType: 'system',
+      notifyTitle: `📹 Camera upgrade request from ${user.full_name}`,
+      notifyMessage: 'They want to add Live Camera to your job.',
+      notifyLink: `/Messages?conversation=${activeConvo.id}`,
+      notifyTargetRole: 'user'
     });
-    await base44.entities.Conversation.update(activeConvo.id, {
-      last_message: '📹 Camera upgrade requested',
-      last_message_at: new Date().toISOString(),
-      last_message_by: user.email,
-    });
-    if (otherEmail) {
-      await base44.entities.Notification.create({
-        user_email: otherEmail,
-        title: `📹 Camera upgrade request from ${user.full_name}`,
-        message: 'They want to add Live Camera to your job.',
-        type: 'message',
-        link: `/Messages?conversation=${activeConvo.id}`,
-        reference_id: activeConvo.id,
-        target_role: 'user',
-      });
-    }
     queryClient.invalidateQueries({ queryKey: ['messages', activeConvo?.id] });
     queryClient.invalidateQueries({ queryKey: ['conversations'] });
   };
@@ -111,30 +96,15 @@ export default function AvatarMessages() {
     if (!file || !activeConvo) return;
     setUploadingPhoto(true);
     const { file_url } = await base44.integrations.Core.UploadFile({ file });
-    await base44.entities.Message.create({
-      conversation_id: activeConvo.id,
-      sender_email: user.email,
-      sender_name: user.full_name,
+    await base44.functions.invoke('sendMessage', {
+      conversationId: activeConvo.id,
       content: file_url,
-      message_type: 'photo',
+      messageType: 'photo',
+      notifyTitle: `📷 Photo from ${user.full_name}`,
+      notifyMessage: 'Sent a photo in your job conversation.',
+      notifyLink: `/Messages?conversation=${activeConvo.id}`,
+      notifyTargetRole: 'user'
     });
-    await base44.entities.Conversation.update(activeConvo.id, {
-      last_message: '📷 Photo',
-      last_message_at: new Date().toISOString(),
-      last_message_by: user.email,
-    });
-    const otherEmail = (activeConvo.participant_emails || []).find(e => e !== user.email);
-    if (otherEmail) {
-      await base44.entities.Notification.create({
-        user_email: otherEmail,
-        title: `📷 Photo from ${user.full_name}`,
-        message: 'Sent a photo in your job conversation.',
-        type: 'message',
-        link: `/Messages?conversation=${activeConvo.id}`,
-        reference_id: activeConvo.id,
-        target_role: 'user',
-      });
-    }
     setUploadingPhoto(false);
     queryClient.invalidateQueries({ queryKey: ['messages', activeConvo?.id] });
     queryClient.invalidateQueries({ queryKey: ['conversations'] });
@@ -142,30 +112,13 @@ export default function AvatarMessages() {
 
   const sendMessage = useMutation({
     mutationFn: async () => {
-      await base44.entities.Message.create({
-        conversation_id: activeConvo.id,
-        sender_email: user.email,
-        sender_name: user.full_name,
+      await base44.functions.invoke('sendMessage', {
+        conversationId: activeConvo.id,
         content: newMsg,
-        message_type: 'text',
+        messageType: 'text',
+        notifyLink: `/Messages?conversation=${activeConvo.id}`,
+        notifyTargetRole: 'user'
       });
-      await base44.entities.Conversation.update(activeConvo.id, {
-        last_message: newMsg,
-        last_message_at: new Date().toISOString(),
-        last_message_by: user.email,
-      });
-      const otherEmail = (activeConvo.participant_emails || []).find(e => e !== user.email);
-      if (otherEmail) {
-        await base44.entities.Notification.create({
-          user_email: otherEmail,
-          title: `New message from ${user.full_name}`,
-          message: newMsg.length > 80 ? newMsg.slice(0, 80) + '…' : newMsg,
-          type: 'message',
-          link: `/Messages?conversation=${activeConvo.id}`,
-          reference_id: activeConvo.id,
-          target_role: 'user',
-        });
-      }
     },
     onSuccess: () => {
       setNewMsg('');
