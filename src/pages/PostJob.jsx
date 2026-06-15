@@ -114,7 +114,7 @@ export default function PostJob() {
   const submit = useMutation({
     mutationFn: async () => {
       if (editJobId) {
-        await base44.entities.JobPost.update(editJobId, jobPayload);
+        await base44.functions.invoke('updateJobPost', { jobId: editJobId, updates: jobPayload });
         return { id: editJobId };
       }
       const job = await base44.entities.JobPost.create({

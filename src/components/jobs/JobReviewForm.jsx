@@ -18,31 +18,15 @@ export default function JobReviewForm({ job, user, reviewerType, onDone }) {
   const submit = async () => {
     if (!rating) return;
     setLoading(true);
-    await base44.entities.Review.create({
+    
+    await base44.functions.invoke('createReview', {
       job_id: job.id,
-      reviewer_email: user.email,
-      reviewer_name: user.full_name,
       reviewer_type: reviewerType,
       reviewed_email: reviewedEmail,
-      avatar_email: reviewerType === 'client' ? job.winner_email : user.email,
-      avatar_name: reviewerType === 'client' ? reviewedName : user.full_name,
       rating,
       comment,
       category: job.category,
     });
-
-    // If reviewing avatar, update their profile rating average
-    if (reviewerType === 'client' && job.winner_email) {
-      const allReviews = await base44.entities.Review.filter({ reviewed_email: job.winner_email });
-      const avg = allReviews.reduce((s, r) => s + r.rating, 0) / allReviews.length;
-      const profiles = await base44.entities.AvatarProfile.filter({ user_email: job.winner_email });
-      if (profiles[0]) {
-        await base44.entities.AvatarProfile.update(profiles[0].id, {
-          rating: Math.round(avg * 10) / 10,
-          review_count: allReviews.length,
-        });
-      }
-    }
 
     // Mark review done on job
     await base44.functions.invoke('updateJobProgress', {

@@ -158,14 +158,17 @@ export default function JobDetail() {
   };
 
   const saveEdit = async () => {
-    await base44.entities.JobPost.update(jobId, {
-      title: editForm.title,
-      description: editForm.description,
-      budget_min: editForm.budget_min ? Number(editForm.budget_min) : undefined,
-      budget_max: editForm.budget_max ? Number(editForm.budget_max) : undefined,
-      location: editForm.location,
-      scheduled_date: editForm.scheduled_date || undefined,
-      scheduled_time: editForm.scheduled_time || undefined,
+    await base44.functions.invoke('updateJobPost', {
+      jobId,
+      updates: {
+        title: editForm.title,
+        description: editForm.description,
+        budget_min: editForm.budget_min ? Number(editForm.budget_min) : undefined,
+        budget_max: editForm.budget_max ? Number(editForm.budget_max) : undefined,
+        location: editForm.location,
+        scheduled_date: editForm.scheduled_date || undefined,
+        scheduled_time: editForm.scheduled_time || undefined,
+      }
     });
     queryClient.invalidateQueries({ queryKey: ['job-detail', jobId] });
     setShowEditForm(false);
