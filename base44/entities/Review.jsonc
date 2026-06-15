@@ -19,12 +19,10 @@
       "enum": [
         "client",
         "avatar"
-      ],
-      "description": "Who is leaving the review"
+      ]
     },
     "reviewed_email": {
-      "type": "string",
-      "description": "Who is being reviewed"
+      "type": "string"
     },
     "avatar_email": {
       "type": "string"
@@ -46,5 +44,33 @@
     "reviewer_email",
     "reviewed_email",
     "rating"
-  ]
+  ],
+  "rls": {
+    "create": true,
+    "read": true,
+    "update": {
+      "$or": [
+        {
+          "reviewer_email": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "$or": [
+        {
+          "reviewer_email": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    }
+  }
 }

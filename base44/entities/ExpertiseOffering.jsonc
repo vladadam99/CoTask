@@ -15,15 +15,13 @@
       "type": "string"
     },
     "title": {
-      "type": "string",
-      "description": "e.g. '1-on-1 Python Tutoring' or 'Marketing Strategy Call'"
+      "type": "string"
     },
     "description": {
       "type": "string"
     },
     "topic": {
-      "type": "string",
-      "description": "Broad topic/category e.g. 'Technology', 'Business', 'Language Learning'"
+      "type": "string"
     },
     "session_type": {
       "type": "string",
@@ -41,8 +39,7 @@
       "default": 60
     },
     "rate": {
-      "type": "number",
-      "description": "Price per session"
+      "type": "number"
     },
     "currency": {
       "type": "string",
@@ -50,7 +47,6 @@
     },
     "office_hours": {
       "type": "array",
-      "description": "Expert office hours slots \u2014 separate from regular job availability",
       "items": {
         "type": "object",
         "properties": {
@@ -78,5 +74,33 @@
     "avatar_email",
     "title",
     "rate"
-  ]
+  ],
+  "rls": {
+    "create": true,
+    "read": true,
+    "update": {
+      "$or": [
+        {
+          "avatar_email": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "$or": [
+        {
+          "avatar_email": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    }
+  }
 }

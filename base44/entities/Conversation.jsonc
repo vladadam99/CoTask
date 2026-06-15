@@ -1,39 +1,32 @@
 {
-  "name": "CounterOffer",
+  "name": "Conversation",
   "type": "object",
   "properties": {
+    "participant_emails": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "participant_names": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
     "booking_id": {
       "type": "string"
     },
-    "offered_by_email": {
+    "last_message": {
       "type": "string"
     },
-    "offered_by_role": {
-      "type": "string",
-      "enum": [
-        "avatar",
-        "client"
-      ]
-    },
-    "offered_by_name": {
+    "last_message_at": {
       "type": "string"
     },
-    "amount": {
-      "type": "number"
-    },
-    "note": {
+    "last_message_by": {
       "type": "string"
     },
-    "status": {
-      "type": "string",
-      "enum": [
-        "pending",
-        "accepted",
-        "declined"
-      ],
-      "default": "pending"
-    },
-    "participant_emails": {
+    "unread_by": {
       "type": "array",
       "items": {
         "type": "string"
@@ -41,12 +34,14 @@
     }
   },
   "required": [
-    "booking_id",
-    "offered_by_email",
-    "amount"
+    "participant_emails"
   ],
   "rls": {
-    "create": true,
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
     "read": {
       "$or": [
         {

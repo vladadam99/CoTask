@@ -1,49 +1,20 @@
 {
-  "name": "Notification",
+  "name": "Favorite",
   "type": "object",
   "properties": {
     "user_email": {
       "type": "string"
     },
-    "title": {
+    "avatar_profile_id": {
       "type": "string"
     },
-    "message": {
-      "type": "string"
-    },
-    "type": {
-      "type": "string",
-      "enum": [
-        "booking_request",
-        "booking_accepted",
-        "booking_declined",
-        "message",
-        "session_starting",
-        "session_live",
-        "payment",
-        "review",
-        "system"
-      ]
-    },
-    "is_read": {
-      "type": "boolean",
-      "default": false
-    },
-    "link": {
-      "type": "string"
-    },
-    "reference_id": {
-      "type": "string"
-    },
-    "target_role": {
+    "avatar_name": {
       "type": "string"
     }
   },
   "required": [
     "user_email",
-    "title",
-    "message",
-    "type"
+    "avatar_profile_id"
   ],
   "rls": {
     "create": true,

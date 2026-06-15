@@ -1,70 +1,65 @@
 {
-  "name": "Post",
+  "name": "PayoutSettings",
   "type": "object",
   "properties": {
     "avatar_email": {
       "type": "string"
     },
-    "avatar_name": {
-      "type": "string"
-    },
-    "avatar_photo_url": {
-      "type": "string"
-    },
-    "avatar_profile_id": {
-      "type": "string"
-    },
-    "type": {
+    "method": {
       "type": "string",
       "enum": [
-        "photo",
-        "video"
+        "bank_transfer",
+        "paypal",
+        "stripe",
+        "wise"
       ],
-      "default": "photo"
+      "default": "bank_transfer"
     },
-    "media_url": {
+    "account_name": {
       "type": "string"
     },
-    "media_urls": {
-      "type": "array",
-      "items": {
-        "type": "string"
-      }
-    },
-    "media_types": {
-      "type": "array",
-      "items": {
-        "type": "string"
-      }
-    },
-    "thumbnail_url": {
+    "account_number": {
       "type": "string"
     },
-    "caption": {
+    "routing_number": {
       "type": "string"
     },
-    "category": {
+    "paypal_email": {
       "type": "string"
     },
-    "likes_count": {
+    "wise_email": {
+      "type": "string"
+    },
+    "schedule": {
+      "type": "string",
+      "enum": [
+        "weekly",
+        "biweekly",
+        "monthly"
+      ],
+      "default": "weekly"
+    },
+    "minimum_payout": {
       "type": "number",
-      "default": 0
+      "default": 20
     },
-    "comments_count": {
-      "type": "number",
-      "default": 0
+    "currency": {
+      "type": "string",
+      "default": "USD"
     },
-    "duration_seconds": {
-      "type": "number"
-    },
-    "is_published": {
+    "is_active": {
       "type": "boolean",
-      "default": true
+      "default": false
+    },
+    "last_payout_date": {
+      "type": "string"
+    },
+    "last_payout_amount": {
+      "type": "number"
     }
   },
   "required": [
-    "avatar_email",
-    "media_url"
+    "avatar_email"
   ],
   "rls": {
     "create": {
@@ -79,7 +74,18 @@
         }
       ]
     },
-    "read": true,
+    "read": {
+      "$or": [
+        {
+          "avatar_email": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
     "update": {
       "$or": [
         {
@@ -93,16 +99,9 @@
       ]
     },
     "delete": {
-      "$or": [
-        {
-          "avatar_email": "{{user.email}}"
-        },
-        {
-          "user_condition": {
-            "role": "admin"
-          }
-        }
-      ]
+      "user_condition": {
+        "role": "admin"
+      }
     }
   }
 }

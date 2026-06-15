@@ -1,27 +1,43 @@
 {
-  "name": "CounterOffer",
+  "name": "JobApplication",
   "type": "object",
   "properties": {
-    "booking_id": {
+    "job_id": {
       "type": "string"
     },
-    "offered_by_email": {
+    "job_title": {
       "type": "string"
     },
-    "offered_by_role": {
+    "applicant_email": {
+      "type": "string"
+    },
+    "applicant_name": {
+      "type": "string"
+    },
+    "applicant_type": {
       "type": "string",
       "enum": [
         "avatar",
-        "client"
+        "enterprise"
       ]
     },
-    "offered_by_name": {
+    "applicant_profile_id": {
       "type": "string"
     },
-    "amount": {
+    "cover_message": {
+      "type": "string"
+    },
+    "proposed_rate": {
       "type": "number"
     },
-    "note": {
+    "proposed_currency": {
+      "type": "string",
+      "default": "USD"
+    },
+    "proposed_duration": {
+      "type": "string"
+    },
+    "available_from": {
       "type": "string"
     },
     "status": {
@@ -29,28 +45,29 @@
       "enum": [
         "pending",
         "accepted",
-        "declined"
+        "rejected",
+        "withdrawn"
       ],
       "default": "pending"
     },
-    "participant_emails": {
-      "type": "array",
-      "items": {
-        "type": "string"
-      }
+    "client_email": {
+      "type": "string"
     }
   },
   "required": [
-    "booking_id",
-    "offered_by_email",
-    "amount"
+    "job_id",
+    "applicant_email",
+    "cover_message"
   ],
   "rls": {
     "create": true,
     "read": {
       "$or": [
         {
-          "participant_emails": "{{user.email}}"
+          "applicant_email": "{{user.email}}"
+        },
+        {
+          "client_email": "{{user.email}}"
         },
         {
           "user_condition": {
@@ -62,7 +79,10 @@
     "update": {
       "$or": [
         {
-          "participant_emails": "{{user.email}}"
+          "applicant_email": "{{user.email}}"
+        },
+        {
+          "client_email": "{{user.email}}"
         },
         {
           "user_condition": {

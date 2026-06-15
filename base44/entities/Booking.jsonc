@@ -56,12 +56,10 @@
         "onsite",
         "remote"
       ],
-      "default": "onsite",
-      "description": "Whether the avatar attends physically or virtually"
+      "default": "onsite"
     },
     "meeting_platform": {
-      "type": "string",
-      "description": "Platform for remote sessions e.g. Zoom, Google Meet"
+      "type": "string"
     },
     "scheduled_date": {
       "type": "string",
@@ -170,5 +168,33 @@
     "client_email",
     "avatar_email",
     "category"
-  ]
+  ],
+  "rls": {
+    "create": true,
+    "read": {
+      "$or": [
+        {
+          "client_email": "{{user.email}}"
+        },
+        {
+          "avatar_email": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
 }

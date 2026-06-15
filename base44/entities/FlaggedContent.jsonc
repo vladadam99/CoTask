@@ -9,19 +9,16 @@
         "post",
         "job_post",
         "review"
-      ],
-      "description": "What type of content was flagged"
+      ]
     },
     "entity_id": {
       "type": "string"
     },
     "content_preview": {
-      "type": "string",
-      "description": "Short preview of the flagged content"
+      "type": "string"
     },
     "reason": {
-      "type": "string",
-      "description": "Why it was flagged"
+      "type": "string"
     },
     "severity": {
       "type": "string",
@@ -57,5 +54,30 @@
     "entity_type",
     "entity_id",
     "reason"
-  ]
+  ],
+  "rls": {
+    "create": true,
+    "read": {
+      "$or": [
+        {
+          "author_email": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
 }

@@ -1,49 +1,47 @@
 {
-  "name": "CounterOffer",
+  "name": "Message",
   "type": "object",
   "properties": {
-    "booking_id": {
+    "conversation_id": {
       "type": "string"
     },
-    "offered_by_email": {
+    "sender_email": {
       "type": "string"
     },
-    "offered_by_role": {
+    "sender_name": {
+      "type": "string"
+    },
+    "content": {
+      "type": "string"
+    },
+    "message_type": {
       "type": "string",
       "enum": [
-        "avatar",
-        "client"
-      ]
-    },
-    "offered_by_name": {
-      "type": "string"
-    },
-    "amount": {
-      "type": "number"
-    },
-    "note": {
-      "type": "string"
-    },
-    "status": {
-      "type": "string",
-      "enum": [
-        "pending",
-        "accepted",
-        "declined"
+        "text",
+        "system",
+        "booking_update",
+        "photo"
       ],
-      "default": "pending"
+      "default": "text"
+    },
+    "is_read": {
+      "type": "boolean",
+      "default": false
     },
     "participant_emails": {
       "type": "array",
       "items": {
         "type": "string"
       }
+    },
+    "media_url": {
+      "type": "string"
     }
   },
   "required": [
-    "booking_id",
-    "offered_by_email",
-    "amount"
+    "conversation_id",
+    "sender_email",
+    "content"
   ],
   "rls": {
     "create": true,
@@ -62,7 +60,7 @@
     "update": {
       "$or": [
         {
-          "participant_emails": "{{user.email}}"
+          "sender_email": "{{user.email}}"
         },
         {
           "user_condition": {

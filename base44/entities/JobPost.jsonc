@@ -90,8 +90,7 @@
       "format": "date"
     },
     "scheduled_time": {
-      "type": "string",
-      "description": "Time the job starts, e.g. 14:30"
+      "type": "string"
     },
     "flexible_dates": {
       "type": "boolean",
@@ -121,12 +120,10 @@
       "default": 0
     },
     "started_at": {
-      "type": "string",
-      "description": "ISO timestamp when avatar clicked Start Job"
+      "type": "string"
     },
     "ended_at": {
-      "type": "string",
-      "description": "ISO timestamp when avatar submitted proof"
+      "type": "string"
     },
     "proof_url": {
       "type": "string"
@@ -158,19 +155,52 @@
         "arrived",
         "working",
         "wrapping_up"
-      ],
-      "description": "Real-time arrival/progress status updated by avatar during in_progress jobs"
+      ]
     },
     "arrival_status_updated_at": {
-      "type": "string",
-      "description": "ISO timestamp of last arrival_status update"
+      "type": "string"
     },
     "progress_photos": {
       "type": "array",
       "items": {
         "type": "string"
-      },
-      "description": "Progress photo URLs uploaded by avatar during the job"
+      }
+    },
+    "stripe_payment_intent_id": {
+      "type": "string",
+      "rls": {
+        "write": {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      }
+    },
+    "escrow_amount": {
+      "type": "number",
+      "rls": {
+        "write": {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      }
+    },
+    "escrow_status": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "authorized",
+        "captured",
+        "cancelled"
+      ],
+      "rls": {
+        "write": {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      }
     }
   },
   "required": [
@@ -178,5 +208,29 @@
     "title",
     "description",
     "category"
-  ]
+  ],
+  "rls": {
+    "create": true,
+    "read": true,
+    "update": {
+      "$or": [
+        {
+          "posted_by_email": "{{user.email}}"
+        },
+        {
+          "winner_email": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
 }

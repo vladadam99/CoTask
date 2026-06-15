@@ -3,8 +3,7 @@
   "type": "object",
   "properties": {
     "user_email": {
-      "type": "string",
-      "description": "Email of the linked user"
+      "type": "string"
     },
     "display_name": {
       "type": "string"
@@ -16,16 +15,13 @@
       "type": "string"
     },
     "cover_url": {
-      "type": "string",
-      "description": "Cover/banner photo for profile card"
+      "type": "string"
     },
     "postcode": {
-      "type": "string",
-      "description": "UK postcode"
+      "type": "string"
     },
     "full_address": {
-      "type": "string",
-      "description": "Full address selected from postcode lookup"
+      "type": "string"
     },
     "city": {
       "type": "string"
@@ -114,13 +110,11 @@
     },
     "willing_to_travel": {
       "type": "boolean",
-      "default": false,
-      "description": "Whether this avatar is willing to travel outside their city"
+      "default": false
     },
     "travel_radius_km": {
       "type": "number",
-      "default": 0,
-      "description": "How far in km the avatar is willing to travel from their city"
+      "default": 0
     },
     "verification_status": {
       "type": "string",
@@ -139,11 +133,63 @@
         "pending",
         "active"
       ],
-      "default": "not_connected"
+      "default": "not_connected",
+      "rls": {
+        "read": {
+          "$or": [
+            {
+              "user_email": "{{user.email}}"
+            },
+            {
+              "user_condition": {
+                "role": "admin"
+              }
+            }
+          ]
+        },
+        "write": {
+          "$or": [
+            {
+              "user_email": "{{user.email}}"
+            },
+            {
+              "user_condition": {
+                "role": "admin"
+              }
+            }
+          ]
+        }
+      }
     },
     "total_earnings": {
       "type": "number",
-      "default": 0
+      "default": 0,
+      "rls": {
+        "read": {
+          "$or": [
+            {
+              "user_email": "{{user.email}}"
+            },
+            {
+              "user_condition": {
+                "role": "admin"
+              }
+            }
+          ]
+        },
+        "write": {
+          "$or": [
+            {
+              "user_email": "{{user.email}}"
+            },
+            {
+              "user_condition": {
+                "role": "admin"
+              }
+            }
+          ]
+        }
+      }
     },
     "status": {
       "type": "string",
@@ -156,7 +202,6 @@
     },
     "availability_slots": {
       "type": "array",
-      "description": "Weekly availability schedule",
       "items": {
         "type": "object",
         "properties": {
@@ -177,15 +222,97 @@
     },
     "cv_url": {
       "type": "string",
-      "description": "URL to uploaded CV/resume document"
+      "rls": {
+        "read": {
+          "$or": [
+            {
+              "user_email": "{{user.email}}"
+            },
+            {
+              "user_condition": {
+                "role": "admin"
+              }
+            }
+          ]
+        },
+        "write": {
+          "$or": [
+            {
+              "user_email": "{{user.email}}"
+            },
+            {
+              "user_condition": {
+                "role": "admin"
+              }
+            }
+          ]
+        }
+      }
     },
     "cv_filename": {
       "type": "string",
-      "description": "Original filename of the uploaded CV"
+      "rls": {
+        "read": {
+          "$or": [
+            {
+              "user_email": "{{user.email}}"
+            },
+            {
+              "user_condition": {
+                "role": "admin"
+              }
+            }
+          ]
+        },
+        "write": {
+          "$or": [
+            {
+              "user_email": "{{user.email}}"
+            },
+            {
+              "user_condition": {
+                "role": "admin"
+              }
+            }
+          ]
+        }
+      }
     }
   },
   "required": [
     "user_email",
     "display_name"
-  ]
+  ],
+  "rls": {
+    "create": {
+      "$or": [
+        {
+          "user_email": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "read": true,
+    "update": {
+      "$or": [
+        {
+          "user_email": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
 }

@@ -1,16 +1,31 @@
 {
-  "name": "VerificationSession",
+  "name": "Category",
   "type": "object",
   "properties": {
-    "session_id": {
+    "name": {
       "type": "string"
     },
-    "result": {
-      "type": "object"
+    "slug": {
+      "type": "string"
+    },
+    "description": {
+      "type": "string"
+    },
+    "icon": {
+      "type": "string"
+    },
+    "is_featured": {
+      "type": "boolean",
+      "default": false
+    },
+    "sort_order": {
+      "type": "number",
+      "default": 0
     }
   },
   "required": [
-    "session_id"
+    "name",
+    "slug"
   ],
   "rls": {
     "create": {
@@ -18,11 +33,7 @@
         "role": "admin"
       }
     },
-    "read": {
-      "user_condition": {
-        "role": "admin"
-      }
-    },
+    "read": true,
     "update": {
       "user_condition": {
         "role": "admin"

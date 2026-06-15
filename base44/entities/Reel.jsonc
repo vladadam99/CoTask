@@ -1,5 +1,5 @@
 {
-  "name": "Post",
+  "name": "Reel",
   "type": "object",
   "properties": {
     "avatar_email": {
@@ -11,60 +11,49 @@
     "avatar_photo_url": {
       "type": "string"
     },
-    "avatar_profile_id": {
+    "title": {
       "type": "string"
     },
-    "type": {
-      "type": "string",
-      "enum": [
-        "photo",
-        "video"
-      ],
-      "default": "photo"
-    },
-    "media_url": {
-      "type": "string"
-    },
-    "media_urls": {
-      "type": "array",
-      "items": {
-        "type": "string"
-      }
-    },
-    "media_types": {
-      "type": "array",
-      "items": {
-        "type": "string"
-      }
-    },
-    "thumbnail_url": {
-      "type": "string"
-    },
-    "caption": {
+    "description": {
       "type": "string"
     },
     "category": {
       "type": "string"
     },
-    "likes_count": {
-      "type": "number",
-      "default": 0
+    "thumbnail_url": {
+      "type": "string"
     },
-    "comments_count": {
-      "type": "number",
-      "default": 0
+    "video_url": {
+      "type": "string"
     },
     "duration_seconds": {
       "type": "number"
     },
+    "views": {
+      "type": "number",
+      "default": 0
+    },
+    "likes": {
+      "type": "number",
+      "default": 0
+    },
     "is_published": {
       "type": "boolean",
       "default": true
+    },
+    "recording_id": {
+      "type": "string"
+    },
+    "booking_id": {
+      "type": "string"
+    },
+    "location": {
+      "type": "string"
     }
   },
   "required": [
     "avatar_email",
-    "media_url"
+    "title"
   ],
   "rls": {
     "create": {

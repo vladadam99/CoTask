@@ -1,0 +1,118 @@
+{
+  "name": "EnterpriseProfile",
+  "type": "object",
+  "properties": {
+    "user_email": {
+      "type": "string"
+    },
+    "company_name": {
+      "type": "string"
+    },
+    "logo_url": {
+      "type": "string"
+    },
+    "contact_person": {
+      "type": "string"
+    },
+    "company_email": {
+      "type": "string"
+    },
+    "phone": {
+      "type": "string"
+    },
+    "industry": {
+      "type": "string"
+    },
+    "company_size": {
+      "type": "string",
+      "enum": [
+        "1-10",
+        "11-50",
+        "51-200",
+        "201-1000",
+        "1000+"
+      ]
+    },
+    "cities": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "booking_needs": {
+      "type": "string"
+    },
+    "invoice_preference": {
+      "type": "string",
+      "enum": [
+        "monthly",
+        "per_booking",
+        "quarterly"
+      ]
+    },
+    "total_spend": {
+      "type": "number",
+      "default": 0
+    },
+    "active_bookings": {
+      "type": "number",
+      "default": 0
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "active",
+        "inactive",
+        "suspended"
+      ],
+      "default": "active"
+    }
+  },
+  "required": [
+    "user_email",
+    "company_name"
+  ],
+  "rls": {
+    "create": {
+      "$or": [
+        {
+          "user_email": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "read": {
+      "$or": [
+        {
+          "user_email": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "update": {
+      "$or": [
+        {
+          "user_email": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

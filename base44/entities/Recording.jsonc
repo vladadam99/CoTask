@@ -1,70 +1,60 @@
 {
-  "name": "Post",
+  "name": "Recording",
   "type": "object",
   "properties": {
     "avatar_email": {
       "type": "string"
     },
-    "avatar_name": {
+    "client_name": {
       "type": "string"
     },
-    "avatar_photo_url": {
+    "client_email": {
       "type": "string"
     },
-    "avatar_profile_id": {
+    "session_id": {
       "type": "string"
     },
-    "type": {
-      "type": "string",
-      "enum": [
-        "photo",
-        "video"
-      ],
-      "default": "photo"
-    },
-    "media_url": {
+    "booking_id": {
       "type": "string"
     },
-    "media_urls": {
-      "type": "array",
-      "items": {
-        "type": "string"
-      }
-    },
-    "media_types": {
-      "type": "array",
-      "items": {
-        "type": "string"
-      }
-    },
-    "thumbnail_url": {
-      "type": "string"
-    },
-    "caption": {
+    "title": {
       "type": "string"
     },
     "category": {
       "type": "string"
     },
-    "likes_count": {
-      "type": "number",
-      "default": 0
-    },
-    "comments_count": {
-      "type": "number",
-      "default": 0
-    },
     "duration_seconds": {
       "type": "number"
     },
-    "is_published": {
+    "file_url": {
+      "type": "string"
+    },
+    "thumbnail_url": {
+      "type": "string"
+    },
+    "file_size_mb": {
+      "type": "number"
+    },
+    "stream_mode": {
+      "type": "string",
+      "enum": [
+        "standard",
+        "360",
+        "vr"
+      ],
+      "default": "standard"
+    },
+    "is_shared_with_client": {
       "type": "boolean",
-      "default": true
+      "default": false
+    },
+    "notes": {
+      "type": "string"
     }
   },
   "required": [
     "avatar_email",
-    "media_url"
+    "title"
   ],
   "rls": {
     "create": {
@@ -79,7 +69,21 @@
         }
       ]
     },
-    "read": true,
+    "read": {
+      "$or": [
+        {
+          "avatar_email": "{{user.email}}"
+        },
+        {
+          "client_email": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
     "update": {
       "$or": [
         {

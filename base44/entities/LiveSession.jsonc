@@ -1,0 +1,104 @@
+{
+  "name": "LiveSession",
+  "type": "object",
+  "properties": {
+    "booking_id": {
+      "type": "string"
+    },
+    "avatar_email": {
+      "type": "string"
+    },
+    "avatar_name": {
+      "type": "string"
+    },
+    "client_email": {
+      "type": "string"
+    },
+    "client_name": {
+      "type": "string"
+    },
+    "category": {
+      "type": "string"
+    },
+    "title": {
+      "type": "string"
+    },
+    "notes": {
+      "type": "string"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "waiting",
+        "live",
+        "paused",
+        "ended"
+      ],
+      "default": "waiting"
+    },
+    "started_at": {
+      "type": "string"
+    },
+    "ended_at": {
+      "type": "string"
+    },
+    "duration_minutes": {
+      "type": "number"
+    },
+    "stream_mode": {
+      "type": "string",
+      "enum": [
+        "standard",
+        "360",
+        "vr"
+      ],
+      "default": "standard"
+    },
+    "session_url": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "booking_id",
+    "avatar_email",
+    "client_email"
+  ],
+  "rls": {
+    "create": true,
+    "read": {
+      "$or": [
+        {
+          "client_email": "{{user.email}}"
+        },
+        {
+          "avatar_email": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "update": {
+      "$or": [
+        {
+          "client_email": "{{user.email}}"
+        },
+        {
+          "avatar_email": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}
