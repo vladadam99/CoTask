@@ -159,25 +159,10 @@ export default function AvatarView() {
   const startMessage = async () => {
     setMessaging(true);
     try {
-      const me = await base44.auth.me();
-      const senderName = me.full_name || me.email;
-
-      const existing = await base44.entities.Conversation.filter({ booking_id: `direct_${me.email}_${avatar.user_email}` });
-      if (existing.length > 0) {
-        navigate(`/Messages?conversation=${existing[0].id}`);
-        return;
+      const res = await base44.functions.invoke('createDirectConversation', { avatar_profile_id: avatar.id });
+      if (res.data?.conversation) {
+        navigate(`/Messages?conversation=${res.data.conversation.id}`);
       }
-
-      const convo = await base44.entities.Conversation.create({
-        participant_emails: [me.email, avatar.user_email],
-        participant_names: [senderName, avatar.display_name],
-        booking_id: `direct_${me.email}_${avatar.user_email}`,
-        last_message: 'Conversation started.',
-        last_message_at: new Date().toISOString(),
-        last_message_by: 'system',
-        unread_by: [avatar.user_email],
-      });
-      navigate(`/Messages?conversation=${convo.id}`);
     } catch (err) {
       console.error(err);
     } finally {

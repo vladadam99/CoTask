@@ -47,9 +47,12 @@ export default function AvatarLive() {
 
   const endSession = useMutation({
     mutationFn: async (session) => {
-      await base44.entities.LiveSession.update(session.id, {
-        status: 'ended',
-        ended_at: new Date().toISOString(),
+      await base44.functions.invoke('updateLiveSession', {
+        id: session.id,
+        updates: {
+          status: 'ended',
+          ended_at: new Date().toISOString(),
+        }
       });
       // Complete the booking via backend to enforce permissions
       if (session.booking_id) {

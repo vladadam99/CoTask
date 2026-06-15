@@ -126,10 +126,13 @@ export default function LiveStreamStudio() {
 
   const endSessionMutation = useMutation({
     mutationFn: async (id) => {
-      await base44.entities.LiveSession.update(id, {
-        status: 'ended',
-        ended_at: new Date().toISOString(),
-        duration_minutes: Math.round(elapsed / 60),
+      await base44.functions.invoke('updateLiveSession', {
+        id,
+        updates: {
+          status: 'ended',
+          ended_at: new Date().toISOString(),
+          duration_minutes: Math.round(elapsed / 60),
+        }
       });
       if (attachedBooking?.id) {
         await base44.functions.invoke('updateBookingStatus', {

@@ -400,18 +400,13 @@ export default function JobDetail() {
             variant="outline"
             className="w-full h-11 gap-2 border-white/10"
             onClick={async () => {
-              const existing = await base44.entities.Conversation.filter({ booking_id: `direct_${[user.email, job.posted_by_email].sort().join('_')}` });
-              let conv = existing[0];
-              if (!conv) {
-                conv = await base44.entities.Conversation.create({
-                  participant_emails: [user.email, job.posted_by_email],
-                  participant_names: [user.full_name, job.posted_by_name],
-                  booking_id: `direct_${[user.email, job.posted_by_email].sort().join('_')}`,
-                  last_message: '',
-                  unread_by: [job.posted_by_email],
-                });
+              const res = await base44.functions.invoke('createDirectConversation', { 
+                target_email: job.posted_by_email, 
+                target_name: job.posted_by_name 
+              });
+              if (res.data?.conversation) {
+                navigate(`/Messages?conversation=${res.data.conversation.id}`);
               }
-              navigate(`/Messages?conversation=${conv.id}`);
             }}
           >
             <Send className="w-4 h-4" /> Message Client

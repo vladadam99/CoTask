@@ -124,9 +124,6 @@ export default function ConsultationBooking() {
         try {
           const room = await base44.functions.invoke('createDailyRoom', { bookingId: newBooking.id });
           setCallUrl(room?.data?.url || '');
-          if (room?.data?.url) {
-            await base44.entities.Booking.update(newBooking.id, { meeting_platform: room.data.url });
-          }
         } catch (_) {}
       }
 

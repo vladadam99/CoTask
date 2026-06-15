@@ -15,37 +15,17 @@ export default function LeaveReview({ booking, user, onDone }) {
 
   const submit = useMutation({
     mutationFn: async () => {
-      const review = await base44.entities.Review.create({
+      const response = await base44.functions.invoke('createReview', {
         booking_id: booking.id,
-        reviewer_email: user.email,
-        reviewer_name: user.full_name,
+        reviewer_type: 'client',
+        reviewed_email: booking.avatar_email,
         avatar_email: booking.avatar_email,
         avatar_name: booking.avatar_name,
         rating,
         comment,
         category: booking.category,
       });
-      // Update avatar profile rating
-      const profiles = await base44.entities.AvatarProfile.filter({ user_email: booking.avatar_email });
-      const profile = profiles[0];
-      if (profile) {
-        const allReviews = await base44.entities.Review.filter({ avatar_email: booking.avatar_email });
-        const total = allReviews.reduce((s, r) => s + r.rating, 0);
-        const count = allReviews.length;
-        await base44.entities.AvatarProfile.update(profile.id, {
-          rating: Math.round((total / count) * 10) / 10,
-          review_count: count,
-        });
-      }
-      // Notify avatar
-      await base44.entities.Notification.create({
-        user_email: booking.avatar_email,
-        title: 'New Review!',
-        message: `${user.full_name} left you a ${rating}-star review.`,
-        type: 'review',
-        reference_id: booking.id,
-      });
-      return review;
+      return response.data.review;
     },
     onSuccess: () => {
       setDone(true);

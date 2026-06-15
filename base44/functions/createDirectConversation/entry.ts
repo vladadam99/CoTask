@@ -6,19 +6,25 @@ Deno.serve(async (req) => {
     const user = await base44.auth.me();
     if (!user) return Response.json({ error: 'Unauthorized' }, { status: 401 });
 
-    const { avatar_profile_id } = await req.json();
+    const { avatar_profile_id, target_email, target_name } = await req.json();
 
-    if (!avatar_profile_id) {
-      return Response.json({ error: 'Missing avatar_profile_id' }, { status: 400 });
+    let peerEmail = target_email;
+    let peerName = target_name;
+
+    if (avatar_profile_id) {
+      const profiles = await base44.asServiceRole.entities.AvatarProfile.filter({ id: avatar_profile_id });
+      if (!profiles.length) {
+        return Response.json({ error: 'Avatar not found' }, { status: 404 });
+      }
+      peerEmail = profiles[0].user_email;
+      peerName = profiles[0].display_name;
     }
 
-    const profiles = await base44.asServiceRole.entities.AvatarProfile.filter({ id: avatar_profile_id });
-    if (!profiles.length) {
-      return Response.json({ error: 'Avatar not found' }, { status: 404 });
+    if (!peerEmail) {
+      return Response.json({ error: 'Missing target user info' }, { status: 400 });
     }
-    const avatar = profiles[0];
 
-    const participant_emails = [user.email, avatar.user_email];
+    const participant_emails = [user.email, peerEmail];
     
     // Check if conversation already exists
     const conversations = await base44.asServiceRole.entities.Conversation.filter({
@@ -26,7 +32,7 @@ Deno.serve(async (req) => {
     });
     
     const existing = conversations.find(c => 
-      c.participant_emails.includes(avatar.user_email) && 
+      c.participant_emails.includes(peerEmail) && 
       !c.booking_id // only direct ones, or any
     );
 
@@ -35,17 +41,17 @@ Deno.serve(async (req) => {
     if (!existing) {
       conversation = await base44.asServiceRole.entities.Conversation.create({
         participant_emails,
-        participant_names: [user.full_name, avatar.display_name]
+        participant_names: [user.full_name || user.email, peerName || peerEmail]
       });
 
       await base44.asServiceRole.entities.Notification.create({
-        user_email: avatar.user_email,
+        user_email: peerEmail,
         title: 'New Message',
-        message: `${user.full_name} started a conversation with you.`,
+        message: `${user.full_name || 'Someone'} started a conversation with you.`,
         type: 'message',
-        link: `/AvatarMessages?id=${conversation.id}`,
+        link: `/Messages?conversation=${conversation.id}`,
         reference_id: conversation.id,
-        target_role: 'avatar'
+        target_role: avatar_profile_id ? 'avatar' : 'user'
       });
     }
 

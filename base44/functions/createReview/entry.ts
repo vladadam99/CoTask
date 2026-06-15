@@ -29,6 +29,20 @@ Deno.serve(async (req) => {
 
     const review = await base44.asServiceRole.entities.Review.create(reviewData);
 
+    if (reviewer_type === 'client' || !reviewer_type) {
+      const profiles = await base44.asServiceRole.entities.AvatarProfile.filter({ user_email: reviewed_email });
+      const profile = profiles[0];
+      if (profile) {
+        const allReviews = await base44.asServiceRole.entities.Review.filter({ avatar_email: reviewed_email });
+        const total = allReviews.reduce((s, r) => s + r.rating, 0);
+        const count = allReviews.length;
+        await base44.asServiceRole.entities.AvatarProfile.update(profile.id, {
+          rating: Math.round((total / count) * 10) / 10,
+          review_count: count,
+        });
+      }
+    }
+
     await base44.asServiceRole.entities.Notification.create({
       user_email: reviewed_email,
       title: 'New Review Received',
