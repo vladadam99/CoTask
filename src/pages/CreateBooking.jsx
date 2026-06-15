@@ -109,12 +109,8 @@ Based on this, return:
     setError('');
     setCheckoutLoading(true);
     try {
-      const booking = await base44.entities.Booking.create({
-        client_email: user.email,
-        client_name: user.full_name,
+      const bookingRes = await base44.functions.invoke('createBooking', {
         client_type: user.app_role === 'enterprise' ? 'enterprise' : 'user',
-        avatar_email: avatar?.user_email || '',
-        avatar_name: avatar?.display_name || 'TBD',
         avatar_profile_id: avatarId || '',
         category: form.category,
         service_type: form.category,
@@ -134,23 +130,13 @@ Based on this, return:
         amount: freeTest ? 0 : amount,
         service_fee: freeTest ? 0 : serviceFee,
         total_amount: freeTest ? 0 : total,
-        status: 'pending',
         payment_status: freeTest ? 'paid' : 'pending',
       });
 
-      base44.functions.invoke('createConversation', { bookingId: booking.id }).catch(() => {});
+      if (!bookingRes.data.success) throw new Error(bookingRes.data.error || 'Failed to create booking');
+      const booking = bookingRes.data.booking;
 
-      // Notify avatar of new booking request
-      if (avatar?.user_email) {
-        base44.entities.Notification.create({
-          user_email: avatar.user_email,
-          title: 'New Booking Request!',
-          message: `${user.full_name} has requested a ${form.category} booking${form.scheduled_date ? ` on ${form.scheduled_date}` : ''}. Accept or decline in your requests.`,
-          type: 'booking_request',
-          link: '/AvatarRequests',
-          reference_id: booking.id,
-        }).catch(() => {});
-      }
+      base44.functions.invoke('createConversation', { bookingId: booking.id }).catch(() => {});
 
       if (freeTest) {
         navigate(`/UserBookingDetail?id=${booking.id}`);

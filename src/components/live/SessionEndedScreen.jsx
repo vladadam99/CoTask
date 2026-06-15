@@ -15,24 +15,15 @@ export default function SessionEndedScreen({ session, user }) {
   const submitReview = async () => {
     if (!rating) return;
     setSubmitting(true);
-    await base44.entities.Review.create({
+    await base44.functions.invoke('createReview', {
       booking_id: session.booking_id,
-      reviewer_email: user.email,
-      reviewer_name: user.full_name,
+      reviewer_type: 'client',
+      reviewed_email: session.avatar_email,
       avatar_email: session.avatar_email,
       avatar_name: session.avatar_name,
       rating,
       comment,
       category: session.category,
-    });
-    // Notify avatar of new review
-    await base44.entities.Notification.create({
-      user_email: session.avatar_email,
-      title: `${user.full_name} left you a ${rating}★ review`,
-      message: comment || `Rated your ${session.category} session.`,
-      type: 'review',
-      link: '/AvatarReviews',
-      reference_id: session.booking_id,
     });
     setSubmitting(false);
     setSubmitted(true);

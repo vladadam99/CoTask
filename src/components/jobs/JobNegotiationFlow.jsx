@@ -44,26 +44,19 @@ export default function JobNegotiationFlow({ application, job, user, onRateAgree
     if (!amount || isNaN(parseFloat(amount))) return;
     setSending(true);
 
-    await base44.entities.CounterOffer.create({
-      booking_id: refId,
-      offered_by_email: user.email,
-      offered_by_name: user.full_name,
-      offered_by_role: isOwner ? 'client' : 'avatar',
-      amount: parseFloat(amount),
-      note: note.trim(),
-      status: 'pending',
-    });
-
     const targetEmail = isOwner ? application.applicant_email : job.posted_by_email;
     const targetRole = isOwner ? 'avatar' : 'user';
-    await base44.entities.Notification.create({
-      user_email: targetEmail,
-      title: `${user.full_name} made a counter-offer on "${job.title}"`,
-      message: `Proposed rate: $${parseFloat(amount).toFixed(2)}${note ? ` — "${note}"` : ''}`,
-      type: 'booking_request',
-      reference_id: job.id,
-      link: `/JobDetail?id=${job.id}`,
-      target_role: targetRole,
+
+    await base44.functions.invoke('jobNegotiation', {
+      action: 'create',
+      refId,
+      amount: parseFloat(amount),
+      note: note.trim(),
+      isOwner,
+      jobId: job.id,
+      targetEmail,
+      targetRole,
+      jobTitle: job.title
     });
 
     setAmount('');
@@ -74,38 +67,25 @@ export default function JobNegotiationFlow({ application, job, user, onRateAgree
   };
 
   const respondToOffer = async (offerId, accept) => {
-    await base44.entities.CounterOffer.update(offerId, { status: accept ? 'accepted' : 'declined' });
-
     const targetEmail = isOwner ? application.applicant_email : job.posted_by_email;
     const targetRole = isOwner ? 'avatar' : 'user';
     const agreedAmount = latestOffer.amount;
 
-    if (accept) {
-      // Update application with agreed rate
-      await base44.entities.JobApplication.update(application.id, { proposed_rate: agreedAmount });
-      await base44.entities.Notification.create({
-        user_email: targetEmail,
-        title: `Rate of $${agreedAmount.toFixed(2)} accepted for "${job.title}"`,
-        message: `${user.full_name} accepted your offer. Proceeding with payment.`,
-        type: 'payment',
-        reference_id: job.id,
-        link: `/JobDetail?id=${job.id}`,
-        target_role: targetRole,
-      });
-      queryClient.invalidateQueries({ queryKey: ['job-neg', application.id] });
-      onRateAgreed?.(agreedAmount);
-    } else {
-      await base44.entities.Notification.create({
-        user_email: targetEmail,
-        title: `Offer declined for "${job.title}"`,
-        message: `${user.full_name} declined. You can propose a new rate.`,
-        type: 'booking_request',
-        reference_id: job.id,
-        link: `/JobDetail?id=${job.id}`,
-        target_role: targetRole,
-      });
-      queryClient.invalidateQueries({ queryKey: ['job-neg', application.id] });
-    }
+    await base44.functions.invoke('jobNegotiation', {
+      action: 'respond',
+      offerId,
+      accept,
+      amount: agreedAmount,
+      isOwner,
+      jobId: job.id,
+      targetEmail,
+      targetRole,
+      jobTitle: job.title,
+      applicantEmail: application.applicant_email
+    });
+
+    queryClient.invalidateQueries({ queryKey: ['job-neg', application.id] });
+    if (accept) onRateAgreed?.(agreedAmount);
   };
 
   if (!canNegotiate && offers.length === 0) return null;
