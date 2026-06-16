@@ -13,14 +13,14 @@ import {
 
 const navItems = [
   { icon: LayoutDashboard, label: 'Overview', path: '/AdminDashboard' },
-  { icon: Users, label: 'Users', path: '/AdminUsers' },
-  { icon: Radio, label: 'Avatars', path: '/AdminAvatars' },
-  { icon: Building2, label: 'Enterprises', path: '/AdminEnterprises' },
-  { icon: Calendar, label: 'Bookings', path: '/AdminBookings' },
-  { icon: Star, label: 'Reviews', path: '/AdminReviews' },
-  { icon: Flag, label: 'Disputes', path: '/AdminDisputes' },
-  { icon: Shield, label: 'Verification', path: '/AdminVerification' },
-  { icon: Settings, label: 'Settings', path: '/AdminSettings' },
+  { icon: Users, label: 'Users', path: '/AdminDashboard' },
+  { icon: Radio, label: 'Local Agents', path: '/AdminDashboard' },
+  { icon: Building2, label: 'Enterprises', path: '/AdminDashboard' },
+  { icon: Calendar, label: 'Tasks', path: '/AdminDashboard' },
+  { icon: Star, label: 'Reviews', path: '/AdminDashboard' },
+  { icon: Flag, label: 'Disputes', path: '/AdminDashboard' },
+  { icon: Shield, label: 'Verification', path: '/AdminDashboard' },
+  { icon: Settings, label: 'Settings', path: '/AdminDashboard' },
 ];
 
 export default function AdminDashboard() {
@@ -59,7 +59,7 @@ export default function AdminDashboard() {
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-8">
         {[
           { label: 'Total Users', value: users.length, icon: Users, color: 'text-blue-400' },
-          { label: 'Avatars', value: avatars.length, icon: Radio, color: 'text-primary' },
+          { label: 'Local Agents', value: avatars.length, icon: Radio, color: 'text-primary' },
           { label: 'Enterprises', value: enterprises.length, icon: Building2, color: 'text-purple-400' },
           { label: 'Revenue', value: `$${totalRevenue.toLocaleString()}`, icon: DollarSign, color: 'text-green-400' },
         ].map(stat => (
@@ -73,7 +73,7 @@ export default function AdminDashboard() {
 
       <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 mb-8">
         {[
-          { label: 'Total Bookings', value: bookings.length, icon: Calendar },
+          { label: 'Total Tasks', value: bookings.length, icon: Calendar },
           { label: 'Pending Verification', value: pendingVerifications, icon: Shield },
           { label: 'Open Disputes', value: disputedBookings, icon: Flag },
         ].map(stat => (

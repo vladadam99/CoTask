@@ -15,11 +15,10 @@ export const avatarNavItems = [
 ];
 
 export const enterpriseNavItems = [
-  { icon: Search, label: 'Deploy Avatar', path: '/Explore' },
-  { icon: Briefcase, label: 'Jobs', path: '/JobMarketplace' },
-  { icon: Calendar, label: 'Sessions', path: '/Bookings' },
-  { icon: MessageSquare, label: 'Messages', path: '/Messages' },
   { icon: Building2, label: 'Dashboard', path: '/EnterpriseDashboard' },
+  { icon: Calendar, label: 'Tasks', path: '/Bookings' },
+  { icon: Users, label: 'Team or Company', path: '/EnterpriseSettings' },
+  { icon: DollarSign, label: 'Billing', path: '/EnterpriseSettings' },
   { icon: Settings, label: 'Settings', path: '/EnterpriseSettings' },
 ];
 

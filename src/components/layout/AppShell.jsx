@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { LogOut, X, HelpCircle, Settings, User, ChevronRight, Wallet, Calendar } from 'lucide-react';
+import { LogOut, X, HelpCircle, Settings, User, ChevronRight, Wallet, Calendar, Shield, CreditCard, DollarSign, LayoutDashboard, Users, FileText, Flag } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import NotificationBell from '@/components/notifications/NotificationBell';
 import RoleSwitcher from '@/components/RoleSwitcher';
@@ -20,16 +20,43 @@ function getNavBadgeCount(path, unreadNotifs) {
 }
 
 function ProfilePanel({ user, onClose, navItems = [] }) {
-  const settingsPath = user?.selected_role === 'avatar' ? '/AvatarSettings' : user?.selected_role === 'enterprise' ? '/EnterpriseSettings' : '/UserSettings';
-  const bookingsPath = user?.selected_role === 'avatar' ? '/AvatarRequests' : '/Bookings';
-  const walletPath = user?.selected_role === 'avatar' ? '/AvatarWallet' : '/UserWallet';
+  let menuItems = [];
 
-  const menuItems = [
-    { icon: Settings, label: 'Settings', path: settingsPath },
-    { icon: Wallet, label: 'Earnings', path: walletPath },
-    { icon: Calendar, label: 'My Tasks', path: bookingsPath },
-    { icon: HelpCircle, label: 'Help & FAQ', path: '/FAQ' },
-  ];
+  if (user?.role === 'admin') {
+    menuItems = [
+      { icon: LayoutDashboard, label: 'Admin Dashboard', path: '/AdminDashboard' },
+      { icon: Users, label: 'Users', path: '/AdminDashboard' },
+      { icon: Calendar, label: 'Tasks', path: '/AdminDashboard' },
+      { icon: DollarSign, label: 'Payments / Escrow', path: '/AdminDashboard' },
+      { icon: Flag, label: 'Disputes', path: '/AdminDashboard' },
+      { icon: Shield, label: 'Verification / Safety', path: '/AdminDashboard' },
+      { icon: Settings, label: 'Settings', path: '/AdminDashboard' },
+    ];
+  } else if (user?.selected_role === 'enterprise') {
+    menuItems = [
+      { icon: LayoutDashboard, label: 'Enterprise Dashboard', path: '/EnterpriseDashboard' },
+      { icon: Users, label: 'Team / Company Profile', path: '/EnterpriseSettings' },
+      { icon: FileText, label: 'Billing / Invoices', path: '/EnterpriseSettings' },
+      { icon: Settings, label: 'Settings', path: '/EnterpriseSettings' },
+      { icon: HelpCircle, label: 'Help & FAQ', path: '/FAQ' },
+    ];
+  } else if (user?.selected_role === 'avatar') {
+    menuItems = [
+      { icon: User, label: 'Public Profile', path: '/AvatarProfileEdit' },
+      { icon: Shield, label: 'Verification', path: '/IdentityVerification' },
+      { icon: Wallet, label: 'Earnings', path: '/AvatarWallet' },
+      { icon: DollarSign, label: 'Payout Settings', path: '/AvatarSettings' },
+      { icon: Settings, label: 'Settings', path: '/AvatarSettings' },
+      { icon: HelpCircle, label: 'Help & FAQ', path: '/FAQ' },
+    ];
+  } else {
+    menuItems = [
+      { icon: Calendar, label: 'My Tasks', path: '/Bookings' },
+      { icon: CreditCard, label: 'Billing / Payments', path: '/UserWallet' },
+      { icon: Settings, label: 'Settings', path: '/UserSettings' },
+      { icon: HelpCircle, label: 'Help & FAQ', path: '/FAQ' },
+    ];
+  }
 
   return (
     <div className="fixed inset-0 z-[60] flex flex-col bg-background">
