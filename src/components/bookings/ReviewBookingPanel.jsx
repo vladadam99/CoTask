@@ -135,11 +135,11 @@ export default function ReviewBookingPanel({ form, avatar, amount, livePremium, 
         disabled={loading}
       >
         {loading ? (
-          <><Loader2 className="w-4 h-4 animate-spin" /> Processing…</>
+          <><Loader2 className="w-4 h-4 animate-spin" /> Preparing secure payment…</>
         ) : freeTest ? (
           <><FlaskConical className="w-4 h-4" /> Confirm & Book Free (Test)</>
         ) : (
-          <><CreditCard className="w-4 h-4" /> Confirm & Pay — ${total.toFixed(2)}</>
+          <><CreditCard className="w-4 h-4" /> Fund Secure Payment — ${total.toFixed(2)}</>
         )}
       </Button>
     </div>

@@ -91,55 +91,125 @@ Deno.serve(async (req) => {
 
   if (event.type === 'checkout.session.completed') {
     const session = event.data.object;
-    const bookingId = session.metadata?.booking_id;
-    if (!bookingId) {
-      console.warn('No booking_id in session metadata');
+    const taskType = session.metadata?.task_type;
+    const taskId = session.metadata?.task_id || session.metadata?.booking_id;
+    const paymentIntentId = session.payment_intent;
+    
+    if (!taskId) {
+      console.warn('No task_id in session metadata');
       return Response.json({ received: true });
     }
 
     try {
       const base44 = createClientFromRequest(req);
-      // Mark as paid but keep status pending — avatar must still accept/decline
-      await base44.asServiceRole.entities.Booking.update(bookingId, {
-        payment_status: 'paid',
-        status: 'pending',
-      });
+      
+      const updateData = {
+        payment_status: 'held',
+        stripe_payment_intent_id: paymentIntentId
+      };
 
-      // Auto-create conversation if none exists
-      const convos = await base44.asServiceRole.entities.Conversation.filter({ booking_id: bookingId });
-      if (convos.length === 0) {
-        const bookings = await base44.asServiceRole.entities.Booking.filter({ id: bookingId });
-        const booking = bookings[0];
-        if (booking) {
-          await base44.asServiceRole.entities.Conversation.create({
-            participant_emails: [booking.client_email, booking.avatar_email],
-            participant_names: [booking.client_name, booking.avatar_name],
-            booking_id: bookingId,
-            last_message: 'Booking confirmed and paid. Say hello!',
-            last_message_at: new Date().toISOString(),
-            last_message_by: 'system',
-            unread_by: [booking.client_email, booking.avatar_email],
-          });
+      let clientEmail = '';
+      let avatarEmail = '';
+
+      if (taskType === 'job') {
+        const jobs = await base44.asServiceRole.entities.JobPost.filter({ id: taskId });
+        if (jobs.length > 0 && jobs[0].payment_status !== 'held') {
+          await base44.asServiceRole.entities.JobPost.update(taskId, updateData);
+          clientEmail = jobs[0].posted_by_email;
+          avatarEmail = jobs[0].assigned_to_email;
+        }
+      } else {
+        // Default to booking
+        const bookings = await base44.asServiceRole.entities.Booking.filter({ id: taskId });
+        if (bookings.length > 0 && bookings[0].payment_status !== 'held') {
+          await base44.asServiceRole.entities.Booking.update(taskId, updateData);
+          clientEmail = bookings[0].client_email;
+          avatarEmail = bookings[0].avatar_email;
+          
+          // Auto-create conversation if none exists
+          const convos = await base44.asServiceRole.entities.Conversation.filter({ booking_id: taskId });
+          if (convos.length === 0) {
+            await base44.asServiceRole.entities.Conversation.create({
+              participant_emails: [clientEmail, avatarEmail],
+              participant_names: [bookings[0].client_name, bookings[0].avatar_name],
+              booking_id: taskId,
+              last_message: 'Secure Payment Held. Say hello!',
+              last_message_at: new Date().toISOString(),
+              last_message_by: 'system',
+              unread_by: [clientEmail, avatarEmail],
+            });
+          }
         }
       }
 
-      // Notify avatar to accept or decline the paid booking
-      const bookingList = await base44.asServiceRole.entities.Booking.filter({ id: bookingId });
-      const booking = bookingList[0];
-      if (booking) {
+      if (clientEmail) {
         await base44.asServiceRole.entities.Notification.create({
-          user_email: booking.avatar_email,
-          title: 'New Booking Request — Payment Received!',
-          message: `${booking.client_name} has paid for a ${booking.category} booking. Please accept or decline in your requests.`,
-          type: 'booking_request',
-          link: '/AvatarRequests',
-          reference_id: bookingId,
+          user_email: clientEmail,
+          title: 'Secure Payment Held',
+          message: 'Your payment was successful and is securely held until task approval.',
+          type: 'payment'
+        });
+      }
+      
+      if (avatarEmail) {
+        await base44.asServiceRole.entities.Notification.create({
+          user_email: avatarEmail,
+          title: 'Secure Payment Held',
+          message: 'The client has securely funded the task. It is safe to proceed.',
+          type: 'payment'
         });
       }
 
-      console.log(`Booking ${bookingId} marked as paid, awaiting avatar acceptance`);
+      console.log(`Task ${taskId} marked as held.`);
     } catch (err) {
-      console.error('Failed to update booking after payment:', err.message);
+      console.error('Failed to update task after checkout completion:', err.message);
+    }
+  }
+
+  if (event.type === 'payment_intent.payment_failed' || event.type === 'checkout.session.async_payment_failed') {
+    // Handle failed payments
+  }
+
+  if (event.type === 'charge.refunded') {
+    const charge = event.data.object;
+    const paymentIntentId = charge.payment_intent;
+    if (paymentIntentId) {
+      try {
+        const base44 = createClientFromRequest(req);
+        // Find booking or job with this payment intent
+        const bookings = await base44.asServiceRole.entities.Booking.filter({ stripe_payment_intent_id: paymentIntentId });
+        if (bookings.length > 0) {
+          await base44.asServiceRole.entities.Booking.update(bookings[0].id, { payment_status: 'refunded' });
+        } else {
+          const jobs = await base44.asServiceRole.entities.JobPost.filter({ stripe_payment_intent_id: paymentIntentId });
+          if (jobs.length > 0) {
+            await base44.asServiceRole.entities.JobPost.update(jobs[0].id, { payment_status: 'refunded' });
+          }
+        }
+      } catch(err) {
+        console.error('Failed to process refund:', err.message);
+      }
+    }
+  }
+
+  if (event.type === 'charge.dispute.created') {
+    const charge = event.data.object;
+    const paymentIntentId = charge.payment_intent;
+    if (paymentIntentId) {
+      try {
+        const base44 = createClientFromRequest(req);
+        const bookings = await base44.asServiceRole.entities.Booking.filter({ stripe_payment_intent_id: paymentIntentId });
+        if (bookings.length > 0) {
+          await base44.asServiceRole.entities.Booking.update(bookings[0].id, { payment_status: 'disputed' });
+        } else {
+          const jobs = await base44.asServiceRole.entities.JobPost.filter({ stripe_payment_intent_id: paymentIntentId });
+          if (jobs.length > 0) {
+            await base44.asServiceRole.entities.JobPost.update(jobs[0].id, { payment_status: 'disputed' });
+          }
+        }
+      } catch(err) {
+        console.error('Failed to process dispute:', err.message);
+      }
     }
   }
 

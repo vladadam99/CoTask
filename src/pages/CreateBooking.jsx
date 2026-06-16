@@ -149,15 +149,13 @@ Based on this, return:
         return;
       }
 
-      const res = await base44.functions.invoke('createCheckout', {
-        bookingId: booking.id,
-        amount: total,
-        avatarName: avatar?.display_name,
-        category: form.category,
+      const res = await base44.functions.invoke('createTaskCheckout', {
+        task_type: 'booking',
+        task_id: booking.id,
       });
 
-      if (res.data?.url) {
-        window.location.href = res.data.url;
+      if (res.data?.checkout_url) {
+        window.location.href = res.data.checkout_url;
       } else {
         throw new Error(res.data?.error || 'Failed to create checkout');
       }
