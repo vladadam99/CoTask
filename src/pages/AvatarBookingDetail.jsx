@@ -87,7 +87,10 @@ export default function AvatarBookingDetail() {
 
         <div className="flex items-center justify-between mb-6">
           <h1 className="text-2xl font-bold">Task Details</h1>
-          <StatusBadge status={booking.status} />
+          <div className="flex items-center gap-2">
+            <span className="text-xs font-medium px-2.5 py-1 rounded-md bg-secondary text-secondary-foreground border border-border">Direct Hire Request</span>
+            <StatusBadge status={booking.status} />
+          </div>
         </div>
 
         <div className="space-y-4">
@@ -196,7 +199,7 @@ export default function AvatarBookingDetail() {
                   </p>
                 </div>
                 <Button size="sm" className="bg-primary gap-2" onClick={() => navigate(`/LiveStreamStudio?booking=${booking.id}`)}>
-                  <Video className="w-3.5 h-3.5" /> Open Studio
+                  <Video className="w-3.5 h-3.5" /> Start Live Session
                 </Button>
               </div>
             </GlassCard>

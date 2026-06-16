@@ -23,11 +23,11 @@ export default function SimulatedPaymentModal({ job, onSuccess, onCancel }) {
     <div className="glass rounded-2xl p-6 border border-primary/20 space-y-4">
       <div className="flex items-center gap-2">
         <Coins className="w-5 h-5 text-yellow-400" />
-        <h3 className="font-bold text-base">Test Mode — Simulated Payment</h3>
+        <h3 className="font-bold text-base">Test Secure Payment Flow</h3>
       </div>
 
       <div className="bg-yellow-500/10 border border-yellow-500/20 rounded-xl p-4 text-sm text-yellow-300 space-y-1">
-        <p className="font-semibold">🧪 This is fake money for testing</p>
+        <p className="font-semibold">🧪 This is a simulated payment for testing</p>
         <p className="text-xs text-muted-foreground">No real card is required. The system will simulate holding <span className="font-semibold text-foreground">${amount}</span> in secure payment.</p>
       </div>
 

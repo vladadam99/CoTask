@@ -153,7 +153,7 @@ export default function JobActionCard({ job, user, userRole, conversationId, onJ
       }
       await Promise.all([
         base44.functions.invoke('updateJobProgress', { jobId: job.id, action: 'complete' }),
-        postSystemMessage(`🎉 Client confirmed satisfaction! Job is complete and payment released to ${job.winner_email}. Thank you both!`, {
+        postSystemMessage(`🎉 Client confirmed satisfaction! Task is complete and secure payment released to ${job.winner_email}. Thank you both!`, {
           notifyTitle: '💰 Payment Released!',
           notifyMessage: `${user.full_name} is satisfied with your work. Payment released!`,
           notifyType: 'payment',
@@ -384,7 +384,7 @@ export default function JobActionCard({ job, user, userRole, conversationId, onJ
               onClick={() => setShowProofForm(true)}
               className="text-xs text-muted-foreground hover:text-foreground border border-white/10 hover:border-primary/30 px-4 py-2 rounded-full transition-all gap-2 flex items-center"
             >
-              <CheckCircle className="w-3.5 h-3.5" /> Mark Job as Done
+              <CheckCircle className="w-3.5 h-3.5" /> Mark Ready for Review
             </button>
           </div>
         );
@@ -421,7 +421,7 @@ export default function JobActionCard({ job, user, userRole, conversationId, onJ
           <textarea value={proofNote} onChange={e => setProofNote(e.target.value)} rows={2} placeholder="Optional note about the completed work…"
             className="w-full text-sm bg-muted/50 border border-white/5 rounded-xl px-3 py-2 focus:outline-none focus:border-primary/40 text-foreground placeholder:text-muted-foreground resize-none" />
           <Button className="w-full gap-2" onClick={handleJobDone} disabled={!proofFile || loading}>
-            {loading ? <><Loader2 className="w-4 h-4 animate-spin" /> Uploading…</> : <><CheckCircle className="w-4 h-4" /> Submit Proof & Mark Done</>}
+            {loading ? <><Loader2 className="w-4 h-4 animate-spin" /> Uploading…</> : <><CheckCircle className="w-4 h-4" /> Submit Proof & Mark Ready for Review</>}
           </Button>
         </div>
       );
@@ -454,7 +454,7 @@ export default function JobActionCard({ job, user, userRole, conversationId, onJ
           {!showDisputeForm ? (
             <div className="flex gap-2">
               <Button className="flex-1 gap-1.5 bg-green-600 hover:bg-green-700 text-white" onClick={handleSatisfied} disabled={loading}>
-                {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <><CheckCircle className="w-4 h-4" /> Satisfied — Release Payment</>}
+                {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <><CheckCircle className="w-4 h-4" /> Approve Completion</>}
               </Button>
               <Button variant="outline" className="flex-1 gap-1.5 border-red-500/30 text-red-400 hover:bg-red-500/10" onClick={() => setShowDisputeForm(true)} disabled={loading}>
                 <XCircle className="w-4 h-4" /> Not Satisfied

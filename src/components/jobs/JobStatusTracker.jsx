@@ -76,7 +76,7 @@ export default function JobStatusTracker({ job, user, conversationId, onJobUpdat
       <div className="px-4 py-3 border-b border-white/5 flex items-center justify-between">
         <div className="flex items-center gap-2">
           <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
-          <span className="text-xs font-semibold text-green-400">Job Live — Update Your Status</span>
+          <span className="text-xs font-semibold text-green-400">Task Live — Update Your Status</span>
         </div>
         {current && (
           <span className={`text-xs px-2 py-0.5 rounded-full border ${current.bg} ${current.color} font-medium`}>

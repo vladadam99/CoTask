@@ -132,8 +132,11 @@ export default function UserBookingDetail() {
         )}
 
         <div className="flex items-center justify-between mb-6">
-          <h1 className="text-2xl font-bold">Booking Details</h1>
-          <StatusBadge status={booking.status} />
+          <h1 className="text-2xl font-bold">Task Details</h1>
+          <div className="flex items-center gap-2">
+            <span className="text-xs font-medium px-2.5 py-1 rounded-md bg-secondary text-secondary-foreground border border-border">Direct Hire</span>
+            <StatusBadge status={booking.status} />
+          </div>
         </div>
 
         <div className="space-y-4">
@@ -154,7 +157,7 @@ export default function UserBookingDetail() {
               <div className="flex items-center gap-2 text-muted-foreground">
                 <User className="w-4 h-4" />
                 <div>
-                  <p className="text-xs text-muted-foreground">Avatar</p>
+                  <p className="text-xs text-muted-foreground">Local Agent</p>
                   <p className="text-foreground font-medium">{booking.avatar_name}</p>
                 </div>
               </div>
@@ -221,7 +224,7 @@ export default function UserBookingDetail() {
           )}
 
           <GlassCard className="p-6">
-            <h3 className="font-semibold mb-3 flex items-center gap-2"><DollarSign className="w-4 h-4 text-primary" /> Payment</h3>
+            <h3 className="font-semibold mb-3 flex items-center gap-2"><DollarSign className="w-4 h-4 text-primary" /> Secure Payment</h3>
             <div className="space-y-2 text-sm">
               <div className="flex justify-between"><span className="text-muted-foreground">Service</span><span>${booking.amount?.toFixed(2)}</span></div>
               <div className="flex justify-between"><span className="text-muted-foreground">Platform fee (10%)</span><span>${booking.service_fee?.toFixed(2)}</span></div>
@@ -253,8 +256,8 @@ export default function UserBookingDetail() {
 
           {booking.proof_url && (
             <GlassCard className="p-5">
-              <h3 className="font-semibold text-sm mb-3 flex items-center gap-2"><Camera className="w-4 h-4 text-primary" /> Job Completion Proof</h3>
-              <img src={booking.proof_url} alt="Job proof" className="w-full max-h-64 object-cover rounded-xl border border-white/10 mb-2" />
+              <h3 className="font-semibold text-sm mb-3 flex items-center gap-2"><Camera className="w-4 h-4 text-primary" /> Task Completion Proof</h3>
+              <img src={booking.proof_url} alt="Task proof" className="w-full max-h-64 object-cover rounded-xl border border-white/10 mb-2" />
               {booking.proof_note && <p className="text-xs text-muted-foreground">"{booking.proof_note}"</p>}
             </GlassCard>
           )}
@@ -268,7 +271,7 @@ export default function UserBookingDetail() {
           />
 
           <div className="flex flex-wrap gap-3">
-            {canCancel && <Button variant="outline" className="border-white/10 flex-1" onClick={() => updateStatus.mutate('cancelled')}>Cancel Booking</Button>}
+            {canCancel && <Button variant="outline" className="border-white/10 flex-1" onClick={() => updateStatus.mutate('cancelled')}>Cancel Task</Button>}
 
             {needsPayment && (
               <Button
@@ -276,7 +279,7 @@ export default function UserBookingDetail() {
                 onClick={handlePay}
                 disabled={checkoutLoading}
               >
-                {checkoutLoading ? <><Loader2 className="w-4 h-4 animate-spin" /> Redirecting…</> : <><CreditCard className="w-4 h-4" /> Pay Now — ${booking.total_amount?.toFixed(2)}</>}
+                {checkoutLoading ? <><Loader2 className="w-4 h-4 animate-spin" /> Redirecting…</> : <><CreditCard className="w-4 h-4" /> Fund Secure Payment — ${booking.total_amount?.toFixed(2)}</>}
               </Button>
             )}
 

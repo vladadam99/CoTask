@@ -162,13 +162,13 @@ export default function JobApprovalFlow({ booking, user, onUpdate }) {
       <p className="text-xs text-muted-foreground mb-4">The agent has submitted their proof of completion. Choose how to proceed — your funds are safely held until you decide.</p>
       <div className="grid grid-cols-1 gap-2">
         <Button className="w-full bg-green-600 hover:bg-green-700 gap-2" onClick={() => setMode('approve')}>
-          <CheckCircle className="w-4 h-4" /> Happy — Release Full Payment
+          <CheckCircle className="w-4 h-4" /> Approve Completion
         </Button>
         <Button className="w-full bg-yellow-600 hover:bg-yellow-700 gap-2" onClick={() => setMode('partial')}>
-          <DollarSign className="w-4 h-4" /> Not Fully Satisfied — Pay Partially
+          <DollarSign className="w-4 h-4" /> Offer Partial Payment
         </Button>
         <Button className="w-full bg-red-600/80 hover:bg-red-600 gap-2" onClick={() => setMode('dispute')}>
-          <AlertTriangle className="w-4 h-4" /> Not Happy — Raise a Dispute
+          <AlertTriangle className="w-4 h-4" /> Raise a Dispute
         </Button>
       </div>
     </GlassCard>

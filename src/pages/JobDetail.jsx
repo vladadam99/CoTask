@@ -187,7 +187,7 @@ export default function JobDetail() {
 
   if (!job) return (
     <AppShell navItems={getNavItems(user?.role)} user={user}>
-      <div className="text-center py-20 text-muted-foreground">Task not found.</div>
+      <div className="flex items-center justify-center h-64 text-muted-foreground">Task not found.</div>
     </AppShell>
   );
 
@@ -228,6 +228,7 @@ export default function JobDetail() {
             <div>
               <div className="flex items-center gap-2 flex-wrap mb-1">
                 <h1 className="text-xl font-bold">{job.title}</h1>
+                <Badge variant="outline" className="text-xs font-medium px-2.5 py-1 rounded-md bg-secondary text-secondary-foreground border-border">Open Task</Badge>
                 <StatusBadge status={job.status} />
                 {job.camera_required && <Badge variant="outline" className="text-xs bg-primary/10 text-primary border-primary/20">📷 Camera Required</Badge>}
               </div>
@@ -314,16 +315,16 @@ export default function JobDetail() {
             <div>
               <p className="text-sm font-semibold text-yellow-400">
                 {job.stripe_payment_intent_id?.startsWith('sim_') ? '🧪 ' : '💰 '}
-                ${job.escrow_amount} held in secure payment{job.stripe_payment_intent_id?.startsWith('sim_') ? ' (simulated)' : ''}
+                ${job.escrow_amount} Secure Payment Held{job.stripe_payment_intent_id?.startsWith('sim_') ? ' (Test Flow)' : ''}
               </p>
-              <p className="text-xs text-muted-foreground">Funds will be released to the agent once you approve their work, or automatically after 24 hours.</p>
+              <p className="text-xs text-muted-foreground">Funds will be paid to the Local Agent once you approve their work, or automatically after 24 hours.</p>
             </div>
           </div>
         )}
         {job.escrow_status === 'captured' && (
           <div className="glass rounded-2xl p-3 border border-green-500/20 flex items-center gap-2">
             <CheckCircle className="w-4 h-4 text-green-400" />
-            <p className="text-xs text-green-400">Payment of ${job.escrow_amount} released to the agent.</p>
+            <p className="text-xs text-green-400">Secure Payment of ${job.escrow_amount} paid to the Local Agent.</p>
           </div>
         )}
 
@@ -483,7 +484,7 @@ export default function JobDetail() {
                           <div className="flex items-center gap-2 text-xs text-muted-foreground">
                             <span className="capitalize">{app.applicant_type}</span>
                             {profile?.rating > 0 && <span className="flex items-center gap-0.5"><Star className="w-3 h-3 text-yellow-400" />{profile.rating.toFixed(1)}</span>}
-                            {profile?.completed_jobs > 0 && <span>{profile.completed_jobs} jobs done</span>}
+                            {profile?.completed_jobs > 0 && <span>{profile.completed_jobs} tasks done</span>}
                           </div>
                         </div>
                         <StatusBadge status={app.status} />
