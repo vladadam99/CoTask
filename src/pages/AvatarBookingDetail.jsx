@@ -237,18 +237,18 @@ export default function AvatarBookingDetail() {
             )}
             {canStart && (
               <Button className="bg-primary hover:bg-primary/90 flex-1" onClick={() => navigate(`/LiveStreamStudio?booking=${booking.id}`)}>
-                Start Stream
+                Start Live Session
               </Button>
             )}
             {canComplete && (
               <Button className="bg-green-600 hover:bg-green-700 flex-1" onClick={() => updateStatus.mutate('completed')}>
-                Mark Complete
+                Mark Ready for Review
               </Button>
             )}
 
             <Link to={convId ? `/AvatarMessages?conv=${convId}` : '/AvatarMessages'} className="flex-1">
               <Button variant="outline" className="w-full border-white/10 gap-2">
-                <MessageSquare className="w-4 h-4" /> Message Client
+                <MessageSquare className="w-4 h-4" /> Open Messages
               </Button>
             </Link>
           </div>

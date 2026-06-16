@@ -75,7 +75,7 @@ export default function AvatarLive() {
       <div className="flex items-start justify-between mb-8">
         <div>
           <h1 className="text-2xl lg:text-3xl font-bold mb-1">Live Sessions</h1>
-          <p className="text-muted-foreground text-sm">Manage and start your live avatar sessions</p>
+          <p className="text-muted-foreground text-sm">Manage and start your live sessions</p>
         </div>
         <div className="flex items-center gap-2">
           <Link to="/RecordingLibrary">

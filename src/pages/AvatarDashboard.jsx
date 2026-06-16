@@ -78,15 +78,16 @@ export default function AvatarDashboard() {
   const firstName = (user?.legal_name || user?.full_name)?.split(' ')[0] || 'Agent';
 
   return (
-    <AppShell navItems={getNavItems(user?.selected_role)} user={user}>
+    <AppShell navItems={getNavItems(user?.selected_role)} user={user} title="Agent Dashboard">
       {/* Header */}
       <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="flex items-center justify-between mb-8">
         <div>
           <h1 className="text-2xl lg:text-3xl font-black mb-1">Hey, {firstName} 👋</h1>
+          <p className="text-sm text-muted-foreground mb-2">Manage your tasks, live sessions, proposals, verification, and earnings.</p>
           <div className="flex items-center gap-2 text-sm">
             <span className={`w-2 h-2 rounded-full ${profile?.is_available ? 'bg-green-400 animate-pulse' : 'bg-muted-foreground'}`} />
             <span className="text-muted-foreground">
-              {profile?.is_available ? 'Available for jobs' : 'Currently offline'}
+              {profile?.is_available ? 'Available for tasks' : 'Currently offline'}
             </span>
           </div>
         </div>
@@ -129,10 +130,10 @@ export default function AvatarDashboard() {
       {/* Stats Grid */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-8">
         {[
-          { label: 'Pending', value: pendingBookings.length, icon: Clock, color: 'text-yellow-400', bg: 'bg-yellow-500/10', path: '/AvatarRequests' },
-          { label: 'Upcoming', value: upcomingBookings.length, icon: Calendar, color: 'text-blue-400', bg: 'bg-blue-500/10', path: '/AvatarRequests' },
+          { label: 'Requests', value: pendingBookings.length, icon: Clock, color: 'text-yellow-400', bg: 'bg-yellow-500/10', path: '/AvatarRequests' },
+          { label: 'Accepted', value: upcomingBookings.length, icon: Calendar, color: 'text-blue-400', bg: 'bg-blue-500/10', path: '/AvatarRequests' },
           { label: 'Completed', value: completedCount, icon: CheckCircle, color: 'text-green-400', bg: 'bg-green-500/10', path: '/AvatarRequests' },
-          { label: 'Earnings', value: `$${profile?.total_earnings || 0}`, icon: TrendingUp, color: 'text-primary', bg: 'bg-primary/10', path: '/Profile' },
+          { label: 'Earnings', value: `$${profile?.total_earnings || 0}`, icon: TrendingUp, color: 'text-primary', bg: 'bg-primary/10', path: '/AvatarWallet' },
         ].map((stat, i) => (
           <Link key={stat.label} to={stat.path}>
             <motion.div
@@ -169,7 +170,7 @@ export default function AvatarDashboard() {
           className="flex items-center gap-3 glass border border-primary/20 hover:border-primary/40 rounded-2xl px-4 py-4 transition-all text-left"
         >
           <PlusCircle className="w-4 h-4 text-primary flex-shrink-0" />
-          <span className="text-sm font-semibold text-primary">New Post</span>
+          <span className="text-sm font-semibold text-primary">New Portfolio Video</span>
         </button>
         <Link to="/RecordingLibrary"
           className="flex items-center gap-3 glass border border-border hover:border-border rounded-2xl px-4 py-4 transition-all"
@@ -183,7 +184,7 @@ export default function AvatarDashboard() {
       {pendingBookings.length > 0 && (
         <div className="mb-8">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-base font-bold">Pending Requests</h2>
+            <h2 className="text-base font-bold">Direct Hire Requests</h2>
             <Link to="/AvatarRequests" className="text-sm text-primary hover:underline flex items-center gap-1">
               See all <ArrowRight className="w-3 h-3" />
             </Link>

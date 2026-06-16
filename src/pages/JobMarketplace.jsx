@@ -50,15 +50,15 @@ export default function JobMarketplace() {
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold">Job Marketplace</h1>
+            <h1 className="text-2xl font-bold">Job Board</h1>
             <p className="text-muted-foreground text-sm mt-1">
-              {canApply ? 'Browse and apply for jobs posted by clients' : 'Post jobs and find the perfect avatar'}
+              {canApply ? 'Find Open Tasks from clients looking for Local Agents.' : 'Post tasks and find the perfect Local Agent.'}
             </p>
           </div>
           {canPost && (
             <Link to="/PostJob">
               <Button className="gap-2">
-                <Plus className="w-4 h-4" /> Post a Job
+                <Plus className="w-4 h-4" /> Post a Task
               </Button>
             </Link>
           )}
@@ -70,7 +70,7 @@ export default function JobMarketplace() {
             items={jobs}
             itemSummaryFn={jobSummaryFn}
             onResults={setAiMatchedIds}
-            placeholder="Search jobs, tasks, skills... (AI-powered)"
+            placeholder="Search tasks, skills... (AI-powered)"
             suggestions={CATEGORIES.filter(c => c !== 'All')}
           />
           <div className="flex gap-2 overflow-x-auto pb-1">
@@ -86,17 +86,17 @@ export default function JobMarketplace() {
           <div className="flex gap-2">
             <button onClick={() => setShowOpen(true)}
               className={`text-xs px-3 py-1.5 rounded-full transition-all ${showOpen ? 'bg-green-500/20 text-green-400 border border-green-500/20' : 'bg-secondary text-muted-foreground border border-border'}`}>
-              Open Jobs
+              Open Tasks
             </button>
             <button onClick={() => setShowOpen(false)}
               className={`text-xs px-3 py-1.5 rounded-full transition-all ${!showOpen ? 'bg-white/20 text-foreground border border-white/20' : 'bg-secondary text-muted-foreground border border-border'}`}>
-              All Jobs
+              All Tasks
             </button>
           </div>
         </div>
 
         {/* Job Count */}
-        <p className="text-sm text-muted-foreground">{isLoading ? 'Loading...' : `${sortedFiltered.length} job${sortedFiltered.length !== 1 ? 's' : ''} found`}</p>
+        <p className="text-sm text-muted-foreground">{isLoading ? 'Loading...' : `${sortedFiltered.length} task${sortedFiltered.length !== 1 ? 's' : ''} found`}</p>
 
         {/* Job Cards */}
         {isLoading ? (
@@ -112,7 +112,7 @@ export default function JobMarketplace() {
             <p className="text-sm text-muted-foreground mb-6 max-w-sm">There are no open tasks matching your criteria right now. Check back later or adjust your filters.</p>
             {canPost && (
               <Link to="/PostJob" className="inline-block mt-4">
-                <Button size="sm">Post the first job</Button>
+                <Button size="sm">Post the first task</Button>
               </Link>
             )}
           </div>
@@ -136,7 +136,7 @@ export default function JobMarketplace() {
                       <p className="text-xs text-muted-foreground">Posted by {job.posted_by_name}</p>
                     </div>
                     <Badge variant="outline" className="text-xs bg-secondary border-border text-muted-foreground flex-shrink-0">
-                      <Users className="w-3 h-3 mr-1" />{job.application_count || 0} applicant{job.application_count !== 1 ? 's' : ''}
+                      <Users className="w-3 h-3 mr-1" />{job.application_count || 0} proposal{job.application_count !== 1 ? 's' : ''}
                     </Badge>
                   </div>
 

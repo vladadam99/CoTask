@@ -23,7 +23,7 @@ function downloadInvoice(job, userEmail, userName, role) {
   doc.setFontSize(10); doc.setFont('helvetica', 'normal');
   doc.text(`Invoice #: ${invoiceNo}`, 20, 38);
   doc.text(`Date: ${date}`, 20, 45);
-  doc.text(`Role: ${role === 'avatar' ? 'Avatar (Worker)' : 'Client'}`, 20, 52);
+  doc.text(`Role: ${role === 'avatar' ? 'Local Agent' : 'Client'}`, 20, 52);
   doc.text(`Name: ${userName}`, 20, 59);
   doc.text(`Email: ${userEmail}`, 20, 66);
 
@@ -116,7 +116,7 @@ export default function AvatarWallet() {
         <div className="flex items-center justify-between flex-wrap gap-3">
           <div>
             <h1 className="text-2xl lg:text-3xl font-bold mb-1 flex items-center gap-2"><Wallet className="w-7 h-7 text-primary" /> Earnings</h1>
-            <p className="text-muted-foreground text-sm">Your earnings overview and payment history</p>
+            <p className="text-muted-foreground text-sm">Track completed tasks, pending secure payments, and payout settings.</p>
           </div>
           <button onClick={() => setShowWithdraw(true)} className="flex items-center gap-2 bg-primary text-primary-foreground px-4 py-2 rounded-xl text-sm font-medium hover:bg-primary/90 transition-colors">
             <ArrowUpRight className="w-4 h-4" /> Withdraw
@@ -129,7 +129,7 @@ export default function AvatarWallet() {
         <GlassCard className="p-5">
           <div className="flex items-center gap-3 mb-2">
             <div className="w-9 h-9 rounded-xl bg-green-500/10 flex items-center justify-center"><DollarSign className="w-5 h-5 text-green-400" /></div>
-            <span className="text-sm text-muted-foreground">Available Balance</span>
+            <span className="text-sm text-muted-foreground">Available Earnings</span>
           </div>
           <p className="text-2xl font-bold text-green-400">${totalNet.toFixed(2)}</p>
           <p className="text-xs text-muted-foreground mt-1">After 10% platform fee</p>
@@ -137,7 +137,7 @@ export default function AvatarWallet() {
         <GlassCard className="p-5">
           <div className="flex items-center gap-3 mb-2">
             <div className="w-9 h-9 rounded-xl bg-yellow-500/10 flex items-center justify-center"><Clock className="w-5 h-5 text-yellow-400" /></div>
-            <span className="text-sm text-muted-foreground">Pending</span>
+            <span className="text-sm text-muted-foreground">Pending Secure Payments</span>
           </div>
           <p className="text-2xl font-bold text-yellow-400">${pendingAmount.toFixed(2)}</p>
           <p className="text-xs text-muted-foreground mt-1">{pendingJobs.length} task{pendingJobs.length !== 1 ? 's' : ''} in progress</p>

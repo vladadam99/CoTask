@@ -20,10 +20,10 @@ import { useToast } from '@/components/ui/use-toast';
 
 
 const TABS = [
-  { key: 'accepted', label: 'Accepted', icon: CheckCircle },
-  { key: 'pending', label: 'Pending', icon: Clock },
+  { key: 'accepted', label: 'Accepted Tasks', icon: CheckCircle },
+  { key: 'pending', label: 'Direct Hire Requests', icon: Clock },
   { key: 'declined', label: 'Declined', icon: XCircle },
-  { key: 'jobs', label: 'My Jobs', icon: Briefcase },
+  { key: 'jobs', label: 'Open Task Proposals', icon: Briefcase },
   { key: 'all', label: 'All', icon: Inbox },
 ];
 
@@ -110,7 +110,7 @@ export default function AvatarRequests() {
   return (
     <AppShell navItems={getNavItems(user?.selected_role)} user={user}>
       <div className="mb-8">
-        <h1 className="text-2xl lg:text-3xl font-bold mb-1">Task Requests</h1>
+        <h1 className="text-2xl lg:text-3xl font-bold mb-1">My Schedule</h1>
         <p className="text-muted-foreground text-sm">
           {pendingCount > 0 ? `You have ${pendingCount} pending request${pendingCount > 1 ? 's' : ''}` : 'No pending requests right now'}
         </p>
@@ -153,7 +153,12 @@ export default function AvatarRequests() {
             <Inbox className="w-8 h-8 text-muted-foreground" />
           </div>
           <h3 className="text-xl font-bold mb-2">No tasks found</h3>
-          <p className="text-sm text-muted-foreground">No {activeTab === 'jobs' ? 'won tasks' : activeTab === 'all' ? 'tasks' : activeTab} found for this filter.</p>
+          <p className="text-sm text-muted-foreground mb-4">No {activeTab === 'jobs' ? 'won tasks' : activeTab === 'all' ? 'tasks' : activeTab} found for this filter.</p>
+          {activeTab === 'pending' && (
+            <Link to="/JobMarketplace">
+              <Button size="sm" variant="outline">Browse Job Board</Button>
+            </Link>
+          )}
         </GlassCard>
       ) : (
         <div className="space-y-3">

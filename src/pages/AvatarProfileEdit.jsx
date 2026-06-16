@@ -208,7 +208,7 @@ export default function AvatarProfileEdit() {
     return (
       <AppShell navItems={getNavItems(user?.selected_role || user?.role)} user={user}>
         <GlassCard className="p-10 text-center max-w-md mx-auto mt-20">
-          <p className="text-muted-foreground text-sm">No avatar profile found. Complete onboarding first.</p>
+          <p className="text-muted-foreground text-sm">No agent profile found. Complete onboarding first.</p>
         </GlassCard>
       </AppShell>
     );
@@ -507,11 +507,11 @@ export default function AvatarProfileEdit() {
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-2">
                 <Grid className="w-4 h-4 text-primary" />
-                <h3 className="font-semibold text-sm">My Posts</h3>
+                <h3 className="font-semibold text-sm">Portfolio Media</h3>
                 <span className="text-xs text-muted-foreground">({myPosts.length})</span>
               </div>
               <Button size="sm" onClick={() => setShowUpload(true)} className="gap-1.5 h-8">
-                <Plus className="w-3.5 h-3.5" /> New Post
+                <Plus className="w-3.5 h-3.5" /> New Portfolio Item
               </Button>
             </div>
             {myPosts.length === 0 ? (
@@ -519,8 +519,8 @@ export default function AvatarProfileEdit() {
                 <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mx-auto">
                   <Camera className="w-8 h-8 text-primary" />
                 </div>
-                <p className="text-sm text-muted-foreground">No posts yet. Share your work!</p>
-                <Button size="sm" variant="outline" className="border-white/10" onClick={() => setShowUpload(true)}>Upload first post</Button>
+                <p className="text-sm text-muted-foreground">No portfolio media yet. Share your work!</p>
+                <Button size="sm" variant="outline" className="border-white/10" onClick={() => setShowUpload(true)}>Upload first portfolio item</Button>
               </div>
             ) : (
               <div className="grid grid-cols-3 gap-2">
@@ -573,8 +573,8 @@ export default function AvatarProfileEdit() {
       {deleteConfirm && (
         <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
           <div className="bg-card rounded-2xl p-6 max-w-sm w-full border border-white/10">
-            <h3 className="text-lg font-bold mb-2">Delete Post?</h3>
-            <p className="text-sm text-muted-foreground mb-6">Are you sure you want to delete this post? This action cannot be undone.</p>
+            <h3 className="text-lg font-bold mb-2">Delete Media?</h3>
+            <p className="text-sm text-muted-foreground mb-6">Are you sure you want to delete this media? This action cannot be undone.</p>
             <div className="flex gap-3">
               <Button variant="outline" className="flex-1 border-white/10" onClick={() => setDeleteConfirm(null)}>
                 Cancel

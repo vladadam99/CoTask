@@ -187,7 +187,7 @@ export default function JobDetail() {
 
   if (!job) return (
     <AppShell navItems={getNavItems(user?.role)} user={user}>
-      <div className="text-center py-20 text-muted-foreground">Job not found.</div>
+      <div className="text-center py-20 text-muted-foreground">Task not found.</div>
     </AppShell>
   );
 
@@ -235,7 +235,7 @@ export default function JobDetail() {
             </div>
             {showOwnerControls && job.status === 'open' && (
               <Badge variant="outline" className="text-xs bg-yellow-500/10 text-yellow-400 border-yellow-500/20">
-                {job.application_count || 0} applicant{job.application_count !== 1 ? 's' : ''}
+                {job.application_count || 0} proposal{job.application_count !== 1 ? 's' : ''}
               </Badge>
             )}
           </div>
@@ -330,7 +330,7 @@ export default function JobDetail() {
         {/* Edit Form */}
         {showEditForm && (
           <div className="glass rounded-2xl p-6 border border-primary/20 space-y-4">
-            <h3 className="font-bold">Edit Task Post</h3>
+            <h3 className="font-bold">Edit Open Task</h3>
             <div>
               <label className="text-sm font-medium mb-1.5 block">Title</label>
               <input value={editForm.title} onChange={e => setEditForm(p => ({ ...p, title: e.target.value }))}
@@ -385,7 +385,7 @@ export default function JobDetail() {
                 : myApplication.status === 'rejected' ? <XCircle className="w-5 h-5 text-red-400" />
                 : <Clock className="w-5 h-5 text-yellow-400" />}
               <div>
-                <p className="font-semibold text-sm">Your Application: <span className="capitalize">{myApplication.status}</span></p>
+                <p className="font-semibold text-sm">Your Proposal: <span className="capitalize">{myApplication.status}</span></p>
                 <p className="text-xs text-muted-foreground">{myApplication.cover_message}</p>
               </div>
             </div>
@@ -412,7 +412,7 @@ export default function JobDetail() {
               }
             }}
           >
-            <Send className="w-4 h-4" /> Chat with Client
+            <Send className="w-4 h-4" /> Open Messages
           </Button>
         )}
 
@@ -427,7 +427,7 @@ export default function JobDetail() {
               <ShieldAlert className="w-6 h-6 text-yellow-400 flex-shrink-0" />
               <div className="flex-1 min-w-0">
                 <p className="font-semibold text-sm">Identity Verification Required</p>
-                <p className="text-xs text-muted-foreground">You must verify your identity before applying to jobs.</p>
+                <p className="text-xs text-muted-foreground">You must verify your identity before submitting proposals.</p>
               </div>
               <Button size="sm" onClick={() => navigate('/IdentityVerification')}>Verify</Button>
             </div>
@@ -436,7 +436,7 @@ export default function JobDetail() {
 
         {showApplyForm && (
           <div className="glass rounded-2xl p-6 border border-primary/20 space-y-4">
-            <h3 className="font-bold">Your Application</h3>
+            <h3 className="font-bold">Your Proposal</h3>
             <div>
               <label className="text-sm font-medium mb-1.5 block">Cover Message *</label>
               <textarea
@@ -457,7 +457,7 @@ export default function JobDetail() {
             </div>
             <div className="flex gap-3">
               <Button className="flex-1" onClick={() => applyMutation.mutate()} disabled={applyMutation.isPending || !applyForm.cover_message}>
-                {applyMutation.isPending ? 'Submitting...' : 'Submit Application'}
+                {applyMutation.isPending ? 'Submitting...' : 'Submit Proposal'}
               </Button>
               <Button variant="outline" className="border-border" onClick={() => setShowApplyForm(false)}>Cancel</Button>
             </div>
@@ -467,7 +467,7 @@ export default function JobDetail() {
         {/* Applications List (Owner Only) */}
         {showOwnerControls && applications.length > 0 && (
           <div className="space-y-3">
-            <h2 className="font-bold text-lg">Applications ({applications.length})</h2>
+            <h2 className="font-bold text-lg">Proposals ({applications.length})</h2>
             {applications.map(app => {
               const profile = applicantProfiles.find(p => p?.user_email === app.applicant_email);
               return (
@@ -532,7 +532,7 @@ export default function JobDetail() {
         {/* Open Chat button for assigned participants */}
         {job.status === 'in_progress' && jobConversation && (user?.email === job.posted_by_email || user?.email === job.winner_email) && (
           <Button className="w-full h-11 gap-2" onClick={() => navigate(`/Messages?conversation=${jobConversation.id}`)}>
-            <MessageCircle className="w-4 h-4" /> Go to Messages
+            <MessageCircle className="w-4 h-4" /> Open Messages
           </Button>
         )}
 
@@ -542,8 +542,8 @@ export default function JobDetail() {
             <div className="flex items-center gap-2">
               <Award className="w-5 h-5 text-yellow-400" />
               <div>
-                <p className="font-semibold text-sm text-green-400">Job Assigned</p>
-                <p className="text-xs text-muted-foreground">This job has been assigned to a selected applicant</p>
+                <p className="font-semibold text-sm text-green-400">Task Assigned</p>
+                <p className="text-xs text-muted-foreground">This task has been assigned to a Local Agent</p>
               </div>
             </div>
           </div>
