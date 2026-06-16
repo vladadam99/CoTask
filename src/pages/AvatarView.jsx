@@ -14,7 +14,7 @@ import ExpertiseOfferingsTab from '@/components/expertise/ExpertiseOfferingsTab'
 
 function PostCard({ post }) {
   return (
-    <div className="bg-card rounded-2xl overflow-hidden border border-white/8 mb-3">
+    <div className="bg-card rounded-2xl overflow-hidden border border-border mb-3">
       {post.type === 'video' ? (
         <div className="relative w-full aspect-square bg-black rounded-t-2xl overflow-hidden">
           <video src={post.media_url} className="w-full h-full object-cover" playsInline />
@@ -73,7 +73,7 @@ function PostViewer({ posts, initialIndex, onClose, avatarName, avatarPhoto }) {
       onTouchEnd={handleTouchEnd}
     >
       {/* Header */}
-      <div className="flex items-center gap-3 px-4 py-3 border-b border-white/10">
+      <div className="flex items-center gap-3 px-4 py-3 border-b border-border">
         <button onClick={onClose} className="text-white mr-1">
           <ArrowLeft className="w-5 h-5" />
         </button>
@@ -97,7 +97,7 @@ function PostViewer({ posts, initialIndex, onClose, avatarName, avatarPhoto }) {
         </div>
 
         {/* Actions + caption */}
-        <div className="px-4 py-3 border-t border-white/10">
+        <div className="px-4 py-3 border-t border-border">
           <div className="flex gap-5 mb-2">
             <button onClick={() => setLiked(l => !l)} className="text-2xl transition-transform active:scale-125">
               {liked ? '♥' : '♡'}
@@ -129,7 +129,7 @@ function PostViewer({ posts, initialIndex, onClose, avatarName, avatarPhoto }) {
       </div>
 
       {/* Swipe hint */}
-      <div className="flex justify-center gap-6 py-3 border-t border-white/10">
+      <div className="flex justify-center gap-6 py-3 border-t border-border">
         <button onClick={goPrev} disabled={index === 0} className="text-white/50 disabled:opacity-20 text-sm">↑ Prev</button>
         <button onClick={goNext} disabled={index === posts.length - 1} className="text-white/50 disabled:opacity-20 text-sm">↓ Next</button>
       </div>
@@ -302,16 +302,16 @@ export default function AvatarView() {
 
         {/* Stats Row */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3 px-4 mb-6">
-          <div className="bg-card/50 rounded-xl p-4 text-center border border-white/5">
+          <div className="bg-card/50 rounded-xl p-4 text-center border border-border">
             <p className="text-2xl font-bold text-primary">${avatar.hourly_rate || 0}</p>
             <p className="text-xs text-muted-foreground mt-1">Per Hour</p>
           </div>
-          <div className="bg-card/50 rounded-xl p-4 text-center border border-white/5">
+          <div className="bg-card/50 rounded-xl p-4 text-center border border-border">
             <p className="text-2xl font-bold text-primary">${avatar.per_session_rate || 0}</p>
             <p className="text-xs text-muted-foreground mt-1">Per Session</p>
           </div>
 
-          <div className="bg-card/50 rounded-xl p-4 text-center border border-white/5">
+          <div className="bg-card/50 rounded-xl p-4 text-center border border-border">
             <p className="text-2xl font-bold text-primary">{avatar.rating > 0 ? avatar.rating.toFixed(1) : '—'}</p>
             <p className="text-xs text-muted-foreground mt-1">Rating</p>
           </div>
@@ -324,13 +324,13 @@ export default function AvatarView() {
               <Calendar className="w-4 h-4 mr-2" /> Book Now — ${avatar.hourly_rate || 30}/hr
             </Button>
           </Link>
-          <Button variant="outline" className="border-white/10 py-5 gap-2" onClick={startMessage} disabled={messaging}>
+          <Button variant="outline" className="border-border py-5 gap-2" onClick={startMessage} disabled={messaging}>
             {messaging ? <Loader2 className="w-4 h-4 animate-spin" /> : <MessageSquare className="w-4 h-4" />}
             Message
           </Button>
           <Button
             variant="outline"
-            className="border-white/10 py-5"
+            className="border-border py-5"
             onClick={() => toggleFavorite.mutate()}
             disabled={toggleFavorite.isPending || !user}
           >
@@ -349,7 +349,7 @@ export default function AvatarView() {
               className={`px-5 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all border ${
                 activeTab === tab
                   ? 'bg-primary text-primary-foreground border-primary'
-                  : 'bg-card/50 text-muted-foreground border-white/10 hover:border-white/20 hover:text-foreground'
+                  : 'bg-card/50 text-muted-foreground border-border hover:border-border hover:text-foreground'
               }`}
             >
               {tab}{tab === 'Posts' ? ` (${posts.length})` : tab === 'Reviews' ? ` (${reviews.length})` : tab === 'Expertise' ? ' 🎓' : ''}
@@ -382,7 +382,7 @@ export default function AvatarView() {
               {reviews.length > 0 ? (
                 <div className="space-y-4">
                   {reviews.map(r => (
-                    <div key={r.id} className="border-b border-white/5 pb-4 last:border-0">
+                    <div key={r.id} className="border-b border-border pb-4 last:border-0">
                       <div className="flex items-center gap-2 mb-2">
                         <div className="flex">
                           {[1,2,3,4,5].map(s => (

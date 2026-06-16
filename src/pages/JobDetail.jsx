@@ -196,13 +196,13 @@ export default function JobDetail() {
       <div className="max-w-3xl mx-auto space-y-6">
         {/* Back + Delete */}
         <div className="flex items-center justify-between">
-          <button onClick={() => navigate(-1)} className="w-9 h-9 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:border-primary/30 transition-colors">
+          <button onClick={() => navigate(-1)} className="w-9 h-9 rounded-full bg-secondary border border-border flex items-center justify-center hover:border-primary/30 transition-colors">
             <ArrowLeft className="w-4 h-4" />
           </button>
           {isOwner && (
             <div className="flex gap-2">
               {job.status === 'open' && (
-                <Button variant="outline" size="sm" className="border-white/10 text-xs gap-1" onClick={() => navigate(`/PostJob?edit=${jobId}`)}>
+                <Button variant="outline" size="sm" className="border-border text-xs gap-1" onClick={() => navigate(`/PostJob?edit=${jobId}`)}>
                   <Pencil className="w-3 h-3" /> Edit
                 </Button>
               )}
@@ -223,7 +223,7 @@ export default function JobDetail() {
         </div>
 
         {/* Job Header */}
-        <div className="glass rounded-2xl p-6 border border-white/5 space-y-4">
+        <div className="glass rounded-2xl p-6 border border-border space-y-4">
           <div className="flex items-start justify-between gap-3">
             <div>
               <div className="flex items-center gap-2 flex-wrap mb-1">
@@ -258,7 +258,7 @@ export default function JobDetail() {
             {job.flexible_dates
               ? <span className="px-2 py-1 rounded-full bg-green-500/10 border border-green-500/20 text-green-400">Flexible Dates</span>
               : job.scheduled_date && (
-                <span className="px-2 py-1 rounded-full bg-white/5 border border-white/10 text-muted-foreground flex items-center gap-1.5">
+                <span className="px-2 py-1 rounded-full bg-secondary border border-border text-muted-foreground flex items-center gap-1.5">
                   <Calendar className="w-3.5 h-3.5" />
                   {job.scheduled_date}{job.scheduled_time ? ` at ${job.scheduled_time}` : ''}
                 </span>
@@ -274,7 +274,7 @@ export default function JobDetail() {
             <div>
               <p className="text-xs font-semibold text-muted-foreground mb-1.5">SKILLS REQUIRED</p>
               <div className="flex flex-wrap gap-1.5">
-                {job.skills_required.map(s => <span key={s} className="text-xs bg-white/5 border border-white/5 rounded-full px-2.5 py-1">{s}</span>)}
+                {job.skills_required.map(s => <span key={s} className="text-xs bg-secondary border border-border rounded-full px-2.5 py-1">{s}</span>)}
               </div>
             </div>
           )}
@@ -282,7 +282,7 @@ export default function JobDetail() {
             <div>
               <p className="text-xs font-semibold text-muted-foreground mb-1.5">LANGUAGES</p>
               <div className="flex flex-wrap gap-1.5">
-                {job.languages_required.map(l => <span key={l} className="text-xs bg-white/5 border border-white/5 rounded-full px-2.5 py-1">{l}</span>)}
+                {job.languages_required.map(l => <span key={l} className="text-xs bg-secondary border border-border rounded-full px-2.5 py-1">{l}</span>)}
               </div>
             </div>
           )}
@@ -290,7 +290,7 @@ export default function JobDetail() {
             <div>
               <p className="text-xs font-semibold text-muted-foreground mb-1.5">EQUIPMENT NEEDED</p>
               <div className="flex flex-wrap gap-1.5">
-                {job.equipment_needed.map(eq => <span key={eq} className="text-xs bg-white/5 border border-white/5 rounded-full px-2.5 py-1">{eq}</span>)}
+                {job.equipment_needed.map(eq => <span key={eq} className="text-xs bg-secondary border border-border rounded-full px-2.5 py-1">{eq}</span>)}
               </div>
             </div>
           )}
@@ -334,45 +334,45 @@ export default function JobDetail() {
             <div>
               <label className="text-sm font-medium mb-1.5 block">Title</label>
               <input value={editForm.title} onChange={e => setEditForm(p => ({ ...p, title: e.target.value }))}
-                className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-primary/50 text-foreground" />
+                className="w-full bg-secondary border border-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-primary/50 text-foreground" />
             </div>
             <div>
               <label className="text-sm font-medium mb-1.5 block">Description</label>
               <textarea value={editForm.description} onChange={e => setEditForm(p => ({ ...p, description: e.target.value }))} rows={4}
-                className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm resize-none focus:outline-none focus:border-primary/50 text-foreground" />
+                className="w-full bg-secondary border border-border rounded-lg px-3 py-2 text-sm resize-none focus:outline-none focus:border-primary/50 text-foreground" />
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <label className="text-sm font-medium mb-1.5 block">Budget Min ($)</label>
                 <input type="number" value={editForm.budget_min} onChange={e => setEditForm(p => ({ ...p, budget_min: e.target.value }))}
-                  className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-primary/50 text-foreground" />
+                  className="w-full bg-secondary border border-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-primary/50 text-foreground" />
               </div>
               <div>
                 <label className="text-sm font-medium mb-1.5 block">Budget Max ($)</label>
                 <input type="number" value={editForm.budget_max} onChange={e => setEditForm(p => ({ ...p, budget_max: e.target.value }))}
-                  className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-primary/50 text-foreground" />
+                  className="w-full bg-secondary border border-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-primary/50 text-foreground" />
               </div>
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <label className="text-sm font-medium mb-1.5 block">Location</label>
                 <input value={editForm.location} onChange={e => setEditForm(p => ({ ...p, location: e.target.value }))}
-                  className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-primary/50 text-foreground" />
+                  className="w-full bg-secondary border border-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-primary/50 text-foreground" />
               </div>
               <div>
                 <label className="text-sm font-medium mb-1.5 block">Scheduled Date</label>
                 <input type="date" value={editForm.scheduled_date} onChange={e => setEditForm(p => ({ ...p, scheduled_date: e.target.value }))}
-                  className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-primary/50 text-foreground" />
+                  className="w-full bg-secondary border border-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-primary/50 text-foreground" />
               </div>
               <div>
                 <label className="text-sm font-medium mb-1.5 block">Scheduled Time</label>
                 <input type="time" value={editForm.scheduled_time || ''} onChange={e => setEditForm(p => ({ ...p, scheduled_time: e.target.value }))}
-                  className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-primary/50 text-foreground" />
+                  className="w-full bg-secondary border border-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-primary/50 text-foreground" />
               </div>
             </div>
             <div className="flex gap-3">
               <Button className="flex-1" onClick={saveEdit}>Save Changes</Button>
-              <Button variant="outline" className="border-white/10" onClick={() => setShowEditForm(false)}>Cancel</Button>
+              <Button variant="outline" className="border-border" onClick={() => setShowEditForm(false)}>Cancel</Button>
             </div>
           </div>
         )}
@@ -401,7 +401,7 @@ export default function JobDetail() {
         {isAvatar && job?.posted_by_email && (
           <Button
             variant="outline"
-            className="w-full h-11 gap-2 border-white/10"
+            className="w-full h-11 gap-2 border-border"
             onClick={async () => {
               const res = await base44.functions.invoke('createDirectConversation', { 
                 target_email: job.posted_by_email, 
@@ -444,14 +444,14 @@ export default function JobDetail() {
                 onChange={e => setApplyForm(p => ({ ...p, cover_message: e.target.value }))}
                 placeholder="Introduce yourself, explain why you're a great fit, relevant experience..."
                 rows={4}
-                className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm resize-none focus:outline-none focus:border-primary/50 text-foreground placeholder:text-muted-foreground"
+                className="w-full bg-secondary border border-border rounded-lg px-3 py-2 text-sm resize-none focus:outline-none focus:border-primary/50 text-foreground placeholder:text-muted-foreground"
               />
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <label className="text-sm font-medium mb-1.5 block">Your Rate ($)</label>
                 <input type="number" value={applyForm.proposed_rate} onChange={e => setApplyForm(p => ({ ...p, proposed_rate: e.target.value }))}
-                  placeholder="e.g. 35" className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-primary/50 text-foreground placeholder:text-muted-foreground" />
+                  placeholder="e.g. 35" className="w-full bg-secondary border border-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-primary/50 text-foreground placeholder:text-muted-foreground" />
               </div>
 
             </div>
@@ -459,7 +459,7 @@ export default function JobDetail() {
               <Button className="flex-1" onClick={() => applyMutation.mutate()} disabled={applyMutation.isPending || !applyForm.cover_message}>
                 {applyMutation.isPending ? 'Submitting...' : 'Submit Application'}
               </Button>
-              <Button variant="outline" className="border-white/10" onClick={() => setShowApplyForm(false)}>Cancel</Button>
+              <Button variant="outline" className="border-border" onClick={() => setShowApplyForm(false)}>Cancel</Button>
             </div>
           </div>
         )}
@@ -471,7 +471,7 @@ export default function JobDetail() {
             {applications.map(app => {
               const profile = applicantProfiles.find(p => p?.user_email === app.applicant_email);
               return (
-                <div key={app.id} className={`glass rounded-2xl p-5 border transition-all ${app.status === 'accepted' ? 'border-green-500/30' : 'border-white/5'}`}>
+                <div key={app.id} className={`glass rounded-2xl p-5 border transition-all ${app.status === 'accepted' ? 'border-green-500/30' : 'border-border'}`}>
                   <div className="flex items-start justify-between gap-3">
                     <div className="flex-1">
                       <div className="flex items-center gap-2 mb-1">
@@ -505,7 +505,7 @@ export default function JobDetail() {
                     {showOwnerControls && job.status === 'open' && app.status === 'pending' && (
                       <div className="flex flex-col gap-2">
                         <Link to={`/AvatarView?id=${profile?.id || ''}`}>
-                          <Button size="sm" variant="outline" className="border-white/10 text-xs w-full">View Profile</Button>
+                          <Button size="sm" variant="outline" className="border-border text-xs w-full">View Profile</Button>
                         </Link>
                         <Button size="sm" className="text-xs gap-1"
                           onClick={() => selectWinner.mutate(app)}

@@ -18,7 +18,7 @@ export default function FindPeople() {
         </div>
 
         <Tabs defaultValue="avatars" className="w-full">
-          <TabsList className="grid w-full grid-cols-2 mb-6 bg-card border border-white/5">
+          <TabsList className="grid w-full grid-cols-2 mb-6 bg-card border border-border">
             <TabsTrigger value="avatars" className="data-[state=active]:bg-primary/20 data-[state=active]:text-primary">Hire Local Agents</TabsTrigger>
             <TabsTrigger value="experts" className="data-[state=active]:bg-primary/20 data-[state=active]:text-primary">Consult Experts</TabsTrigger>
           </TabsList>

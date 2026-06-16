@@ -139,7 +139,7 @@ export default function AvatarDashboard() {
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.05 }}
-              className="glass border border-white/5 hover:border-primary/20 rounded-2xl p-5 transition-all hover:scale-[1.02]"
+              className="glass border border-border hover:border-primary/20 rounded-2xl p-5 transition-all hover:scale-[1.02]"
             >
               <div className={`w-9 h-9 rounded-xl ${stat.bg} flex items-center justify-center mb-3`}>
                 <stat.icon className={`w-4.5 h-4.5 ${stat.color}`} />
@@ -172,7 +172,7 @@ export default function AvatarDashboard() {
           <span className="text-sm font-semibold text-primary">New Post</span>
         </button>
         <Link to="/RecordingLibrary"
-          className="flex items-center gap-3 glass border border-white/5 hover:border-white/15 rounded-2xl px-4 py-4 transition-all"
+          className="flex items-center gap-3 glass border border-border hover:border-border rounded-2xl px-4 py-4 transition-all"
         >
           <Play className="w-4 h-4 text-muted-foreground flex-shrink-0" />
           <span className="text-sm text-muted-foreground">Recordings</span>
@@ -191,7 +191,7 @@ export default function AvatarDashboard() {
           <div className="space-y-3">
             {pendingBookings.slice(0, 3).map(b => (
               <Link key={b.id} to={`/AvatarBookingDetail?id=${b.id}`}>
-                <div className="glass border border-white/5 hover:border-primary/30 rounded-2xl p-4 flex items-center justify-between transition-all">
+                <div className="glass border border-border hover:border-primary/30 rounded-2xl p-4 flex items-center justify-between transition-all">
                   <div>
                     <p className="font-semibold text-sm">{b.category}</p>
                     <p className="text-xs text-muted-foreground mt-1">{b.client_name}</p>
@@ -219,7 +219,7 @@ export default function AvatarDashboard() {
           <div className="space-y-3">
             {upcomingBookings.slice(0, 3).map(b => (
               <Link key={b.id} to={`/AvatarBookingDetail?id=${b.id}`}>
-                <div className="glass border border-white/5 hover:border-primary/30 rounded-2xl p-4 flex items-center justify-between transition-all">
+                <div className="glass border border-border hover:border-primary/30 rounded-2xl p-4 flex items-center justify-between transition-all">
                   <div>
                     <p className="font-semibold text-sm">{b.category}</p>
                     <p className="text-xs text-muted-foreground mt-1">

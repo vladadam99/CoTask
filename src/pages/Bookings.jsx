@@ -82,7 +82,7 @@ export default function Bookings() {
 
         <div className="relative mb-6">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-          <Input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search tasks..." className="pl-10 bg-muted/50 border-white/5" />
+          <Input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search tasks..." className="pl-10 bg-muted/50 border-border" />
         </div>
 
         {isAvatar && (
@@ -218,9 +218,15 @@ export default function Bookings() {
             ))}
           </div>
         ) : (
-          <GlassCard className="p-10 text-center">
-            <Calendar className="w-10 h-10 text-muted-foreground mx-auto mb-3" />
-            <p className="text-muted-foreground">No tasks match your filter</p>
+          <GlassCard className="p-12 text-center flex flex-col items-center justify-center">
+            <div className="w-16 h-16 rounded-full bg-secondary flex items-center justify-center mb-4">
+              <Calendar className="w-8 h-8 text-muted-foreground" />
+            </div>
+            <h3 className="text-xl font-bold mb-2">No tasks yet</h3>
+            <p className="text-muted-foreground mb-6 max-w-sm">You haven't requested or scheduled any tasks yet. Post a task to get started.</p>
+            <Link to="/PostJob" className="px-6 py-2.5 bg-primary text-primary-foreground rounded-lg font-medium hover:bg-primary/90 transition-colors">
+              Post your first task
+            </Link>
           </GlassCard>
         )}
       </div>

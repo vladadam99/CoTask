@@ -77,7 +77,7 @@ export default function JobMarketplace() {
             {CATEGORIES.map(cat => (
               <button key={cat} onClick={() => setCategory(cat)}
                 className={`flex-shrink-0 px-3 py-1.5 rounded-full text-xs font-medium transition-all ${
-                  cat === category ? 'bg-primary text-white' : 'bg-white/5 border border-white/10 text-muted-foreground hover:border-primary/30'
+                  cat === category ? 'bg-primary text-white' : 'bg-secondary border border-border text-muted-foreground hover:border-primary/30'
                 }`}>
                 {cat}
               </button>
@@ -85,11 +85,11 @@ export default function JobMarketplace() {
           </div>
           <div className="flex gap-2">
             <button onClick={() => setShowOpen(true)}
-              className={`text-xs px-3 py-1.5 rounded-full transition-all ${showOpen ? 'bg-green-500/20 text-green-400 border border-green-500/20' : 'bg-white/5 text-muted-foreground border border-white/10'}`}>
+              className={`text-xs px-3 py-1.5 rounded-full transition-all ${showOpen ? 'bg-green-500/20 text-green-400 border border-green-500/20' : 'bg-secondary text-muted-foreground border border-border'}`}>
               Open Jobs
             </button>
             <button onClick={() => setShowOpen(false)}
-              className={`text-xs px-3 py-1.5 rounded-full transition-all ${!showOpen ? 'bg-white/20 text-foreground border border-white/20' : 'bg-white/5 text-muted-foreground border border-white/10'}`}>
+              className={`text-xs px-3 py-1.5 rounded-full transition-all ${!showOpen ? 'bg-white/20 text-foreground border border-white/20' : 'bg-secondary text-muted-foreground border border-border'}`}>
               All Jobs
             </button>
           </div>
@@ -101,13 +101,15 @@ export default function JobMarketplace() {
         {/* Job Cards */}
         {isLoading ? (
           <div className="space-y-3">
-            {[1,2,3].map(i => <div key={i} className="glass rounded-2xl p-5 animate-pulse h-28 border border-white/5" />)}
+            {[1,2,3].map(i => <div key={i} className="glass rounded-2xl p-5 animate-pulse h-28 border border-border" />)}
           </div>
         ) : filtered.length === 0 ? (
-          <div className="glass rounded-2xl p-12 text-center border border-white/5">
-            <Briefcase className="w-10 h-10 text-muted-foreground mx-auto mb-3" />
-            <h3 className="font-bold mb-1">No jobs found</h3>
-            <p className="text-sm text-muted-foreground">Try adjusting your filters or check back later</p>
+          <div className="glass rounded-2xl p-12 text-center flex flex-col items-center justify-center">
+            <div className="w-16 h-16 rounded-full bg-secondary flex items-center justify-center mb-4">
+              <Briefcase className="w-8 h-8 text-muted-foreground" />
+            </div>
+            <h3 className="text-xl font-bold mb-2">No open tasks found</h3>
+            <p className="text-sm text-muted-foreground mb-6 max-w-sm">There are no open tasks matching your criteria right now. Check back later or adjust your filters.</p>
             {canPost && (
               <Link to="/PostJob" className="inline-block mt-4">
                 <Button size="sm">Post the first job</Button>
@@ -118,7 +120,7 @@ export default function JobMarketplace() {
           <div className="space-y-3">
             {sortedFiltered.map(job => (
               <Link key={job.id} to={`/JobDetail?id=${job.id}`}>
-                <div className="glass border border-white/5 hover:border-primary/30 rounded-2xl p-6 transition-all hover:scale-[1.005] space-y-4">
+                <div className="glass border border-border hover:border-primary/30 rounded-2xl p-6 transition-all hover:scale-[1.005] space-y-4">
                   {/* Title row */}
                   <div className="flex items-start justify-between gap-3">
                     <div>
@@ -133,7 +135,7 @@ export default function JobMarketplace() {
                       </div>
                       <p className="text-xs text-muted-foreground">Posted by {job.posted_by_name}</p>
                     </div>
-                    <Badge variant="outline" className="text-xs bg-white/5 border-white/10 text-muted-foreground flex-shrink-0">
+                    <Badge variant="outline" className="text-xs bg-secondary border-border text-muted-foreground flex-shrink-0">
                       <Users className="w-3 h-3 mr-1" />{job.application_count || 0} applicant{job.application_count !== 1 ? 's' : ''}
                     </Badge>
                   </div>
@@ -159,7 +161,7 @@ export default function JobMarketplace() {
                     {job.flexible_dates
                       ? <span className="px-2 py-1 rounded-full bg-green-500/10 border border-green-500/20 text-green-400">Flexible Dates</span>
                       : job.scheduled_date && (
-                        <span className="px-2 py-1 rounded-full bg-white/5 border border-white/10 text-muted-foreground flex items-center gap-1.5">
+                        <span className="px-2 py-1 rounded-full bg-secondary border border-border text-muted-foreground flex items-center gap-1.5">
                           <Calendar className="w-3.5 h-3.5" />
                           {job.scheduled_date}{job.scheduled_time ? ` at ${job.scheduled_time}` : ''}
                         </span>
@@ -175,7 +177,7 @@ export default function JobMarketplace() {
                   {(job.skills_required || []).length > 0 && (
                     <div className="flex flex-wrap gap-1.5">
                       {job.skills_required.slice(0, 5).map(s => (
-                        <span key={s} className="text-xs bg-white/5 border border-white/5 rounded-full px-2.5 py-1">{s}</span>
+                        <span key={s} className="text-xs bg-secondary border border-border rounded-full px-2.5 py-1">{s}</span>
                       ))}
                     </div>
                   )}

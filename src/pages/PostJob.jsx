@@ -155,7 +155,7 @@ export default function PostJob() {
     <AppShell navItems={getNavItems(user?.selected_role)} user={user}>
       <div className="max-w-2xl mx-auto space-y-6">
         <div className="flex items-center gap-3">
-          <button onClick={() => navigate(-1)} className="w-9 h-9 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:border-primary/30 transition-colors">
+          <button onClick={() => navigate(-1)} className="w-9 h-9 rounded-full bg-background border border-input flex items-center justify-center hover:border-primary/30 transition-colors">
             <ArrowLeft className="w-4 h-4" />
           </button>
           <div>
@@ -165,17 +165,17 @@ export default function PostJob() {
         </div>
 
         {/* Basic Info */}
-        <div className="glass rounded-2xl p-6 border border-white/5 space-y-4 relative z-10">
+        <div className="glass rounded-2xl p-6 border border-border space-y-4 relative z-10">
           <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Basic Info</p>
           <div>
             <label className="text-sm font-medium mb-1.5 block">Task Title *</label>
-            <Input value={form.title} onChange={e => set('title', e.target.value)} placeholder="e.g. Check apartment in Paris" className="bg-white/5 border-white/10" />
+            <Input value={form.title} onChange={e => set('title', e.target.value)} placeholder="e.g. Check apartment in Paris" className="bg-background border-input" />
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="text-sm font-medium mb-1.5 block">Category *</label>
               <select value={form.category} onChange={e => set('category', e.target.value)}
-                className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-primary/50 text-foreground">
+                className="w-full bg-background border border-input rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-primary/50 text-foreground">
                 <option value="" className="bg-card text-muted-foreground">Select a category</option>
                 {CATEGORIES.map(c => <option key={c} value={c} className="bg-card">{c}</option>)}
               </select>
@@ -189,7 +189,7 @@ export default function PostJob() {
 
         {/* When does this need to be done */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="glass rounded-2xl p-6 border border-white/5 space-y-4">
+          <div className="glass rounded-2xl p-6 border border-border space-y-4">
             <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Date</p>
             <DatePicker
               mode={form.timing_mode}
@@ -202,7 +202,7 @@ export default function PostJob() {
               onFlexibility={v => set('flexibility', v)}
             />
           </div>
-          <div className="glass rounded-2xl p-6 border border-white/5 space-y-4">
+          <div className="glass rounded-2xl p-6 border border-border space-y-4">
             <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Time</p>
             <TimePicker
               timeMode={form.time_mode}
@@ -218,7 +218,7 @@ export default function PostJob() {
         </div>
 
         {/* Budget */}
-        <div className="glass rounded-2xl p-6 border border-white/5 space-y-4">
+        <div className="glass rounded-2xl p-6 border border-border space-y-4">
           <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Budget</p>
           {/* Payment type */}
           <div className="flex items-center gap-2 text-sm">
@@ -226,7 +226,7 @@ export default function PostJob() {
             {[{ key: 'fixed', label: 'for the whole task' }, { key: 'hourly', label: 'per hour' }].map(({ key, label }) => (
               <button key={key} type="button" onClick={() => set('budget_type', key)}
                 className={`px-2.5 py-1 rounded-full text-xs font-medium border transition-all ${
-                  form.budget_type === key ? 'bg-foreground text-background border-foreground' : 'bg-white/5 text-muted-foreground border-white/10 hover:border-white/20'
+                  form.budget_type === key ? 'bg-foreground text-background border-foreground' : 'bg-background text-muted-foreground border-input hover:border-foreground/20'
                 }`}>
                 {label}
               </button>
@@ -234,13 +234,13 @@ export default function PostJob() {
           </div>
           <div>
             <label className="text-sm font-medium mb-1.5 block">Price ($){form.budget_type === 'hourly' ? '/hr' : ''}</label>
-            <Input type="number" value={form.budget} onChange={e => set('budget', e.target.value)} placeholder="50" className="bg-white/5 border-white/10" />
+            <Input type="number" value={form.budget} onChange={e => set('budget', e.target.value)} placeholder="50" className="bg-background border-input" />
           </div>
           <button type="button" onClick={() => set('negotiable', !form.negotiable)}
             className={`flex items-center gap-2 px-3 py-2 rounded-lg border text-xs font-medium transition-all w-fit ${
               form.negotiable
                 ? 'bg-primary/10 text-primary border-primary/30'
-                : 'bg-white/5 text-muted-foreground border-white/10 hover:border-white/20'
+                : 'bg-background text-muted-foreground border-input hover:border-foreground/20'
             }`}>
             <span className={`w-3.5 h-3.5 rounded-full border-2 flex items-center justify-center flex-shrink-0 ${form.negotiable ? 'border-primary' : 'border-muted-foreground'}`}>
               {form.negotiable && <span className="w-1.5 h-1.5 rounded-full bg-primary block" />}
@@ -250,12 +250,12 @@ export default function PostJob() {
         </div>
 
         {/* Equipment */}
-        <div className="glass rounded-2xl p-6 border border-white/5 space-y-4">
+        <div className="glass rounded-2xl p-6 border border-border space-y-4">
           <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Equipment Needed</p>
           <div className="flex flex-wrap gap-2">
             {EQUIPMENT_OPTIONS.map(eq => (
               <button key={eq} onClick={() => toggleArr('equipment_needed', eq)}
-                className={`px-2.5 py-1 rounded-full text-xs font-medium border transition-all ${form.equipment_needed.includes(eq) ? 'bg-primary/10 text-primary border-primary/30' : 'bg-white/5 text-muted-foreground border-white/10'}`}>
+                className={`px-2.5 py-1 rounded-full text-xs font-medium border transition-all ${form.equipment_needed.includes(eq) ? 'bg-primary/10 text-primary border-primary/30' : 'bg-background text-muted-foreground border-input'}`}>
                 {eq}
               </button>
             ))}
@@ -263,11 +263,11 @@ export default function PostJob() {
         </div>
 
         {/* Description */}
-        <div className="glass rounded-2xl p-6 border border-white/5 space-y-4">
+        <div className="glass rounded-2xl p-6 border border-border space-y-4">
           <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Description</p>
           <textarea value={form.description} onChange={e => set('description', e.target.value)}
             placeholder="Describe the task in detail — what needs to be done, any specific requirements, expected outcome..."
-            rows={4} className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm resize-none focus:outline-none focus:border-primary/50 text-foreground placeholder:text-muted-foreground" />
+            rows={4} className="w-full bg-background border border-input rounded-lg px-3 py-2 text-sm resize-none focus:outline-none focus:border-primary/50 text-foreground placeholder:text-muted-foreground" />
         </div>
 
         <Button className="w-full h-11" onClick={() => submit.mutate()} disabled={submit.isPending || !form.title || !form.description}>
