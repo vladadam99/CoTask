@@ -40,7 +40,7 @@ export default function ReviewBookingPanel({ form, avatar, amount, livePremium, 
             </div>
           )}
           <div>
-            <p className="font-semibold">{avatar?.display_name || 'Avatar'}</p>
+            <p className="font-semibold">{avatar?.display_name || 'Agent'}</p>
             <p className="text-xs text-muted-foreground">${rate}/hr · {avatar?.city || ''}</p>
           </div>
         </div>

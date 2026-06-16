@@ -65,7 +65,7 @@ export default function Contact() {
                     <SelectItem value="general">General Inquiry</SelectItem>
                     <SelectItem value="support">Technical Support</SelectItem>
                     <SelectItem value="enterprise">Enterprise Sales</SelectItem>
-                    <SelectItem value="avatar">Becoming an Avatar</SelectItem>
+                    <SelectItem value="avatar">Becoming an Agent</SelectItem>
                     <SelectItem value="partnership">Partnership</SelectItem>
                   </SelectContent>
                 </Select>

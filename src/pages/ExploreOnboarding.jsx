@@ -255,7 +255,7 @@ function IntroSlide1() {
       {/* Stats */}
       <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }} className="grid grid-cols-3 gap-4">
         {[
-          { value: '2,000+', label: 'Avatars' },
+          { value: '2,000+', label: 'Agents' },
           { value: '50+', label: 'Countries' },
           { value: '4.9★', label: 'Avg Rating' },
         ].map(s => (

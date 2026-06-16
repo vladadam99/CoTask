@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 const cols = [
   { head: 'Product', links: [{l:'How it works',to:'/HowItWorks'},{l:'Explore Avatars',to:'/Explore'},{l:'Pricing',to:'/Pricing'},{l:'FAQ',to:'/FAQ'}] },
   { head: 'Company', links: [{l:'About',to:'/HowItWorks'},{l:'Trust & Safety',to:'/Safety'},{l:'Contact',to:'/Contact'}] },
-  { head: 'Avatars', links: [{l:'Become an Avatar',to:'/Onboarding?role=avatar'},{l:'Avatar FAQ',to:'/FAQ'}] },
+  { head: 'Agents', links: [{l:'Become an Agent',to:'/Onboarding?role=avatar'},{l:'Agent FAQ',to:'/FAQ'}] },
   { head: 'Enterprise', links: [{l:'Business Solutions',to:'/Onboarding?role=enterprise'},{l:'Contact Sales',to:'/Contact'}] },
 ];
 

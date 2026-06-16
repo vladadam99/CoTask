@@ -12,7 +12,7 @@ export default function JobReviewForm({ job, user, reviewerType, onDone }) {
 
   // reviewerType = 'avatar' (avatar reviews client) or 'client' (client reviews avatar)
   const reviewedEmail = reviewerType === 'avatar' ? job.posted_by_email : job.winner_email;
-  const reviewedName = reviewerType === 'avatar' ? job.posted_by_name : (job.winner_email || 'Avatar');
+  const reviewedName = reviewerType === 'avatar' ? job.posted_by_name : (job.winner_email || 'Agent');
   const label = reviewerType === 'avatar' ? `Rate your client` : `Rate your avatar`;
 
   const submit = async () => {

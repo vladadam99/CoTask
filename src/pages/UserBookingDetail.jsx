@@ -281,8 +281,8 @@ export default function UserBookingDetail() {
             )}
 
             <Link to={convId ? `/Messages?conv=${convId}` : '/Messages'} className="flex-1">
-              <Button variant="outline" className="w-full border-white/10 gap-2">
-                <MessageSquare className="w-4 h-4" /> Message
+              <Button variant="outline" className="w-full border-border gap-2">
+                <MessageSquare className="w-4 h-4" /> Open Messages
               </Button>
             </Link>
           </div>

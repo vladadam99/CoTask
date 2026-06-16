@@ -55,7 +55,7 @@ export default function Saved() {
             </div>
             <h3 className="text-xl font-bold mb-2">No saved avatars</h3>
             <p className="text-sm text-muted-foreground mb-4">Browse and save your favorite avatars for quick access.</p>
-            <Link to="/Explore"><Button>Explore Avatars</Button></Link>
+            <Link to="/FindPeople"><Button>Explore Agents</Button></Link>
           </GlassCard>
         )}
       </div>
