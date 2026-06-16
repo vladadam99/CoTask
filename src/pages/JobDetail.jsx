@@ -211,7 +211,7 @@ export default function JobDetail() {
                 size="sm"
                 className="border-red-500/30 text-red-400 hover:bg-red-500/10 text-xs"
                 onClick={async () => {
-                  if (!confirm('Delete this job post? This cannot be undone.')) return;
+                  if (!confirm('Delete this task? This cannot be undone.')) return;
                   await base44.entities.JobPost.delete(jobId);
                   navigate('/JobMarketplace');
                 }}
@@ -314,23 +314,23 @@ export default function JobDetail() {
             <div>
               <p className="text-sm font-semibold text-yellow-400">
                 {job.stripe_payment_intent_id?.startsWith('sim_') ? '🧪 ' : '💰 '}
-                ${job.escrow_amount} held in escrow{job.stripe_payment_intent_id?.startsWith('sim_') ? ' (simulated)' : ''}
+                ${job.escrow_amount} held in secure payment{job.stripe_payment_intent_id?.startsWith('sim_') ? ' (simulated)' : ''}
               </p>
-              <p className="text-xs text-muted-foreground">Funds will be released to the avatar once you approve their work, or automatically after 24 hours.</p>
+              <p className="text-xs text-muted-foreground">Funds will be released to the agent once you approve their work, or automatically after 24 hours.</p>
             </div>
           </div>
         )}
         {job.escrow_status === 'captured' && (
           <div className="glass rounded-2xl p-3 border border-green-500/20 flex items-center gap-2">
             <CheckCircle className="w-4 h-4 text-green-400" />
-            <p className="text-xs text-green-400">Payment of ${job.escrow_amount} released to the avatar.</p>
+            <p className="text-xs text-green-400">Payment of ${job.escrow_amount} released to the agent.</p>
           </div>
         )}
 
         {/* Edit Form */}
         {showEditForm && (
           <div className="glass rounded-2xl p-6 border border-primary/20 space-y-4">
-            <h3 className="font-bold">Edit Job Post</h3>
+            <h3 className="font-bold">Edit Task Post</h3>
             <div>
               <label className="text-sm font-medium mb-1.5 block">Title</label>
               <input value={editForm.title} onChange={e => setEditForm(p => ({ ...p, title: e.target.value }))}
@@ -412,7 +412,7 @@ export default function JobDetail() {
               }
             }}
           >
-            <Send className="w-4 h-4" /> Message Client
+            <Send className="w-4 h-4" /> Chat with Client
           </Button>
         )}
 
@@ -420,7 +420,7 @@ export default function JobDetail() {
         {canApply && !showApplyForm && (
           user?.identity_verified ? (
             <Button className="w-full h-11" onClick={() => setShowApplyForm(true)}>
-              Apply for this Job
+              Submit Proposal
             </Button>
           ) : (
             <div className="glass rounded-2xl p-5 border border-yellow-500/20 flex items-center gap-4">
@@ -510,7 +510,7 @@ export default function JobDetail() {
                         <Button size="sm" className="text-xs gap-1"
                           onClick={() => selectWinner.mutate(app)}
                           disabled={selectWinner.isPending}>
-                          <Award className="w-3 h-3" /> Select
+                          <Award className="w-3 h-3" /> Hire & Fund Secure Payment
                         </Button>
                       </div>
                     )}
@@ -532,7 +532,7 @@ export default function JobDetail() {
         {/* Open Chat button for assigned participants */}
         {job.status === 'in_progress' && jobConversation && (user?.email === job.posted_by_email || user?.email === job.winner_email) && (
           <Button className="w-full h-11 gap-2" onClick={() => navigate(`/Messages?conversation=${jobConversation.id}`)}>
-            <MessageCircle className="w-4 h-4" /> Open Job Chat
+            <MessageCircle className="w-4 h-4" /> Go to Messages
           </Button>
         )}
 

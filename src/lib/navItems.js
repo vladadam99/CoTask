@@ -1,17 +1,17 @@
 import { Search, Calendar, MessageSquare, Home, User, Inbox, DollarSign, Settings, Building2, Briefcase, Users, Wallet, Plus, UserSearch, BookOpen, Compass } from 'lucide-react';
 
 export const userNavItems = [
-  { icon: UserSearch, label: 'People', path: '/FindPeople' },
-  { icon: Compass, label: 'Explore', path: '/Explore' },
-  { icon: Plus, label: 'Post Job', path: '/PostJob' },
+  { icon: Compass, label: 'Discover', path: '/FindPeople' },
+  { icon: Plus, label: 'Post Task', path: '/PostJob' },
+  { icon: Calendar, label: 'My Tasks', path: '/Bookings' },
   { icon: MessageSquare, label: 'Messages', path: '/Messages' },
 ];
 
 export const avatarNavItems = [
-  { icon: Home, label: 'Home', path: '/AvatarDashboard' },
-  { icon: Briefcase, label: 'Jobs', path: '/JobMarketplace' },
-  { icon: Inbox, label: 'Requests', path: '/AvatarRequests' },
+  { icon: Briefcase, label: 'Job Board', path: '/JobMarketplace' },
+  { icon: Calendar, label: 'My Schedule', path: '/AvatarRequests' },
   { icon: MessageSquare, label: 'Messages', path: '/AvatarMessages' },
+  { icon: Wallet, label: 'Earnings', path: '/AvatarWallet' },
 ];
 
 export const enterpriseNavItems = [

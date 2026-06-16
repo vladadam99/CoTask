@@ -26,8 +26,8 @@ function ProfilePanel({ user, onClose, navItems = [] }) {
 
   const menuItems = [
     { icon: Settings, label: 'Settings', path: settingsPath },
-    { icon: Wallet, label: 'Wallet', path: walletPath },
-    { icon: Calendar, label: 'Bookings', path: bookingsPath },
+    { icon: Wallet, label: 'Earnings', path: walletPath },
+    { icon: Calendar, label: 'My Tasks', path: bookingsPath },
     { icon: HelpCircle, label: 'Help & FAQ', path: '/FAQ' },
   ];
 
@@ -141,7 +141,7 @@ export default function AppShell({ children, navItems = [], user, fullBleed = fa
     return unsub;
   }, [user?.email]);
 
-  const homePath = user?.selected_role === 'avatar' ? '/AvatarDashboard' : user?.selected_role === 'enterprise' ? '/EnterpriseDashboard' : '/FindAvatars';
+  const homePath = user?.selected_role === 'avatar' ? '/AvatarDashboard' : user?.selected_role === 'enterprise' ? '/EnterpriseDashboard' : '/FindPeople';
   const settingsPath = user?.selected_role === 'avatar' ? '/AvatarSettings' : user?.selected_role === 'enterprise' ? '/EnterpriseSettings' : '/UserSettings';
 
   return (

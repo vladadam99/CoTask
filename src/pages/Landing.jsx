@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 
 const STATS = [
-  { value: '12K+', label: 'Active Avatars' },
+  { value: '12K+', label: 'Active Agents' },
   { value: '98%', label: 'Satisfaction' },
   { value: '180+', label: 'Countries' },
   { value: '$2.4M', label: 'Paid Out' },
@@ -41,7 +41,7 @@ const USE_CASES = [
   {
     icon: Zap,
     title: 'Instant Errands',
-    desc: 'Need someone on the ground right now? Book an available avatar for queue, pickup, or any real-world task instantly.',
+    desc: 'Need someone on the ground right now? Book an available agent for queue, pickup, or any real-world task instantly.',
     color: 'text-yellow-400',
     bg: 'bg-yellow-500/10',
   },
@@ -53,7 +53,7 @@ const plans = [
     subtitle: 'For individual users',
     price: 'From $25/hr',
     features: [
-      'Browse all available avatars',
+      'Browse all available agents',
       'Book on-demand or scheduled',
       'In-app messaging',
       'Live session access',
@@ -69,7 +69,7 @@ const plans = [
     price: '$99/mo',
     features: [
       'Everything in Pay as you go',
-      'Priority avatar matching',
+      'Priority agent matching',
       'Reduced platform fees (10%)',
       'Saved preferences',
       'Dedicated support',
@@ -97,15 +97,15 @@ const plans = [
 ];
 
 const faqs = [
-  { q: 'What is CoTask?', a: 'CoTask is a live human presence marketplace. It connects people and businesses with local avatars who can physically go to a location and act as your remote eyes, hands, and guide in real time.' },
-  { q: 'How is this different from a video call?', a: "Unlike video calls, your CoTask avatar is physically at the location. They walk, interact, pick things up, ask questions, and stream everything live. It's real-world presence, not screen-to-screen communication." },
+  { q: 'What is CoTask?', a: 'CoTask is a live human presence marketplace. It connects people and businesses with local agents who can physically go to a location and act as your remote eyes, hands, and guide in real time.' },
+  { q: 'How is this different from a video call?', a: "Unlike video calls, your CoTask agent is physically at the location. They walk, interact, pick things up, ask questions, and stream everything live. It's real-world presence, not screen-to-screen communication." },
   { q: 'What can I use CoTask for?', a: 'Live city tours, property walkthroughs, shopping assistance, event attendance, queue standing, campus tours, business site inspections, product demos, family support, and much more.' },
-  { q: 'How do I become an avatar?', a: 'Sign up, choose "Avatar" as your role, complete your profile, pass verification, and start accepting bookings. All you need is a smartphone and reliable internet connection.' },
-  { q: 'How much do avatars earn?', a: 'Avatars set their own rates and keep 85% of every booking. Rates vary by service type, location, and experience. Most avatars earn between $25–$100 per hour.' },
-  { q: 'Is CoTask safe?', a: 'Yes. All avatars go through identity verification. Every session is tracked. Both parties can rate and review. We have a dedicated trust and safety team.' },
-  { q: 'What equipment do avatars need?', a: 'At minimum, a smartphone with good data connection. For premium experiences, a headset, 360° camera, or specialized equipment may be beneficial.' },
+  { q: 'How do I become a local agent?', a: 'Sign up, choose "Local Agent" as your role, complete your profile, pass verification, and start accepting tasks. All you need is a smartphone and reliable internet connection.' },
+  { q: 'How much do local agents earn?', a: 'Agents set their own rates and keep 85% of every task. Rates vary by service type, location, and experience. Most agents earn between $25–$100 per hour.' },
+  { q: 'Is CoTask safe?', a: 'Yes. All agents go through identity verification. Every session is tracked. Both parties can rate and review. We have a dedicated trust and safety team.' },
+  { q: 'What equipment do local agents need?', a: 'At minimum, a smartphone with good data connection. For premium experiences, a headset, 360° camera, or specialized equipment may be beneficial.' },
   { q: 'Does CoTask support businesses?', a: 'Absolutely. Our Enterprise plan offers bulk booking, custom invoicing, team management, and dedicated support for business use cases like site inspections and field operations.' },
-  { q: 'How do payments work?', a: 'Users pay securely through the platform when booking. Avatars receive payouts after sessions are completed. Enterprise clients can opt for monthly invoicing.' },
+  { q: 'How do payments work?', a: 'Users pay securely through the platform when booking. Agents receive payouts after sessions are completed. Enterprise clients can opt for monthly invoicing.' },
   { q: 'What about live video streaming?', a: 'We are actively developing real-time video, audio, and 360° streaming capabilities. The current beta focuses on booking, coordination, and session management. Full live streaming is coming soon.' },
 ];
 
@@ -179,7 +179,7 @@ export default function Landing() {
               <br />being there
             </h1>
             <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-10 leading-relaxed">
-              Book a local avatar for live-streamed tours, inspections, errands, and real-time presence — anywhere in the world, instantly.
+              Book a local agent for live-streamed tours, inspections, errands, and real-time presence — anywhere in the world, instantly.
             </p>
           </motion.div>
 
@@ -222,7 +222,7 @@ export default function Landing() {
           </div>
           <div className="text-center">
             <button onClick={handleGetStarted} className="inline-flex items-center gap-2 px-6 py-3 bg-primary/10 hover:bg-primary/20 border border-primary/20 text-primary rounded-xl font-medium transition-all">
-              Explore all avatars <ArrowRight className="w-4 h-4" />
+              Explore all agents <ArrowRight className="w-4 h-4" />
             </button>
           </div>
         </div>
@@ -240,8 +240,8 @@ export default function Landing() {
             {[
               { icon: Zap, title: 'Not a Video Call', desc: 'Unlike Zoom or FaceTime, CoTask gives you a trained local person who physically goes to a location and acts as your remote presence.' },
               { icon: Globe, title: 'Not a YouTube Tour', desc: 'This is live, interactive, and personalized. You direct the experience in real time. Ask questions, zoom in, pivot direction.' },
-              { icon: Users, title: 'Not a Task App', desc: 'CoTask avatars are trained, verified, and equipped for live sessions. They are your eyes, hands, and guide — not just an errand runner.' },
-              { icon: Shield, title: 'Trust Built In', desc: 'Every avatar is verified, reviewed, and rated. Every session is tracked. Your safety and privacy are our top priority.' },
+              { icon: Users, title: 'Not a Task App', desc: 'CoTask agents are trained, verified, and equipped for live sessions. They are your eyes, hands, and guide — not just an errand runner.' },
+              { icon: Shield, title: 'Trust Built In', desc: 'Every agent is verified, reviewed, and rated. Every session is tracked. Your safety and privacy are our top priority.' },
             ].map(item => (
               <GlassCard key={item.title} className="p-6">
                 <item.icon className="w-6 h-6 text-primary mb-3" />
@@ -253,9 +253,9 @@ export default function Landing() {
 
           <div className="grid md:grid-cols-3 gap-6 mb-16">
             {[
-              { n: '01', title: 'Find an Avatar', desc: 'Search by category, location or availability. See real ratings and live previews before you book.' },
-              { n: '02', title: 'Book & Connect', desc: 'Schedule ahead or book instantly. Pay securely and get connected via live stream with your avatar.' },
-              { n: '03', title: 'Experience Live', desc: "Direct your avatar in real time. They're your eyes, hands, and guide — wherever you need them." },
+              { n: '01', title: 'Discover Local Agents', desc: 'Search by category, location or availability. See real ratings and live previews before you request.' },
+              { n: '02', title: 'Request & Connect', desc: 'Schedule ahead or request instantly. Pay securely and get connected via live stream with your agent.' },
+              { n: '03', title: 'Experience Live', desc: "Direct your agent in real time. They're your eyes, hands, and guide — wherever you need them." },
             ].map((step, i) => (
               <motion.div
                 key={step.n}
@@ -297,7 +297,7 @@ export default function Landing() {
         </div>
       </section>
 
-      {/* Avatar Earnings CTA */}
+      {/* Earnings CTA */}
       <section className="py-20 px-4">
         <div className="max-w-4xl mx-auto">
           <div className="glass rounded-3xl p-10 md:p-14 border border-primary/10 relative overflow-hidden">
@@ -305,14 +305,14 @@ export default function Landing() {
             <div className="relative z-10 text-center">
               <div className="inline-flex items-center gap-2 bg-primary/10 border border-primary/20 rounded-full px-4 py-1.5 mb-6">
                 <TrendingUp className="w-3.5 h-3.5 text-primary" />
-                <span className="text-xs font-medium text-primary">Top avatars earn $3,000+/month</span>
+                <span className="text-xs font-medium text-primary">Top agents earn $3,000+/month</span>
               </div>
-              <h2 className="text-3xl md:text-4xl font-bold mb-4">Earn by Being Someone's Avatar</h2>
+              <h2 className="text-3xl md:text-4xl font-bold mb-4">Earn by Being a Local Agent</h2>
               <p className="text-muted-foreground max-w-xl mx-auto mb-8 leading-relaxed">
                 Use your local knowledge, your camera, and your presence to earn money helping people remotely. Set your own schedule and rates.
               </p>
               <button onClick={handleGetStarted} className="inline-flex items-center gap-2 px-8 py-4 bg-primary hover:bg-primary/90 text-white font-bold rounded-xl glow-primary transition-all">
-                <Video className="w-5 h-5" /> Become an Avatar
+                <Video className="w-5 h-5" /> Become a Local Agent
               </button>
             </div>
           </div>
@@ -325,7 +325,7 @@ export default function Landing() {
           <div className="text-center mb-16">
             <h2 className="text-4xl md:text-5xl font-bold mb-4">Simple, transparent pricing</h2>
             <p className="text-lg text-muted-foreground max-w-xl mx-auto">
-              Pay only for what you use. Avatars set their own rates. CoTask charges a small platform fee.
+              Pay only for what you use. Agents set their own rates. CoTask charges a small platform fee.
             </p>
           </div>
 
@@ -361,9 +361,9 @@ export default function Landing() {
           </div>
 
           <div className="text-center mt-12">
-            <h3 className="font-semibold mb-2">Avatar earnings</h3>
+            <h3 className="font-semibold mb-2">Agent earnings</h3>
             <p className="text-sm text-muted-foreground max-w-lg mx-auto">
-              Avatars keep 85% of every booking. Set your own hourly or per-session rate.
+              Agents keep 85% of every task. Set your own hourly or per-session rate.
               Get paid directly to your account after each completed session.
             </p>
           </div>

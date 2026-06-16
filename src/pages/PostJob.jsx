@@ -159,8 +159,8 @@ export default function PostJob() {
             <ArrowLeft className="w-4 h-4" />
           </button>
           <div>
-            <h1 className="text-2xl font-bold">{editJobId ? 'Edit Job' : 'Post a Job'}</h1>
-            <p className="text-muted-foreground text-sm">{editJobId ? 'Update your job post details' : 'Find the perfect avatar for your task'}</p>
+            <h1 className="text-2xl font-bold">{editJobId ? 'Edit Task' : 'Post a Task'}</h1>
+            <p className="text-muted-foreground text-sm">{editJobId ? 'Update your task post details' : 'Find the perfect local agent for your task'}</p>
           </div>
         </div>
 
@@ -168,7 +168,7 @@ export default function PostJob() {
         <div className="glass rounded-2xl p-6 border border-white/5 space-y-4 relative z-10">
           <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Basic Info</p>
           <div>
-            <label className="text-sm font-medium mb-1.5 block">Job Title *</label>
+            <label className="text-sm font-medium mb-1.5 block">Task Title *</label>
             <Input value={form.title} onChange={e => set('title', e.target.value)} placeholder="e.g. Check apartment in Paris" className="bg-white/5 border-white/10" />
           </div>
           <div className="grid grid-cols-2 gap-4">
@@ -223,7 +223,7 @@ export default function PostJob() {
           {/* Payment type */}
           <div className="flex items-center gap-2 text-sm">
             <span className="text-muted-foreground">Charge</span>
-            {[{ key: 'fixed', label: 'for the whole job' }, { key: 'hourly', label: 'per hour' }].map(({ key, label }) => (
+            {[{ key: 'fixed', label: 'for the whole task' }, { key: 'hourly', label: 'per hour' }].map(({ key, label }) => (
               <button key={key} type="button" onClick={() => set('budget_type', key)}
                 className={`px-2.5 py-1 rounded-full text-xs font-medium border transition-all ${
                   form.budget_type === key ? 'bg-foreground text-background border-foreground' : 'bg-white/5 text-muted-foreground border-white/10 hover:border-white/20'
@@ -266,12 +266,12 @@ export default function PostJob() {
         <div className="glass rounded-2xl p-6 border border-white/5 space-y-4">
           <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Description</p>
           <textarea value={form.description} onChange={e => set('description', e.target.value)}
-            placeholder="Describe the job in detail — what needs to be done, any specific requirements, expected outcome..."
+            placeholder="Describe the task in detail — what needs to be done, any specific requirements, expected outcome..."
             rows={4} className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm resize-none focus:outline-none focus:border-primary/50 text-foreground placeholder:text-muted-foreground" />
         </div>
 
         <Button className="w-full h-11" onClick={() => submit.mutate()} disabled={submit.isPending || !form.title || !form.description}>
-          {submit.isPending ? (editJobId ? 'Saving...' : 'Posting...') : (editJobId ? 'Save Changes' : 'Post Job')}
+          {submit.isPending ? (editJobId ? 'Saving...' : 'Posting...') : (editJobId ? 'Save Changes' : 'Post Task')}
         </Button>
       </div>
     </AppShell>
