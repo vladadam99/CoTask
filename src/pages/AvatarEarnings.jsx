@@ -192,7 +192,7 @@ export default function AvatarEarnings() {
       ) : (
         <div className="space-y-2">
           {bookings.map(b => (
-            <Link key={b.id} to={`/BookingDetail?id=${b.id}`}>
+            <Link key={b.id} to={`/AvatarBookingDetail?id=${b.id}`}>
               <GlassCard className="p-4 flex items-center justify-between gap-4" hover>
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-medium truncate">{b.category} — {b.client_name}</p>

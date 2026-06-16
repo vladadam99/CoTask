@@ -117,7 +117,7 @@ export default function AvatarSchedule() {
           ) : (
             <div className="space-y-3">
               {selectedBookings.map(b => (
-                <Link key={b.id} to={`/BookingDetail?id=${b.id}`}>
+                <Link key={b.id} to={`/AvatarBookingDetail?id=${b.id}`}>
                   <GlassCard className="p-4" hover>
                     <div className="flex items-start justify-between gap-2 mb-2">
                       <p className="font-semibold text-sm">{b.category}</p>
@@ -147,7 +147,7 @@ export default function AvatarSchedule() {
               .sort((a, b) => new Date(a.scheduled_date) - new Date(b.scheduled_date))
               .slice(0, 6)
               .map(b => (
-                <Link key={b.id} to={`/BookingDetail?id=${b.id}`}>
+                <Link key={b.id} to={`/AvatarBookingDetail?id=${b.id}`}>
                   <GlassCard className="p-3 flex items-center gap-3" hover>
                     <div className="w-9 h-9 rounded-lg bg-primary/10 flex flex-col items-center justify-center text-primary flex-shrink-0">
                       <span className="text-xs font-bold leading-none">{format(new Date(b.scheduled_date), 'd')}</span>
