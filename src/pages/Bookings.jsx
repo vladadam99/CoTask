@@ -96,9 +96,14 @@ export default function Bookings() {
           </div>
         )}
 
+        <div className="mb-8">
+          <h1 className="text-2xl font-bold mb-1">My Tasks</h1>
+          <p className="text-sm text-muted-foreground mb-6">Track your direct hires, open tasks, live sessions, messages, and completed work in one place.</p>
+        </div>
+
         {isClient && (
           <div className="mb-8">
-            <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-3">Direct Tasks</h2>
+            <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-3">Direct Hires</h2>
             {isLoading ? (
               <div className="space-y-3">
                 {[1,2,3].map(i => <div key={i} className="glass rounded-xl p-5 animate-pulse"><div className="h-4 bg-muted rounded w-1/2 mb-2" /><div className="h-3 bg-muted rounded w-1/3" /></div>)}
@@ -124,8 +129,8 @@ export default function Bookings() {
                 ))}
               </div>
             ) : (
-              <GlassCard className="p-6 text-center">
-                <p className="text-sm text-muted-foreground">No direct tasks yet</p>
+              <GlassCard className="p-6 text-center border border-dashed border-border/60 bg-transparent shadow-none">
+                <p className="text-sm text-muted-foreground">No direct hires yet</p>
               </GlassCard>
             )}
           </div>
@@ -183,10 +188,10 @@ export default function Bookings() {
               })}
             </div>
           ) : (
-            <GlassCard className="p-10 text-center">
-              <Briefcase className="w-10 h-10 text-muted-foreground mx-auto mb-3" />
+            <GlassCard className="p-10 text-center border border-dashed border-border/60 bg-transparent shadow-none">
+              <Briefcase className="w-8 h-8 text-muted-foreground mx-auto mb-3 opacity-50" />
               <p className="text-muted-foreground">No open tasks yet</p>
-              <Link to="/PostJob"><button className="mt-3 text-sm text-primary hover:underline">Post your first task →</button></Link>
+              <Link to="/PostJob"><button className="mt-3 text-sm text-primary hover:underline font-medium">Post your first Open Task →</button></Link>
             </GlassCard>
           )
         ) : viewMode === 'calendar' ? (
@@ -218,15 +223,20 @@ export default function Bookings() {
             ))}
           </div>
         ) : (
-          <GlassCard className="p-12 text-center flex flex-col items-center justify-center">
+          <GlassCard className="p-12 text-center flex flex-col items-center justify-center border border-dashed border-border/60 bg-transparent shadow-none">
             <div className="w-16 h-16 rounded-full bg-secondary flex items-center justify-center mb-4">
               <Calendar className="w-8 h-8 text-muted-foreground" />
             </div>
             <h3 className="text-xl font-bold mb-2">No tasks yet</h3>
-            <p className="text-muted-foreground mb-6 max-w-sm">You haven't requested or scheduled any tasks yet. Post a task to get started.</p>
-            <Link to="/PostJob" className="px-6 py-2.5 bg-primary text-primary-foreground rounded-lg font-medium hover:bg-primary/90 transition-colors">
-              Post your first task
-            </Link>
+            <p className="text-muted-foreground mb-6 max-w-sm">Post an open task or request a Local Agent directly to get started.</p>
+            <div className="flex flex-col sm:flex-row gap-3 justify-center w-full max-w-md">
+              <Link to="/PostJob" className="flex-1 px-6 py-2.5 bg-primary text-primary-foreground rounded-lg font-medium hover:bg-primary/90 transition-colors text-center">
+                Post Open Task
+              </Link>
+              <Link to="/FindPeople" className="flex-1 px-6 py-2.5 bg-card border border-border text-foreground rounded-lg font-medium hover:bg-secondary transition-colors text-center">
+                Discover Local Agents
+              </Link>
+            </div>
           </GlassCard>
         )}
       </div>

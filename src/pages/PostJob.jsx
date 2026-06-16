@@ -159,8 +159,8 @@ export default function PostJob() {
             <ArrowLeft className="w-4 h-4" />
           </button>
           <div>
-            <h1 className="text-2xl font-bold">{editJobId ? 'Edit Task' : 'Post a Task'}</h1>
-            <p className="text-muted-foreground text-sm">{editJobId ? 'Update your task post details' : 'Find the perfect local agent for your task'}</p>
+            <h1 className="text-2xl font-bold">{editJobId ? 'Edit Open Task' : 'Post an Open Task'}</h1>
+            <p className="text-muted-foreground text-sm">{editJobId ? 'Update your task details' : 'Describe what you need done and let qualified Local Agents submit proposals.'}</p>
           </div>
         </div>
 
@@ -219,7 +219,7 @@ export default function PostJob() {
 
         {/* Budget */}
         <div className="glass rounded-2xl p-6 border border-border space-y-4">
-          <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Budget</p>
+          <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Budget / Secure Payment</p>
           {/* Payment type */}
           <div className="flex items-center gap-2 text-sm">
             <span className="text-muted-foreground">Charge</span>
@@ -271,8 +271,11 @@ export default function PostJob() {
         </div>
 
         <Button className="w-full h-11" onClick={() => submit.mutate()} disabled={submit.isPending || !form.title || !form.description}>
-          {submit.isPending ? (editJobId ? 'Saving...' : 'Posting...') : (editJobId ? 'Save Changes' : 'Post Task')}
+          {submit.isPending ? (editJobId ? 'Saving...' : 'Posting...') : (editJobId ? 'Save Changes' : 'Post Open Task')}
         </Button>
+        <p className="text-xs text-center text-muted-foreground pt-2 pb-6">
+          Open Tasks are best when you want several Local Agents to respond. Use Direct Hire if you already know who you want.
+        </p>
       </div>
     </AppShell>
   );

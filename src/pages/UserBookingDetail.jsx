@@ -244,7 +244,7 @@ export default function UserBookingDetail() {
                 </div>
                 <Link to={`/ClientLiveView?session=${liveSession.id}`}>
                   <Button size="sm" className="bg-primary gap-2">
-                    <Video className="w-3.5 h-3.5" /> Join Stream
+                    <Video className="w-3.5 h-3.5" /> Join Live Session
                   </Button>
                 </Link>
               </div>

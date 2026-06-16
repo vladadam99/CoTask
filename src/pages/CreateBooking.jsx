@@ -189,7 +189,15 @@ Based on this, return:
           <ArrowLeft className="w-4 h-4" /> Back
         </button>
 
-        <h1 className="text-2xl font-bold mb-1">Request to Hire</h1>
+        <h1 className="text-2xl font-bold mb-1">Request Direct Hire</h1>
+        <p className="text-sm text-muted-foreground mb-6">Send a task request to this Local Agent. They can accept, decline, or discuss details before starting.</p>
+        
+        <div className="bg-muted/50 border border-border rounded-xl p-3 mb-8">
+          <p className="text-xs text-muted-foreground">
+            <strong className="text-foreground">Tip:</strong> Direct Hire is best when you already selected a Local Agent. If you want multiple proposals, <a href="/PostJob" className="text-primary hover:underline">post an Open Task</a> instead.
+          </p>
+        </div>
+
         {avatar && (
           <div className="flex items-center gap-3 mb-8">
             {avatar.photo_url
@@ -407,9 +415,9 @@ Based on this, return:
           {error && <p className="text-sm text-red-400 bg-red-500/10 border border-red-500/20 rounded-xl px-4 py-3">{error}</p>}
 
           <Button className="w-full py-5 text-base gap-2 bg-primary hover:bg-primary/90 glow-primary-sm" onClick={handleReview} disabled={!form.category}>
-            Review Task →
+            Review Request →
           </Button>
-          <p className="text-xs text-center text-muted-foreground pb-4">You'll review all details before payment.</p>
+          <p className="text-xs text-center text-muted-foreground pb-4">You'll review all details before secure payment.</p>
         </div>
       </div>
     </div>

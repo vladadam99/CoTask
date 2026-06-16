@@ -1,5 +1,6 @@
 import React from 'react';
 import { useCurrentUser } from '@/lib/useCurrentUser';
+import { Link } from 'react-router-dom';
 import AppShell from '@/components/layout/AppShell';
 import { getNavItems } from '@/lib/navItems';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -12,9 +13,19 @@ export default function FindPeople() {
   return (
     <AppShell navItems={getNavItems(user?.selected_role)} user={user}>
       <div className="max-w-5xl mx-auto">
-        <div className="mb-6">
-          <h1 className="text-2xl font-black mb-1">Discover Local Agents</h1>
-          
+        <div className="mb-6 flex flex-col md:flex-row md:items-start md:justify-between gap-4">
+          <div>
+            <h1 className="text-2xl font-black mb-1">Discover Local Agents</h1>
+            <p className="text-sm text-muted-foreground max-w-xl">
+              Find verified Local Agents who can visit, inspect, record, or livestream from where you need them.
+              Need someone available nearby? Use filters or post an open task.
+            </p>
+          </div>
+          <div className="flex-shrink-0">
+            <Link to="/PostJob" className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground shadow hover:bg-primary/90 h-9 px-4 py-2">
+              Post an Open Task
+            </Link>
+          </div>
         </div>
 
         <Tabs defaultValue="avatars" className="w-full">

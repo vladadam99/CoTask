@@ -233,7 +233,7 @@ function AvatarCard({ avatar, i, user, queryClient }) {
               ))}
             </div>
           )}
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between mb-4">
             <span className="text-sm font-bold text-primary">${avatar.hourly_rate || 30}/hr</span>
             {avatar.rating > 0 && (
               <div className="flex items-center gap-1">
@@ -241,6 +241,15 @@ function AvatarCard({ avatar, i, user, queryClient }) {
                 <span className="text-xs">{avatar.rating.toFixed(1)}</span>
               </div>
             )}
+          </div>
+          
+          <div className="flex flex-col gap-2">
+            <Button variant="outline" className="w-full h-8 text-xs pointer-events-none" asChild>
+              <span>View Profile</span>
+            </Button>
+            <Button className="w-full h-8 text-xs pointer-events-none" asChild>
+              <span>Request Direct Hire</span>
+            </Button>
           </div>
         </div>
       </Link>

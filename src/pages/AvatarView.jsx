@@ -318,24 +318,34 @@ export default function AvatarView() {
         </div>
 
         {/* Action Buttons */}
-        <div className="flex gap-3 mb-6 px-4">
-          <Link to={`/CreateBooking?avatar=${id}`} className="flex-1">
-            <Button className="w-full bg-primary hover:bg-primary/90 glow-primary-sm py-5">
-              <Calendar className="w-4 h-4 mr-2" /> Book Now — ${avatar.hourly_rate || 30}/hr
+        <div className="flex flex-col gap-3 mb-6 px-4">
+          <div className="flex gap-3">
+            <Link to={`/CreateBooking?avatar=${id}`} className="flex-1">
+              <Button className="w-full bg-primary hover:bg-primary/90 glow-primary-sm py-5">
+                <Calendar className="w-4 h-4 mr-2" /> Request Direct Hire — ${avatar.hourly_rate || 30}/hr
+              </Button>
+            </Link>
+            <Button variant="outline" className="border-border py-5 gap-2 flex-1 md:flex-none md:px-8" onClick={startMessage} disabled={messaging}>
+              {messaging ? <Loader2 className="w-4 h-4 animate-spin" /> : <MessageSquare className="w-4 h-4" />}
+              Message
             </Button>
-          </Link>
-          <Button variant="outline" className="border-border py-5 gap-2" onClick={startMessage} disabled={messaging}>
-            {messaging ? <Loader2 className="w-4 h-4 animate-spin" /> : <MessageSquare className="w-4 h-4" />}
-            Message
-          </Button>
-          <Button
-            variant="outline"
-            className="border-border py-5"
-            onClick={() => toggleFavorite.mutate()}
-            disabled={toggleFavorite.isPending || !user}
-          >
-            <Heart className={`w-4 h-4 ${isFavorited ? 'fill-primary text-primary' : ''}`} />
-          </Button>
+            <Button
+              variant="outline"
+              className="border-border py-5 px-3"
+              onClick={() => toggleFavorite.mutate()}
+              disabled={toggleFavorite.isPending || !user}
+            >
+              <Heart className={`w-4 h-4 ${isFavorited ? 'fill-primary text-primary' : ''}`} />
+            </Button>
+          </div>
+          
+          <div className="text-center bg-muted/50 rounded-xl p-3 border border-border mt-2">
+            <p className="text-xs text-muted-foreground mb-1.5">Direct Hire is best when you already know you want this Local Agent.</p>
+            <Link to="/PostJob" className="text-sm text-primary hover:underline font-medium block">
+              Post an Open Task instead
+            </Link>
+            <p className="text-[10px] text-muted-foreground mt-1">Use an Open Task to let multiple Local Agents submit proposals.</p>
+          </div>
         </div>
 
 
