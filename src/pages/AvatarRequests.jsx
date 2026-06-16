@@ -148,9 +148,12 @@ export default function AvatarRequests() {
           ))}
         </div>
       ) : filtered.length === 0 ? (
-        <GlassCard className="p-12 text-center">
-          <Inbox className="w-10 h-10 text-muted-foreground mx-auto mb-3" />
-          <p className="text-sm text-muted-foreground">No {activeTab === 'jobs' ? 'won jobs' : activeTab === 'all' ? '' : activeTab} found</p>
+        <GlassCard className="p-12 text-center flex flex-col items-center justify-center">
+          <div className="w-16 h-16 rounded-full bg-secondary flex items-center justify-center mb-4">
+            <Inbox className="w-8 h-8 text-muted-foreground" />
+          </div>
+          <h3 className="text-xl font-bold mb-2">No tasks found</h3>
+          <p className="text-sm text-muted-foreground">No {activeTab === 'jobs' ? 'won tasks' : activeTab === 'all' ? 'tasks' : activeTab} found for this filter.</p>
         </GlassCard>
       ) : (
         <div className="space-y-3">

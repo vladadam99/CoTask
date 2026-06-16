@@ -161,10 +161,12 @@ export default function AvatarMessages() {
               </button>
             ))
           ) : (
-            <div className="p-8 text-center">
-              <MessageSquare className="w-8 h-8 text-muted-foreground mx-auto mb-3" />
-              <p className="text-sm text-muted-foreground">No conversations yet</p>
-              <p className="text-xs text-muted-foreground mt-1">Messages from tasks will appear here</p>
+            <div className="p-12 text-center flex flex-col items-center justify-center h-full">
+              <div className="w-16 h-16 rounded-full bg-secondary flex items-center justify-center mb-4">
+                <MessageSquare className="w-8 h-8 text-muted-foreground" />
+              </div>
+              <h3 className="text-lg font-bold mb-1">No conversations yet</h3>
+              <p className="text-sm text-muted-foreground">Messages from your tasks will appear here</p>
             </div>
           )}
         </div>

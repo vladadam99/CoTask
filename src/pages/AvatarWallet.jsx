@@ -157,9 +157,12 @@ export default function AvatarWallet() {
       {isLoading ? (
         <div className="space-y-3">{[1,2,3].map(i => <GlassCard key={i} className="p-4 animate-pulse"><div className="h-4 bg-muted rounded w-1/3" /></GlassCard>)}</div>
       ) : completedJobs.length === 0 ? (
-        <GlassCard className="p-12 text-center">
-          <Wallet className="w-10 h-10 text-muted-foreground mx-auto mb-3" />
-          <p className="text-sm text-muted-foreground">No completed tasks yet</p>
+        <GlassCard className="p-12 text-center flex flex-col items-center justify-center">
+          <div className="w-16 h-16 rounded-full bg-secondary flex items-center justify-center mb-4">
+            <Wallet className="w-8 h-8 text-muted-foreground" />
+          </div>
+          <h3 className="text-xl font-bold mb-2">No completed tasks yet</h3>
+          <p className="text-sm text-muted-foreground">Your earnings history will appear here.</p>
         </GlassCard>
       ) : (
         <div className="space-y-3">

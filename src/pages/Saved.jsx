@@ -49,11 +49,13 @@ export default function Saved() {
             ))}
           </div>
         ) : (
-          <GlassCard className="p-10 text-center">
-            <Heart className="w-10 h-10 text-muted-foreground mx-auto mb-3" />
-            <h3 className="font-semibold mb-2">No saved avatars</h3>
-            <p className="text-sm text-muted-foreground mb-4">Browse and save your favorite avatars for quick access</p>
-            <Link to="/Explore"><Button className="bg-primary hover:bg-primary/90">Explore Avatars</Button></Link>
+          <GlassCard className="p-12 text-center flex flex-col items-center justify-center">
+            <div className="w-16 h-16 rounded-full bg-secondary flex items-center justify-center mb-4">
+              <Heart className="w-8 h-8 text-muted-foreground" />
+            </div>
+            <h3 className="text-xl font-bold mb-2">No saved avatars</h3>
+            <p className="text-sm text-muted-foreground mb-4">Browse and save your favorite avatars for quick access.</p>
+            <Link to="/Explore"><Button>Explore Avatars</Button></Link>
           </GlassCard>
         )}
       </div>
