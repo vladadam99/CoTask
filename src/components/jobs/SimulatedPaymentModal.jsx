@@ -28,15 +28,15 @@ export default function SimulatedPaymentModal({ job, onSuccess, onCancel }) {
 
       <div className="bg-yellow-500/10 border border-yellow-500/20 rounded-xl p-4 text-sm text-yellow-300 space-y-1">
         <p className="font-semibold">🧪 This is fake money for testing</p>
-        <p className="text-xs text-muted-foreground">No real card is required. The system will simulate holding <span className="font-semibold text-foreground">${amount}</span> in escrow.</p>
+        <p className="text-xs text-muted-foreground">No real card is required. The system will simulate holding <span className="font-semibold text-foreground">${amount}</span> in secure payment.</p>
       </div>
 
       <div className="bg-primary/5 border border-primary/20 rounded-xl p-4 flex items-start gap-3">
         <ShieldCheck className="w-5 h-5 text-primary mt-0.5 flex-shrink-0" />
         <div>
-          <p className="text-sm font-semibold">Funds held in simulated escrow</p>
+          <p className="text-sm font-semibold">Funds held in simulated secure payment</p>
           <p className="text-xs text-muted-foreground mt-0.5">
-            <span className="font-medium text-foreground">${amount}</span> will be "held" and released to the avatar after you approve their work — or automatically after 24 hours.
+            <span className="font-medium text-foreground">${amount}</span> will be "held" and released to the agent after you approve their work — or automatically after 24 hours.
           </p>
         </div>
       </div>

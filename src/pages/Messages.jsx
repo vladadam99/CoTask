@@ -169,7 +169,7 @@ export default function Messages() {
             <div className="p-8 text-center">
               <MessageSquare className="w-8 h-8 text-muted-foreground mx-auto mb-3" />
               <p className="text-sm text-muted-foreground">No conversations yet</p>
-              <p className="text-xs text-muted-foreground mt-1">Messages from bookings will appear here</p>
+              <p className="text-xs text-muted-foreground mt-1">Messages from tasks will appear here</p>
             </div>
           )}
         </div>

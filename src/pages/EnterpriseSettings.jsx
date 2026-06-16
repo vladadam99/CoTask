@@ -12,18 +12,7 @@ import {
   Home, FileText, Calendar, MessageSquare, Users, CreditCard, Heart, BarChart3, Settings,
   Save, Upload, Loader2
 } from 'lucide-react';
-
-const navItems = [
-  { icon: Home, label: 'Home', path: '/EnterpriseDashboard' },
-  { icon: FileText, label: 'Requests', path: '/EnterpriseRequests' },
-  { icon: Calendar, label: 'Bookings', path: '/Bookings' },
-  { icon: MessageSquare, label: 'Messages', path: '/Messages' },
-  { icon: Users, label: 'Team', path: '/EnterpriseTeam' },
-  { icon: CreditCard, label: 'Billing', path: '/EnterpriseBilling' },
-  { icon: Heart, label: 'Favorites', path: '/Saved' },
-  { icon: BarChart3, label: 'Reports', path: '/EnterpriseReports' },
-  { icon: Settings, label: 'Settings', path: '/EnterpriseSettings' },
-];
+import { getNavItems } from '@/lib/navItems';
 
 export default function EnterpriseSettings() {
   const { user, loading } = useCurrentUser();
@@ -99,7 +88,7 @@ export default function EnterpriseSettings() {
   if (loading) return <div className="min-h-screen flex items-center justify-center"><div className="w-8 h-8 border-4 border-primary/20 border-t-primary rounded-full animate-spin" /></div>;
 
   return (
-    <AppShell navItems={navItems} user={user}>
+    <AppShell navItems={getNavItems(user?.selected_role)} user={user}>
       <div className="flex items-center justify-between mb-8">
         <div>
           <h1 className="text-2xl lg:text-3xl font-bold mb-1">Company Settings</h1>

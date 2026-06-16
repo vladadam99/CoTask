@@ -186,7 +186,7 @@ export default function ConsultationBooking() {
           )}
 
           <div className="flex flex-col gap-2">
-            <Button onClick={() => navigate('/Bookings')} className="w-full">View My Bookings</Button>
+            <Button onClick={() => navigate('/Bookings')} className="w-full">View My Tasks</Button>
             <Button variant="outline" className="w-full border-white/10" onClick={() => navigate(-1)}>Back to Profile</Button>
           </div>
         </div>
@@ -311,7 +311,7 @@ export default function ConsultationBooking() {
             {[
               { icon: Video, text: 'Private video call link auto-generated at booking time' },
               { icon: Clock, text: `${offering?.duration_minutes || 60} minute live session` },
-              { icon: Shield, text: 'Payment held in escrow — released after session' },
+              { icon: Shield, text: 'Payment held in secure payment — released after session' },
             ].map(({ icon: Icon, text }) => (
               <div key={text} className="flex items-center gap-2.5 text-sm text-muted-foreground">
                 <Icon className="w-4 h-4 text-primary flex-shrink-0" />
@@ -366,7 +366,7 @@ export default function ConsultationBooking() {
             )}
           </Button>
           <p className="text-xs text-center text-muted-foreground pb-4">
-            A video call link will be generated automatically. Payment is held in escrow until after the session.
+            A video call link will be generated automatically. Payment is held in secure payment until after the session.
           </p>
         </div>
       </div>

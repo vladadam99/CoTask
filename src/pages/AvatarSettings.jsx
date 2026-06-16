@@ -208,7 +208,7 @@ export default function AvatarSettings() {
                 <button onClick={() => handleSwitchRole('avatar')} disabled={switchingRole} className="w-full text-left disabled:opacity-50">
                   <div className="p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors text-sm flex items-center gap-3">
                     <ArrowRightLeft className="w-4 h-4 text-muted-foreground" />
-                    <span>{switchingRole ? 'Switching...' : 'Switch to Avatar'}</span>
+                    <span>{switchingRole ? 'Switching...' : 'Switch to Agent'}</span>
                   </div>
                 </button>
               )}

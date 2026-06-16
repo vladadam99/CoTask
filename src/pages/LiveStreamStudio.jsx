@@ -529,7 +529,7 @@ export default function LiveStreamStudio() {
                 <div className="space-y-3">
                   {readyBookings.length > 0 && (
                     <div className="space-y-2">
-                      <p className="text-xs text-muted-foreground">With a booking:</p>
+                      <p className="text-xs text-muted-foreground">With a task:</p>
                       {readyBookings.map(b => (
                         <div key={b.id} className="flex items-center justify-between gap-3">
                           <div className="min-w-0">
@@ -552,7 +552,7 @@ export default function LiveStreamStudio() {
                   <div className="flex items-center justify-between gap-3">
                     <div>
                       <p className="text-sm font-medium">Quick Stream</p>
-                      <p className="text-xs text-muted-foreground">Go live without a booking</p>
+                      <p className="text-xs text-muted-foreground">Go live without a task</p>
                     </div>
                     <Button
                       size="sm"
@@ -680,7 +680,7 @@ export default function LiveStreamStudio() {
             {selectedSource && !isLive && (insta360Status === 'connected' || (selectedSource.id !== 'insta360' && streamRef.current)) && (
               <div className="mt-3 flex items-center gap-3 text-xs text-muted-foreground px-1">
                 <span className="w-2 h-2 rounded-full bg-yellow-500 animate-pulse" />
-                Camera preview active — not broadcasting yet. Select a booking above to go live.
+                Camera preview active — not broadcasting yet. Select a task above to go live.
               </div>
             )}
             {isLive && (

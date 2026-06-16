@@ -108,7 +108,7 @@ export default function JobActionCard({ job, user, userRole, conversationId, onJ
         : null;
 
       const summary = [
-        `✅ Job marked as done by ${user.full_name}.`,
+        `✅ Task marked as done by ${user.full_name}.`,
         startedAt ? `⏱ Started: ${startedAt.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}` : null,
         durationStr ? `⏳ Duration: ${durationStr}` : null,
         proofNote ? `📝 Note: "${proofNote}"` : null,
@@ -180,7 +180,7 @@ export default function JobActionCard({ job, user, userRole, conversationId, onJ
       }
       await Promise.all([
         base44.functions.invoke('approveJob', { bookingId: job.id, action: 'dispute', disputeReason, payload: { dispute_photo_url: disputePhotoUrl } }),
-        postSystemMessage(`⚠️ Client raised a dispute: "${disputeReason}"${disputePhotoUrl ? ' (photo attached)' : ''}. The avatar can now respond.`, {
+        postSystemMessage(`⚠️ Client raised a dispute: "${disputeReason}"${disputePhotoUrl ? ' (photo attached)' : ''}. The agent can now respond.`, {
           notifyTitle: '⚠️ Dispute Raised',
           notifyMessage: `${user.full_name} raised a dispute. Please respond in the chat.`,
           notifyTargetRole: 'avatar'
@@ -203,9 +203,9 @@ export default function JobActionCard({ job, user, userRole, conversationId, onJ
     try {
       await Promise.all([
         base44.functions.invoke('updateJobProgress', { jobId: job.id, action: 'refund' }),
-        postSystemMessage(`↩️ Avatar agreed to a full refund. Job closed.`, {
+        postSystemMessage(`↩️ Agent agreed to a full refund. Task closed.`, {
           notifyTitle: '↩️ Full Refund Agreed',
-          notifyMessage: `The avatar agreed to refund you in full.`,
+          notifyMessage: `The agent agreed to refund you in full.`,
           notifyType: 'payment',
           notifyTargetRole: 'user'
         }),
@@ -224,9 +224,9 @@ export default function JobActionCard({ job, user, userRole, conversationId, onJ
     try {
       await Promise.all([
         base44.functions.invoke('updateJobProgress', { jobId: job.id, action: 'propose_partial', payload: { amount: Number(partialAmount) } }),
-        postSystemMessage(`🤝 Avatar proposed partial settlement: Client pays $${partialAmount}. Awaiting client acceptance.`, {
+        postSystemMessage(`🤝 Agent proposed partial settlement: Client pays $${partialAmount}. Awaiting client acceptance.`, {
           notifyTitle: '🤝 Partial Settlement Proposal',
-          notifyMessage: `The avatar proposed a partial payment of $${partialAmount}. Please accept or reject.`,
+          notifyMessage: `The agent proposed a partial payment of $${partialAmount}. Please accept or reject.`,
           notifyType: 'payment',
           notifyTargetRole: 'user'
         }),
@@ -355,7 +355,7 @@ export default function JobActionCard({ job, user, userRole, conversationId, onJ
             <div className="flex items-center gap-2">
               <Clock className="w-4 h-4 text-primary" />
               <span className="text-sm font-semibold">
-                {scheduledStr && countdown && !countdown.expired ? 'Job starts in' : 'Waiting for avatar to start…'}
+                {scheduledStr && countdown && !countdown.expired ? 'Job starts in' : 'Waiting for agent to start…'}
               </span>
             </div>
             {scheduledStr && countdown && !countdown.expired && (
@@ -431,7 +431,7 @@ export default function JobActionCard({ job, user, userRole, conversationId, onJ
       return (
         <div className="mx-4 my-3 glass rounded-2xl p-3 border border-green-500/20 flex items-center gap-2">
           <Play className="w-4 h-4 text-green-400" />
-          <p className="text-sm text-green-400 font-medium">Job is in progress — avatar is working on it.</p>
+          <p className="text-sm text-green-400 font-medium">Task is in progress — agent is working on it.</p>
         </div>
       );
     }
@@ -446,9 +446,9 @@ export default function JobActionCard({ job, user, userRole, conversationId, onJ
         <div className="mx-4 my-3 glass rounded-2xl p-4 border border-yellow-500/30 space-y-3">
           <div className="flex items-center gap-2">
             <AlertTriangle className="w-4 h-4 text-yellow-400" />
-            <p className="font-semibold text-sm text-yellow-400">Job Completion — Your Review Needed</p>
+            <p className="font-semibold text-sm text-yellow-400">Task Completion — Your Review Needed</p>
           </div>
-          <p className="text-xs text-muted-foreground">The avatar has marked this job as done. Review the proof and confirm.</p>
+          <p className="text-xs text-muted-foreground">The agent has marked this task as done. Review the proof and confirm.</p>
           {job.proof_url && <img src={job.proof_url} alt="Proof" className="w-full max-h-48 object-cover rounded-xl border border-white/10" />}
           {job.proof_note && <p className="text-xs text-muted-foreground italic">"{job.proof_note}"</p>}
           {!showDisputeForm ? (
@@ -507,7 +507,7 @@ export default function JobActionCard({ job, user, userRole, conversationId, onJ
           <AlertTriangle className="w-4 h-4 text-blue-400" />
           <p className="font-semibold text-sm text-blue-400">Partial Settlement Proposal</p>
         </div>
-        <p className="text-xs text-muted-foreground">The avatar proposed a partial settlement of <span className="font-semibold text-blue-400">${job.partial_amount}</span>. Do you accept?</p>
+        <p className="text-xs text-muted-foreground">The agent proposed a partial settlement of <span className="font-semibold text-blue-400">${job.partial_amount}</span>. Do you accept?</p>
         <div className="flex gap-2">
           <Button className="flex-1 gap-1.5 bg-green-600 hover:bg-green-700 text-white" onClick={handleAcceptPartialRefund} disabled={loading}>
             {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <><CheckCircle className="w-4 h-4" /> Accept</>}

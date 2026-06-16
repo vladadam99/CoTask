@@ -115,7 +115,7 @@ export default function AvatarWallet() {
       <div className="mb-8">
         <div className="flex items-center justify-between flex-wrap gap-3">
           <div>
-            <h1 className="text-2xl lg:text-3xl font-bold mb-1 flex items-center gap-2"><Wallet className="w-7 h-7 text-primary" /> My Wallet</h1>
+            <h1 className="text-2xl lg:text-3xl font-bold mb-1 flex items-center gap-2"><Wallet className="w-7 h-7 text-primary" /> Earnings</h1>
             <p className="text-muted-foreground text-sm">Your earnings overview and payment history</p>
           </div>
           <button onClick={() => setShowWithdraw(true)} className="flex items-center gap-2 bg-primary text-primary-foreground px-4 py-2 rounded-xl text-sm font-medium hover:bg-primary/90 transition-colors">
@@ -140,7 +140,7 @@ export default function AvatarWallet() {
             <span className="text-sm text-muted-foreground">Pending</span>
           </div>
           <p className="text-2xl font-bold text-yellow-400">${pendingAmount.toFixed(2)}</p>
-          <p className="text-xs text-muted-foreground mt-1">{pendingJobs.length} job{pendingJobs.length !== 1 ? 's' : ''} in progress</p>
+          <p className="text-xs text-muted-foreground mt-1">{pendingJobs.length} task{pendingJobs.length !== 1 ? 's' : ''} in progress</p>
         </GlassCard>
         <GlassCard className="p-5">
           <div className="flex items-center gap-3 mb-2">
@@ -148,7 +148,7 @@ export default function AvatarWallet() {
             <span className="text-sm text-muted-foreground">Total Earned (Gross)</span>
           </div>
           <p className="text-2xl font-bold text-primary">${totalGross.toFixed(2)}</p>
-          <p className="text-xs text-muted-foreground mt-1">{completedJobs.length} completed job{completedJobs.length !== 1 ? 's' : ''}</p>
+          <p className="text-xs text-muted-foreground mt-1">{completedJobs.length} completed task{completedJobs.length !== 1 ? 's' : ''}</p>
         </GlassCard>
       </div>
 
@@ -159,7 +159,7 @@ export default function AvatarWallet() {
       ) : completedJobs.length === 0 ? (
         <GlassCard className="p-12 text-center">
           <Wallet className="w-10 h-10 text-muted-foreground mx-auto mb-3" />
-          <p className="text-sm text-muted-foreground">No completed jobs yet</p>
+          <p className="text-sm text-muted-foreground">No completed tasks yet</p>
         </GlassCard>
       ) : (
         <div className="space-y-3">

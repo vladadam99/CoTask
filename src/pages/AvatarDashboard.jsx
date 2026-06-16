@@ -154,7 +154,7 @@ export default function AvatarDashboard() {
       {/* No profile prompt */}
       {!profile && (
         <div className="glass border border-yellow-500/20 bg-yellow-500/5 rounded-2xl p-6 mb-8">
-          <p className="text-sm font-bold mb-1">Complete your profile to start accepting jobs</p>
+          <p className="text-sm font-bold mb-1">Complete your profile to start accepting tasks</p>
           <p className="text-xs text-muted-foreground mb-3">Add your bio, services, and pricing to appear in search results.</p>
           <Link to="/AvatarProfileEdit">
             <Button size="sm" variant="outline" className="border-yellow-500/30 text-yellow-400">Set up profile →</Button>
@@ -207,11 +207,11 @@ export default function AvatarDashboard() {
         </div>
       )}
 
-      {/* Upcoming Jobs */}
+      {/* Upcoming Tasks */}
       {upcomingBookings.length > 0 && (
         <div>
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-base font-bold">Upcoming Jobs</h2>
+            <h2 className="text-base font-bold">Upcoming Tasks</h2>
             <Link to="/AvatarRequests" className="text-sm text-primary hover:underline flex items-center gap-1">
               See all <ArrowRight className="w-3 h-3" />
             </Link>

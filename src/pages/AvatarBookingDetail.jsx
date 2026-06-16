@@ -86,7 +86,7 @@ export default function AvatarBookingDetail() {
         </button>
 
         <div className="flex items-center justify-between mb-6">
-          <h1 className="text-2xl font-bold">Booking Details</h1>
+          <h1 className="text-2xl font-bold">Task Details</h1>
           <StatusBadge status={booking.status} />
         </div>
 
@@ -227,7 +227,7 @@ export default function AvatarBookingDetail() {
           <div className="flex flex-wrap gap-3">
             {canAccept && (
               <Button className="bg-green-600 hover:bg-green-700 flex-1" onClick={() => updateStatus.mutate('accepted')}>
-                Accept Booking
+                Accept Task
               </Button>
             )}
             {canDecline && (

@@ -189,7 +189,7 @@ Based on this, return:
           <ArrowLeft className="w-4 h-4" /> Back
         </button>
 
-        <h1 className="text-2xl font-bold mb-1">Create Booking</h1>
+        <h1 className="text-2xl font-bold mb-1">Request to Hire</h1>
         {avatar && (
           <div className="flex items-center gap-3 mb-8">
             {avatar.photo_url
@@ -262,7 +262,7 @@ Based on this, return:
                 <Textarea value={form.notes} onChange={e => update('notes', e.target.value)} className="bg-muted/50 border-white/5 h-20 text-sm" placeholder="Describe the task in detail…" />
               </div>
             ) : (
-              <Textarea value={form.notes} onChange={e => update('notes', e.target.value)} className="bg-muted/50 border-white/5 h-20 text-sm" placeholder="Any specific instructions for the avatar…" />
+              <Textarea value={form.notes} onChange={e => update('notes', e.target.value)} className="bg-muted/50 border-white/5 h-20 text-sm" placeholder="Any specific instructions for the agent…" />
             )}
           </GlassCard>
 
@@ -325,11 +325,11 @@ Based on this, return:
 
           {/* Travel */}
           <GlassCard className="p-5 space-y-3">
-            <h2 className="font-semibold text-sm flex items-center gap-2"><Truck className="w-4 h-4 text-primary" /> Does the avatar need to travel?</h2>
+            <h2 className="font-semibold text-sm flex items-center gap-2"><Truck className="w-4 h-4 text-primary" /> Does the agent need to travel?</h2>
             <div className="grid grid-cols-2 gap-2">
               {[
                 { value: false, label: '🏠 No Travel', sub: 'Remote or already on location' },
-                { value: true, label: '🚗 Yes, Travel', sub: 'Avatar needs to go somewhere' },
+                { value: true, label: '🚗 Yes, Travel', sub: 'Agent needs to go somewhere' },
               ].map(opt => (
                 <button key={String(opt.value)} type="button" onClick={() => update('transport_required', opt.value)}
                   className={`p-4 rounded-xl border text-left transition-all ${form.transport_required === opt.value ? 'bg-primary/10 border-primary/40' : 'bg-muted/30 border-white/5 hover:border-white/10'}`}>
@@ -396,7 +396,7 @@ Based on this, return:
             className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl border transition-all text-sm ${freeTest ? 'bg-yellow-500/10 border-yellow-500/30 text-yellow-400' : 'bg-card/40 border-white/5 text-muted-foreground hover:border-white/10'}`}>
             <FlaskConical className="w-4 h-4 shrink-0" />
             <div className="text-left flex-1">
-              <p className="font-medium">Free test booking</p>
+              <p className="font-medium">Free test task</p>
               <p className="text-xs opacity-70">Skip payment — instantly accepted for testing</p>
             </div>
             <div className={`w-9 h-5 rounded-full flex items-center px-0.5 transition-colors ${freeTest ? 'bg-yellow-500' : 'bg-muted'}`}>
@@ -407,7 +407,7 @@ Based on this, return:
           {error && <p className="text-sm text-red-400 bg-red-500/10 border border-red-500/20 rounded-xl px-4 py-3">{error}</p>}
 
           <Button className="w-full py-5 text-base gap-2 bg-primary hover:bg-primary/90 glow-primary-sm" onClick={handleReview} disabled={!form.category}>
-            Review Booking →
+            Review Task →
           </Button>
           <p className="text-xs text-center text-muted-foreground pb-4">You'll review all details before payment.</p>
         </div>

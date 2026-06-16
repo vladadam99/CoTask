@@ -113,7 +113,7 @@ export default function AvatarEarnings() {
             sub: stats.growth !== 0 ? `${stats.growth > 0 ? '+' : ''}${stats.growth.toFixed(0)}% vs last month` : null,
           },
           {
-            label: 'Avg Per Job', value: `$${stats.avgPerJob.toFixed(0)}`,
+            label: 'Avg Per Task', value: `$${stats.avgPerJob.toFixed(0)}`,
             icon: Wallet, color: 'text-blue-400', bg: 'bg-blue-500/10',
           },
           {
@@ -187,7 +187,7 @@ export default function AvatarEarnings() {
       {bookings.length === 0 ? (
         <GlassCard className="p-10 text-center">
           <DollarSign className="w-10 h-10 text-muted-foreground mx-auto mb-3" />
-          <p className="text-sm text-muted-foreground">No completed bookings yet</p>
+          <p className="text-sm text-muted-foreground">No completed tasks yet</p>
         </GlassCard>
       ) : (
         <div className="space-y-2">

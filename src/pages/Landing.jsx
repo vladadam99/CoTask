@@ -179,17 +179,28 @@ export default function Landing() {
               <br />being there
             </h1>
             <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-10 leading-relaxed">
-              Book a local agent for live-streamed tours, inspections, errands, and real-time presence — anywhere in the world, instantly.
+              Hire a trusted Local Agent to visit, inspect, record, or livestream from anywhere — so you can see and act remotely in real time.
             </p>
           </motion.div>
 
-          <div className="flex justify-center mb-12">
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-8">
             <button
               onClick={handleGetStarted}
-              className="px-12 py-4 bg-primary hover:bg-primary/90 text-white font-bold rounded-xl glow-primary transition-all text-lg flex items-center gap-3 hover:scale-105"
+              className="px-8 py-4 bg-primary hover:bg-primary/90 text-white font-bold rounded-xl glow-primary transition-all text-lg flex items-center gap-3 hover:scale-105"
             >
-              <Zap className="w-5 h-5" /> Let's Go
+              <Zap className="w-5 h-5" /> Post a Task
             </button>
+            <button
+              onClick={handleGetStarted}
+              className="px-8 py-4 bg-white/10 hover:bg-white/20 border border-white/10 text-white font-bold rounded-xl transition-all text-lg flex items-center gap-3"
+            >
+              <Video className="w-5 h-5" /> Become a Local Agent
+            </button>
+          </div>
+          <div className="flex justify-center mb-12">
+            <p className="text-sm font-medium text-muted-foreground flex items-center gap-2">
+              <Shield className="w-4 h-4 text-green-400" /> Verified agents. Secure payments. Live video proof.
+            </p>
           </div>
 
           <motion.div

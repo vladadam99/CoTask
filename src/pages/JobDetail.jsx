@@ -305,7 +305,7 @@ export default function JobDetail() {
           />
         )}
 
-        {/* Escrow Status Banner */}
+        {/* Secure Payment Status Banner */}
         {job.stripe_payment_intent_id && job.escrow_status === 'authorized' && isOwner && (
           <div className="glass rounded-2xl p-4 border border-yellow-500/20 flex items-center gap-3">
             <div className="w-8 h-8 rounded-full bg-yellow-500/10 flex items-center justify-center flex-shrink-0">

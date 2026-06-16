@@ -110,7 +110,7 @@ export default function AvatarRequests() {
   return (
     <AppShell navItems={getNavItems(user?.selected_role)} user={user}>
       <div className="mb-8">
-        <h1 className="text-2xl lg:text-3xl font-bold mb-1">Booking Requests</h1>
+        <h1 className="text-2xl lg:text-3xl font-bold mb-1">Task Requests</h1>
         <p className="text-muted-foreground text-sm">
           {pendingCount > 0 ? `You have ${pendingCount} pending request${pendingCount > 1 ? 's' : ''}` : 'No pending requests right now'}
         </p>
@@ -286,7 +286,7 @@ export default function AvatarRequests() {
               onClick={handleDeclineConfirm}
               disabled={!declineReason.trim() || updateBooking.isPending}
             >
-              Decline Booking
+              Decline Task
             </Button>
           </DialogFooter>
         </DialogContent>

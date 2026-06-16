@@ -93,7 +93,7 @@ export default function UserSettings() {
                 <button key={role} onClick={() => handleSwitchRole(role)} disabled={switchingRole}
                   className="w-full p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors text-sm flex items-center gap-3 disabled:opacity-50">
                   <ArrowRightLeft className="w-4 h-4 text-muted-foreground" />
-                  <span className="capitalize">{switchingRole ? 'Switching...' : `Switch to ${role}`}</span>
+                  <span className="capitalize">{switchingRole ? 'Switching...' : `Switch to ${role === 'avatar' ? 'agent' : role}`}</span>
                 </button>
               ))}
             </div>

@@ -32,7 +32,7 @@ export default function JobStatusTracker({ job, user, conversationId, onJobUpdat
         conversationId,
         content: `${s.emoji} ${user.full_name} status update: **${s.label}**`,
         messageType: 'system',
-        notifyTitle: `${s.emoji} Avatar update: ${s.label}`,
+        notifyTitle: `${s.emoji} Agent update: ${s.label}`,
         notifyMessage: `${user.full_name} is now: ${s.label}`,
         notifyType: 'session_live',
         notifyLink: `/Messages?conversation=${conversationId}`,
@@ -60,7 +60,7 @@ export default function JobStatusTracker({ job, user, conversationId, onJobUpdat
         content: file_url,
         messageType: 'photo',
         notifyTitle: `📸 Progress photo from ${user.full_name}`,
-        notifyMessage: 'Your avatar shared a progress update photo.',
+        notifyMessage: 'Your agent shared a progress update photo.',
         notifyType: 'message',
         notifyLink: `/Messages?conversation=${conversationId}`,
         notifyTargetRole: 'user'

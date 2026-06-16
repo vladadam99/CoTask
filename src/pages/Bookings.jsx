@@ -82,7 +82,7 @@ export default function Bookings() {
 
         <div className="relative mb-6">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-          <Input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search bookings..." className="pl-10 bg-muted/50 border-white/5" />
+          <Input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search tasks..." className="pl-10 bg-muted/50 border-white/5" />
         </div>
 
         {isAvatar && (
@@ -98,7 +98,7 @@ export default function Bookings() {
 
         {isClient && (
           <div className="mb-8">
-            <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-3">Direct Bookings</h2>
+            <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-3">Direct Tasks</h2>
             {isLoading ? (
               <div className="space-y-3">
                 {[1,2,3].map(i => <div key={i} className="glass rounded-xl p-5 animate-pulse"><div className="h-4 bg-muted rounded w-1/2 mb-2" /><div className="h-3 bg-muted rounded w-1/3" /></div>)}
@@ -125,7 +125,7 @@ export default function Bookings() {
               </div>
             ) : (
               <GlassCard className="p-6 text-center">
-                <p className="text-sm text-muted-foreground">No direct bookings yet</p>
+                <p className="text-sm text-muted-foreground">No direct tasks yet</p>
               </GlassCard>
             )}
           </div>
@@ -185,8 +185,8 @@ export default function Bookings() {
           ) : (
             <GlassCard className="p-10 text-center">
               <Briefcase className="w-10 h-10 text-muted-foreground mx-auto mb-3" />
-              <p className="text-muted-foreground">No job posts yet</p>
-              <Link to="/PostJob"><button className="mt-3 text-sm text-primary hover:underline">Post your first job →</button></Link>
+              <p className="text-muted-foreground">No open tasks yet</p>
+              <Link to="/PostJob"><button className="mt-3 text-sm text-primary hover:underline">Post your first task →</button></Link>
             </GlassCard>
           )
         ) : viewMode === 'calendar' ? (
@@ -220,7 +220,7 @@ export default function Bookings() {
         ) : (
           <GlassCard className="p-10 text-center">
             <Calendar className="w-10 h-10 text-muted-foreground mx-auto mb-3" />
-            <p className="text-muted-foreground">No bookings match your filter</p>
+            <p className="text-muted-foreground">No tasks match your filter</p>
           </GlassCard>
         )}
       </div>

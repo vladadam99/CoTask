@@ -94,7 +94,7 @@ export default function JobApprovalFlow({ booking, user, onUpdate }) {
     return (
       <GlassCard className="p-5 border-green-500/20">
         <h3 className="font-semibold text-sm mb-3 text-green-400 flex items-center gap-2"><CheckCircle className="w-4 h-4" /> Confirm Approval</h3>
-        <p className="text-sm text-muted-foreground mb-4">You're about to release the full payment of <strong className="text-foreground">${booking.total_amount?.toFixed(2)}</strong> to the avatar. This cannot be undone.</p>
+        <p className="text-sm text-muted-foreground mb-4">You're about to release the full payment of <strong className="text-foreground">${booking.total_amount?.toFixed(2)}</strong> to the agent. This cannot be undone.</p>
         <div className="flex gap-2">
           <Button className="flex-1 bg-green-600 hover:bg-green-700 gap-2" onClick={handleApprove} disabled={loading}>
             {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <CheckCircle className="w-4 h-4" />} Confirm & Pay
@@ -157,9 +157,9 @@ export default function JobApprovalFlow({ booking, user, onUpdate }) {
     <GlassCard className="p-5 border-primary/20">
       <div className="flex items-center gap-2 mb-1">
         <Shield className="w-4 h-4 text-primary" />
-        <h3 className="font-semibold text-sm">Review Job Proof</h3>
+        <h3 className="font-semibold text-sm">Review Task Proof</h3>
       </div>
-      <p className="text-xs text-muted-foreground mb-4">The avatar has submitted their proof of completion. Choose how to proceed — your funds are safely held until you decide.</p>
+      <p className="text-xs text-muted-foreground mb-4">The agent has submitted their proof of completion. Choose how to proceed — your funds are safely held until you decide.</p>
       <div className="grid grid-cols-1 gap-2">
         <Button className="w-full bg-green-600 hover:bg-green-700 gap-2" onClick={() => setMode('approve')}>
           <CheckCircle className="w-4 h-4" /> Happy — Release Full Payment

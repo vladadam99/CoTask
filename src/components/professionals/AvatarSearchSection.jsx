@@ -79,7 +79,7 @@ export default function AvatarSearchSection({ user }) {
           items={avatars}
           itemSummaryFn={avatarSummaryFn}
           onResults={setAiMatchedIds}
-          placeholder="Search avatars, skills, tasks... (AI-powered)"
+          placeholder="Search agents, skills, tasks... (AI-powered)"
           suggestions={suggestionList}
         />
       </div>
@@ -151,7 +151,7 @@ export default function AvatarSearchSection({ user }) {
       ) : filtered.length === 0 ? (
         <div className="text-center py-20 space-y-3">
           <p className="text-3xl">🔍</p>
-          <h3 className="font-bold">No avatars found</h3>
+          <h3 className="font-bold">No local agents found</h3>
           <Button variant="outline" className="border-white/10" onClick={() => { setOnlineOnly(false); setSelectedCategories([]); setAiMatchedIds(null); }}>Clear filters</Button>
         </div>
       ) : (

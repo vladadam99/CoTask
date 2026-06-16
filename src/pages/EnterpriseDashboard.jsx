@@ -11,13 +11,7 @@ import {
   Plus, MessageSquare, Settings,
   ArrowRight, Calendar, FileText, DollarSign, Clock, Rocket, Star
 } from 'lucide-react';
-
-const navItems = [
-  { icon: Rocket, label: 'Deploy', path: '/CreateBooking' },
-  { icon: Calendar, label: 'Sessions', path: '/Bookings' },
-  { icon: MessageSquare, label: 'Messages', path: '/Messages' },
-  { icon: Settings, label: 'Settings', path: '/EnterpriseSettings' },
-];
+import { getNavItems } from '@/lib/navItems';
 
 export default function EnterpriseDashboard() {
   const navigate = useNavigate();
@@ -68,7 +62,7 @@ export default function EnterpriseDashboard() {
   const pendingCount = bookings.filter(b => b.status === 'pending').length;
 
   return (
-    <AppShell navItems={navItems} user={user}>
+    <AppShell navItems={getNavItems(user?.selected_role)} user={user}>
       {/* Header */}
       <div className="flex items-center justify-between mb-8">
         <div>
@@ -84,15 +78,15 @@ export default function EnterpriseDashboard() {
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div>
             <h2 className="text-lg font-bold flex items-center gap-2">
-              <Rocket className="w-5 h-5 text-primary" /> Deploy an Avatar
+              <Rocket className="w-5 h-5 text-primary" /> Deploy an Agent
             </h2>
             <p className="text-sm text-muted-foreground mt-1">
-              Find a human avatar and deploy them for site visits, inspections, training, and more.
+              Find a human agent and deploy them for site visits, inspections, training, and more.
             </p>
           </div>
           <Link to="/CreateBooking">
             <Button size="lg" className="bg-primary hover:bg-primary/90 glow-primary-sm shrink-0">
-              <Plus className="w-5 h-5 mr-2" /> Deploy Avatar
+              <Plus className="w-5 h-5 mr-2" /> Deploy Agent
             </Button>
           </Link>
         </div>
@@ -165,9 +159,9 @@ export default function EnterpriseDashboard() {
         ) : (
           <GlassCard className="p-8 text-center">
             <Rocket className="w-8 h-8 text-muted-foreground mx-auto mb-3" />
-            <p className="text-sm text-muted-foreground mb-3">No sessions yet. Deploy your first avatar.</p>
+            <p className="text-sm text-muted-foreground mb-3">No sessions yet. Deploy your first agent.</p>
             <Link to="/CreateBooking">
-              <Button size="sm" className="bg-primary hover:bg-primary/90">Deploy Avatar</Button>
+              <Button size="sm" className="bg-primary hover:bg-primary/90">Deploy Agent</Button>
             </Link>
           </GlassCard>
         )}

@@ -11,18 +11,7 @@ import {
   Download, Eye, EyeOff, Zap, TrendingUp
 } from 'lucide-react';
 import { format } from 'date-fns';
-
-const navItems = [
-  { icon: Home, label: 'Home', path: '/AvatarDashboard' },
-  { icon: Inbox, label: 'Requests', path: '/AvatarRequests' },
-  { icon: Calendar, label: 'Schedule', path: '/AvatarSchedule' },
-  { icon: Radio, label: 'Live', path: '/AvatarLive' },
-  { icon: MessageSquare, label: 'Messages', path: '/Messages' },
-  { icon: DollarSign, label: 'Earnings', path: '/AvatarEarnings' },
-  { icon: Star, label: 'Reviews', path: '/AvatarReviews' },
-  { icon: User, label: 'Profile', path: '/AvatarProfileEdit' },
-  { icon: Settings, label: 'Settings', path: '/AvatarSettings' },
-];
+import { getNavItems } from '@/lib/navItems';
 
 function formatDuration(seconds) {
   if (!seconds) return '—';
@@ -81,7 +70,7 @@ export default function RecordingLibrary() {
   );
 
   return (
-    <AppShell navItems={navItems} user={user}>
+    <AppShell navItems={getNavItems(user?.selected_role)} user={user}>
       <div className="mb-8">
         <h1 className="text-2xl lg:text-3xl font-bold mb-1 flex items-center gap-3">
           <Film className="w-7 h-7 text-primary" /> Recording Library
@@ -165,7 +154,7 @@ export default function RecordingLibrary() {
                     onClick={() => publishAsReel.mutate(r)}
                     disabled={publishAsReel.isPending}
                   >
-                    <TrendingUp className="w-3.5 h-3.5" /> Publish Reel
+                    <TrendingUp className="w-3.5 h-3.5" /> Publish Portfolio Video
                   </Button>
                   <Button
                     size="sm"

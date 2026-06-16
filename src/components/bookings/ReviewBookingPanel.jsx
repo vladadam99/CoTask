@@ -24,7 +24,7 @@ export default function ReviewBookingPanel({ form, avatar, amount, livePremium, 
           <ArrowLeft className="w-4 h-4" />
         </button>
         <div>
-          <h2 className="text-xl font-bold">Review Booking</h2>
+          <h2 className="text-xl font-bold">Review Task</h2>
           <p className="text-xs text-muted-foreground">Please confirm all details before payment</p>
         </div>
       </div>
@@ -50,7 +50,7 @@ export default function ReviewBookingPanel({ form, avatar, amount, livePremium, 
       <GlassCard className="p-5">
         <h3 className="font-semibold text-sm mb-1 text-muted-foreground uppercase tracking-wider">Service</h3>
         <Row label="Category" value={form.category} />
-        <Row label="Booking Type" value={form.booking_type === 'immediate' ? 'Immediate / On-demand' : 'Scheduled'} />
+        <Row label="Task Type" value={form.booking_type === 'immediate' ? 'Immediate / On-demand' : 'Scheduled'} />
         <Row label="Service Mode" value={
           form.stream_mode === 'live_camera'
             ? '🎥 Live Camera Stream (+$' + livePremium.toFixed(2) + ')'
