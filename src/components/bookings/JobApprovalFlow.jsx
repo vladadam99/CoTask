@@ -39,10 +39,9 @@ export default function JobApprovalFlow({ booking, user, onUpdate }) {
   const handleDispute = async () => {
     if (!disputeReason.trim()) return;
     setLoading(true);
-    // Mark locally as disputed or route to issue flow. Since the prompt says:
-    // dispute/issue button should not refund automatically; it should mark disputed or route to issue flow
-    await base44.entities[booking.title ? 'JobPost' : 'Booking'].update(booking.id, {
-      payment_status: 'disputed',
+    await base44.functions.invoke('disputeTaskPayment', {
+      task_type: booking.title ? 'job' : 'booking',
+      task_id: booking.id,
       dispute_reason: disputeReason
     });
     setLoading(false);
