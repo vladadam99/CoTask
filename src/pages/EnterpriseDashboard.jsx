@@ -84,7 +84,7 @@ export default function EnterpriseDashboard() {
               Find a human agent and deploy them for site visits, inspections, training, and more.
             </p>
           </div>
-          <Link to="/CreateBooking">
+          <Link to="/FindPeople">
             <Button size="lg" className="bg-primary hover:bg-primary/90 glow-primary-sm shrink-0">
               <Plus className="w-5 h-5 mr-2" /> Deploy Agent
             </Button>
@@ -160,7 +160,7 @@ export default function EnterpriseDashboard() {
           <GlassCard className="p-8 text-center">
             <Rocket className="w-8 h-8 text-muted-foreground mx-auto mb-3" />
             <p className="text-sm text-muted-foreground mb-3">No sessions yet. Deploy your first agent.</p>
-            <Link to="/CreateBooking">
+            <Link to="/FindPeople">
               <Button size="sm" className="bg-primary hover:bg-primary/90">Deploy Agent</Button>
             </Link>
           </GlassCard>

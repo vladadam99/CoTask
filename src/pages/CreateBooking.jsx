@@ -106,6 +106,14 @@ Based on this, return:
   };
 
   const createAndPay = async () => {
+    if (!avatarId) {
+      setError('Please choose a Local Agent before sending a Direct Hire request.');
+      return;
+    }
+    if (!form.category) {
+      setError('Please select a category.');
+      return;
+    }
     setError('');
     setCheckoutLoading(true);
     try {
@@ -164,6 +172,30 @@ Based on this, return:
       setCheckoutLoading(false);
     }
   };
+
+  if (!avatarId) {
+    return (
+      <div className="min-h-screen pb-12 px-4 flex items-center justify-center">
+        <GlassCard className="p-8 max-w-md w-full text-center space-y-5">
+          <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-2">
+            <span className="text-primary text-2xl">🔍</span>
+          </div>
+          <h2 className="text-xl font-bold">Choose a Local Agent first</h2>
+          <p className="text-sm text-muted-foreground">
+            Direct Hire requests must be connected to a specific Local Agent. Go back to Discover and choose who you want to request.
+          </p>
+          <div className="flex flex-col gap-3 pt-2">
+            <Button className="w-full" onClick={() => navigate('/FindPeople')}>
+              Discover Local Agents
+            </Button>
+            <Button variant="outline" className="w-full border-white/10" onClick={() => navigate('/PostJob')}>
+              Post an Open Task
+            </Button>
+          </div>
+        </GlassCard>
+      </div>
+    );
+  }
 
   if (step === 'review') {
     return (

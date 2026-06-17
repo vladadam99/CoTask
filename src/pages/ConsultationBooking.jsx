@@ -84,6 +84,10 @@ export default function ConsultationBooking() {
     : [];
 
   const handleConfirm = async () => {
+    if (!avatarId && !offering?.avatar_profile_id) {
+      setError('Please choose a Local Agent before sending a Direct Hire request.');
+      return;
+    }
     if (!selectedDate || !selectedTime) { setError('Please pick a date and time.'); return; }
     setError('');
     setLoading(true);
@@ -154,6 +158,30 @@ export default function ConsultationBooking() {
     }
     setLoading(false);
   };
+
+  if (!avatarId && !offeringId) {
+    return (
+      <div className="min-h-screen pb-12 px-4 flex items-center justify-center">
+        <GlassCard className="p-8 max-w-md w-full text-center space-y-5">
+          <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-2">
+            <span className="text-primary text-2xl">🔍</span>
+          </div>
+          <h2 className="text-xl font-bold">Choose a Local Agent first</h2>
+          <p className="text-sm text-muted-foreground">
+            Consultations must be connected to a specific expert. Go back to Discover and choose who you want to consult.
+          </p>
+          <div className="flex flex-col gap-3 pt-2">
+            <Button className="w-full" onClick={() => navigate('/FindPeople')}>
+              Discover Experts
+            </Button>
+            <Button variant="outline" className="w-full border-white/10" onClick={() => navigate('/PostJob')}>
+              Post an Open Task
+            </Button>
+          </div>
+        </GlassCard>
+      </div>
+    );
+  }
 
   if (step === 'done') {
     return (

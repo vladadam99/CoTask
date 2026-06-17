@@ -190,11 +190,12 @@ function AvatarCard({ avatar, i, user, queryClient }) {
 
   return (
     <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: Math.min(i * 0.04, 0.3) }}>
-      <Link to={`/AvatarView?id=${avatar.id}`}>
-        <div className="glass border border-white/5 hover:border-primary/30 rounded-2xl p-4 transition-all hover:scale-[1.02] relative">
+      <div className="glass border border-white/5 hover:border-primary/30 rounded-2xl p-4 transition-all hover:scale-[1.02] relative group">
+        <Link to={`/AvatarView?id=${avatar.id}`} className="absolute inset-0 z-0"></Link>
+        <div className="relative z-10 pointer-events-none">
           {user && (
-            <button onClick={e => { e.preventDefault(); toggleFav.mutate(); }} disabled={toggleFav.isPending}
-              className="absolute top-3 right-3 w-6 h-6 rounded-full bg-black/30 backdrop-blur flex items-center justify-center">
+            <button onClick={e => { e.preventDefault(); e.stopPropagation(); toggleFav.mutate(); }} disabled={toggleFav.isPending}
+              className="absolute top-0 right-0 w-6 h-6 rounded-full bg-black/30 backdrop-blur flex items-center justify-center pointer-events-auto z-20">
               <Heart className={`w-3 h-3 ${isFavorited ? 'fill-primary text-primary' : 'text-white/60'}`} />
             </button>
           )}
@@ -243,16 +244,16 @@ function AvatarCard({ avatar, i, user, queryClient }) {
             )}
           </div>
           
-          <div className="flex flex-col gap-2">
-            <Button variant="outline" className="w-full h-8 text-xs pointer-events-none" asChild>
-              <span>View Profile</span>
+          <div className="flex flex-col gap-2 relative z-20 pointer-events-auto">
+            <Button variant="outline" className="w-full h-8 text-xs" asChild>
+              <Link to={`/AvatarView?id=${avatar.id}`}>View Profile</Link>
             </Button>
-            <Button className="w-full h-8 text-xs pointer-events-none" asChild>
-              <span>Request Direct Hire</span>
+            <Button className="w-full h-8 text-xs" asChild>
+              <Link to={`/CreateBooking?avatar=${avatar.id}`}>Request Direct Hire</Link>
             </Button>
           </div>
         </div>
-      </Link>
+      </div>
     </motion.div>
   );
 }

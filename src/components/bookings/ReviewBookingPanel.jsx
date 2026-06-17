@@ -1,6 +1,7 @@
 import React from 'react';
 import GlassCard from '@/components/ui/GlassCard';
 import { Button } from '@/components/ui/button';
+import { Link } from 'react-router-dom';
 import { ArrowLeft, Calendar, Clock, MapPin, Wifi, Truck, Wrench, Video, VideoOff, CreditCard, Loader2, FlaskConical, CheckCircle } from 'lucide-react';
 
 const Row = ({ label, value, icon: IconComp }) => (
@@ -16,6 +17,28 @@ const Row = ({ label, value, icon: IconComp }) => (
 export default function ReviewBookingPanel({ form, avatar, amount, livePremium, serviceFee, total, freeTest, loading, onBack, onConfirm }) {
   const durationLabel = { 30: '30 minutes', 60: '1 hour', 90: '1.5 hours', 120: '2 hours', 180: '3 hours' }[form.duration_minutes] || `${form.duration_minutes} min`;
   const rate = avatar?.hourly_rate || 30;
+
+  if (!avatar) {
+    return (
+      <GlassCard className="p-8 max-w-md mx-auto text-center space-y-5">
+        <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-2">
+          <span className="text-primary text-2xl">🔍</span>
+        </div>
+        <h2 className="text-xl font-bold">Choose a Local Agent first</h2>
+        <p className="text-sm text-muted-foreground">
+          Direct Hire requests must be connected to a specific Local Agent. Go back to Discover and choose who you want to request.
+        </p>
+        <div className="flex flex-col gap-3 pt-2">
+          <Button className="w-full" asChild>
+            <Link to="/FindPeople">Discover Local Agents</Link>
+          </Button>
+          <Button variant="outline" className="w-full border-white/10" asChild>
+            <Link to="/PostJob">Post an Open Task</Link>
+          </Button>
+        </div>
+      </GlassCard>
+    );
+  }
 
   return (
     <div className="space-y-4">

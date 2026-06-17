@@ -9,7 +9,10 @@ Deno.serve(async (req) => {
     const payload = await req.json();
     const { avatar_profile_id, category, ...rest } = payload;
 
-    if (!avatar_profile_id || !category) {
+    if (!avatar_profile_id) {
+      return Response.json({ error: 'Missing Local Agent profile ID.' }, { status: 400 });
+    }
+    if (!category) {
       return Response.json({ error: 'Missing required fields' }, { status: 400 });
     }
 
