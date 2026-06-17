@@ -64,7 +64,7 @@ const EarningsTooltip = ({ active, payload, label }) => {
 };
 
 const BASE_TABS = ['Jobs Posted', 'Reviews', 'About'];
-const AVATAR_TABS = ['Jobs Posted', 'Reviews', 'Wallet', 'About'];
+const AVATAR_TABS = ['Jobs Posted', 'Reviews', 'Earnings', 'About'];
 
 export default function Profile() {
   const { user, updateUser } = useCurrentUser();
@@ -375,8 +375,8 @@ export default function Profile() {
             </div>
           )}
 
-          {/* Wallet Tab */}
-          {activeTab === 'Wallet' && (
+          {/* Earnings Tab */}
+          {activeTab === 'Earnings' && (
             <div>
               {/* Withdraw Modal */}
               {showWithdraw && (

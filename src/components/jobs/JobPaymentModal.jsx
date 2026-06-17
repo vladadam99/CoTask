@@ -44,7 +44,7 @@ function CheckoutForm({ jobTitle, amount, onSuccess, onCancel }) {
       <div className="bg-primary/5 border border-primary/20 rounded-xl p-4 flex items-start gap-3">
         <ShieldCheck className="w-5 h-5 text-primary mt-0.5 flex-shrink-0" />
         <div>
-          <p className="text-sm font-semibold">Funds held in escrow</p>
+          <p className="text-sm font-semibold">Funds held securely</p>
           <p className="text-xs text-muted-foreground mt-0.5">Your payment of <span className="font-medium text-foreground">${amount}</span> will be authorized now but only released to the avatar after you confirm the job is complete.</p>
         </div>
       </div>

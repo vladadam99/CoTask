@@ -6,7 +6,7 @@ import { Shield, UserCheck, Eye, Lock, AlertTriangle, Star } from 'lucide-react'
 
 const features = [
   { icon: UserCheck, title: 'Identity Verification', desc: 'Every avatar undergoes identity verification before they can accept bookings. We verify government-issued IDs and conduct background checks.' },
-  { icon: Shield, title: 'Secure Payments', desc: 'All transactions are processed through our secure payment system. Funds are held in escrow until sessions are completed to your satisfaction.' },
+  { icon: Shield, title: 'Secure Payments', desc: 'All transactions are processed through our secure payment system. Funds are held securely until sessions are completed to your satisfaction.' },
   { icon: Star, title: 'Reviews & Ratings', desc: 'Both clients and avatars can rate each other after every session. This creates accountability and helps maintain high service quality.' },
   { icon: Eye, title: 'Session Monitoring', desc: 'All sessions are logged with timestamps, duration, and participant information. Suspicious activity is flagged for review.' },
   { icon: Lock, title: 'Data Privacy', desc: 'Your personal data is encrypted and never shared without consent. We comply with GDPR and other data protection regulations.' },
