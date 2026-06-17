@@ -115,7 +115,7 @@ export default function UserBookingDetail() {
   );
 
   const canCancel = isClient && ['pending', 'accepted', 'scheduled'].includes(booking.status);
-  const needsPayment = isClient && booking.payment_status === 'pending' && ['pending', 'accepted'].includes(booking.status) && negotiationResolved;
+  const needsPayment = isClient && booking.payment_status === 'pending' && booking.status === 'accepted' && negotiationResolved;
 
   return (
     <div className="min-h-screen bg-background p-4 lg:p-8">
@@ -128,6 +128,26 @@ export default function UserBookingDetail() {
           <div className="mb-6 flex items-center gap-3 bg-green-500/10 border border-green-500/20 text-green-400 rounded-xl px-4 py-3">
             <CheckCircle className="w-5 h-5 shrink-0" />
             <p className="text-sm font-medium">Payment successful! Your booking is confirmed.</p>
+          </div>
+        )}
+
+        {booking.status === 'pending' && isClient && (
+          <div className="mb-6 flex items-center gap-3 bg-blue-500/10 border border-blue-500/20 text-blue-400 rounded-xl px-4 py-3">
+            <Clock className="w-5 h-5 shrink-0" />
+            <div>
+              <p className="text-sm font-medium">Waiting for Local Agent</p>
+              <p className="text-xs opacity-90">Your request has been sent. You can fund Secure Payment once the Local Agent accepts.</p>
+            </div>
+          </div>
+        )}
+
+        {booking.status === 'accepted' && isClient && needsPayment && (
+          <div className="mb-6 flex items-center gap-3 bg-green-500/10 border border-green-500/20 text-green-400 rounded-xl px-4 py-3">
+            <CheckCircle className="w-5 h-5 shrink-0" />
+            <div>
+              <p className="text-sm font-medium">Local Agent accepted!</p>
+              <p className="text-xs opacity-90">Please fund Secure Payment to confirm and schedule the task.</p>
+            </div>
           </div>
         )}
 

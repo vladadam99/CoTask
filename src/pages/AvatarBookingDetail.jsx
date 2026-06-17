@@ -93,6 +93,18 @@ export default function AvatarBookingDetail() {
           </div>
         </div>
 
+        {booking.status === 'accepted' && booking.payment_status === 'pending' && (
+          <div className="mb-6 flex items-center gap-3 bg-blue-500/10 border border-blue-500/20 text-blue-400 rounded-xl px-4 py-3">
+            <div className="w-5 h-5 shrink-0 flex items-center justify-center">
+              <span className="w-2 h-2 rounded-full bg-blue-400 animate-pulse" />
+            </div>
+            <div>
+              <p className="text-sm font-medium">Waiting for client to fund Secure Payment</p>
+              <p className="text-xs opacity-90">You have accepted the request. The client has been notified to confirm with payment.</p>
+            </div>
+          </div>
+        )}
+
         <div className="space-y-4">
           <GlassCard className="p-6">
             <div className="flex items-center justify-between mb-4">
@@ -230,12 +242,12 @@ export default function AvatarBookingDetail() {
           <div className="flex flex-wrap gap-3">
             {canAccept && (
               <Button className="bg-green-600 hover:bg-green-700 flex-1" onClick={() => updateStatus.mutate('accepted')}>
-                Accept Task
+                Accept Request
               </Button>
             )}
             {canDecline && (
               <Button variant="outline" className="border-red-500/20 text-red-400 flex-1" onClick={() => updateStatus.mutate('declined')}>
-                Decline
+                Decline Request
               </Button>
             )}
             {canStart && (

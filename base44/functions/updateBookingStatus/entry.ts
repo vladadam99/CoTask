@@ -115,8 +115,8 @@ Deno.serve(async (req) => {
         if (booking.client_email) {
           await base44.asServiceRole.entities.Notification.create({
             user_email: booking.client_email,
-            title: 'Booking Accepted!',
-            message: `${user.full_name} accepted your booking request.`,
+            title: 'Local Agent Accepted!',
+            message: `${user.full_name} accepted your request. Please fund Secure Payment to confirm.`,
             type: 'booking_accepted',
             link: `/UserBookingDetail?id=${id}`,
             reference_id: id,

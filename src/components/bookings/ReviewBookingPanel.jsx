@@ -149,7 +149,7 @@ export default function ReviewBookingPanel({ form, avatar, amount, livePremium, 
 
       <div className="bg-green-500/10 border border-green-500/20 rounded-xl px-4 py-3 flex items-center gap-2 text-green-400 text-sm">
         <CheckCircle className="w-4 h-4 shrink-0" />
-        Please confirm everything looks correct before proceeding to payment.
+        Secure Payment will be requested after the Local Agent accepts.
       </div>
 
       <Button
@@ -158,11 +158,9 @@ export default function ReviewBookingPanel({ form, avatar, amount, livePremium, 
         disabled={loading}
       >
         {loading ? (
-          <><Loader2 className="w-4 h-4 animate-spin" /> Preparing secure payment…</>
-        ) : freeTest ? (
-          <><FlaskConical className="w-4 h-4" /> Confirm & Book Free (Test)</>
+          <><Loader2 className="w-4 h-4 animate-spin" /> Sending Request…</>
         ) : (
-          <><CreditCard className="w-4 h-4" /> Fund Secure Payment — ${total.toFixed(2)}</>
+          <><CreditCard className="w-4 h-4" /> Send Direct Hire Request</>
         )}
       </Button>
     </div>

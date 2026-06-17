@@ -146,27 +146,8 @@ Based on this, return:
 
       base44.functions.invoke('createConversation', { bookingId: booking.id }).catch(() => {});
 
-      if (freeTest) {
-        navigate(`/UserBookingDetail?id=${booking.id}`);
-        return;
-      }
-
-      if (window.self !== window.top) {
-        alert('Payment checkout only works on the published app.');
-        setCheckoutLoading(false);
-        return;
-      }
-
-      const res = await base44.functions.invoke('createTaskCheckout', {
-        task_type: 'booking',
-        task_id: booking.id,
-      });
-
-      if (res.data?.checkout_url) {
-        window.location.href = res.data.checkout_url;
-      } else {
-        throw new Error(res.data?.error || 'Failed to create checkout');
-      }
+      // Decoupled payment - redirect to detail page to await agent acceptance
+      navigate(`/UserBookingDetail?id=${booking.id}&new=true`);
     } catch (err) {
       setError(err.message || 'Something went wrong. Please try again.');
       setCheckoutLoading(false);

@@ -23,6 +23,9 @@ Deno.serve(async (req) => {
       if (user.role !== 'admin' && booking.client_email !== user.email) {
         return Response.json({ error: 'Unauthorized for this booking' }, { status: 403 });
       }
+      if (booking.status === 'pending') {
+        return Response.json({ error: 'Cannot pay for a pending booking. Wait for the agent to accept.' }, { status: 400 });
+      }
       if (['held', 'released', 'paid'].includes(booking.payment_status)) {
         return Response.json({ error: 'Booking is already paid' }, { status: 400 });
       }
@@ -41,6 +44,9 @@ Deno.serve(async (req) => {
       const job = jobs[0];
       if (user.role !== 'admin' && job.posted_by_email !== user.email) {
         return Response.json({ error: 'Unauthorized for this job' }, { status: 403 });
+      }
+      if (job.status === 'open' || !job.winner_email) {
+        return Response.json({ error: 'Cannot pay for an open task without a selected agent.' }, { status: 400 });
       }
       if (['held', 'released', 'paid'].includes(job.payment_status)) {
         return Response.json({ error: 'Job is already paid' }, { status: 400 });

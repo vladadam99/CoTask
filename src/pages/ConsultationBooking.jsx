@@ -131,27 +131,7 @@ export default function ConsultationBooking() {
         } catch (_) {}
       }
 
-      if (!freeTest) {
-        // Redirect to checkout
-        if (window.self !== window.top) {
-          alert('Payment checkout only works on the published app.');
-          setLoading(false);
-          return;
-        }
-        const res = await base44.functions.invoke('createCheckout', {
-          bookingId: newBooking.id,
-          amount: total,
-          avatarName: avatar?.display_name || offering?.avatar_name,
-          category: offering?.title || 'Consultation Session',
-        });
-        if (res.data?.url) {
-          window.location.href = res.data.url;
-          return;
-        } else {
-          throw new Error(res.data?.error || 'Failed to create checkout');
-        }
-      }
-
+      // Decoupled payment - move to done step
       setStep('done');
     } catch (err) {
       setError(err.message || 'Something went wrong. Please try again.');
@@ -388,13 +368,13 @@ export default function ConsultationBooking() {
             disabled={loading || !selectedDate || !selectedTime}
           >
             {loading ? (
-              <><Loader2 className="w-4 h-4 animate-spin" /> Setting up your session...</>
+              <><Loader2 className="w-4 h-4 animate-spin" /> Sending Request...</>
             ) : (
-              <><Video className="w-4 h-4" /> {freeTest ? 'Book Free Session' : `Book & Pay $${total.toFixed(2)}`}</>
+              <><Video className="w-4 h-4" /> Send Consultation Request</>
             )}
           </Button>
           <p className="text-xs text-center text-muted-foreground pb-4">
-            A video call link will be generated automatically. Payment is held securely until after the session.
+            Secure Payment will be requested after the expert accepts your request.
           </p>
         </div>
       </div>

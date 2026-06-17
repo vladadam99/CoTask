@@ -21,10 +21,16 @@ const statusStyles = {
 
 export default function StatusBadge({ status }) {
   const style = statusStyles[status] || 'bg-muted text-muted-foreground border-border';
-  const label = (status || 'unknown').replace(/_/g, ' ');
+  
+  let label = (status || 'unknown').replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+  if (status === 'pending') label = 'Waiting for Local Agent';
+  if (status === 'accepted') label = 'Local Agent Accepted';
+  if (status === 'payment_required') label = 'Secure Payment Required';
+  if (status === 'held') label = 'Secure Payment Held';
+  if (status === 'awaiting_approval') label = 'Waiting for Client Approval';
 
   return (
-    <Badge variant="outline" className={`${style} border capitalize text-xs font-medium`}>
+    <Badge variant="outline" className={`${style} border text-xs font-medium`}>
       {label}
     </Badge>
   );
