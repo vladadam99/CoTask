@@ -1,0 +1,319 @@
+# 1. Simple Product Explanation
+
+CoTask lets a client be somewhere without physically being there by hiring a trusted Local Agent to complete a real-world task remotely through messages, live video, proof, reviews, and secure payment.
+
+*   **Client:** The user who needs something done remotely (e.g., viewing an apartment, inspecting a car, running an errand). They pay for the service.
+*   **Local Agent:** The verified user on the ground who performs the task, streams video if required, and submits proof of completion to earn money.
+*   **Task:** The specific job to be done. It can be an Open Task (broadcast to many) or a Direct Hire (sent to one).
+*   **Direct Hire:** A private request sent directly from a Client to a specific Local Agent they found on the Discover page.
+*   **Open Task:** A public job board post created by a Client. Multiple Local Agents can see it, submit proposals (with rates/times), and the Client chooses one winner.
+*   **My Tasks:** The central dashboard where both Clients and Local Agents track their ongoing, upcoming, and past tasks (aggregating both Direct Hires and Open Tasks).
+*   **Secure Payment:** The financial system (via Stripe) where a Client's money is captured and held in escrow *before* work begins, and released to the Local Agent only after the task is approved.
+*   **Live Session:** A scheduled or ad-hoc video call (using Daily.co) where the Local Agent streams their perspective to the Client in real-time.
+*   **Proof:** Photos, videos, or notes uploaded by the Local Agent to prove the task was completed successfully, triggering the Client's approval phase.
+*   **Review:** A 1-5 star rating and text feedback left by either party after the task is completed, affecting public profiles.
+
+---
+
+# 2. Current Main User Roles
+
+## Logged-out visitor
+*   **What they can see:** Landing page, public SEO pages (How it Works, Pricing, FAQ, Safety), Public Profile views (if linked directly).
+*   **What they can do:** Read marketing copy, click "Sign Up" or "Login".
+*   **Where they go next:** Redirected to `RoleSelect` -> `Register` -> `Onboarding`.
+
+## Client
+*   **What they can do:** Discover Local Agents, Post Open Tasks, Request Direct Hires, manage bookings, message agents, join live streams, approve proof, release payments.
+*   **Main navigation:** Discover (FindPeople), Post an Open Task, My Tasks (Bookings), Messages, Wallet.
+*   **Main decisions:** Direct Hire vs Open Task? Which proposal to accept? Approve proof or raise a dispute?
+*   **Main flows:** Task Creation -> Payment -> Messaging -> Live Session -> Approval -> Review.
+
+## Local Agent
+*   **What they can do:** Set up public profile, set rates, browse Open Tasks, submit proposals, accept/decline Direct Hires, stream video, submit proof, withdraw earnings.
+*   **Main navigation:** Dashboard, Job Board (JobMarketplace), My Schedule (AvatarRequests), Messages, Earnings.
+*   **Main decisions:** Accept/Decline Direct Hires? Apply to Open Tasks? What to charge?
+*   **Main flows:** Profile Setup -> Proposal/Acceptance -> Execution/Live Stream -> Proof Submission -> Payout.
+
+## Enterprise
+*   **What they can do:** Nominally manage multiple agents/bookings, view aggregated billing.
+*   **Status:** BUILT BUT CONFUSING. Currently sits in a parallel dashboard (`EnterpriseDashboard`) but shares many underlying booking entities. It clutters the core UX and is not fully production-ready for multi-seat management.
+
+## Admin
+*   **What they can do:** View all users, manage verifications, override disputes, force-refund payments, manage categories.
+*   **Which flows they control:** Identity Verification approval, Dispute resolution (holding/releasing funds).
+
+### Role Summary Table
+
+| Role | Purpose | Main pages | Main actions | Current clarity | Problems |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| **Visitor** | Conversion | Landing, Register | Sign up | Clear | None |
+| **Client** | Demand/Pay | FindPeople, PostJob, Bookings | Discover, Post, Pay, Approve | Confusing | Open Tasks and Direct Hires are split across two different database entities (`JobPost` vs `Booking`), causing fragmented UI. |
+| **Local Agent** | Supply/Earn | AvatarDashboard, JobMarketplace | Apply, Accept, Stream, Submit Proof | Confusing | Must check two different pages for incoming work ("Job Board" for Open Tasks, "Requests" for Direct Hires). |
+| **Enterprise** | B2B Scale | EnterpriseDashboard | Deploy Agents | BUILT BUT CONFUSING | Duplicates Client flow with added complexity; not fully fleshed out. |
+| **Admin** | Moderation | AdminDashboard | Resolve disputes, verify users | UI ONLY / BUILT BUT BROKEN | Dispute resolution tools exist but rely on manual backend edits or untested refund functions. |
+
+---
+
+# 3. Current Navigation and Workspaces
+
+**Client Navigation:**
+*   Main: Discover (`/FindPeople`), My Tasks (`/Bookings`), Messages (`/Messages`)
+*   Profile Menu: Public Profile, Settings, Wallet, Logout
+*   Hidden/Accessible: `/ClientLiveView`, `/UserBookingDetail`, `/JobDetail`
+
+**Local Agent Navigation:**
+*   Main: Dashboard (`/AvatarDashboard`), Job Board (`/JobMarketplace`), Schedule/Requests (`/AvatarRequests`), Messages (`/AvatarMessages`)
+*   Profile Menu: Public Profile Edit, Earnings, Settings, Verification, Logout
+*   Hidden/Accessible: `/AvatarLive`, `/LiveStreamStudio`
+
+**Navigation Analysis:**
+*   **Does navigation match the product?** Mostly, but the split between `AvatarRequests` (Direct Hires) and `JobMarketplace` (Open Tasks) creates friction.
+*   **Are there too many options?** Yes, especially for Agents. Dashboard, Schedule, Requests, and Job Board overlap heavily.
+*   **Are any important pages hidden?** The distinction between a `BookingDetail` page and a `JobDetail` page is buried in the list views.
+*   **Are any routes duplicated?** Yes. `/Messages` (Client) and `/AvatarMessages` (Agent) exist, which is redundant. Both use the `Conversation` entity.
+*   **Are any pages named internally vs displayed?** Yes. "Avatar" is the internal code name, but the UI says "Local Agent". "Booking" is the internal code name for Direct Hire, while "JobPost" is the code name for Open Task.
+
+---
+
+# 4. The Two Main Client Paths
+
+## Path A — Direct Hire
+*Client knows who they want.*
+
+1. **Client opens Discover.** (`FindPeople.jsx` - Clear)
+2. **Client views Local Agent profile.** (`AvatarView.jsx` - Clear)
+3. **Client clicks Request Direct Hire.** (Passes `?avatar=ID` to `CreateBooking.jsx` - Clear)
+4. **Client fills task details.** (`CreateBooking.jsx` - Clear)
+5. **Client reviews task.** (`ReviewBookingPanel.jsx` - Clear)
+6. **Client sends request.** (Calls `createBooking` - BUILT BUT CONFUSING)
+7. **Secure Payment is required.** (Currently attempts to trigger `createTaskCheckout` immediately upon creation - BUILT BUT BROKEN/RISKY. Forces payment *before* agent accepts).
+8. **Local Agent receives request.** (Appears in `AvatarRequests.jsx` - Clear)
+9. **Task appears in My Tasks.** (`Bookings.jsx` - Clear)
+10. **Messages open.** (Conversation entity created - Clear)
+11. **Live Session happens if needed.** (`ClientLiveView` / `LiveStreamStudio` - UI BUILT, WebRTC UNTESTED)
+12. **Proof/completion happens.** (`JobActionCard` component - Clear)
+13. **Client approves or raises issue.** (`JobApprovalFlow` component - Clear)
+14. **Review is left.** (`createReview` - Clear)
+
+## Path B — Open Task
+*Client broadcasts to many.*
+
+1. **Client opens Post Task.** (`PostJob.jsx` - Clear)
+2. **Client enters task details.** (Saves to `JobPost` entity - Clear)
+3. **Client publishes Open Task.** (Status becomes 'open' - Clear)
+4. **Task appears in My Tasks.** (`Bookings.jsx` / `JobDetail.js` - Confusing, mixes with Direct Hires)
+5. **Task appears on Agent Job Board.** (`JobMarketplace.jsx` - Clear)
+6. **Local Agents submit proposals.** (`JobApplication` entity created - Clear)
+7. **Client reviews proposals.** (`JobDetail.js` view for owner - Clear)
+8. **Client chooses Local Agent.** (Accepts application - Clear)
+9. **Secure Payment is required.** (Client prompted to fund Escrow - Clearer than Direct Hire)
+10. **Messages open.** (Conversation created - Clear)
+11. **Live Session happens if needed.** (UNTESTED)
+12. **Proof/completion happens.** (`JobActionCard` - Clear)
+13. **Client approves or raises issue.** (Releases payment - Clear)
+14. **Review is left.** (Clear)
+
+---
+
+# 5. Direct Hire vs Open Task Confusion
+
+| Confusing area | Current behaviour | Why confusing | Recommended fix | Priority |
+| :--- | :--- | :--- | :--- | :--- |
+| **Dual Database Entities** | Direct Hire = `Booking`. Open Task = `JobPost`. | Building features (messages, reviews, payments, live streams) requires writing the logic twice. | Unify into a single `Task` entity with a `type` field (direct vs open). | High (Phase A) |
+| **My Tasks Aggregation** | Client `Bookings.jsx` fetches both `Booking` and `JobPost` arrays and merges them. | Clicking a task routes to either `/UserBookingDetail` or `/JobDetail` depending on the entity type, leading to jarring UX changes. | Use one unified `TaskDetail.jsx` page that handles both types gracefully. | High |
+| **Payment Timing** | Direct Hire asks for payment *during request*. Open Task asks for payment *after selecting a proposal*. | Direct hire asks clients to pay before the agent even says "yes", causing massive refund/hold headaches if the agent declines. | Move Direct Hire payment to AFTER the Local Agent accepts the request. | Critical |
+
+---
+
+# 6. Current Booking / Task Creation Flow
+
+**Direct Hire (`CreateBooking.jsx`)**
+*   **Data collected:** Category, date, time, duration, stream mode (live/no camera), transport needs, equipment, notes.
+*   **Required:** Avatar Profile ID, Category.
+*   **Errors/Missing Data:** Blocked by frontend guard (fixed recently). If missing, shows empty state.
+*   **Payment Trigger:** Currently triggered *immediately* via `createAndPay`.
+*   **Success State:** Redirects to Stripe Checkout (or shows generic success if free test).
+
+**Open Task (`PostJob.jsx`)**
+*   **Data collected:** Title, description, category, location, budget range, skills/equipment, scheduled date.
+*   **Required:** Title, description, category.
+*   **Errors/Missing Data:** Form validation prevents submission.
+*   **Payment Trigger:** None at creation. Triggered only when a proposal is accepted.
+*   **Success State:** Redirects to the published `JobDetail.js` page.
+
+---
+
+# 7. Current Payment Placement
+
+*   **Where does payment currently appear?**
+    *   Direct Hire: At the very end of the `CreateBooking` form.
+    *   Open Task: Inside `JobDetail` when clicking "Hire" on a proposal.
+*   **Is payment currently paused?** Attempted but paused. The UI has buttons, but test-mode flows were interrupted by the `avatar_profile_id` bug.
+*   **Terminology:**
+    *   *Secure Payment Required:* Client needs to pay.
+    *   *Secure Payment Held:* Money is captured by Stripe and sitting in Base44's connected platform account.
+    *   *Released/Paid:* Task approved, money sent to Agent's Base44 balance (and eventually paid out via Stripe Connect).
+    *   *Disputed:* Task paused, funds frozen pending Admin review.
+*   **Recommendation for Production V1:** **Model B (Client sends request first, Local Agent accepts, then client funds Secure Payment).**
+    *   *Why?* Paying upfront for a Direct Hire request that an agent might decline (because they are busy, asleep, or don't want the job) creates massive friction, requires complex automatic voiding/refunding logic, and ties up user funds unnecessarily.
+    *   *Flow:* Client Requests -> Status: `pending`. Agent Accepts -> Status: `accepted_awaiting_payment`. Client Pays -> Status: `scheduled`/`in_progress`.
+
+---
+
+# 8. Current Task Status Lifecycle
+
+**Direct Hire (`Booking` entity)**
+1.  `pending` (Request sent, waiting for Agent)
+2.  `accepted` (Agent agreed, waiting for payment) -> *Ideal state, currently bypassed by forced upfront payment*
+3.  `scheduled` (Paid, waiting for date/time)
+4.  `in_progress` (Agent is working/traveling)
+5.  `live` (Video stream active)
+6.  `awaiting_approval` (Proof submitted by Agent)
+7.  `completed` (Client approved, funds released)
+8.  `disputed` (Client raised issue)
+9.  `cancelled` / `declined` (Dead ends)
+
+**Open Task (`JobPost` entity)**
+1.  `open` (Receiving proposals)
+2.  `awaiting_approval` (Winner selected, awaiting client payment)
+3.  `in_progress` (Paid, work started)
+4.  `completed` (Approved)
+5.  `disputed`
+6.  `cancelled`
+
+*Note: The terminology and statuses between the two schemas are slightly mismatched (e.g., `JobPost` lacks a specific `scheduled` state, `Booking` lacks an `open` state). Unifying them is highly recommended.*
+
+---
+
+# 9. Current Page-by-Page Process Map
+
+| Page | Purpose | Who sees it | Status | Notes |
+| :--- | :--- | :--- | :--- | :--- |
+| **Landing** | Marketing | Public | Clear | Good to go. |
+| **FindPeople** | Discover Agents | Client | Clear | The main entry point for Direct Hires. |
+| **AvatarView** | Agent Profile | Client | Clear | Shows posts, reviews, and CTA to Hire. |
+| **CreateBooking** | Direct Hire Form | Client | Clear | Guarded properly now. Payment logic needs shifting. |
+| **PostJob** | Open Task Form | Client | Clear | Works well. |
+| **Bookings** | My Tasks Dashboard | Both | Confusing | Merges two schemas awkwardly. Needs a unified UI. |
+| **JobDetail** | Open Task Hub | Both | Clear | Handles proposals and hiring well. |
+| **UserBookingDetail** | Direct Hire Hub | Client | Confusing | Lacks parity with `JobDetail`. Should be unified. |
+| **Messages** | Chat | Both | BUILT | Functional, but redundant routes exist (`AvatarMessages`). |
+| **JobMarketplace** | Job Board | Agent | Clear | Where agents find Open Tasks. |
+| **AvatarDashboard** | Agent Home | Agent | Confusing | Overlaps too much with Schedule/Requests. |
+| **LiveStreamStudio** | WebRTC Video | Both | UNTESTED | UI looks good, Daily.co integration needs rigorous QA. |
+| **User/AvatarWallet**| Finances | Both | Clear | Handles transaction history and invoices. |
+
+---
+
+# 10. Every Important Button / Action Map
+
+| Page | Button | What it actually does | Route / Backend | Problem / Recommendation |
+| :--- | :--- | :--- | :--- | :--- |
+| **FindPeople** | Request Direct Hire | Opens form | `/CreateBooking?avatar=id` | Fixed recently. Clear. |
+| **CreateBooking** | Review Request | Triggers validation | Scrolls to Review panel | Clear. |
+| **ReviewPanel** | Confirm / Pay | Calls `createBooking` & checkout | `createTaskCheckout` | **Problem:** Charges client before agent accepts. **Fix:** Change to "Send Request", delay payment. |
+| **PostJob** | Publish Task | Creates `JobPost` | `updateJobPost` | Clear. |
+| **JobDetail** | Submit Proposal | Creates `JobApplication` | `applyToJob` | Clear. |
+| **JobDetail** | Hire (on Proposal) | Prompts payment | `createTaskCheckout` | Clear (funds escrow). |
+| **ActionCard** | Start Work | Changes status to `in_progress` | `updateBookingStatus` | Clear. |
+| **ActionCard** | Submit Proof | Uploads image, changes status to `awaiting_approval` | `updateBookingStatus` | Clear. |
+| **ActionCard** | Approve | Releases funds | `releaseTaskPayment` | Clear. |
+| **ActionCard** | Dispute | Freezes funds | `disputeTaskPayment` | Clear. |
+
+---
+
+# 11. Current Data Flow Map
+
+**Direct Hire:**
+`CreateBooking` (Frontend) -> `createBooking` (Backend) -> Creates `Booking` Record -> Stripe Checkout -> Webhook marks `payment_status: held` -> Agent sees in `AvatarRequests` -> Agent Clicks Accept -> Messaging opens -> `JobActionCard` handles lifecycle updates -> Proof uploaded -> `releaseTaskPayment` (Backend) updates `AvatarProfile.total_earnings` and marks `Booking` completed.
+
+**Open Task:**
+`PostJob` (Frontend) -> Creates `JobPost` Record -> Agent sees in `JobMarketplace` -> Agent calls `applyToJob` -> Creates `JobApplication` Record -> Client sees apps in `JobDetail` -> Client accepts -> Stripe Checkout -> Webhook marks `JobPost.escrow_status: captured` -> `JobActionCard` handles lifecycle -> `releaseTaskPayment` (Backend).
+
+*Weak Points:* Two completely separate data structures for the exact same lifecycle. If you want to add a feature (e.g., "Add 30 minutes to task time"), you have to build it twice (once for `Booking`, once for `JobPost`).
+
+---
+
+# 12. Current Broken or Risky Areas
+
+| Area | Problem | Severity | User impact | Fix now or later |
+| :--- | :--- | :--- | :--- | :--- |
+| **Dual Entities** | `Booking` and `JobPost` schemas split the app logic in half. | High | Code duplication, confusing UI in "My Tasks". | Fix Later (Phase A refactor) |
+| **Direct Hire Payment** | Client is forced to pay before the Agent accepts the request. | Critical | Refunds required if Agent declines. High friction. | **Fix Now (Phase B)** |
+| **Redundant Routes** | `/Messages` vs `/AvatarMessages`. | Low | Slight confusion in navigation. | Fix Later |
+| **Enterprise Mode** | Overcomplicates Nav, relies on parallel DB logic. | Medium | Distracts from core marketplace validation. | Hide for V1 Launch |
+| **Live Video** | Daily.co implementation exists but hasn't been end-to-end tested with real tokens in this thread. | High | Core value prop might fail on connection. | Fix Later (Phase F) |
+| **Disputes/Admin** | Dispute buttons freeze funds, but Admin dashboard lacks tested UI to *resolve* and route money manually. | Medium | Edge cases will require manual Stripe dashboard intervention. | Fix Later (Phase H) |
+
+---
+
+# 13. Recommended Clean Production V1 Process
+
+To make CoTask feel like a premium, reliable product, the flow must be standardized.
+
+**The Golden Rule of V1:** No money moves until both parties agree to the scope.
+
+## 1. Client Direct Hire (The Fix)
+1.  Client clicks "Request Direct Hire" on a profile.
+2.  Client fills out details (Date, Time, Scope).
+3.  Client clicks **"Send Request"** (NO PAYMENT YET).
+4.  Local Agent receives notification: "New Request from [Name]".
+5.  Agent reviews details and clicks **"Accept & Request Payment"**.
+6.  Client receives notification: "Agent Accepted! Fund the escrow to confirm."
+7.  Client clicks **"Fund Secure Payment"** -> Stripe Checkout.
+8.  Task becomes `scheduled` / `in_progress`.
+
+## 2. Client Open Task
+1.  Client posts Open Task (NO PAYMENT YET).
+2.  Local Agents submit proposals (Rate + Message).
+3.  Client reviews proposals and selects a winner.
+4.  Client clicks **"Hire & Fund Escrow"** -> Stripe Checkout.
+5.  Task becomes `scheduled` / `in_progress`.
+
+## 3. Execution & Live Session
+1.  At scheduled time, both parties see a **"Join Live Session"** button in their Task Detail page.
+2.  Button opens `LiveStreamStudio` (Agent broadcasts) / `ClientLiveView` (Client watches).
+
+## 4. Completion & Approval
+1.  Agent clicks **"Submit Proof of Completion"** (Uploads photo/notes).
+2.  Client gets notification. Clicks **"Approve & Release Funds"**.
+3.  Base44 backend transfers held Stripe funds to Agent's connected account balance.
+4.  Both prompted to leave a Review.
+
+---
+
+# 14. Recommended Screen Structure
+
+*   **Discover (`FindPeople`):** Grid of agent cards. AI Search bar. Categories. *No complex dashboards here.*
+*   **Task Detail (Unified):**
+    *   **Header:** Title, Status Badge, Agent Info, Price.
+    *   **Main Body:** Description, Location, Time.
+    *   **Action Bar (Sticky Bottom):** Context-aware buttons (e.g., "Fund Escrow", "Join Call", "Submit Proof").
+    *   **Tabs:** Details | Messages | Proof | Receipts.
+*   **My Tasks (`Bookings`):** Simple list view. Tabs for "Active", "Pending", "Completed". Clear status badges.
+*   **Job Board (`JobMarketplace`):** For Agents only. Filterable feed of Open Tasks.
+
+---
+
+# 15. Recommended Next Implementation Phases
+
+To safely reach a polished Production V1 without breaking the app:
+
+*   **Phase A: Information Architecture unification (Low Code).** Hide Enterprise routes. Consolidate navigation (remove redundant Avatar/User routes).
+*   **Phase B: Fix Direct Hire Payment Timing (High Priority).** Modify `CreateBooking` to skip Stripe. Add a "Fund Escrow" button to the Booking detail page that the client clicks *after* the agent accepts.
+*   **Phase C: Task Detail Consistency.** Ensure `UserBookingDetail` and `JobDetail` show the exact same `JobActionCard` lifecycle components so users don't have to learn two interfaces.
+*   **Phase D: Stripe Test-Mode QA.** Run a complete end-to-end test of the escrow capture and release using Stripe test cards.
+*   **Phase E: Live Session QA.** Hard-test the Daily.co WebRTC integration.
+*   **Phase F: Launch V1.**
+
+---
+
+# 16. Final Summary for ChatGPT
+
+**Current State:** CoTask's core architecture is built, but the UX is currently messy because the app maintains two completely separate workflows and database entities for the same concept (`Booking` for Direct Hires, `JobPost` for Open Tasks). Navigation is cluttered with redundant roles (User vs Avatar vs Enterprise), and payment logic is awkwardly placed.
+
+**What is Broken/Risky:** The biggest flaw right now is that Direct Hire forces the Client to pay via Stripe *before* the Local Agent even accepts the request. If the agent declines, complex refunds are required.
+
+**How it Should Work:** The Golden Rule for V1 should be implemented: **No money moves until both parties agree.** Direct Hires should send a free "Request" to the agent. Once the agent accepts, the Client is prompted to "Fund Secure Payment". Open Tasks should follow the same logic (Post -> Agent Proposes -> Client Accepts & Funds).
+
+**Next Fix:** We must execute Phase B: Decouple Stripe checkout from the `CreateBooking` form submission, and move the "Fund Secure Payment" button to the Task Detail page, revealing it only after the Agent's status becomes `accepted`. Do not build new features or redesign UI until this core payment timing is resolved.
