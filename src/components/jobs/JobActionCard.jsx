@@ -145,7 +145,7 @@ export default function JobActionCard({ job, user, userRole, conversationId, onJ
   const handleSatisfied = async () => {
     setLoading(true);
     try {
-      // Release escrow (real or simulated)
+      // Release payment
       if (job.stripe_payment_intent_id && job.escrow_status === 'authorized') {
         if (!job.stripe_payment_intent_id.startsWith('sim_')) {
           await base44.functions.invoke('captureJobPayment', { jobId: job.id });

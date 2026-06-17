@@ -100,7 +100,7 @@ export default function UserWallet() {
   return (
     <AppShell navItems={getNavItems(user?.role)} user={user}>
       <div className="mb-8">
-        <h1 className="text-2xl lg:text-3xl font-bold mb-1 flex items-center gap-2"><Wallet className="w-7 h-7 text-primary" /> My Wallet</h1>
+        <h1 className="text-2xl lg:text-3xl font-bold mb-1 flex items-center gap-2"><Wallet className="w-7 h-7 text-primary" /> Billing / Payments</h1>
         <p className="text-muted-foreground text-sm">Your spending overview and payment history</p>
       </div>
 
@@ -125,7 +125,7 @@ export default function UserWallet() {
         <GlassCard className="p-5">
           <div className="flex items-center gap-3 mb-2">
             <div className="w-9 h-9 rounded-xl bg-yellow-500/10 flex items-center justify-center"><Clock className="w-5 h-5 text-yellow-400" /></div>
-            <span className="text-sm text-muted-foreground">In Escrow</span>
+            <span className="text-sm text-muted-foreground">Secure Payment Held</span>
           </div>
           <p className="text-2xl font-bold text-yellow-400">${pendingEscrow.toFixed(2)}</p>
           <p className="text-xs text-muted-foreground mt-1">{pendingCount} task{pendingCount !== 1 ? 's' : ''} in progress · held securely</p>

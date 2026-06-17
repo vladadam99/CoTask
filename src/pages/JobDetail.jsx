@@ -315,7 +315,7 @@ export default function JobDetail() {
             <div>
               <p className="text-sm font-semibold text-yellow-400">
                 {job.stripe_payment_intent_id?.startsWith('sim_') ? '🧪 ' : '💰 '}
-                ${job.escrow_amount} Secure Payment Held{job.stripe_payment_intent_id?.startsWith('sim_') ? ' (Test Flow)' : ''}
+                ${job.escrow_amount} Secure Payment Held{job.stripe_payment_intent_id?.startsWith('sim_') ? ' (Test Secure Payment Flow)' : ''}
               </p>
               <p className="text-xs text-muted-foreground">Funds will be paid to the Local Agent once you approve their work, or automatically after 24 hours.</p>
             </div>

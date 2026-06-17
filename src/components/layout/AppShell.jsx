@@ -27,7 +27,7 @@ function ProfilePanel({ user, onClose, navItems = [] }) {
       { icon: LayoutDashboard, label: 'Admin Dashboard', path: '/AdminDashboard' },
       { icon: Users, label: 'Users', path: '/AdminDashboard' },
       { icon: Calendar, label: 'Tasks', path: '/AdminDashboard' },
-      { icon: DollarSign, label: 'Payments / Escrow', path: '/AdminDashboard' },
+      { icon: DollarSign, label: 'Payments / Secure Payment', path: '/AdminDashboard' },
       { icon: Flag, label: 'Disputes', path: '/AdminDashboard' },
       { icon: Shield, label: 'Verification / Safety', path: '/AdminDashboard' },
       { icon: Settings, label: 'Settings', path: '/AdminDashboard' },
