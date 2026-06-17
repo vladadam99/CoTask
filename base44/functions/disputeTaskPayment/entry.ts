@@ -12,10 +12,20 @@ Deno.serve(async (req) => {
     }
 
     const collection = task_type === 'job' ? 'JobPost' : 'Booking';
-    const task = await base44.asServiceRole.entities[collection].get(task_id);
-    if (!task) return Response.json({ error: 'Task not found' }, { status: 404 });
+    const records = await base44.asServiceRole.entities[collection].filter({ id: task_id });
+    if (!records.length) return Response.json({ error: 'Task not found' }, { status: 404 });
+    const task = records[0];
 
-    if (task.client_email !== user.email && task.avatar_email !== user.email) {
+    let clientEmail, avatarEmail;
+    if (task_type === 'job') {
+      clientEmail = task.posted_by_email;
+      avatarEmail = task.winner_email || task.assigned_to_email;
+    } else {
+      clientEmail = task.client_email;
+      avatarEmail = task.avatar_email;
+    }
+
+    if (clientEmail !== user.email && avatarEmail !== user.email && user.role !== 'admin') {
       return Response.json({ error: 'Forbidden' }, { status: 403 });
     }
 
@@ -25,18 +35,20 @@ Deno.serve(async (req) => {
       dispute_reason: dispute_reason
     });
 
-    // Notify the other party
-    const targetEmail = user.email === task.client_email ? task.avatar_email : task.client_email;
-    const targetRole = user.email === task.client_email ? 'avatar' : 'user';
-    
-    await base44.asServiceRole.entities.Notification.create({
-      user_email: targetEmail,
-      title: 'Payment Disputed',
-      message: `${user.full_name} has opened a dispute on the secure payment. Reason: ${dispute_reason}`,
-      type: 'system',
-      target_role: targetRole,
-      link: task_type === 'job' ? `/JobDetail?id=${task_id}` : `/UserBookingDetail?id=${task_id}`
-    });
+    // Notify the other party if there is an avatar assigned
+    if (avatarEmail) {
+      const targetEmail = user.email === clientEmail ? avatarEmail : clientEmail;
+      const targetRole = user.email === clientEmail ? 'avatar' : 'user';
+      
+      await base44.asServiceRole.entities.Notification.create({
+        user_email: targetEmail,
+        title: 'Payment Disputed',
+        message: `${user.full_name || 'The other party'} has opened a dispute on the secure payment. Reason: ${dispute_reason}`,
+        type: 'system',
+        target_role: targetRole,
+        link: task_type === 'job' ? `/JobDetail?id=${task_id}` : `/UserBookingDetail?id=${task_id}`
+      });
+    }
 
     return Response.json({ success: true });
   } catch (error) {

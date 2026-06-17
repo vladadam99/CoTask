@@ -33,7 +33,7 @@ Deno.serve(async (req) => {
     const amount = task.total_amount || task.amount || task.total_budget || task.budget || 0;
     const platformFeeAmount = amount * (platformFeePercentage / 100);
     const agentNetAmount = amount - platformFeeAmount;
-    const avatarEmail = task.avatar_email || task.assigned_to_email;
+    const avatarEmail = task_type === 'job' ? task.winner_email : task.avatar_email;
 
     if (task_type === 'booking') {
       await base44.asServiceRole.entities.Booking.update(task_id, {
