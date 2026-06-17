@@ -61,33 +61,38 @@ export default function UserWallet() {
 
   const isLoading = isLoadingJobs || isLoadingBookings;
 
-  const completedJobs = jobs.filter(j => j.status === 'completed');
-  const pendingJobs = jobs.filter(j => ['in_progress', 'awaiting_approval'].includes(j.status));
-  const paidBookings = bookings.filter(b => ['completed', 'in_progress', 'live'].includes(b.status));
+  const releasedJobs = jobs.filter(j => j.payment_status === 'released' || j.status === 'completed');
+  const releasedBookings = bookings.filter(b => b.payment_status === 'released' || b.status === 'completed');
+  const heldJobs = jobs.filter(j => j.payment_status === 'held');
+  const heldBookings = bookings.filter(b => b.payment_status === 'held');
 
-  const totalSpentJobs = completedJobs.reduce((sum, j) => sum + (j.escrow_amount || j.budget_max || 0), 0);
-  const totalSpentBookings = paidBookings.reduce((sum, b) => sum + (b.total_amount || b.amount || 0), 0);
+  const totalSpentJobs = releasedJobs.reduce((sum, j) => sum + (j.escrow_amount || j.budget_max || 0), 0);
+  const totalSpentBookings = releasedBookings.reduce((sum, b) => sum + (b.total_amount || b.amount || 0), 0);
   const totalSpent = totalSpentJobs + totalSpentBookings;
-  const pendingEscrow = pendingJobs.reduce((sum, j) => sum + (j.escrow_amount || j.budget_max || 0), 0);
+
+  const pendingEscrowJobs = heldJobs.reduce((sum, j) => sum + (j.escrow_amount || j.budget_max || 0), 0);
+  const pendingEscrowBookings = heldBookings.reduce((sum, b) => sum + (b.total_amount || b.amount || 0), 0);
+  const pendingEscrow = pendingEscrowJobs + pendingEscrowBookings;
+  const pendingCount = heldJobs.length + heldBookings.length;
 
   // Build unified transaction list
   const transactions = [
-    ...completedJobs.map(j => ({
+    ...[...releasedJobs, ...heldJobs].map(j => ({
       id: j.id,
       title: j.title,
-      to: j.winner_email,
+      to: j.assigned_to_email || j.winner_email || j.avatar_name || j.avatar_email,
       amount: j.escrow_amount || j.budget_max || 0,
-      date: j.ended_at || j.updated_date,
-      status: 'released',
+      date: j.released_at || j.ended_at || j.updated_date,
+      status: j.payment_status || j.status,
       type: 'job',
     })),
-    ...paidBookings.map(b => ({
+    ...[...releasedBookings, ...heldBookings].map(b => ({
       id: b.id,
       title: `${b.category} Booking`,
-      to: b.avatar_name,
+      to: b.avatar_name || b.avatar_email,
       amount: b.total_amount || b.amount || 0,
-      date: b.updated_date,
-      status: b.status,
+      date: b.released_at || b.updated_date,
+      status: b.payment_status || b.status,
       type: 'booking',
     })),
   ].sort((a, b) => new Date(b.date) - new Date(a.date));
@@ -123,7 +128,7 @@ export default function UserWallet() {
             <span className="text-sm text-muted-foreground">In Escrow</span>
           </div>
           <p className="text-2xl font-bold text-yellow-400">${pendingEscrow.toFixed(2)}</p>
-          <p className="text-xs text-muted-foreground mt-1">{pendingJobs.length} job{pendingJobs.length !== 1 ? 's' : ''} in progress · held securely</p>
+          <p className="text-xs text-muted-foreground mt-1">{pendingCount} task{pendingCount !== 1 ? 's' : ''} in progress · held securely</p>
         </GlassCard>
       </div>
 

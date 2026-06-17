@@ -12,10 +12,10 @@ const PLATFORM_FEE_RATE = 0.1;
 
 function downloadInvoice(job, userEmail, userName, role) {
   const doc = new jsPDF();
-  const gross = job.escrow_amount || job.budget_max || 0;
+  const gross = job.total_amount || job.amount || job.escrow_amount || job.budget_max || 0;
   const fee = gross * PLATFORM_FEE_RATE;
   const net = gross - fee;
-  const date = job.ended_at ? new Date(job.ended_at).toLocaleDateString() : new Date(job.updated_date).toLocaleDateString();
+  const date = job.released_at ? new Date(job.released_at).toLocaleDateString() : (job.ended_at ? new Date(job.ended_at).toLocaleDateString() : new Date(job.updated_date).toLocaleDateString());
   const invoiceNo = `INV-${job.id.slice(-6).toUpperCase()}`;
 
   doc.setFontSize(22); doc.setFont('helvetica', 'bold');
@@ -31,9 +31,9 @@ function downloadInvoice(job, userEmail, userName, role) {
   doc.setFont('helvetica', 'bold');
   doc.text('Job Details', 20, 82);
   doc.setFont('helvetica', 'normal');
-  doc.text(`Title: ${job.title}`, 20, 92);
+  doc.text(`Title: ${job.is_booking ? `${job.category} Booking` : job.title}`, 20, 92);
   doc.text(`Category: ${job.category || '-'}`, 20, 99);
-  doc.text(`Client: ${job.posted_by_name}`, 20, 106);
+  doc.text(`Client: ${job.client_name || job.posted_by_name}`, 20, 106);
 
   doc.line(20, 114, 190, 114);
   doc.setFont('helvetica', 'bold');
@@ -62,15 +62,39 @@ export default function AvatarWallet() {
     enabled: !!user,
   });
 
-  if (loading) return <div className="min-h-screen flex items-center justify-center"><div className="w-8 h-8 border-4 border-primary/20 border-t-primary rounded-full animate-spin" /></div>;
+  const { data: bookings = [], isLoading: isLoadingBookings } = useQuery({
+    queryKey: ['avatar-wallet-bookings', user?.email],
+    queryFn: () => base44.entities.Booking.filter({ avatar_email: user.email }, '-updated_date', 100),
+    enabled: !!user,
+  });
 
-  const completedJobs = jobs.filter(j => j.status === 'completed');
-  const pendingJobs = jobs.filter(j => ['in_progress', 'awaiting_approval'].includes(j.status));
+  const isLoadingTotal = isLoading || isLoadingBookings;
 
-  const totalGross = completedJobs.reduce((sum, j) => sum + (j.escrow_amount || j.budget_max || 0), 0);
+  if (loading || isLoadingTotal) return <div className="min-h-screen flex items-center justify-center"><div className="w-8 h-8 border-4 border-primary/20 border-t-primary rounded-full animate-spin" /></div>;
+
+  const releasedJobs = jobs.filter(j => j.payment_status === 'released' || j.status === 'completed');
+  const releasedBookings = bookings.filter(b => b.payment_status === 'released' || b.status === 'completed');
+  const heldJobs = jobs.filter(j => j.payment_status === 'held');
+  const heldBookings = bookings.filter(b => b.payment_status === 'held');
+
+  const totalGrossJobs = releasedJobs.reduce((sum, j) => sum + (j.escrow_amount || j.budget_max || 0), 0);
+  const totalGrossBookings = releasedBookings.reduce((sum, b) => sum + (b.total_amount || b.amount || 0), 0);
+  const totalGross = totalGrossJobs + totalGrossBookings;
+  
   const totalFees = totalGross * PLATFORM_FEE_RATE;
   const totalNet = totalGross - totalFees;
-  const pendingAmount = pendingJobs.reduce((sum, j) => sum + (j.escrow_amount || j.budget_max || 0), 0);
+
+  const pendingAmountJobs = heldJobs.reduce((sum, j) => sum + (j.escrow_amount || j.budget_max || 0), 0);
+  const pendingAmountBookings = heldBookings.reduce((sum, b) => sum + (b.total_amount || b.amount || 0), 0);
+  const pendingAmount = pendingAmountJobs + pendingAmountBookings;
+
+  const pendingCount = heldJobs.length + heldBookings.length;
+  const completedCount = releasedJobs.length + releasedBookings.length;
+  
+  const allReleasedTasks = [
+    ...releasedJobs.map(j => ({ ...j, is_job: true })),
+    ...releasedBookings.map(b => ({ ...b, is_booking: true }))
+  ].sort((a, b) => new Date(b.released_at || b.updated_date) - new Date(a.released_at || a.updated_date));
 
   return (
     <AppShell navItems={getNavItems(user?.role)} user={user}>
@@ -140,7 +164,7 @@ export default function AvatarWallet() {
             <span className="text-sm text-muted-foreground">Pending Secure Payments</span>
           </div>
           <p className="text-2xl font-bold text-yellow-400">${pendingAmount.toFixed(2)}</p>
-          <p className="text-xs text-muted-foreground mt-1">{pendingJobs.length} task{pendingJobs.length !== 1 ? 's' : ''} in progress</p>
+          <p className="text-xs text-muted-foreground mt-1">{pendingCount} task{pendingCount !== 1 ? 's' : ''} in progress</p>
         </GlassCard>
         <GlassCard className="p-5">
           <div className="flex items-center gap-3 mb-2">
@@ -148,15 +172,13 @@ export default function AvatarWallet() {
             <span className="text-sm text-muted-foreground">Total Earned (Gross)</span>
           </div>
           <p className="text-2xl font-bold text-primary">${totalGross.toFixed(2)}</p>
-          <p className="text-xs text-muted-foreground mt-1">{completedJobs.length} completed task{completedJobs.length !== 1 ? 's' : ''}</p>
+          <p className="text-xs text-muted-foreground mt-1">{completedCount} completed task{completedCount !== 1 ? 's' : ''}</p>
         </GlassCard>
       </div>
 
       {/* Transaction History */}
       <h2 className="text-lg font-semibold mb-4">Payment History</h2>
-      {isLoading ? (
-        <div className="space-y-3">{[1,2,3].map(i => <GlassCard key={i} className="p-4 animate-pulse"><div className="h-4 bg-muted rounded w-1/3" /></GlassCard>)}</div>
-      ) : completedJobs.length === 0 ? (
+      {allReleasedTasks.length === 0 ? (
         <GlassCard className="p-12 text-center flex flex-col items-center justify-center">
           <div className="w-16 h-16 rounded-full bg-secondary flex items-center justify-center mb-4">
             <Wallet className="w-8 h-8 text-muted-foreground" />
@@ -166,8 +188,8 @@ export default function AvatarWallet() {
         </GlassCard>
       ) : (
         <div className="space-y-3">
-          {completedJobs.map(job => {
-            const gross = job.escrow_amount || job.budget_max || 0;
+          {allReleasedTasks.map(job => {
+            const gross = job.total_amount || job.amount || job.escrow_amount || job.budget_max || 0;
             const fee = gross * PLATFORM_FEE_RATE;
             const net = gross - fee;
             return (
@@ -178,8 +200,8 @@ export default function AvatarWallet() {
                       <CheckCircle className="w-5 h-5 text-green-400" />
                     </div>
                     <div>
-                      <p className="font-medium text-sm">{job.title}</p>
-                      <p className="text-xs text-muted-foreground">Client: {job.posted_by_name} · {job.ended_at ? new Date(job.ended_at).toLocaleDateString() : new Date(job.updated_date).toLocaleDateString()}</p>
+                      <p className="font-medium text-sm">{job.is_booking ? `${job.category} Booking` : job.title}</p>
+                      <p className="text-xs text-muted-foreground">Client: {job.client_name || job.posted_by_name} · {job.released_at ? new Date(job.released_at).toLocaleDateString() : (job.ended_at ? new Date(job.ended_at).toLocaleDateString() : new Date(job.updated_date).toLocaleDateString())}</p>
                     </div>
                   </div>
                   <div className="text-right flex-shrink-0">

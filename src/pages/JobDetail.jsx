@@ -9,7 +9,7 @@ import { getNavItems } from '@/lib/navItems';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import StatusBadge from '@/components/ui/StatusBadge';
-import SimulatedPaymentModal from '@/components/jobs/SimulatedPaymentModal';
+import SecurePaymentModal from '@/components/jobs/SecurePaymentModal';
 import { ArrowLeft, MapPin, Clock, DollarSign, Users, CheckCircle, XCircle, Star, Award, MessageCircle, Pencil, Calendar, AlertCircle, ShieldAlert, Send } from 'lucide-react';
 import JobNegotiationFlow from '@/components/jobs/JobNegotiationFlow';
 
@@ -299,7 +299,7 @@ export default function JobDetail() {
 
         {/* Payment Modal (shown when selecting a winner) */}
         {showPaymentModal && pendingWinnerApp && (
-          <SimulatedPaymentModal
+          <SecurePaymentModal
             job={{ ...job, escrow_amount: pendingWinnerApp.proposed_rate || job.budget_max || job.budget_min || 50 }}
             onSuccess={handlePaymentSuccess}
             onCancel={() => { setShowPaymentModal(false); setPendingWinnerApp(null); }}

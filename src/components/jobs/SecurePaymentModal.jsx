@@ -3,7 +3,7 @@ import { base44 } from '@/api/base44Client';
 import { Button } from '@/components/ui/button';
 import { ShieldCheck, Loader2, Coins } from 'lucide-react';
 
-export default function SimulatedPaymentModal({ job, onSuccess, onCancel }) {
+export default function SecurePaymentModal({ job, onSuccess, onCancel }) {
   const [loading, setLoading] = useState(false);
   const amount = job.escrow_amount || job.budget_max || job.budget_min || 50;
 
@@ -36,7 +36,7 @@ export default function SimulatedPaymentModal({ job, onSuccess, onCancel }) {
       </div>
 
       <div className="bg-yellow-500/10 border border-yellow-500/20 rounded-xl p-4 text-sm text-yellow-300 space-y-1">
-        <p className="font-semibold">🧪 Test secure payment simulation</p>
+        <p className="font-semibold">🧪 Secure Payment</p>
         <p className="text-xs text-muted-foreground">Using Stripe Test Mode. The system will securely hold <span className="font-semibold text-foreground">${amount}</span>.</p>
       </div>
 
