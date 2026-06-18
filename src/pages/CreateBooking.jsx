@@ -120,6 +120,8 @@ Based on this, return:
       const bookingRes = await base44.functions.invoke('createBooking', {
         client_type: user.app_role === 'enterprise' ? 'enterprise' : 'user',
         avatar_profile_id: avatarId || '',
+        avatar_email: avatar?.user_email || '',
+        avatar_name: avatar?.display_name || '',
         category: form.category,
         service_type: form.category,
         booking_type: form.booking_type,

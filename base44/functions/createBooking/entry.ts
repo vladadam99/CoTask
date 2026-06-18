@@ -7,28 +7,22 @@ Deno.serve(async (req) => {
     if (!user) return Response.json({ error: 'Unauthorized' }, { status: 401 });
 
     const payload = await req.json();
-    const { avatar_profile_id, category, ...rest } = payload;
+    const { avatar_profile_id, avatar_email, avatar_name, category, ...rest } = payload;
 
-    if (!avatar_profile_id) {
-      return Response.json({ error: 'Missing Local Agent profile ID.' }, { status: 400 });
+    if (!avatar_profile_id || !avatar_email) {
+      return Response.json({ error: 'Missing Local Agent details.' }, { status: 400 });
     }
     if (!category) {
       return Response.json({ error: 'Missing required fields' }, { status: 400 });
     }
 
-    const profiles = await base44.asServiceRole.entities.AvatarProfile.filter({ id: avatar_profile_id });
-    if (!profiles.length) {
-      return Response.json({ error: 'Avatar not found' }, { status: 404 });
-    }
-    const avatar = profiles[0];
-
     const bookingData = {
       ...rest,
       client_email: user.email,
       client_name: user.full_name,
-      avatar_email: avatar.user_email,
-      avatar_name: avatar.display_name,
-      avatar_profile_id: avatar.id,
+      avatar_email,
+      avatar_name,
+      avatar_profile_id,
       category,
       status: 'pending'
     };
@@ -36,7 +30,7 @@ Deno.serve(async (req) => {
     const booking = await base44.asServiceRole.entities.Booking.create(bookingData);
 
     await base44.asServiceRole.entities.Notification.create({
-      user_email: avatar.user_email,
+      user_email: avatar_email,
       title: 'New Booking Request',
       message: `${user.full_name} sent you a new booking request.`,
       type: 'booking_request',
