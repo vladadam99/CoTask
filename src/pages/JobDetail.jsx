@@ -65,34 +65,17 @@ export default function JobDetail() {
 
   const applyMutation = useMutation({
     mutationFn: async () => {
-      const app = await base44.entities.JobApplication.create({
+      const res = await base44.functions.invoke('applyToJob', {
         job_id: jobId,
-        job_title: job.title,
-        applicant_email: user.email,
-        applicant_name: user.full_name,
-        applicant_type: user.role,
         cover_message: applyForm.cover_message,
         proposed_rate: applyForm.proposed_rate ? Number(applyForm.proposed_rate) : undefined,
         proposed_duration: applyForm.proposed_duration,
         available_from: applyForm.available_from,
-        client_email: job.posted_by_email,
-        status: 'pending',
+        applicant_profile_id: myAvatarProfile?.id,
+        applicant_type: 'avatar'
       });
-      await base44.functions.invoke('updateJobProgress', {
-        jobId,
-        action: 'apply'
-      });
-      await base44.functions.invoke('sendMessage', {
-        conversationId: 'system', // we just want notification
-        content: 'system_notification',
-        messageType: 'system',
-        notifyTitle: 'New Job Application',
-        notifyMessage: `${user.full_name} applied for your job: ${job.title}`,
-        notifyType: 'booking_request',
-        notifyLink: `/JobDetail?id=${jobId}`,
-        notifyTargetRole: 'user'
-      }).catch(() => {});
-      return app;
+      if (res.data?.error) throw new Error(res.data.error);
+      return res.data?.application;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['job-applications', jobId] });
@@ -142,7 +125,10 @@ export default function JobDetail() {
   });
 
   const isAvatar = user?.selected_role === 'avatar';
-  const isOwner = user?.email === job?.posted_by_email && !isAvatar;
+  const isOwner = user?.email === job?.posted_by_email;
+  const isHiredAgent = job?.winner_email === user?.email;
+  const isProspectAgent = isAvatar && !isOwner && !isHiredAgent;
+  const hasSubmittedProposal = !!myApplication;
 
   const openEditForm = () => {
     setEditForm({
@@ -175,7 +161,7 @@ export default function JobDetail() {
   };
 
   const showOwnerControls = isOwner;
-  const canApply = isAvatar && !isOwner && job?.status === 'open' && !myApplication;
+  const canApply = isProspectAgent && job?.status === 'open' && !hasSubmittedProposal;
 
   if (isLoading) return (
     <AppShell navItems={getNavItems(user?.role)} user={user}>
@@ -321,7 +307,7 @@ export default function JobDetail() {
             </div>
           </div>
         )}
-        {job.escrow_status === 'captured' && (
+        {job.escrow_status === 'captured' && (showOwnerControls || isHiredAgent) && (
           <div className="glass rounded-2xl p-3 border border-green-500/20 flex items-center gap-2">
             <CheckCircle className="w-4 h-4 text-green-400" />
             <p className="text-xs text-green-400">Secure Payment of ${job.escrow_amount} paid to the Local Agent.</p>
@@ -378,44 +364,28 @@ export default function JobDetail() {
           </div>
         )}
 
-        {/* My Application Status */}
-        {myApplication && (
-          <div className={`glass rounded-2xl p-4 border ${myApplication.status === 'accepted' ? 'border-green-500/30' : myApplication.status === 'rejected' ? 'border-red-500/20' : 'border-yellow-500/20'}`}>
+        {/* My Application Status (Prospect With Proposal) */}
+        {hasSubmittedProposal && !isHiredAgent && (
+          <div className="glass rounded-2xl p-4 border border-yellow-500/20">
             <div className="flex items-center gap-2">
-              {myApplication.status === 'accepted' ? <CheckCircle className="w-5 h-5 text-green-400" />
-                : myApplication.status === 'rejected' ? <XCircle className="w-5 h-5 text-red-400" />
-                : <Clock className="w-5 h-5 text-yellow-400" />}
+              <Clock className="w-5 h-5 text-yellow-400" />
               <div>
-                <p className="font-semibold text-sm">Your Proposal: <span className="capitalize">{myApplication.status}</span></p>
-                <p className="text-xs text-muted-foreground">{myApplication.cover_message}</p>
+                <p className="font-semibold text-sm text-yellow-400">Proposal Submitted</p>
+                <p className="text-xs text-muted-foreground">Your proposal is pending review by the client.</p>
               </div>
             </div>
-            <JobNegotiationFlow
-              application={myApplication}
-              job={job}
-              user={user}
-            />
+            <div className="mt-3 p-3 bg-secondary/50 rounded-xl text-sm border border-border">
+              <p className="text-muted-foreground mb-2">"{myApplication.cover_message}"</p>
+              <div className="flex gap-4 font-medium">
+                {myApplication.proposed_rate && <span>${myApplication.proposed_rate} rate</span>}
+                {myApplication.available_from && <span>Available: {myApplication.available_from}</span>}
+              </div>
+            </div>
+            {/* If we support withdrawal safely, we'd add the button here */}
           </div>
         )}
 
-        {/* Message Client Button (avatars only, before applying) */}
-        {isAvatar && job?.posted_by_email && (
-          <Button
-            variant="outline"
-            className="w-full h-11 gap-2 border-border"
-            onClick={async () => {
-              const res = await base44.functions.invoke('createDirectConversation', { 
-                target_email: job.posted_by_email, 
-                target_name: job.posted_by_name 
-              });
-              if (res.data?.conversation) {
-                navigate(`/Messages?conversation=${res.data.conversation.id}`);
-              }
-            }}
-          >
-            <Send className="w-4 h-4" /> Open Messages
-          </Button>
-        )}
+
 
         {/* Apply Button / Form */}
         {canApply && !showApplyForm && (
@@ -454,7 +424,11 @@ export default function JobDetail() {
                 <input type="number" value={applyForm.proposed_rate} onChange={e => setApplyForm(p => ({ ...p, proposed_rate: e.target.value }))}
                   placeholder="e.g. 35" className="w-full bg-secondary border border-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-primary/50 text-foreground placeholder:text-muted-foreground" />
               </div>
-
+              <div>
+                <label className="text-sm font-medium mb-1.5 block">Available From</label>
+                <input type="date" value={applyForm.available_from} onChange={e => setApplyForm(p => ({ ...p, available_from: e.target.value }))}
+                  className="w-full bg-secondary border border-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-primary/50 text-foreground placeholder:text-muted-foreground" />
+              </div>
             </div>
             <div className="flex gap-3">
               <Button className="flex-1" onClick={() => applyMutation.mutate()} disabled={applyMutation.isPending || !applyForm.cover_message}>
@@ -526,12 +500,12 @@ export default function JobDetail() {
         )}
 
         {/* Countdown for scheduled assigned jobs */}
-        {job.status === 'in_progress' && !job.flexible_dates && job.scheduled_date && (isAvatar || showOwnerControls) && (
+        {job.status === 'in_progress' && !job.flexible_dates && job.scheduled_date && (isHiredAgent || showOwnerControls) && (
           <JobCountdown scheduledDate={job.scheduled_date} />
         )}
 
         {/* Open Chat button for assigned participants */}
-        {job.status === 'in_progress' && jobConversation && (user?.email === job.posted_by_email || user?.email === job.winner_email) && (
+        {jobConversation && (isHiredAgent || showOwnerControls) && (
           <Button className="w-full h-11 gap-2" onClick={() => navigate(`/Messages?conversation=${jobConversation.id}`)}>
             <MessageCircle className="w-4 h-4" /> Open Messages
           </Button>
