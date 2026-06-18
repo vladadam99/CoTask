@@ -130,9 +130,9 @@ export default function AvatarDashboard() {
       {/* Stats Grid */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-8">
         {[
-          { label: 'Requests', value: pendingBookings.length, icon: Clock, color: 'text-yellow-400', bg: 'bg-yellow-500/10', path: '/AvatarRequests' },
-          { label: 'Accepted', value: upcomingBookings.length, icon: Calendar, color: 'text-blue-400', bg: 'bg-blue-500/10', path: '/AvatarRequests' },
-          { label: 'Completed', value: completedCount, icon: CheckCircle, color: 'text-green-400', bg: 'bg-green-500/10', path: '/AvatarRequests' },
+          { label: 'Requests & Proposals', value: pendingBookings.length, icon: Clock, color: 'text-yellow-400', bg: 'bg-yellow-500/10', path: '/AvatarRequests' },
+          { label: 'Upcoming Tasks', value: upcomingBookings.length, icon: Calendar, color: 'text-blue-400', bg: 'bg-blue-500/10', path: '/AvatarRequests' },
+          { label: 'Completed Tasks', value: completedCount, icon: CheckCircle, color: 'text-green-400', bg: 'bg-green-500/10', path: '/AvatarRequests' },
           { label: 'Earnings', value: `$${profile?.total_earnings || 0}`, icon: TrendingUp, color: 'text-primary', bg: 'bg-primary/10', path: '/AvatarWallet' },
         ].map((stat, i) => (
           <Link key={stat.label} to={stat.path}>

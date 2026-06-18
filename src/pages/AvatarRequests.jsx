@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
@@ -7,9 +7,10 @@ import AppShell from '@/components/layout/AppShell';
 import GlassCard from '@/components/ui/GlassCard';
 import StatusBadge from '@/components/ui/StatusBadge';
 import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
 import { getNavItems } from '@/lib/navItems';
 import {
-  Inbox, Calendar, Clock, CheckCircle, XCircle, Eye, MapPin, Briefcase
+  Inbox, Calendar, Clock, CheckCircle, XCircle, Eye, MapPin, Briefcase, ChevronRight, AlertCircle
 } from 'lucide-react';
 import {
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter
@@ -17,14 +18,12 @@ import {
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/components/ui/use-toast';
 
-
-
 const TABS = [
-  { key: 'accepted', label: 'Accepted Tasks', icon: CheckCircle },
-  { key: 'pending', label: 'Direct Hire Requests', icon: Clock },
-  { key: 'declined', label: 'Declined', icon: XCircle },
-  { key: 'jobs', label: 'Open Task Proposals', icon: Briefcase },
-  { key: 'all', label: 'All', icon: Inbox },
+  { key: 'Requests', label: 'Requests', icon: Clock },
+  { key: 'Proposals', label: 'Proposals', icon: Briefcase },
+  { key: 'Accepted', label: 'Accepted', icon: CheckCircle },
+  { key: 'Completed', label: 'Completed', icon: CheckCircle },
+  { key: 'Issues', label: 'Issues', icon: AlertCircle },
 ];
 
 export default function AvatarRequests() {
@@ -41,7 +40,6 @@ export default function AvatarRequests() {
     enabled: !!user,
   });
 
-  // Fetch latest counter-offer per booking to show current negotiated price
   const { data: allOffers = [] } = useQuery({
     queryKey: ['avatar-counter-offers', user?.email],
     queryFn: async () => {
@@ -55,13 +53,101 @@ export default function AvatarRequests() {
 
   const getLatestOffer = (bookingId) => allOffers.find(o => o.booking_id === bookingId);
 
-  const { data: wonJobs = [], isLoading: isLoadingJobs } = useQuery({
-    queryKey: ['avatar-won-jobs', user?.email],
-    queryFn: () => base44.entities.JobPost.filter({ winner_email: user.email }, '-updated_date', 50),
+  const { data: jobApps = [], isLoading: isLoadingApps } = useQuery({
+    queryKey: ['avatar-job-apps', user?.email],
+    queryFn: () => base44.entities.JobApplication.filter({ applicant_email: user.email }, '-created_date', 50),
     enabled: !!user,
   });
 
-  const isLoading = isLoadingBookings || isLoadingJobs;
+  const { data: jobPosts = [], isLoading: isLoadingJobs } = useQuery({
+    queryKey: ['avatar-job-posts', user?.email],
+    queryFn: async () => {
+      const postsWhereWinner = await base44.entities.JobPost.filter({ winner_email: user.email }, '-updated_date', 50);
+      const appJobIds = jobApps.map(a => a.job_id).filter(id => !postsWhereWinner.some(p => p.id === id));
+      const postsForApps = [];
+      for (const id of appJobIds) {
+        const post = await base44.entities.JobPost.filter({ id }).then(r => r[0]);
+        if (post) postsForApps.push(post);
+      }
+      return [...postsWhereWinner, ...postsForApps];
+    },
+    enabled: !!user && !isLoadingApps,
+  });
+
+  const isLoading = isLoadingBookings || isLoadingApps || isLoadingJobs;
+
+  const allWorkItems = useMemo(() => {
+    const arr = [];
+    bookings.forEach(b => {
+      let nextAction = 'View Task';
+      if (b.status === 'pending') nextAction = 'Waiting for Local Agent';
+      else if (['accepted', 'scheduled', 'in_progress', 'live'].includes(b.status)) nextAction = 'View Task';
+      else if (b.status === 'completed') nextAction = 'View Earnings';
+      else if (b.status === 'disputed') nextAction = 'View Dispute';
+      else if (['declined', 'cancelled'].includes(b.status)) nextAction = 'View Details';
+
+      const latestOffer = getLatestOffer(b.id);
+      const displayAmount = latestOffer?.status === 'pending' ? latestOffer.amount : (b.total_amount || b.amount || 0);
+
+      arr.push({
+        type: 'direct_hire',
+        id: b.id,
+        title: `${b.category}${b.service_type ? ` - ${b.service_type}` : ''}`,
+        status: b.status,
+        payment_status: b.payment_status,
+        date: b.scheduled_date || 'Immediate',
+        time: b.scheduled_time || '',
+        location: b.location,
+        counterpart: b.client_name,
+        amount: typeof displayAmount === 'number' ? `$${displayAmount.toFixed(2)}` : `$${displayAmount}`,
+        route: `/AvatarBookingDetail?id=${b.id}`,
+        nextAction,
+        rawDate: b.created_date,
+        originalObj: b
+      });
+    });
+
+    jobApps.forEach(app => {
+      const job = jobPosts.find(p => p.id === app.job_id);
+      if (!job) return;
+
+      let nextAction = 'View Task';
+      if (app.status === 'pending') nextAction = 'Waiting for Client';
+      else if (app.status === 'rejected') nextAction = 'Proposal Not Selected';
+      else if (app.status === 'withdrawn') nextAction = 'Withdrawn';
+
+      const isWon = job.winner_email === user?.email && app.status === 'accepted';
+      const effectiveType = isWon ? 'won_open_task' : 'open_task_proposal';
+      
+      const effectiveStatus = isWon ? job.status : app.status;
+
+      if (isWon) {
+        if (['in_progress', 'open'].includes(job.status)) nextAction = 'View Task';
+        else if (job.status === 'completed') nextAction = 'View Earnings';
+        else if (job.status === 'disputed') nextAction = 'View Dispute';
+      }
+
+      arr.push({
+        type: effectiveType,
+        id: app.id,
+        job_id: job.id,
+        title: job.title,
+        status: effectiveStatus,
+        payment_status: job.escrow_status,
+        date: job.flexible_dates ? 'Flexible Dates' : (job.scheduled_date || 'TBD'),
+        time: job.scheduled_time || '',
+        location: job.location,
+        counterpart: job.posted_by_name,
+        amount: app.proposed_rate ? `$${app.proposed_rate}` : `$${job.budget_max || job.budget_min || 0}`,
+        route: `/JobDetail?id=${job.id}`,
+        nextAction,
+        rawDate: app.created_date,
+        originalObj: app
+      });
+    });
+
+    return arr.sort((a, b) => new Date(b.rawDate) - new Date(a.rawDate));
+  }, [bookings, jobApps, jobPosts, allOffers, user?.email]);
 
   const updateBooking = useMutation({
     mutationFn: async ({ id, status, reason }) => {
@@ -99,13 +185,16 @@ export default function AvatarRequests() {
     </div>
   );
 
-  const filtered = activeTab === 'all'
-    ? bookings
-    : activeTab === 'jobs'
-    ? wonJobs
-    : bookings.filter(b => b.status === activeTab);
+  const filtered = allWorkItems.filter(t => {
+    if (activeTab === 'Requests') return t.type === 'direct_hire' && t.status === 'pending';
+    if (activeTab === 'Proposals') return t.type === 'open_task_proposal';
+    if (activeTab === 'Accepted') return (t.type === 'direct_hire' && ['accepted', 'scheduled', 'in_progress', 'live'].includes(t.status)) || (t.type === 'won_open_task' && ['open', 'in_progress'].includes(t.status));
+    if (activeTab === 'Completed') return t.status === 'completed';
+    if (activeTab === 'Issues') return ['disputed', 'cancelled', 'declined', 'rejected', 'withdrawn'].includes(t.status);
+    return false;
+  });
 
-  const pendingCount = bookings.filter(b => b.status === 'pending').length;
+  const pendingCount = allWorkItems.filter(t => t.type === 'direct_hire' && t.status === 'pending').length;
 
   return (
     <AppShell navItems={getNavItems(user?.selected_role)} user={user}>
@@ -153,105 +242,55 @@ export default function AvatarRequests() {
             <Inbox className="w-8 h-8 text-muted-foreground" />
           </div>
           <h3 className="text-xl font-bold mb-2">No tasks found</h3>
-          <p className="text-sm text-muted-foreground mb-4">No {activeTab === 'jobs' ? 'won tasks' : activeTab === 'all' ? 'tasks' : activeTab} found for this filter.</p>
-          {activeTab === 'pending' && (
-            <Link to="/JobMarketplace">
-              <Button size="sm" variant="outline">Browse Job Board</Button>
-            </Link>
-          )}
+          <p className="text-sm text-muted-foreground mb-4">No {activeTab.toLowerCase()} found for this filter.</p>
+          <Link to="/JobMarketplace">
+            <Button size="sm" variant="outline">Browse Job Board</Button>
+          </Link>
         </GlassCard>
       ) : (
         <div className="space-y-3">
-          {activeTab === 'jobs' ? wonJobs.map(job => (
-            <GlassCard key={job.id} className="p-5">
-              <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2 mb-1 flex-wrap">
-                    <span className="font-semibold text-sm">{job.title}</span>
-                    <StatusBadge status={job.status} />
+          {filtered.map(task => (
+            <Link key={`${task.type}-${task.id}`} to={task.route}>
+              <GlassCard className="p-5" hover>
+                <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 mb-1 flex-wrap">
+                      <span className="font-semibold text-sm">{task.title}</span>
+                      <Badge variant="outline" className={`text-xs border ${task.type === 'direct_hire' ? 'bg-purple-500/10 text-purple-400 border-purple-500/20' : 'bg-blue-500/10 text-blue-400 border-blue-500/20'}`}>
+                        {task.type === 'direct_hire' ? 'Direct Hire' : 'Open Task'}
+                      </Badge>
+                      <StatusBadge status={task.status} />
+                    </div>
+                    <p className="text-sm text-muted-foreground mb-1">
+                      <span className="font-medium text-foreground">{task.counterpart}</span>
+                    </p>
+                    <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted-foreground mt-2">
+                      {task.date && (
+                        <span className="flex items-center gap-1">
+                          <Calendar className="w-3 h-3" />
+                          {task.date} {task.time && `at ${task.time}`}
+                        </span>
+                      )}
+                      {task.location && (
+                        <span className="flex items-center gap-1">
+                          <MapPin className="w-3 h-3" /> {task.location}
+                        </span>
+                      )}
+                    </div>
                   </div>
-                  <p className="text-sm text-muted-foreground mb-1">Client: <span className="font-medium text-foreground">{job.posted_by_name}</span></p>
-                  <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted-foreground mt-2">
-                    {job.category && <span className="flex items-center gap-1"><Briefcase className="w-3 h-3" />{job.category}</span>}
-                    {job.location && <span className="flex items-center gap-1"><MapPin className="w-3 h-3" />{job.location}</span>}
-                    {job.scheduled_date && <span className="flex items-center gap-1"><Calendar className="w-3 h-3" />{job.scheduled_date}</span>}
-                  </div>
-                </div>
-                <div className="flex flex-col items-end gap-3 flex-shrink-0">
-                  <span className="text-lg font-bold text-primary">${job.escrow_amount || job.budget_max || 0}</span>
-                  <Link to={`/JobDetail?id=${job.id}`}>
-                    <Button size="sm" variant="outline" className="h-8 gap-1"><Eye className="w-3 h-3" /> View</Button>
-                  </Link>
-                </div>
-              </div>
-            </GlassCard>
-          )) : filtered.map(booking => (
-            <GlassCard key={booking.id} className="p-5">
-              <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2 mb-1 flex-wrap">
-                    <span className="font-semibold text-sm">{booking.category}</span>
-                    {booking.service_type && (
-                      <span className="text-xs text-muted-foreground">· {booking.service_type}</span>
-                    )}
-                    <StatusBadge status={booking.status} />
-                  </div>
-                  <p className="text-sm text-muted-foreground mb-1">
-                    <span className="font-medium text-foreground">{booking.client_name}</span>
-                    {booking.client_type === 'enterprise' && (
-                      <span className="ml-1 text-xs bg-blue-500/10 text-blue-400 px-1.5 py-0.5 rounded">Enterprise</span>
-                    )}
-                  </p>
-                  <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted-foreground mt-2">
-                    {booking.scheduled_date && (
-                      <span className="flex items-center gap-1">
-                        <Calendar className="w-3 h-3" />
-                        {booking.scheduled_date} {booking.scheduled_time && `at ${booking.scheduled_time}`}
-                      </span>
-                    )}
-                    {booking.location && (
-                      <span className="flex items-center gap-1">
-                        <MapPin className="w-3 h-3" /> {booking.location}
-                      </span>
-                    )}
-                    {booking.duration_minutes && (
-                      <span className="flex items-center gap-1">
-                        <Clock className="w-3 h-3" /> {booking.duration_minutes} min
-                      </span>
-                    )}
-                  </div>
-                  {booking.notes && (
-                    <p className="text-xs text-muted-foreground mt-2 italic line-clamp-2">"{booking.notes}"</p>
-                  )}
-                </div>
 
-                <div className="flex flex-col items-end gap-3 flex-shrink-0">
-                  {(() => {
-                    const latestOffer = getLatestOffer(booking.id);
-                    const displayAmount = latestOffer?.status === 'pending'
-                      ? latestOffer.amount
-                      : (booking.total_amount || booking.amount || 0);
-                    return (
-                      <div className="text-right">
-                        <span className="text-lg font-bold text-primary">${typeof displayAmount === 'number' ? displayAmount.toFixed(2) : displayAmount}</span>
-                        {latestOffer?.status === 'pending' && latestOffer.offered_by_role === 'client' && (
-                          <p className="text-xs text-yellow-400 mt-0.5">Counter-offer pending</p>
-                        )}
-                      </div>
-                    );
-                  })()}
-                  <div className="flex gap-2">
-                    <Link to={`/AvatarBookingDetail?id=${booking.id}`}>
-                      <Button size="sm" variant="outline" className="h-8 gap-1">
-                        <Eye className="w-3 h-3" /> View
-                      </Button>
-                    </Link>
-                    {booking.status === 'pending' && (
-                      <>
+                  <div className="flex flex-col items-end gap-3 flex-shrink-0">
+                    <span className="text-lg font-bold text-primary">{task.amount}</span>
+                    <div className="flex items-center gap-1.5 text-primary text-sm font-medium group">
+                      {task.nextAction}
+                      <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                    </div>
+                    {task.type === 'direct_hire' && task.status === 'pending' && (
+                      <div className="flex gap-2 mt-2" onClick={(e) => e.preventDefault()}>
                         <Button
                           size="sm"
                           className="h-8 gap-1 bg-green-600 hover:bg-green-700"
-                          onClick={() => updateBooking.mutate({ id: booking.id, status: 'accepted' })}
+                          onClick={() => updateBooking.mutate({ id: task.id, status: 'accepted' })}
                           disabled={updateBooking.isPending}
                         >
                           <CheckCircle className="w-3 h-3" /> Accept
@@ -260,17 +299,17 @@ export default function AvatarRequests() {
                           size="sm"
                           variant="destructive"
                           className="h-8 gap-1"
-                          onClick={() => handleDeclineClick(booking)}
+                          onClick={() => handleDeclineClick(task.originalObj)}
                           disabled={updateBooking.isPending}
                         >
                           <XCircle className="w-3 h-3" /> Decline
                         </Button>
-                      </>
+                      </div>
                     )}
                   </div>
                 </div>
-              </div>
-            </GlassCard>
+              </GlassCard>
+            </Link>
           ))}
         </div>
       )}

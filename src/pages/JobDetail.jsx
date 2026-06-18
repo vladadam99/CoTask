@@ -366,12 +366,20 @@ export default function JobDetail() {
 
         {/* My Application Status (Prospect With Proposal) */}
         {hasSubmittedProposal && !isHiredAgent && (
-          <div className="glass rounded-2xl p-4 border border-yellow-500/20">
+          <div className={`glass rounded-2xl p-4 border ${myApplication.status === 'rejected' ? 'border-red-500/20' : 'border-yellow-500/20'}`}>
             <div className="flex items-center gap-2">
-              <Clock className="w-5 h-5 text-yellow-400" />
+              {myApplication.status === 'rejected' ? (
+                <XCircle className="w-5 h-5 text-red-400" />
+              ) : (
+                <Clock className="w-5 h-5 text-yellow-400" />
+              )}
               <div>
-                <p className="font-semibold text-sm text-yellow-400">Proposal Submitted</p>
-                <p className="text-xs text-muted-foreground">Your proposal is pending review by the client.</p>
+                <p className={`font-semibold text-sm ${myApplication.status === 'rejected' ? 'text-red-400' : 'text-yellow-400'}`}>
+                  {myApplication.status === 'rejected' ? 'Proposal Not Selected' : 'Proposal Submitted'}
+                </p>
+                <p className="text-xs text-muted-foreground">
+                  {myApplication.status === 'rejected' ? 'The client has chosen another agent or declined this proposal.' : 'Your proposal is pending review by the client.'}
+                </p>
               </div>
             </div>
             <div className="mt-3 p-3 bg-secondary/50 rounded-xl text-sm border border-border">
@@ -381,7 +389,6 @@ export default function JobDetail() {
                 {myApplication.available_from && <span>Available: {myApplication.available_from}</span>}
               </div>
             </div>
-            {/* If we support withdrawal safely, we'd add the button here */}
           </div>
         )}
 
