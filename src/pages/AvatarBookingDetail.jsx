@@ -22,8 +22,11 @@ export default function AvatarBookingDetail() {
   const { data: booking, isLoading } = useQuery({
     queryKey: ['avatar-booking', id],
     queryFn: async () => {
-      const list = await base44.entities.Booking.filter({ id });
-      return list[0] || null;
+      try {
+        return await base44.entities.Booking.get(id);
+      } catch (e) {
+        return null;
+      }
     },
     enabled: !!id,
   });
@@ -66,8 +69,22 @@ export default function AvatarBookingDetail() {
 
   if (!booking) return (
     <div className="min-h-screen flex items-center justify-center p-6">
-      <GlassCard className="p-8 text-center">
-        <p className="text-muted-foreground">Booking not found</p>
+      <GlassCard className="p-8 max-w-md w-full text-center space-y-5">
+        <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-2">
+          <span className="text-primary text-2xl">🔍</span>
+        </div>
+        <h2 className="text-xl font-bold">Task not found</h2>
+        <p className="text-sm text-muted-foreground">
+          This Direct Hire request may have been removed, or you don't have permission to view it.
+        </p>
+        <div className="flex flex-col gap-3 pt-2">
+          <Button className="w-full" onClick={() => navigate('/AvatarRequests')}>
+            Back to My Schedule
+          </Button>
+          <Button variant="outline" className="w-full border-white/10" onClick={() => navigate('/JobMarketplace')}>
+            Browse Open Tasks
+          </Button>
+        </div>
       </GlassCard>
     </div>
   );

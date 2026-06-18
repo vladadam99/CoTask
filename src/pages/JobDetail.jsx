@@ -30,7 +30,7 @@ export default function JobDetail() {
 
   const { data: job, isLoading } = useQuery({
     queryKey: ['job-detail', jobId],
-    queryFn: () => base44.entities.JobPost.filter({ id: jobId }).then(r => r[0]),
+    queryFn: () => base44.entities.JobPost.get(jobId).catch(() => null),
     enabled: !!jobId,
   });
 
