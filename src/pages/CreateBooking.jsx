@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { useCurrentUser } from '@/lib/useCurrentUser';
 import GlassCard from '@/components/ui/GlassCard';
@@ -22,6 +22,7 @@ export default function CreateBooking() {
   const avatarId = params.get('avatar');
   const { user } = useCurrentUser();
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const [checkoutLoading, setCheckoutLoading] = useState(false);
   const [error, setError] = useState('');
   const [freeTest, setFreeTest] = useState(false);
@@ -147,6 +148,9 @@ Based on this, return:
       const booking = bookingRes.data.booking;
 
       base44.functions.invoke('createConversation', { bookingId: booking.id }).catch(() => {});
+
+      // Cache the booking so the detail page renders instantly without waiting for read replicas
+      queryClient.setQueryData(['user-booking', booking.id], booking);
 
       // Decoupled payment - redirect to detail page to await agent acceptance
       navigate(`/UserBookingDetail?id=${booking.id}&new=true`);

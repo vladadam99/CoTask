@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { useCurrentUser } from '@/lib/useCurrentUser';
 import AppShell from '@/components/layout/AppShell';
@@ -27,6 +27,7 @@ const LANGUAGES = ['English', 'Spanish', 'French', 'German', 'Mandarin', 'Arabic
 export default function PostJob() {
   const { user } = useCurrentUser();
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const urlParams = new URLSearchParams(window.location.search);
   const editJobId = urlParams.get('edit');
 
@@ -127,7 +128,10 @@ export default function PostJob() {
       });
       return job;
     },
-    onSuccess: (job) => navigate(`/JobDetail?id=${job.id}`),
+    onSuccess: (job) => {
+      queryClient.setQueryData(['job-detail', job.id], job);
+      navigate(`/JobDetail?id=${job.id}`);
+    },
   });
 
   if (!user) return null;

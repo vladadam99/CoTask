@@ -22,11 +22,7 @@ export default function AvatarBookingDetail() {
   const { data: booking, isLoading } = useQuery({
     queryKey: ['avatar-booking', id],
     queryFn: async () => {
-      try {
-        return await base44.entities.Booking.get(id);
-      } catch (e) {
-        return null;
-      }
+      return await base44.entities.Booking.get(id);
     },
     enabled: !!id,
   });

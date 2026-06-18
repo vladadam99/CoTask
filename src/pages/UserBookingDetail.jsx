@@ -23,11 +23,7 @@ export default function UserBookingDetail() {
   const { data: booking, isLoading } = useQuery({
     queryKey: ['user-booking', id],
     queryFn: async () => {
-      try {
-        return await base44.entities.Booking.get(id);
-      } catch (e) {
-        return null;
-      }
+      return await base44.entities.Booking.get(id);
     },
     enabled: !!id,
   });
