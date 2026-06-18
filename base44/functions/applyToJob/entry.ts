@@ -19,6 +19,18 @@ Deno.serve(async (req) => {
     }
     const job = jobs[0];
 
+    if (job.posted_by_email === user.email) {
+      return Response.json({ error: 'You cannot apply to your own job.' }, { status: 400 });
+    }
+
+    const existingApp = await base44.asServiceRole.entities.JobApplication.filter({
+      job_id: job.id,
+      applicant_email: user.email
+    });
+    if (existingApp.length > 0) {
+      return Response.json({ error: 'You have already applied to this job.' }, { status: 400 });
+    }
+
     const applicationData = {
       ...rest,
       job_id: job.id,
