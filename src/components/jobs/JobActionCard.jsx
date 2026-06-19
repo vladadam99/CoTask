@@ -145,21 +145,16 @@ export default function JobActionCard({ job, user, userRole, conversationId, onJ
   const handleSatisfied = async () => {
     setLoading(true);
     try {
-      // Release payment
-      if (job.stripe_payment_intent_id && (job.payment_status === 'held' || job.escrow_status === 'authorized')) {
-        if (!job.stripe_payment_intent_id.startsWith('sim_')) {
-          await base44.functions.invoke('captureJobPayment', { jobId: job.id });
-        }
-      }
-      await Promise.all([
-        base44.functions.invoke('updateJobProgress', { jobId: job.id, action: 'complete' }),
-        postSystemMessage(`🎉 Client confirmed satisfaction! Task is complete and secure payment released to ${job.winner_email}. Thank you both!`, {
-          notifyTitle: '💰 Payment Released!',
-          notifyMessage: `${user.full_name} is satisfied with your work. Payment released!`,
-          notifyType: 'payment',
-          notifyTargetRole: 'avatar'
-        }),
-      ]);
+      await base44.functions.invoke('releaseTaskPayment', {
+        task_type: 'job',
+        task_id: job.id
+      });
+      await postSystemMessage(`🎉 Client confirmed satisfaction! Task is complete and secure payment released to ${job.winner_email}. Thank you both!`, {
+        notifyTitle: '💰 Payment Released!',
+        notifyMessage: `${user.full_name} is satisfied with your work. Payment released!`,
+        notifyType: 'payment',
+        notifyTargetRole: 'avatar'
+      });
       onJobUpdated?.();
     } catch (error) {
       console.error('Satisfaction confirmation failed:', error);
@@ -179,7 +174,7 @@ export default function JobActionCard({ job, user, userRole, conversationId, onJ
         disputePhotoUrl = file_url;
       }
       await Promise.all([
-        base44.functions.invoke('approveJob', { bookingId: job.id, action: 'dispute', disputeReason, payload: { dispute_photo_url: disputePhotoUrl } }),
+        base44.functions.invoke('disputeTaskPayment', { task_type: 'job', task_id: job.id, dispute_reason: disputeReason }),
         postSystemMessage(`⚠️ Client raised a dispute: "${disputeReason}"${disputePhotoUrl ? ' (photo attached)' : ''}. The agent can now respond.`, {
           notifyTitle: '⚠️ Dispute Raised',
           notifyMessage: `${user.full_name} raised a dispute. Please respond in the chat.`,
@@ -302,7 +297,7 @@ export default function JobActionCard({ job, user, userRole, conversationId, onJ
   if (!job) return null;
 
   // ─── IN_PROGRESS: Countdown / Start Job / Mark Done ───
-  if (job.status === 'in_progress') {
+  if (job.status === 'in_progress' && job.payment_status === 'held') {
     if (!job.started_at) {
       // ── AVATAR: countdown then Start Job ──
       if (isAvatar) {

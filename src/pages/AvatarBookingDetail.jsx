@@ -87,9 +87,9 @@ export default function AvatarBookingDetail() {
 
   const canAccept = booking.status === 'pending';
   const canDecline = booking.status === 'pending';
-  const canStart = ['accepted', 'scheduled'].includes(booking.status) && booking.payment_status !== 'pending' && booking.stream_mode === 'live_camera';
-  const canComplete = booking.status === 'in_progress' && !booking.proof_url;
-  const canUploadProof = booking.status === 'in_progress' && !booking.proof_url;
+  const canStart = ['accepted', 'scheduled'].includes(booking.status) && booking.payment_status === 'held' && booking.stream_mode === 'live_camera';
+  const canComplete = ['scheduled', 'in_progress'].includes(booking.status) && booking.payment_status === 'held' && !booking.proof_url;
+  const canUploadProof = ['scheduled', 'in_progress'].includes(booking.status) && booking.payment_status === 'held' && !booking.proof_url;
 
   return (
     <div className="min-h-screen bg-background p-4 lg:p-8">

@@ -31,6 +31,7 @@ Deno.serve(async (req) => {
 
     // Mark as disputed
     await base44.asServiceRole.entities[collection].update(task_id, {
+      status: 'disputed',
       payment_status: 'disputed',
       dispute_reason: dispute_reason
     });

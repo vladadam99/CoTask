@@ -29,7 +29,7 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Payment is not in held status' }, { status: 400 });
     }
 
-    const platformFeePercentage = 15;
+    const platformFeePercentage = 10;
     const amount = task.total_amount || task.amount || task.escrow_amount || task.budget_min || 0;
     const platformFeeAmount = amount * (platformFeePercentage / 100);
     const agentNetAmount = amount - platformFeeAmount;
@@ -37,11 +37,13 @@ Deno.serve(async (req) => {
 
     if (task_type === 'booking') {
       await base44.asServiceRole.entities.Booking.update(task_id, {
+        status: 'completed',
         payment_status: 'released',
         released_at: new Date().toISOString()
       });
     } else if (task_type === 'job') {
       await base44.asServiceRole.entities.JobPost.update(task_id, {
+        status: 'completed',
         payment_status: 'released',
         released_at: new Date().toISOString()
       });

@@ -10,6 +10,7 @@ import { ArrowLeft, Calendar, Clock, MapPin, User, DollarSign, MessageSquare, Vi
 import LeaveReview from '@/components/reviews/LeaveReview';
 import CounterOfferFlow from '@/components/bookings/CounterOfferFlow';
 import SecurePaymentModal from '@/components/jobs/SecurePaymentModal';
+import JobApprovalFlow from '@/components/bookings/JobApprovalFlow';
 
 export default function UserBookingDetail() {
   const params = new URLSearchParams(window.location.search);
@@ -277,6 +278,8 @@ export default function UserBookingDetail() {
               {booking.proof_note && <p className="text-xs text-muted-foreground">"{booking.proof_note}"</p>}
             </GlassCard>
           )}
+
+          <JobApprovalFlow booking={booking} user={user} onUpdate={() => queryClient.invalidateQueries({ queryKey: ['user-booking', id] })} />
 
           <CounterOfferFlow
             booking={booking}
