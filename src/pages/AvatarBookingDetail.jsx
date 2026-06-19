@@ -87,7 +87,7 @@ export default function AvatarBookingDetail() {
 
   const canAccept = booking.status === 'pending';
   const canDecline = booking.status === 'pending';
-  const canStart = ['accepted', 'scheduled'].includes(booking.status) && booking.stream_mode === 'live_camera';
+  const canStart = ['accepted', 'scheduled'].includes(booking.status) && booking.payment_status !== 'pending' && booking.stream_mode === 'live_camera';
   const canComplete = booking.status === 'in_progress' && !booking.proof_url;
   const canUploadProof = booking.status === 'in_progress' && !booking.proof_url;
 

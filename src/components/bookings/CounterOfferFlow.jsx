@@ -76,14 +76,11 @@ export default function CounterOfferFlow({ booking, user, convId, onBookingUpdat
     if (accept && latestOffer) {
       // Update booking amount
       const newAmount = latestOffer.amount;
-      const fee = parseFloat((newAmount * 0.10).toFixed(2));
       await base44.functions.invoke('updateBookingStatus', {
         id: booking.id,
         action: 'accept_counter_offer',
         payload: {
-          amount: newAmount,
-          service_fee: fee,
-          total_amount: parseFloat((newAmount + fee).toFixed(2)),
+          offer_id: latestOffer.id
         }
       });
 

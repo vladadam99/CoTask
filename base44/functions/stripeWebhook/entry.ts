@@ -105,7 +105,8 @@ Deno.serve(async (req) => {
       
       const updateData = {
         payment_status: 'held',
-        stripe_payment_intent_id: paymentIntentId
+        stripe_payment_intent_id: paymentIntentId,
+        escrow_status: 'authorized'
       };
 
       let clientEmail = '';

@@ -21,7 +21,7 @@ Deno.serve(async (req) => {
         status: 'in_progress',
         winner_application_id: winnerAppId,
         winner_email: avatarEmail,
-        escrow_status: 'authorized',
+        escrow_status: 'pending',
       });
       await base44.asServiceRole.entities.JobApplication.update(winnerAppId, { status: 'accepted' });
       // We'll skip rejecting all others for simplicity here, or just reject them
@@ -30,6 +30,12 @@ Deno.serve(async (req) => {
         if (app.id !== winnerAppId) {
           await base44.asServiceRole.entities.JobApplication.update(app.id, { status: 'rejected' });
         }
+      }
+    } else {
+      // Non-owner cannot create the conversation for the first time
+      const jobs = await base44.asServiceRole.entities.JobPost.filter({ id: jobId });
+      if (!jobs.length || jobs[0].winner_email !== avatarEmail) {
+        return Response.json({ error: 'Cannot create conversation until winner is assigned' }, { status: 403 });
       }
     }
 

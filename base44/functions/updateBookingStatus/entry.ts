@@ -44,10 +44,22 @@ Deno.serve(async (req) => {
     }
 
     if (action === 'accept_counter_offer') {
+      if (!payload.offer_id) return Response.json({ error: 'Missing offer id' }, { status: 400 });
+      const offers = await base44.asServiceRole.entities.CounterOffer.filter({ id: payload.offer_id, booking_id: id });
+      const offer = offers[0];
+      if (!offer) return Response.json({ error: 'Offer not found' }, { status: 404 });
+      if (offer.offered_by_email === user.email) {
+        return Response.json({ error: 'You cannot accept your own counter-offer' }, { status: 403 });
+      }
+
+      const newAmount = offer.amount;
+      const fee = parseFloat((newAmount * 0.10).toFixed(2));
+      const totalAmount = parseFloat((newAmount + fee).toFixed(2));
+
       await base44.asServiceRole.entities.Booking.update(id, {
-        amount: payload.amount,
-        service_fee: payload.service_fee,
-        total_amount: payload.total_amount,
+        amount: newAmount,
+        service_fee: fee,
+        total_amount: totalAmount,
         status: 'accepted'
       });
       
