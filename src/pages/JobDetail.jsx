@@ -25,6 +25,7 @@ export default function JobDetail() {
   const [showApplyForm, setShowApplyForm] = useState(false);
   const [showEditForm, setShowEditForm] = useState(false);
   const [editForm, setEditForm] = useState({});
+  const [showPaymentModal, setShowPaymentModal] = useState(false);
 
 
   const { data: job, isLoading } = useQuery({
@@ -283,24 +284,21 @@ export default function JobDetail() {
                 <p className="text-xs text-muted-foreground">Please fund Secure Payment to confirm the task.</p>
               </div>
             </div>
-            <Button
-              className="w-full bg-primary hover:bg-primary/90 gap-2"
-              onClick={async () => {
-                if (window.self !== window.top) {
-                  alert('Payment checkout only works on the published app.');
-                  return;
-                }
-                const response = await base44.functions.invoke('createTaskCheckout', {
-                  task_type: 'job',
-                  task_id: job.id,
-                  success_url: window.location.href,
-                  cancel_url: window.location.href,
-                });
-                if (response.data?.checkout_url) window.location.href = response.data.checkout_url;
-              }}
-            >
-              <DollarSign className="w-4 h-4" /> Fund Secure Payment — ${job.budget_max || job.budget_min || 50}
-            </Button>
+            {!showPaymentModal ? (
+              <Button
+                className="w-full bg-primary hover:bg-primary/90 gap-2"
+                onClick={() => setShowPaymentModal(true)}
+              >
+                <DollarSign className="w-4 h-4" /> Fund Secure Payment — ${job.budget_max || job.budget_min || 50}
+              </Button>
+            ) : (
+              <div className="w-full mt-2">
+                <SecurePaymentModal 
+                  job={{ ...job, task_type: 'job', escrow_amount: job.budget_max || job.budget_min || 50 }} 
+                  onCancel={() => setShowPaymentModal(false)}
+                />
+              </div>
+            )}
           </div>
         )}
 

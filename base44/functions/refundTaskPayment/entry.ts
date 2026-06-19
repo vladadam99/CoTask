@@ -42,7 +42,7 @@ Deno.serve(async (req) => {
 
     const refund = await stripe.refunds.create(refundParams);
 
-    const newStatus = amount && amount < (task.total_amount || task.amount || task.total_budget || 0) 
+    const newStatus = amount && amount < (task.total_amount || task.amount || task.escrow_amount || task.budget_min || 0) 
       ? 'partially_refunded' 
       : 'refunded';
 

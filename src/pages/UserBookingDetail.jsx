@@ -9,6 +9,7 @@ import { Button } from '@/components/ui/button';
 import { ArrowLeft, Calendar, Clock, MapPin, User, DollarSign, MessageSquare, Video, VideoOff, CreditCard, CheckCircle, Loader2, Camera, Wifi, Truck, Wrench } from 'lucide-react';
 import LeaveReview from '@/components/reviews/LeaveReview';
 import CounterOfferFlow from '@/components/bookings/CounterOfferFlow';
+import SecurePaymentModal from '@/components/jobs/SecurePaymentModal';
 
 export default function UserBookingDetail() {
   const params = new URLSearchParams(window.location.search);
@@ -58,25 +59,7 @@ export default function UserBookingDetail() {
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['user-booking', id] }),
   });
 
-  const handlePay = async () => {
-    if (!booking) return;
-    if (window.self !== window.top) {
-      alert('Payment checkout only works on the published app.');
-      return;
-    }
-    setCheckoutLoading(true);
-    const res = await base44.functions.invoke('createCheckout', {
-      bookingId: booking.id,
-      amount: booking.total_amount || booking.amount,
-      avatarName: booking.avatar_name,
-      category: booking.category,
-    });
-    if (res.data?.url) {
-      window.location.href = res.data.url;
-    } else {
-      setCheckoutLoading(false);
-    }
-  };
+  const [showPaymentModal, setShowPaymentModal] = useState(false);
 
   const isClient = !!user && !!booking && user.email === booking?.client_email;
 
@@ -306,14 +289,22 @@ export default function UserBookingDetail() {
           <div className="flex flex-wrap gap-3">
             {canCancel && <Button variant="outline" className="border-white/10 flex-1" onClick={() => updateStatus.mutate('cancelled')}>Cancel Task</Button>}
 
-            {needsPayment && (
+            {needsPayment && !showPaymentModal && (
               <Button
                 className="w-full bg-primary hover:bg-primary/90 gap-2"
-                onClick={handlePay}
-                disabled={checkoutLoading}
+                onClick={() => setShowPaymentModal(true)}
               >
-                {checkoutLoading ? <><Loader2 className="w-4 h-4 animate-spin" /> Redirecting…</> : <><CreditCard className="w-4 h-4" /> Fund Secure Payment — ${booking.total_amount?.toFixed(2)}</>}
+                <CreditCard className="w-4 h-4" /> Fund Secure Payment — ${booking.total_amount?.toFixed(2)}
               </Button>
+            )}
+            
+            {showPaymentModal && (
+              <div className="w-full mt-4">
+                <SecurePaymentModal 
+                  job={{ ...booking, task_type: 'booking', escrow_amount: booking.total_amount || booking.amount }} 
+                  onCancel={() => setShowPaymentModal(false)}
+                />
+              </div>
             )}
 
             {convId && (

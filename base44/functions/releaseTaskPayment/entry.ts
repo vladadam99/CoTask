@@ -30,7 +30,7 @@ Deno.serve(async (req) => {
     }
 
     const platformFeePercentage = 15;
-    const amount = task.total_amount || task.amount || task.total_budget || task.budget || 0;
+    const amount = task.total_amount || task.amount || task.escrow_amount || task.budget_min || 0;
     const platformFeeAmount = amount * (platformFeePercentage / 100);
     const agentNetAmount = amount - platformFeeAmount;
     const avatarEmail = task_type === 'job' ? task.winner_email : task.avatar_email;

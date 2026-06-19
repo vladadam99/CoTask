@@ -51,11 +51,11 @@ Deno.serve(async (req) => {
       if (['held', 'released', 'paid'].includes(job.payment_status)) {
         return Response.json({ error: 'Job is already paid' }, { status: 400 });
       }
-      amount = job.total_budget || job.budget || 0; // Assuming total_budget exists
+      amount = job.escrow_amount || job.budget_min || 0;
       currency = job.currency || 'USD';
       title = `Job: ${job.title || 'Task'}`;
       clientEmail = job.posted_by_email;
-      avatarEmail = job.assigned_to_email || ''; // Might not be assigned directly in fields, but we pass what we have
+      avatarEmail = job.winner_email || '';
       
       await base44.asServiceRole.entities.JobPost.update(task_id, {
         payment_status: 'checkout_started'
