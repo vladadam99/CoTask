@@ -37,9 +37,9 @@ export default function ProofUpload({ booking, onUpload }) {
   return (
     <GlassCard className="p-5 border-primary/20">
       <h3 className="font-semibold text-sm mb-1 flex items-center gap-2">
-        <Camera className="w-4 h-4 text-primary" /> Upload Job Completion Proof
+        <Camera className="w-4 h-4 text-primary" /> Upload Task Completion Proof
       </h3>
-      <p className="text-xs text-muted-foreground mb-4">Take or upload a photo proving the job is done. The client will review it before releasing payment.</p>
+      <p className="text-xs text-muted-foreground mb-4">Take or upload a photo proving the task is completed. Proof helps confirm the task was completed before payment is released.</p>
 
       {previewUrl ? (
         <div className="mb-3">
@@ -61,7 +61,7 @@ export default function ProofUpload({ booking, onUpload }) {
         value={note}
         onChange={e => setNote(e.target.value)}
         rows={2}
-        placeholder="Optional note about the completed job…"
+        placeholder="Optional note about the completed task…"
         className="w-full text-sm bg-muted/50 border border-white/5 rounded-xl px-3 py-2 focus:outline-none focus:border-primary/40 text-foreground placeholder:text-muted-foreground resize-none mb-3"
       />
 

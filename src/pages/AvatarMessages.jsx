@@ -165,8 +165,11 @@ export default function AvatarMessages() {
               <div className="w-16 h-16 rounded-full bg-secondary flex items-center justify-center mb-4">
                 <MessageSquare className="w-8 h-8 text-muted-foreground" />
               </div>
-              <h3 className="text-lg font-bold mb-1">No conversations yet</h3>
-              <p className="text-sm text-muted-foreground">Messages from your tasks will appear here</p>
+              <h3 className="text-lg font-bold mb-1">Your inbox is empty</h3>
+              <p className="text-sm text-muted-foreground mb-4">Messages will appear when you start a task.</p>
+              <Link to="/AvatarRequests">
+                <Button size="sm" variant="outline">Go to My Schedule</Button>
+              </Link>
             </div>
           )}
         </div>

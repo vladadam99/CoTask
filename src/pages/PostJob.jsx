@@ -278,7 +278,7 @@ export default function PostJob() {
           {submit.isPending ? (editJobId ? 'Saving...' : 'Posting...') : (editJobId ? 'Save Changes' : 'Post Open Task')}
         </Button>
         <p className="text-xs text-center text-muted-foreground pt-2 pb-6">
-          Open Tasks are best when you want several Local Agents to respond. Use Direct Hire if you already know who you want.
+          Open Tasks are best when you want several Local Agents to respond. Local Agents submit proposals. You choose who to work with before funding Secure Payment.
         </p>
       </div>
     </AppShell>

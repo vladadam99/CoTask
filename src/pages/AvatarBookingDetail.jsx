@@ -252,35 +252,39 @@ export default function AvatarBookingDetail() {
             onBookingUpdate={() => queryClient.invalidateQueries({ queryKey: ['avatar-booking', id] })}
           />
 
-          <div className="flex flex-wrap gap-3">
-            {canAccept && (
-              <Button className="bg-green-600 hover:bg-green-700 flex-1" onClick={() => updateStatus.mutate('accepted')}>
-                Accept Request
-              </Button>
-            )}
-            {canDecline && (
-              <Button variant="outline" className="border-red-500/20 text-red-400 flex-1" onClick={() => updateStatus.mutate('declined')}>
-                Decline Request
-              </Button>
-            )}
-            {canStart && (
-              <Button className="bg-primary hover:bg-primary/90 flex-1" onClick={() => navigate(`/LiveStreamStudio?booking=${booking.id}`)}>
-                Start Live Session
-              </Button>
-            )}
-            {canComplete && (
-              <Button className="bg-green-600 hover:bg-green-700 flex-1" onClick={() => updateStatus.mutate('completed')}>
-                Mark Ready for Review
-              </Button>
-            )}
-
-            {convId && (
-              <Link to={`/AvatarMessages?conv=${convId}`} className="flex-1">
-                <Button variant="outline" className="w-full border-white/10 gap-2">
-                  <MessageSquare className="w-4 h-4" /> Open Messages
+          <div className="flex flex-col gap-3 pb-8">
+            <div className="flex flex-col sm:flex-row gap-3">
+              {canAccept && (
+                <Button className="bg-primary hover:bg-primary/90 flex-1 h-12 text-base shadow-lg shadow-primary/20" onClick={() => updateStatus.mutate('accepted')}>
+                  Accept Request
                 </Button>
-              </Link>
-            )}
+              )}
+              {canStart && (
+                <Button className="bg-primary hover:bg-primary/90 flex-1 h-12 text-base shadow-lg shadow-primary/20" onClick={() => navigate(`/LiveStreamStudio?booking=${booking.id}`)}>
+                  Start Live Session
+                </Button>
+              )}
+              {canComplete && (
+                <Button className="bg-green-600 hover:bg-green-700 flex-1 h-12 text-base shadow-lg shadow-green-500/20" onClick={() => updateStatus.mutate('completed')}>
+                  Mark Ready for Review
+                </Button>
+              )}
+            </div>
+
+            <div className="flex flex-wrap gap-3 mt-2">
+              {convId && (
+                <Link to={`/AvatarMessages?conv=${convId}`} className="flex-1 min-w-[140px]">
+                  <Button variant="outline" className="w-full border-border gap-2">
+                    <MessageSquare className="w-4 h-4" /> Open Messages
+                  </Button>
+                </Link>
+              )}
+              {canDecline && (
+                <Button variant="ghost" className="text-muted-foreground hover:text-destructive flex-1 min-w-[140px]" onClick={() => updateStatus.mutate('declined')}>
+                  Decline Request
+                </Button>
+              )}
+            </div>
           </div>
         </div>
       </div>

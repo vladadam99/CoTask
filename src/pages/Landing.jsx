@@ -139,7 +139,7 @@ export default function Landing() {
           <div className="grid md:grid-cols-3 gap-8">
             {[
               { icon: Search, title: '1. Post or choose', desc: 'Post a task outlining what you need done, or browse and choose a verified Local Agent directly.' },
-              { icon: Lock, title: '2. Fund securely', desc: 'Fund the task using our secure payment system. Funds are held safely until the task is complete.' },
+              { icon: Lock, title: '2. Agree & Fund securely', desc: 'The Local Agent accepts your request or you choose from proposals. Then fund the task. Secure Payment is held until approval.' },
               { icon: CheckCircle, title: '3. Join & approve', desc: 'Join via live video or review uploaded proof. Once satisfied, approve completion to release payment.' },
             ].map((step, i) => (
               <div key={i} className="bg-card border border-border rounded-2xl p-8 text-center shadow-sm hover:shadow-md transition-shadow">

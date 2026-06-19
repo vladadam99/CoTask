@@ -33,19 +33,19 @@ const roles = [
     tags: ['Apply to Jobs', 'Live Streams', 'Flexible Hours'],
     featured: true,
   },
-  {
-    key: 'enterprise',
-    icon: BarChart2,
-    gradient: 'from-purple-500/20 to-purple-600/10',
-    border: 'border-purple-500/20',
-    iconColor: 'text-purple-400',
-    iconBg: 'bg-purple-500/10',
-    title: 'Business solutions',
-    subtitle: 'Enterprise',
-    desc: 'Scale field operations without the overhead. Deploy agents for inspections, remote demos, multi-site coverage, and enterprise-grade workflows.',
-    cta: 'Continue as Enterprise',
-    tags: ['Team Access', 'Bulk Jobs', 'Priority Support'],
-  },
+  // {
+  //   key: 'enterprise',
+  //   icon: BarChart2,
+  //   gradient: 'from-purple-500/20 to-purple-600/10',
+  //   border: 'border-purple-500/20',
+  //   iconColor: 'text-purple-400',
+  //   iconBg: 'bg-purple-500/10',
+  //   title: 'Business solutions',
+  //   subtitle: 'Enterprise',
+  //   desc: 'Scale field operations without the overhead. Deploy agents for inspections, remote demos, multi-site coverage, and enterprise-grade workflows.',
+  //   cta: 'Continue as Enterprise',
+  //   tags: ['Team Access', 'Bulk Tasks', 'Priority Support'],
+  // },
 ];
 
 export default function RoleSelect() {

@@ -203,7 +203,8 @@ export default function AvatarRequests() {
       <div className="mb-8">
         <h1 className="text-2xl lg:text-3xl font-bold mb-1">My Schedule</h1>
         <p className="text-muted-foreground text-sm">
-          {pendingCount > 0 ? `You have ${pendingCount} pending request${pendingCount > 1 ? 's' : ''}` : 'No pending requests right now'}
+          Manage requests, proposals, and accepted tasks.
+          {pendingCount > 0 ? ` You have ${pendingCount} pending request${pendingCount > 1 ? 's' : ''}.` : ''}
         </p>
       </div>
 
@@ -246,7 +247,7 @@ export default function AvatarRequests() {
           <h3 className="text-xl font-bold mb-2">No tasks found</h3>
           <p className="text-sm text-muted-foreground mb-4">No {activeTab.toLowerCase()} found for this filter.</p>
           <Link to="/JobMarketplace">
-            <Button size="sm" variant="outline">Browse Job Board</Button>
+            <Button size="sm" variant="outline">Browse Task Board</Button>
           </Link>
         </GlassCard>
       ) : (

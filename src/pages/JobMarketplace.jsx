@@ -50,7 +50,7 @@ export default function JobMarketplace() {
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold">Job Board</h1>
+            <h1 className="text-2xl font-bold">Task Board</h1>
             <p className="text-muted-foreground text-sm mt-1">
               {canApply ? 'Find Open Tasks from clients looking for Local Agents.' : 'Post tasks and find the perfect Local Agent.'}
             </p>

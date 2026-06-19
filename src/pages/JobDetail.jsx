@@ -285,12 +285,17 @@ export default function JobDetail() {
               </div>
             </div>
             {!showPaymentModal ? (
-              <Button
-                className="w-full bg-primary hover:bg-primary/90 gap-2"
-                onClick={() => setShowPaymentModal(true)}
-              >
-                <DollarSign className="w-4 h-4" /> Fund Secure Payment — ${job.budget_max || job.budget_min || 50}
-              </Button>
+              <div className="flex flex-col gap-1 w-full">
+                <Button
+                  className="w-full bg-primary hover:bg-primary/90 gap-2"
+                  onClick={() => setShowPaymentModal(true)}
+                >
+                  <DollarSign className="w-4 h-4" /> Fund Secure Payment — ${job.budget_max || job.budget_min || 50}
+                </Button>
+                <p className="text-center text-xs text-muted-foreground mt-1">
+                  You are not charged until you fund Secure Payment. Funds are held and only released upon approval.
+                </p>
+              </div>
             ) : (
               <div className="w-full mt-2">
                 <SecurePaymentModal 

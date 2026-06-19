@@ -124,7 +124,7 @@ export default function UserBookingDetail() {
         {paymentResult === 'success' && (
           <div className="mb-6 flex items-center gap-3 bg-green-500/10 border border-green-500/20 text-green-400 rounded-xl px-4 py-3">
             <CheckCircle className="w-5 h-5 shrink-0" />
-            <p className="text-sm font-medium">Payment successful! Your booking is confirmed.</p>
+            <p className="text-sm font-medium">Payment successful! Your task is confirmed.</p>
           </div>
         )}
 
@@ -258,7 +258,7 @@ export default function UserBookingDetail() {
                 <div>
                   <p className="font-semibold text-sm flex items-center gap-2">
                     <span className="w-2 h-2 rounded-full bg-primary animate-pulse" />
-                    {liveSession.status === 'live' ? 'Session is LIVE' : 'Avatar is getting ready'}
+                    {liveSession.status === 'live' ? 'Session is LIVE' : 'Local Agent is getting ready'}
                   </p>
                   <p className="text-xs text-muted-foreground mt-1">{liveSession.title || liveSession.category}</p>
                 </div>
@@ -289,20 +289,23 @@ export default function UserBookingDetail() {
             onBookingUpdate={() => queryClient.invalidateQueries({ queryKey: ['user-booking', id] })}
           />
 
-          <div className="flex flex-wrap gap-3">
-            {canCancel && <Button variant="outline" className="border-white/10 flex-1" onClick={() => updateStatus.mutate('cancelled')}>Cancel Task</Button>}
-
+          <div className="flex flex-col gap-3 pb-8">
             {needsPayment && !showPaymentModal && (
-              <Button
-                className="w-full bg-primary hover:bg-primary/90 gap-2"
-                onClick={() => setShowPaymentModal(true)}
-              >
-                <CreditCard className="w-4 h-4" /> Fund Secure Payment — ${booking.total_amount?.toFixed(2)}
-              </Button>
+              <div className="flex flex-col gap-1">
+                <Button
+                  className="w-full bg-primary hover:bg-primary/90 gap-2 h-12 text-base shadow-lg shadow-primary/20"
+                  onClick={() => setShowPaymentModal(true)}
+                >
+                  <CreditCard className="w-5 h-5" /> Fund Secure Payment — ${booking.total_amount?.toFixed(2)}
+                </Button>
+                <p className="text-center text-xs text-muted-foreground mt-1">
+                  You are not charged until you fund Secure Payment. Funds are held and only released upon approval.
+                </p>
+              </div>
             )}
             
             {showPaymentModal && (
-              <div className="w-full mt-4">
+              <div className="w-full mt-2">
                 <SecurePaymentModal 
                   job={{ ...booking, task_type: 'booking', escrow_amount: booking.total_amount || booking.amount }} 
                   onCancel={() => setShowPaymentModal(false)}
@@ -310,13 +313,16 @@ export default function UserBookingDetail() {
               </div>
             )}
 
-            {convId && (
-              <Link to={`/Messages?conv=${convId}`} className="flex-1">
-                <Button variant="outline" className="w-full border-border gap-2">
-                  <MessageSquare className="w-4 h-4" /> Open Messages
-                </Button>
-              </Link>
-            )}
+            <div className="flex flex-wrap gap-3 mt-2">
+              {convId && (
+                <Link to={`/Messages?conv=${convId}`} className="flex-1 min-w-[140px]">
+                  <Button variant="outline" className="w-full border-border gap-2">
+                    <MessageSquare className="w-4 h-4" /> Open Messages
+                  </Button>
+                </Link>
+              )}
+              {canCancel && <Button variant="ghost" className="text-muted-foreground hover:text-destructive flex-1 min-w-[140px]" onClick={() => updateStatus.mutate('cancelled')}>Cancel Task</Button>}
+            </div>
           </div>
         </div>
 

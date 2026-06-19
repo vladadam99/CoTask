@@ -162,7 +162,7 @@ export default function Bookings() {
 
         <div className="mb-8">
           <h1 className="text-2xl font-bold mb-1">My Tasks</h1>
-          <p className="text-sm text-muted-foreground mb-6">Track your direct hires, open tasks, live sessions, messages, and completed work in one place.</p>
+          <p className="text-sm text-muted-foreground mb-6">Track your Direct Hire requests and Open Tasks in one place.</p>
         </div>
 
         {isLoading ? (
