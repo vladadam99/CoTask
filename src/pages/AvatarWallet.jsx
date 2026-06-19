@@ -29,9 +29,9 @@ function downloadInvoice(job, userEmail, userName, role) {
 
   doc.line(20, 72, 190, 72);
   doc.setFont('helvetica', 'bold');
-  doc.text('Job Details', 20, 82);
+  doc.text('Task Details', 20, 82);
   doc.setFont('helvetica', 'normal');
-  doc.text(`Title: ${job.is_booking ? `${job.category} Booking` : job.title}`, 20, 92);
+  doc.text(`Title: ${job.is_booking ? `${job.category} Task` : job.title}`, 20, 92);
   doc.text(`Category: ${job.category || '-'}`, 20, 99);
   doc.text(`Client: ${job.client_name || job.posted_by_name}`, 20, 106);
 
@@ -139,7 +139,7 @@ export default function AvatarWallet() {
       <div className="mb-8">
         <div className="flex items-center justify-between flex-wrap gap-3">
           <div>
-            <h1 className="text-2xl lg:text-3xl font-bold mb-1 flex items-center gap-2"><Wallet className="w-7 h-7 text-primary" /> Earnings</h1>
+            <h1 className="text-2xl lg:text-3xl font-bold mb-1 flex items-center gap-2"><Wallet className="w-7 h-7 text-primary" /> Earnings & Payouts</h1>
             <p className="text-muted-foreground text-sm">Track completed tasks, pending secure payments, and payout settings.</p>
           </div>
           <button onClick={() => setShowWithdraw(true)} className="flex items-center gap-2 bg-primary text-primary-foreground px-4 py-2 rounded-xl text-sm font-medium hover:bg-primary/90 transition-colors">
