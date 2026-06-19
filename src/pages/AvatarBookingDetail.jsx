@@ -274,11 +274,13 @@ export default function AvatarBookingDetail() {
               </Button>
             )}
 
-            <Link to={convId ? `/AvatarMessages?conv=${convId}` : '/AvatarMessages'} className="flex-1">
-              <Button variant="outline" className="w-full border-white/10 gap-2">
-                <MessageSquare className="w-4 h-4" /> Open Messages
-              </Button>
-            </Link>
+            {convId && (
+              <Link to={`/AvatarMessages?conv=${convId}`} className="flex-1">
+                <Button variant="outline" className="w-full border-white/10 gap-2">
+                  <MessageSquare className="w-4 h-4" /> Open Messages
+                </Button>
+              </Link>
+            )}
           </div>
         </div>
       </div>

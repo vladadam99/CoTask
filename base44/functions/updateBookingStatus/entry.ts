@@ -47,8 +47,24 @@ Deno.serve(async (req) => {
       await base44.asServiceRole.entities.Booking.update(id, {
         amount: payload.amount,
         service_fee: payload.service_fee,
-        total_amount: payload.total_amount
+        total_amount: payload.total_amount,
+        status: 'accepted'
       });
+      
+      // Notify client and create conversation since status is now accepted
+      await base44.functions.invoke('createConversation', { bookingId: id });
+      if (booking.client_email) {
+        await base44.asServiceRole.entities.Notification.create({
+          user_email: booking.client_email,
+          title: 'Local Agent Accepted!',
+          message: `${booking.avatar_name} accepted your request at the new price. Please fund Secure Payment to confirm.`,
+          type: 'booking_accepted',
+          link: `/UserBookingDetail?id=${id}`,
+          reference_id: id,
+          target_role: 'user',
+        });
+      }
+      
       return Response.json({ success: true });
     }
 

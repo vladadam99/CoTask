@@ -31,7 +31,7 @@ export default function CounterOfferFlow({ booking, user, convId, onBookingUpdat
     : (isAvatar && booking?.status === 'pending'); // Avatar can start first challenge
 
   const canChallenge = booking?.status === 'pending' &&
-    (!latestOffer || latestOffer.status !== 'pending' || myTurn);
+    (!latestOffer ? isAvatar : (latestOffer.status !== 'pending' || myTurn));
 
   const sendOffer = async () => {
     if (!amount || isNaN(parseFloat(amount))) return;
@@ -45,6 +45,7 @@ export default function CounterOfferFlow({ booking, user, convId, onBookingUpdat
       amount: parseFloat(amount),
       note: note.trim(),
       status: 'pending',
+      participant_emails: [booking.client_email, booking.avatar_email],
     });
 
     // Notify the other party
@@ -141,7 +142,7 @@ export default function CounterOfferFlow({ booking, user, convId, onBookingUpdat
               }`}>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2">
-                    <span className="font-medium text-xs capitalize">{offer.offered_by_name || offer.offered_by_role}</span>
+                    <span className="font-medium text-xs capitalize">{offer.offered_by_name || (offer.offered_by_role === 'avatar' ? 'Local Agent' : 'Client')}</span>
                     <ArrowRight className="w-3 h-3 text-muted-foreground" />
                     <span className="font-bold text-primary">${offer.amount.toFixed(2)}</span>
                     <span className={`ml-auto text-xs px-2 py-0.5 rounded-full ${
@@ -202,7 +203,7 @@ export default function CounterOfferFlow({ booking, user, convId, onBookingUpdat
           <p className="text-xs text-muted-foreground">
             {isAvatar
               ? 'Propose a new price (e.g. due to travel, equipment, time required)'
-              : 'Suggest a different price for this booking'}
+              : 'Suggest a different price for this task'}
           </p>
 
           <div className="flex items-center gap-2 bg-white/5 border border-white/10 rounded-xl px-3 py-2">
@@ -221,8 +222,8 @@ export default function CounterOfferFlow({ booking, user, convId, onBookingUpdat
             value={note}
             onChange={e => setNote(e.target.value)}
             placeholder={isAvatar
-              ? 'Reason: e.g. Travel to location requires 2h, need $15 travel fee'
-              : 'Optional note to the avatar...'}
+              ? 'Optional note to the client...'
+              : 'Optional note to the Local Agent...'}
             rows={2}
             className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-yellow-500/40 text-foreground placeholder:text-muted-foreground resize-none"
           />
@@ -234,7 +235,7 @@ export default function CounterOfferFlow({ booking, user, convId, onBookingUpdat
           >
             {sending
               ? <><Loader2 className="w-4 h-4 animate-spin mr-2" /> Sending...</>
-              : `Send Offer — $${parseFloat(amount || 0).toFixed(2)}`}
+              : (amount && !isNaN(parseFloat(amount)) && parseFloat(amount) > 0 ? `Send Offer — $${parseFloat(amount).toFixed(2)}` : 'Send Offer')}
           </Button>
         </GlassCard>
       )}
