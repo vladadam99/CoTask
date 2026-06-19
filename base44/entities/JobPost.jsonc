@@ -191,6 +191,43 @@
         }
       }
     },
+    "payment_status": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "checkout_started",
+        "held",
+        "released",
+        "refunded",
+        "partially_refunded",
+        "disputed",
+        "failed",
+        "cancelled"
+      ],
+      "default": "pending",
+      "rls": {
+        "write": {
+          "user_condition": {
+            "role": "admin"
+          }
+        },
+        "read": {
+          "$or": [
+            {
+              "posted_by_email": "{{user.email}}"
+            },
+            {
+              "winner_email": "{{user.email}}"
+            },
+            {
+              "user_condition": {
+                "role": "admin"
+              }
+            }
+          ]
+        }
+      }
+    },
     "escrow_amount": {
       "type": "number",
       "rls": {
