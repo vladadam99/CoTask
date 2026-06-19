@@ -146,7 +146,7 @@ export default function JobActionCard({ job, user, userRole, conversationId, onJ
     setLoading(true);
     try {
       // Release payment
-      if (job.stripe_payment_intent_id && job.escrow_status === 'authorized') {
+      if (job.stripe_payment_intent_id && (job.payment_status === 'held' || job.escrow_status === 'authorized')) {
         if (!job.stripe_payment_intent_id.startsWith('sim_')) {
           await base44.functions.invoke('captureJobPayment', { jobId: job.id });
         }

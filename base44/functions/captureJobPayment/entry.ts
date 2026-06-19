@@ -24,6 +24,7 @@ Deno.serve(async (req) => {
     }
 
     await base44.asServiceRole.entities.JobPost.update(jobId, {
+      payment_status: 'released',
       escrow_status: 'captured',
     });
 

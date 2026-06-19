@@ -90,10 +90,12 @@ export default function Bookings() {
       const pendingApps = jobApps.filter(a => a.status === 'pending');
       const acceptedApp = jobApps.find(a => a.status === 'accepted');
       
+      const paymentStatus = job.payment_status || (job.escrow_status === 'authorized' ? 'held' : job.escrow_status === 'captured' ? 'released' : 'pending');
+
       let nextAction = 'View Task';
       if (job.status === 'open' && pendingApps.length > 0) nextAction = 'Review Proposals';
       else if (job.status === 'open') nextAction = 'Waiting for Proposals';
-      else if (job.status === 'in_progress' && job.escrow_status !== 'authorized' && job.escrow_status !== 'captured') nextAction = 'Fund Secure Payment';
+      else if (job.status === 'in_progress' && paymentStatus === 'pending') nextAction = 'Fund Secure Payment';
       else if (job.status === 'in_progress') nextAction = 'Track Status / Join Live';
       else if (job.status === 'awaiting_approval') nextAction = 'Review Work';
       else if (job.status === 'completed') nextAction = 'View Receipt / Review';
@@ -104,7 +106,7 @@ export default function Bookings() {
         id: job.id,
         title: job.title,
         status: job.status,
-        payment_status: job.escrow_status,
+        payment_status: paymentStatus,
         date: job.flexible_dates ? 'Flexible Dates' : (job.scheduled_date || 'TBD'),
         time: job.scheduled_time || '',
         location: job.location,

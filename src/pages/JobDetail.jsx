@@ -117,6 +117,8 @@ export default function JobDetail() {
   const isProspectAgent = isAvatar && !isOwner && !isHiredAgent;
   const hasSubmittedProposal = !!myApplication;
 
+  const paymentStatus = job?.payment_status || (job?.escrow_status === 'authorized' ? 'held' : job?.escrow_status === 'captured' ? 'released' : 'pending');
+
   const openEditForm = () => {
     setEditForm({
       title: job.title || '',
@@ -270,7 +272,7 @@ export default function JobDetail() {
           )}
         </div>
 
-        {job.winner_email && job.escrow_status !== 'authorized' && job.escrow_status !== 'captured' && isOwner && (
+        {job.winner_email && paymentStatus === 'pending' && isOwner && (
           <div className="glass rounded-2xl p-4 border border-yellow-500/20 flex flex-col gap-3">
             <div className="flex items-center gap-3">
               <div className="w-8 h-8 rounded-full bg-yellow-500/10 flex items-center justify-center flex-shrink-0">
@@ -302,7 +304,7 @@ export default function JobDetail() {
           </div>
         )}
 
-        {job.winner_email && job.escrow_status !== 'authorized' && job.escrow_status !== 'captured' && isHiredAgent && (
+        {job.winner_email && paymentStatus === 'pending' && isHiredAgent && (
           <div className="glass rounded-2xl p-4 border border-blue-500/20 flex flex-col gap-3">
             <div className="flex items-center gap-3">
               <div className="w-8 h-8 rounded-full bg-blue-500/10 flex items-center justify-center flex-shrink-0">
@@ -317,7 +319,7 @@ export default function JobDetail() {
         )}
 
         {/* Secure Payment Status Banner */}
-        {job.stripe_payment_intent_id && job.escrow_status === 'authorized' && isOwner && (
+        {job.stripe_payment_intent_id && paymentStatus === 'held' && isOwner && (
           <div className="glass rounded-2xl p-4 border border-yellow-500/20 flex items-center gap-3">
             <div className="w-8 h-8 rounded-full bg-yellow-500/10 flex items-center justify-center flex-shrink-0">
               <DollarSign className="w-4 h-4 text-yellow-400" />
@@ -331,10 +333,10 @@ export default function JobDetail() {
             </div>
           </div>
         )}
-        {job.escrow_status === 'captured' && (showOwnerControls || isHiredAgent) && (
+        {paymentStatus === 'released' && (showOwnerControls || isHiredAgent) && (
           <div className="glass rounded-2xl p-3 border border-green-500/20 flex items-center gap-2">
             <CheckCircle className="w-4 h-4 text-green-400" />
-            <p className="text-xs text-green-400">Secure Payment of ${job.escrow_amount} paid to the Local Agent.</p>
+            <p className="text-xs text-green-400">Secure Payment of ${job.escrow_amount || job.budget_max || job.budget_min} paid to the Local Agent.</p>
           </div>
         )}
 

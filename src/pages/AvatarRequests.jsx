@@ -121,6 +121,8 @@ export default function AvatarRequests() {
       
       const effectiveStatus = isWon ? job.status : app.status;
 
+      const paymentStatus = job.payment_status || (job.escrow_status === 'authorized' ? 'held' : job.escrow_status === 'captured' ? 'released' : 'pending');
+
       if (isWon) {
         if (['in_progress', 'open'].includes(job.status)) nextAction = 'View Task';
         else if (job.status === 'completed') nextAction = 'View Earnings';
@@ -133,7 +135,7 @@ export default function AvatarRequests() {
         job_id: job.id,
         title: job.title,
         status: effectiveStatus,
-        payment_status: job.escrow_status,
+        payment_status: paymentStatus,
         date: job.flexible_dates ? 'Flexible Dates' : (job.scheduled_date || 'TBD'),
         time: job.scheduled_time || '',
         location: job.location,
