@@ -246,10 +246,10 @@ function AvatarCard({ avatar, i, user, queryClient }) {
           
           <div className="flex flex-col gap-2 relative z-20 pointer-events-auto">
             <Button variant="outline" className="w-full h-8 text-xs" asChild>
-              <Link to={`/AvatarView?id=${avatar.id}`}>View Profile</Link>
+              <Link to={`/AvatarView?id=${avatar.id}`}>View Profile & Portfolio</Link>
             </Button>
             <Button className="w-full h-8 text-xs" asChild>
-              <Link to={`/CreateBooking?avatar=${avatar.id}`}>Request Direct Hire</Link>
+              <Link to={`/CreateBooking?avatar=${avatar.id}`} title="Send a Direct Hire request to this specific Local Agent.">Request Direct Hire</Link>
             </Button>
           </div>
         </div>

@@ -197,7 +197,7 @@ export default function CounterOfferFlow({ booking, user, convId, onBookingUpdat
             </button>
           </div>
 
-          <p className="text-xs text-muted-foreground">
+          <p className="text-xs text-muted-foreground" title="Suggest a different price before accepting this Direct Hire request.">
             {isAvatar
               ? 'Propose a new price (e.g. due to travel, equipment, time required)'
               : 'Suggest a different price for this task'}

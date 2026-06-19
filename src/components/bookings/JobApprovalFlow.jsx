@@ -66,10 +66,10 @@ export default function JobApprovalFlow({ booking, user, onUpdate }) {
         <GlassCard className="p-5 border-red-500/20">
           <div className="flex items-center gap-2 mb-2 text-red-400">
             <AlertTriangle className="w-4 h-4" />
-            <span className="text-sm font-semibold">Dispute In Progress</span>
+            <span className="text-sm font-semibold">Issue raised</span>
           </div>
           <p className="text-xs text-muted-foreground mb-2">Client reason: <span className="text-foreground">"{booking.dispute_reason}"</span></p>
-          <p className="text-xs text-muted-foreground">Funds are held. Our team will review and contact both parties within 48 hours.</p>
+          <p className="text-xs text-muted-foreground">Secure Payment is paused while this is reviewed. The task cannot be released until the issue is resolved. Support/admin review may be required.</p>
         </GlassCard>
       );
     }
@@ -134,7 +134,7 @@ export default function JobApprovalFlow({ booking, user, onUpdate }) {
     return (
       <GlassCard className="p-5 border-red-500/20">
         <h3 className="font-semibold text-sm mb-3 text-red-400 flex items-center gap-2"><AlertTriangle className="w-4 h-4" /> Raise a Dispute</h3>
-        <p className="text-sm text-muted-foreground mb-3">Funds will be held until our team reviews the case. Please describe the issue clearly.</p>
+        <p className="text-sm text-muted-foreground mb-3">Secure Payment is paused while this is reviewed. Please describe the issue clearly.</p>
         <textarea
           value={disputeReason}
           onChange={e => setDisputeReason(e.target.value)}

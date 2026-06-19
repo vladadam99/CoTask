@@ -235,7 +235,7 @@ export default function Bookings() {
               <Briefcase className="w-8 h-8 text-muted-foreground" />
             </div>
             <h3 className="text-xl font-bold mb-2">No tasks yet</h3>
-            <p className="text-muted-foreground mb-6 max-w-sm">Request a Local Agent directly or post an Open Task to get started.</p>
+            <p className="text-muted-foreground mb-6 max-w-sm">Request a Local Agent or post an Open Task to get started.</p>
             <div className="flex flex-col sm:flex-row gap-3 justify-center w-full max-w-md">
               <Link to="/PostJob" className="flex-1 px-6 py-2.5 bg-primary text-primary-foreground rounded-lg font-medium hover:bg-primary/90 transition-colors text-center">
                 Post Open Task

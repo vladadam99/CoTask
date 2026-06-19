@@ -53,9 +53,9 @@ export default function Saved() {
             <div className="w-16 h-16 rounded-full bg-secondary flex items-center justify-center mb-4">
               <Heart className="w-8 h-8 text-muted-foreground" />
             </div>
-            <h3 className="text-xl font-bold mb-2">No saved avatars</h3>
-            <p className="text-sm text-muted-foreground mb-4">Browse and save your favorite avatars for quick access.</p>
-            <Link to="/FindPeople"><Button>Explore Agents</Button></Link>
+            <h3 className="text-xl font-bold mb-2">No saved Local Agents</h3>
+            <p className="text-sm text-muted-foreground mb-4">Browse and save your favorite Local Agents for quick access.</p>
+            <Link to="/FindPeople"><Button>Discover Local Agents</Button></Link>
           </GlassCard>
         )}
       </div>

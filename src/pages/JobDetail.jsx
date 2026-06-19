@@ -432,7 +432,7 @@ export default function JobDetail() {
           ) : (
             <div className="glass rounded-2xl p-5 border border-yellow-500/20 flex items-center gap-4">
               <ShieldAlert className="w-6 h-6 text-yellow-400 flex-shrink-0" />
-              <div className="flex-1 min-w-0">
+              <div className="flex-1 min-w-0" title="Identity verification ensures a safe and trusted marketplace for all users.">
                 <p className="font-semibold text-sm">Identity Verification Required</p>
                 <p className="text-xs text-muted-foreground">You must verify your identity before submitting proposals.</p>
               </div>
@@ -445,7 +445,7 @@ export default function JobDetail() {
           <div className="glass rounded-2xl p-6 border border-primary/20 space-y-4">
             <h3 className="font-bold">Your Proposal</h3>
             <div>
-              <label className="text-sm font-medium mb-1.5 block">Cover Message *</label>
+              <label className="text-sm font-medium mb-1.5 block" title="Tell the client why you are a good fit and what rate you propose.">Cover Message *</label>
               <textarea
                 value={applyForm.cover_message}
                 onChange={e => setApplyForm(p => ({ ...p, cover_message: e.target.value }))}

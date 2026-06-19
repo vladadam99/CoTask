@@ -256,13 +256,13 @@ Based on this, return:
             <h2 className="font-semibold text-sm">Live camera stream?</h2>
             <div className="grid grid-cols-2 gap-2">
               {[
-                { value: 'no_camera', label: 'No Camera', sub: 'Updates via messages', icon: VideoOff },
-                { value: 'live_camera', label: 'Live Camera', sub: `+$${LIVE_PREMIUM_PER_HOUR}/hr premium`, icon: Video },
+                { value: 'no_camera', label: 'No Camera', sub: 'Updates via messages', icon: VideoOff, tooltip: 'Task is completed without streaming video.' },
+                { value: 'live_camera', label: 'Live Camera', sub: `+$${LIVE_PREMIUM_PER_HOUR}/hr premium`, icon: Video, tooltip: 'Watch a live video feed from the Local Agent during the task.' },
               ].map(opt => {
                 const Icon = opt.icon;
                 return (
-                  <button key={opt.value} type="button" onClick={() => update('stream_mode', opt.value)}
-                    className={`p-4 rounded-xl border text-left transition-all ${form.stream_mode === opt.value ? 'bg-primary/10 border-primary/40' : 'bg-muted/30 border-white/5 hover:border-white/10'}`}>
+                  <button key={opt.value} type="button" onClick={() => update('stream_mode', opt.value)} title={opt.tooltip}
+                    className={`p-4 rounded-xl border text-left transition-all ${form.stream_mode === opt.value ? 'bg-primary/10 border-primary/40' : 'bg-muted/30 border-border hover:border-primary/30'}`}>
                     <Icon className={`w-5 h-5 mb-2 ${form.stream_mode === opt.value ? 'text-primary' : 'text-muted-foreground'}`} />
                     <p className={`font-medium text-sm ${form.stream_mode === opt.value ? 'text-foreground' : 'text-muted-foreground'}`}>{opt.label}</p>
                     <p className="text-xs text-muted-foreground mt-0.5">{opt.sub}</p>

@@ -108,11 +108,11 @@ export default function JobMarketplace() {
             <div className="w-16 h-16 rounded-full bg-secondary flex items-center justify-center mb-4">
               <Briefcase className="w-8 h-8 text-muted-foreground" />
             </div>
-            <h3 className="text-xl font-bold mb-2">No open tasks found</h3>
-            <p className="text-sm text-muted-foreground mb-6 max-w-sm">There are no open tasks matching your criteria right now. Check back later or adjust your filters.</p>
+            <h3 className="text-xl font-bold mb-2">No tasks found</h3>
+            <p className="text-sm text-muted-foreground mb-6 max-w-sm">Check back later or adjust your filters.</p>
             {canPost && (
               <Link to="/PostJob" className="inline-block mt-4">
-                <Button size="sm">Post the first task</Button>
+                <Button size="sm">Post an Open Task</Button>
               </Link>
             )}
           </div>

@@ -39,7 +39,7 @@ export default function ProofUpload({ booking, onUpload }) {
       <h3 className="font-semibold text-sm mb-1 flex items-center gap-2">
         <Camera className="w-4 h-4 text-primary" /> Upload Task Completion Proof
       </h3>
-      <p className="text-xs text-muted-foreground mb-4">Take or upload a photo proving the task is completed. Proof helps confirm the task was completed before payment is released.</p>
+      <p className="text-xs text-muted-foreground mb-4" title="Proof helps clients verify completion to release Secure Payment.">Take or upload a photo proving the task is completed. Proof helps confirm the task was completed before payment is released.</p>
 
       {previewUrl ? (
         <div className="mb-3">

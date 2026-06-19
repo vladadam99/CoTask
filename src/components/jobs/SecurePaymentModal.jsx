@@ -40,7 +40,7 @@ export default function SecurePaymentModal({ job, onSuccess, onCancel }) {
         <p className="text-xs text-muted-foreground">Using Stripe Test Mode. The system will securely hold <span className="font-semibold text-foreground">${amount}</span>.</p>
       </div>
 
-      <div className="bg-primary/5 border border-primary/20 rounded-xl p-4 flex items-start gap-3">
+      <div className="bg-primary/5 border border-primary/20 rounded-xl p-4 flex items-start gap-3" title="Held after both sides agree. Released after client approval.">
         <ShieldCheck className="w-5 h-5 text-primary mt-0.5 flex-shrink-0" />
         <div>
           <p className="text-sm font-semibold">Funds held securely</p>

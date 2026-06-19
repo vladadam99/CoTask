@@ -276,7 +276,7 @@ export default function AvatarView() {
               <div className="flex flex-wrap items-center gap-2 mb-1">
                 <h1 className="text-2xl md:text-3xl font-bold">{avatar.display_name}</h1>
                 {avatar.is_verified && (
-                  <Badge className="bg-blue-500/10 text-blue-400 border-blue-500/20" title="Identity verified via government ID. Verified profiles help clients choose trusted Local Agents.">
+                  <Badge className="bg-blue-500/10 text-blue-400 border-blue-500/20" title="Verification helps clients choose trusted people for real-world tasks.">
                     <Shield className="w-3 h-3 mr-1" /> Verified
                   </Badge>
                 )}
