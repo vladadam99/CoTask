@@ -167,29 +167,7 @@
       }
     },
     "stripe_payment_intent_id": {
-      "type": "string",
-      "rls": {
-        "write": {
-          "user_condition": {
-            "role": "admin"
-          }
-        },
-        "read": {
-          "$or": [
-            {
-              "posted_by_email": "{{user.email}}"
-            },
-            {
-              "winner_email": "{{user.email}}"
-            },
-            {
-              "user_condition": {
-                "role": "admin"
-              }
-            }
-          ]
-        }
-      }
+      "type": "string"
     },
     "payment_status": {
       "type": "string",
@@ -204,54 +182,10 @@
         "failed",
         "cancelled"
       ],
-      "default": "pending",
-      "rls": {
-        "write": {
-          "user_condition": {
-            "role": "admin"
-          }
-        },
-        "read": {
-          "$or": [
-            {
-              "posted_by_email": "{{user.email}}"
-            },
-            {
-              "winner_email": "{{user.email}}"
-            },
-            {
-              "user_condition": {
-                "role": "admin"
-              }
-            }
-          ]
-        }
-      }
+      "default": "pending"
     },
     "escrow_amount": {
-      "type": "number",
-      "rls": {
-        "write": {
-          "user_condition": {
-            "role": "admin"
-          }
-        },
-        "read": {
-          "$or": [
-            {
-              "posted_by_email": "{{user.email}}"
-            },
-            {
-              "winner_email": "{{user.email}}"
-            },
-            {
-              "user_condition": {
-                "role": "admin"
-              }
-            }
-          ]
-        }
-      }
+      "type": "number"
     },
     "escrow_status": {
       "type": "string",
@@ -260,29 +194,7 @@
         "authorized",
         "captured",
         "cancelled"
-      ],
-      "rls": {
-        "write": {
-          "user_condition": {
-            "role": "admin"
-          }
-        },
-        "read": {
-          "$or": [
-            {
-              "posted_by_email": "{{user.email}}"
-            },
-            {
-              "winner_email": "{{user.email}}"
-            },
-            {
-              "user_condition": {
-                "role": "admin"
-              }
-            }
-          ]
-        }
-      }
+      ]
     }
   },
   "required": [
