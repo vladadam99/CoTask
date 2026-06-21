@@ -274,7 +274,7 @@ export default function PostJob() {
             rows={4} className="w-full bg-background border border-input rounded-lg px-3 py-2 text-sm resize-none focus:outline-none focus:border-primary/50 text-foreground placeholder:text-muted-foreground" />
         </div>
 
-        <Button className="w-full h-11" onClick={() => submit.mutate()} disabled={submit.isPending || !form.title || !form.description}>
+        <Button className="w-full h-11" onClick={() => submit.mutate()} disabled={submit.isPending || !form.title || !form.description || !form.category}>
           {submit.isPending ? (editJobId ? 'Saving...' : 'Posting...') : (editJobId ? 'Save Changes' : 'Post Open Task')}
         </Button>
         <p className="text-xs text-center text-muted-foreground pt-2 pb-6">
