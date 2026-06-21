@@ -1,17 +1,24 @@
-import { createClientFromRequest } from 'npm:@base44/sdk@0.8.30';
+import { createClientFromRequest } from 'npm:@base44/sdk@0.8.31';
 
 Deno.serve(async (req) => {
   try {
-    const headers = new Headers(req.headers);
-    headers.set('x-base44-data-env', 'dev');
-    
-    const modifiedReq = new Request(req.url, { method: req.method, headers });
-    const base44 = createClientFromRequest(modifiedReq);
-    
-    const bookings = await base44.entities.Booking.filter({});
-    
-    return Response.json({ success: true, count: bookings.length });
+    const base44 = createClientFromRequest(req);
+    const user = await base44.auth.me();
+    if (!user) return Response.json({ error: 'Unauthorized' }, { status: 401 });
+
+    const job = await base44.entities.JobPost.create({
+      title: "Test",
+      description: "Test Desc",
+      category: "Cleaning",
+      posted_by_email: user.email,
+      posted_by_name: user.full_name,
+      posted_by_type: "user",
+      status: "open",
+      application_count: 0
+    });
+
+    return Response.json({ success: true, job });
   } catch (error) {
-    return Response.json({ error: error.message }, { status: 500 });
+    return Response.json({ error: error.message, details: error.response?.data }, { status: 500 });
   }
 });
