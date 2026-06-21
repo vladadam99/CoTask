@@ -8,6 +8,7 @@ import { getNavItems } from '@/lib/navItems';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { ArrowLeft, ShieldAlert } from 'lucide-react';
+import { useToast } from '@/components/ui/use-toast';
 import DatePicker from '@/components/jobs/DatePicker';
 import TimePicker from '@/components/jobs/TimePicker';
 import LocationAutocomplete from '@/components/jobs/LocationAutocomplete';
@@ -46,6 +47,7 @@ export default function PostJob() {
     skills_required: [], languages_required: [], equipment_needed: [],
   });
   const [skillInput, setSkillInput] = useState('');
+  const { toast } = useToast();
 
   useEffect(() => {
     if (!editJobId) return;
@@ -131,6 +133,14 @@ export default function PostJob() {
     onSuccess: (job) => {
       queryClient.setQueryData(['job-detail', job.id], job);
       navigate(`/JobDetail?id=${job.id}`);
+    },
+    onError: (error) => {
+      console.error(error);
+      toast({
+        title: 'Error posting job',
+        description: error.message || 'An unknown error occurred',
+        variant: 'destructive',
+      });
     },
   });
 
@@ -274,7 +284,16 @@ export default function PostJob() {
             rows={4} className="w-full bg-background border border-input rounded-lg px-3 py-2 text-sm resize-none focus:outline-none focus:border-primary/50 text-foreground placeholder:text-muted-foreground" />
         </div>
 
-        <Button className="w-full h-11" onClick={() => submit.mutate()} disabled={submit.isPending || !form.title || !form.description || !form.category}>
+        <Button 
+          className="w-full h-11" 
+          onClick={() => {
+            if (!form.title?.trim()) return toast({ title: 'Missing Field', description: 'Please enter a task title.', variant: 'destructive' });
+            if (!form.category) return toast({ title: 'Missing Field', description: 'Please select a category.', variant: 'destructive' });
+            if (!form.description?.trim()) return toast({ title: 'Missing Field', description: 'Please enter a description.', variant: 'destructive' });
+            submit.mutate();
+          }} 
+          disabled={submit.isPending}
+        >
           {submit.isPending ? (editJobId ? 'Saving...' : 'Posting...') : (editJobId ? 'Save Changes' : 'Post Open Task')}
         </Button>
         <p className="text-xs text-center text-muted-foreground pt-2 pb-6">
