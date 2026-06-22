@@ -4,7 +4,7 @@ import SmartImage from '@/components/media/SmartImage';
 import { useQuery } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { useCurrentUser } from '@/lib/useCurrentUser'; // user used for future auth-gated features
-import { Play, Heart, MessageCircle, Share2, MapPin, Star, ArrowLeft, Zap, Search } from 'lucide-react';
+import { Play, Heart, ArrowLeft, Search } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 export default function ReelFeed() {

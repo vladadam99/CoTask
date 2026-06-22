@@ -29,7 +29,7 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Payment is not in held status' }, { status: 400 });
     }
 
-    const platformFeePercentage = 10;
+    const platformFeePercentage = Number(Deno.env.get('PLATFORM_FEE_PERCENT')) || 15;
     const amount = task.total_amount || task.amount || task.escrow_amount || task.budget_min || 0;
     const platformFeeAmount = amount * (platformFeePercentage / 100);
     const agentNetAmount = amount - platformFeeAmount;

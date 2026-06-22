@@ -69,22 +69,24 @@ Deno.serve(async (req) => {
     const stripe = new Stripe(Deno.env.get('STRIPE_SECRET_KEY'));
     const amountCents = Math.round(amount * 100);
 
-    const platformFeePercentage = 15; // Example fee
+    const platformFeePercentage = Number(Deno.env.get('PLATFORM_FEE_PERCENT')) || 15;
     const platformFeeAmount = Math.round(amount * (platformFeePercentage / 100));
+    const fallbackCurrency = Deno.env.get('DEFAULT_CURRENCY') || 'USD';
+    const baseUrl = Deno.env.get('APP_BASE_URL') || req.headers.get('origin');
 
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],
       mode: 'payment',
       line_items: [{
         price_data: {
-          currency: currency.toLowerCase(),
+          currency: (currency || fallbackCurrency).toLowerCase(),
           product_data: { name: title },
           unit_amount: amountCents,
         },
         quantity: 1,
       }],
-      success_url: success_url || `${req.headers.get('origin')}/Bookings`,
-      cancel_url: cancel_url || `${req.headers.get('origin')}/Bookings`,
+      success_url: success_url || `${baseUrl}/Bookings?payment=success&task_id=${task_id}`,
+      cancel_url: cancel_url || `${baseUrl}/Bookings?payment=cancel&task_id=${task_id}`,
       metadata: {
         task_type,
         task_id,

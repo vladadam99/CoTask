@@ -2,7 +2,6 @@ import React from 'react';
 import { ArrowRight, MapPin, Star, Zap } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import { base44 } from '@/api/base44Client';
 
 export default function HeroSection() {
   return (

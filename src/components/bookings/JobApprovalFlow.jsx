@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { base44 } from '@/api/base44Client';
 import GlassCard from '@/components/ui/GlassCard';
 import { Button } from '@/components/ui/button';
-import { CheckCircle, AlertTriangle, DollarSign, MessageSquare, Shield, Loader2 } from 'lucide-react';
+import { CheckCircle, AlertTriangle, DollarSign, Shield, Loader2 } from 'lucide-react';
 
 export default function JobApprovalFlow({ booking, user, onUpdate }) {
   const [mode, setMode] = useState(null); // 'approve' | 'partial' | 'dispute'

@@ -2,7 +2,7 @@ import React, { useState, useRef } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { Button } from '@/components/ui/button';
-import { Upload, X, Loader2, Image as ImageIcon, Video, Plus } from 'lucide-react';
+import { X, Loader2, Image as ImageIcon, Video, Plus } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 // Compress image to max 1080px, JPEG 80% quality

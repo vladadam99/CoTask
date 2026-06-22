@@ -2,7 +2,7 @@ import React from 'react';
 import GlassCard from '@/components/ui/GlassCard';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
-import { ArrowLeft, Calendar, Clock, MapPin, Wifi, Truck, Wrench, Video, VideoOff, CreditCard, Loader2, FlaskConical, CheckCircle } from 'lucide-react';
+import { ArrowLeft, Calendar, Clock, MapPin, Wifi, Truck, Wrench, CreditCard, Loader2, CheckCircle } from 'lucide-react';
 
 const Row = ({ label, value, icon: IconComp }) => (
   <div className="flex items-start gap-3 py-3 border-b border-white/5 last:border-0">
@@ -14,7 +14,7 @@ const Row = ({ label, value, icon: IconComp }) => (
   </div>
 );
 
-export default function ReviewBookingPanel({ form, avatar, amount, livePremium, serviceFee, total, freeTest, loading, onBack, onConfirm }) {
+export default function ReviewBookingPanel({ form, avatar, amount, livePremium, serviceFee, total, loading, onBack, onConfirm }) {
   const durationLabel = { 30: '30 minutes', 60: '1 hour', 90: '1.5 hours', 120: '2 hours', 180: '3 hours' }[form.duration_minutes] || `${form.duration_minutes} min`;
   const rate = avatar?.hourly_rate || 30;
 
@@ -142,7 +142,7 @@ export default function ReviewBookingPanel({ form, avatar, amount, livePremium, 
           <div className="flex justify-between"><span className="text-muted-foreground">Platform fee (15%)</span><span>${serviceFee.toFixed(2)}</span></div>
           <div className="border-t border-white/5 pt-2 flex justify-between font-bold text-base">
             <span>Total</span>
-            <span className={freeTest ? 'text-yellow-400' : 'text-primary'}>{freeTest ? 'FREE (Test)' : `$${total.toFixed(2)}`}</span>
+            <span className="text-primary">${total.toFixed(2)}</span>
           </div>
         </div>
       </GlassCard>
@@ -153,7 +153,7 @@ export default function ReviewBookingPanel({ form, avatar, amount, livePremium, 
       </div>
 
       <Button
-        className={`w-full py-5 text-base gap-2 ${freeTest ? 'bg-yellow-600 hover:bg-yellow-700' : 'bg-primary hover:bg-primary/90 glow-primary-sm'}`}
+        className="w-full py-5 text-base gap-2 bg-primary hover:bg-primary/90 glow-primary-sm"
         onClick={onConfirm}
         disabled={loading}
       >

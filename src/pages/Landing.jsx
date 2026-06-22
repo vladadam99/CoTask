@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Shield, Video, CheckCircle, Search, CreditCard, Building2, Menu, X, ArrowRight, MapPin, Eye, Zap, MessageSquare, ClipboardCheck, Lock, Star, AlertTriangle, FileText, Camera, Home, Car, Hammer, Presentation, ShoppingBag, HelpCircle } from 'lucide-react';
+import { Shield, Video, CheckCircle, Search, CreditCard, Building2, Menu, X, MapPin, Eye, Zap, ClipboardCheck, Lock, Star, AlertTriangle, Camera, Home, Car, Hammer, Presentation, ShoppingBag, HelpCircle } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
-import GlassCard from '@/components/ui/GlassCard';
 import { Button } from '@/components/ui/button';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 

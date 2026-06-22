@@ -7,8 +7,8 @@ import GlassCard from '@/components/ui/GlassCard';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import {
-  ArrowLeft, MapPin, Star, Shield, Clock, Globe, Radio, Smartphone,
-  Wifi, Headphones, Car, Calendar, MessageSquare, Heart, Loader2, FileText, Download, BookOpen
+  ArrowLeft, MapPin, Star, Shield, Globe, Radio, Smartphone,
+  Wifi, Headphones, Car, Calendar, MessageSquare, Heart, Loader2, FileText, Download
 } from 'lucide-react';
 import ExpertiseOfferingsTab from '@/components/expertise/ExpertiseOfferingsTab';
 

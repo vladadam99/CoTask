@@ -6,7 +6,7 @@ import { useCurrentUser } from '@/lib/useCurrentUser';
 import GlassCard from '@/components/ui/GlassCard';
 import StatusBadge from '@/components/ui/StatusBadge';
 import { Badge } from '@/components/ui/badge';
-import { Calendar, Search, ArrowLeft, Briefcase, Users, Clock, CheckCircle, ChevronRight, AlertCircle, HelpCircle, MapPin } from 'lucide-react';
+import { Calendar, Search, ArrowLeft, Briefcase, Users, Clock, ChevronRight, MapPin } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import AppShell from '@/components/layout/AppShell';
 import { getNavItems } from '@/lib/navItems';

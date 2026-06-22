@@ -11,7 +11,7 @@ import { Switch } from '@/components/ui/switch';
 import { motion } from 'framer-motion';
 import { getNavItems } from '@/lib/navItems';
 import {
-  Radio, Inbox, Calendar, DollarSign, User,
+  Radio, Calendar,
   ArrowRight, TrendingUp, CheckCircle, Zap,
   Clock, Play, PlusCircle
 } from 'lucide-react';

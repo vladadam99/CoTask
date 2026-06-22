@@ -10,7 +10,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import StatusBadge from '@/components/ui/StatusBadge';
 import SecurePaymentModal from '@/components/jobs/SecurePaymentModal';
-import { ArrowLeft, MapPin, Clock, DollarSign, Users, CheckCircle, XCircle, Star, Award, MessageCircle, Pencil, Calendar, AlertCircle, ShieldAlert, Send } from 'lucide-react';
+import { ArrowLeft, MapPin, Clock, DollarSign, CheckCircle, XCircle, Star, Award, MessageCircle, Pencil, Calendar, AlertCircle, ShieldAlert } from 'lucide-react';
 import JobNegotiationFlow from '@/components/jobs/JobNegotiationFlow';
 
 const DURATION_LABELS = { hourly: '/hr', daily: '/day', weekly: '/wk', monthly: '/mo', custom: '' };

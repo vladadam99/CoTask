@@ -10,7 +10,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { getNavItems } from '@/lib/navItems';
 import {
-  Inbox, Calendar, Clock, CheckCircle, XCircle, Eye, MapPin, Briefcase, ChevronRight, AlertCircle
+  Inbox, Calendar, Clock, CheckCircle, XCircle, MapPin, Briefcase, ChevronRight, AlertCircle
 } from 'lucide-react';
 import {
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter

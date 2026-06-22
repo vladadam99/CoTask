@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Radio, Building2, ArrowRight, Globe, BarChart2, Loader2 } from 'lucide-react';
+import { Radio, ArrowRight, Globe, Loader2 } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { useCurrentUser } from '@/lib/useCurrentUser';
 

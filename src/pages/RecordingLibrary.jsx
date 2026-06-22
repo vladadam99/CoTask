@@ -5,10 +5,8 @@ import { useCurrentUser } from '@/lib/useCurrentUser';
 import AppShell from '@/components/layout/AppShell';
 import GlassCard from '@/components/ui/GlassCard';
 import { Button } from '@/components/ui/button';
-import {
-  Home, Inbox, Calendar, Radio, MessageSquare, DollarSign,
-  Star, User, Settings, Film, Play, Share2, Trash2, Clock,
-  Download, Eye, EyeOff, Zap, TrendingUp
+import { Film, Play, Share2, Trash2, Clock,
+  Download, EyeOff, TrendingUp
 } from 'lucide-react';
 import { format } from 'date-fns';
 import { getNavItems } from '@/lib/navItems';

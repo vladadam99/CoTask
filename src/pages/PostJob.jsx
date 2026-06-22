@@ -12,7 +12,6 @@ import { useToast } from '@/components/ui/use-toast';
 import DatePicker from '@/components/jobs/DatePicker';
 import TimePicker from '@/components/jobs/TimePicker';
 import LocationAutocomplete from '@/components/jobs/LocationAutocomplete';
-import { Link } from 'react-router-dom';
 
 const CATEGORIES = [
   'Business Inspection', 'Campus Help', 'Carers & Companionship', 'Cars & Vehicles', 'City Guide',

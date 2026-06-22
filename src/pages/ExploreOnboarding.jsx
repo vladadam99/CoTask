@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowRight, ArrowLeft, MapPin, Heart, Globe, Zap, Users, CheckCircle2 } from 'lucide-react';
+import { ArrowRight, ArrowLeft, MapPin, Globe, Zap, Users, CheckCircle2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 const CATEGORIES = [

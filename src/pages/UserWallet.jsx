@@ -70,9 +70,9 @@ export default function UserWallet() {
   const totalSpentBookings = releasedBookings.reduce((sum, b) => sum + (b.total_amount || b.amount || 0), 0);
   const totalSpent = totalSpentJobs + totalSpentBookings;
 
-  const pendingEscrowJobs = heldJobs.reduce((sum, j) => sum + (j.escrow_amount || j.budget_max || 0), 0);
-  const pendingEscrowBookings = heldBookings.reduce((sum, b) => sum + (b.total_amount || b.amount || 0), 0);
-  const pendingEscrow = pendingEscrowJobs + pendingEscrowBookings;
+  const pendingSecurePaymentJobs = heldJobs.reduce((sum, j) => sum + (j.escrow_amount || j.budget_max || 0), 0);
+  const pendingSecurePaymentBookings = heldBookings.reduce((sum, b) => sum + (b.total_amount || b.amount || 0), 0);
+  const pendingSecurePayment = pendingSecurePaymentJobs + pendingSecurePaymentBookings;
   const pendingCount = heldJobs.length + heldBookings.length;
 
   // Build unified transaction list
@@ -119,7 +119,7 @@ export default function UserWallet() {
             <div className="w-9 h-9 rounded-xl bg-yellow-500/10 flex items-center justify-center"><Clock className="w-5 h-5 text-yellow-400" /></div>
             <span className="text-sm text-muted-foreground">Secure Payment Held</span>
           </div>
-          <p className="text-2xl font-bold text-yellow-400">${pendingEscrow.toFixed(2)}</p>
+          <p className="text-2xl font-bold text-yellow-400">${pendingSecurePayment.toFixed(2)}</p>
           <p className="text-xs text-muted-foreground mt-1">{pendingCount} task{pendingCount !== 1 ? 's' : ''} in progress · held securely</p>
         </GlassCard>
       </div>

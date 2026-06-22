@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { base44 } from '@/api/base44Client';
 import { Button } from '@/components/ui/button';
-import { Heart, MessageCircle, Share2, Copy, ArrowLeft, LogIn } from 'lucide-react';
+import { Heart, MessageCircle, Share2, Copy, ArrowLeft } from 'lucide-react';
 import SmartImage from '@/components/media/SmartImage';
 import { motion } from 'framer-motion';
 

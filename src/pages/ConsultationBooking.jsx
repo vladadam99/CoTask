@@ -7,7 +7,7 @@ import GlassCard from '@/components/ui/GlassCard';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { ArrowLeft, Video, Clock, Calendar, Shield, Star, MapPin, Loader2, CheckCircle2, FlaskConical } from 'lucide-react';
+import { ArrowLeft, Video, Clock, Calendar, Shield, Star, MapPin, Loader2, CheckCircle2 } from 'lucide-react';
 
 const DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 
@@ -31,7 +31,7 @@ export default function ConsultationBooking() {
   const [selectedDate, setSelectedDate] = useState('');
   const [selectedTime, setSelectedTime] = useState('');
   const [notes, setNotes] = useState('');
-  const [freeTest, setFreeTest] = useState(false);
+
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [booking, setBooking] = useState(null);
@@ -108,11 +108,11 @@ export default function ConsultationBooking() {
         service_location_type: 'remote',
         notes: notes,
         stream_mode: 'live_camera',
-        amount: freeTest ? 0 : rate,
-        service_fee: freeTest ? 0 : serviceFee,
-        total_amount: freeTest ? 0 : total,
+        amount: rate,
+        service_fee: serviceFee,
+        total_amount: total,
         status: 'pending',
-        payment_status: freeTest ? 'paid' : 'pending',
+        payment_status: 'pending',
         session_id: null,
       });
 
@@ -122,14 +122,6 @@ export default function ConsultationBooking() {
       base44.functions.invoke('createConversation', { bookingId: newBooking.id }).catch(() => {});
 
       // Notification is handled securely by createConversation in the backend
-
-      // Generate video call room
-      if (freeTest) {
-        try {
-          const room = await base44.functions.invoke('createDailyRoom', { bookingId: newBooking.id });
-          setCallUrl(room?.data?.url || '');
-        } catch (_) {}
-      }
 
       // Decoupled payment - move to done step
       setStep('done');
@@ -342,23 +334,10 @@ export default function ConsultationBooking() {
               </div>
               <div className="border-t border-white/5 pt-2 flex justify-between font-bold text-base">
                 <span>Total</span>
-                <span className="text-primary">${freeTest ? '0.00' : total.toFixed(2)}</span>
+                <span className="text-primary">${total.toFixed(2)}</span>
               </div>
             </div>
           </GlassCard>
-
-          {/* Free test */}
-          <button type="button" onClick={() => setFreeTest(v => !v)}
-            className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl border transition-all text-sm ${freeTest ? 'bg-yellow-500/10 border-yellow-500/30 text-yellow-400' : 'bg-card/40 border-white/5 text-muted-foreground hover:border-white/10'}`}>
-            <FlaskConical className="w-4 h-4 shrink-0" />
-            <div className="text-left flex-1">
-              <p className="font-medium">Free test booking</p>
-              <p className="text-xs opacity-70">Skip payment — video call link generated instantly</p>
-            </div>
-            <div className={`w-9 h-5 rounded-full flex items-center px-0.5 transition-colors ${freeTest ? 'bg-yellow-500' : 'bg-muted'}`}>
-              <div className={`w-4 h-4 rounded-full bg-white shadow transition-transform ${freeTest ? 'translate-x-4' : ''}`} />
-            </div>
-          </button>
 
           {error && <p className="text-sm text-red-400 bg-red-500/10 border border-red-500/20 rounded-xl px-4 py-3">{error}</p>}
 

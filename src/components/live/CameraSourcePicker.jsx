@@ -1,5 +1,5 @@
 import React from 'react';
-import { Smartphone, Camera, Glasses, RotateCcw, CheckCircle2 } from 'lucide-react';
+import { Smartphone, Glasses, RotateCcw, CheckCircle2 } from 'lucide-react';
 
 const COMING_SOON_IDS = ['insta360', 'meta-glasses'];
 

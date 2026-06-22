@@ -6,9 +6,8 @@ import { useCurrentUser } from '@/lib/useCurrentUser';
 import AppShell from '@/components/layout/AppShell';
 import { getNavItems } from '@/lib/navItems';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
-import { Plus, MapPin, Clock, DollarSign, Users, Briefcase, Calendar, AlertCircle } from 'lucide-react';
+import { Plus, MapPin, Clock, Users, Briefcase, Calendar, AlertCircle } from 'lucide-react';
 import SmartSearchBar from '@/components/search/SmartSearchBar';
 
 const CATEGORIES = ['All', 'Shopping', 'Delivery', 'Real Estate', 'Tourism', 'Events', 'Inspection', 'Translation', 'Other'];

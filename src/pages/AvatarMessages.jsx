@@ -4,7 +4,7 @@ import { base44 } from '@/api/base44Client';
 import { useCurrentUser } from '@/lib/useCurrentUser';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, Send, MessageSquare, Camera, Loader2, Video } from 'lucide-react';
+import { ArrowLeft, Send, MessageSquare, Camera, Loader2 } from 'lucide-react';
 import JobActionCard from '@/components/jobs/JobActionCard';
 import JobStatusTracker from '@/components/jobs/JobStatusTracker';
 import { Link } from 'react-router-dom';

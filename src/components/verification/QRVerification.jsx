@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { base44 } from '@/api/base44Client';
 import { Loader2, Smartphone, CheckCircle } from 'lucide-react';
-import { Button } from '@/components/ui/button';
 
 // Simple QR code using a free API - no npm needed
 const QR_API = (data) => `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(data)}`;

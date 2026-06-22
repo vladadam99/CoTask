@@ -6,7 +6,7 @@ import { useCurrentUser } from '@/lib/useCurrentUser';
 import GlassCard from '@/components/ui/GlassCard';
 import StatusBadge from '@/components/ui/StatusBadge';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, Calendar, Clock, MapPin, User, DollarSign, MessageSquare, Video, VideoOff, CreditCard, CheckCircle, Loader2, Camera, Wifi, Truck, Wrench } from 'lucide-react';
+import { ArrowLeft, Calendar, Clock, MapPin, User, DollarSign, MessageSquare, Video, VideoOff, CreditCard, CheckCircle, Camera, Wifi, Truck, Wrench } from 'lucide-react';
 import LeaveReview from '@/components/reviews/LeaveReview';
 import CounterOfferFlow from '@/components/bookings/CounterOfferFlow';
 import SecurePaymentModal from '@/components/jobs/SecurePaymentModal';

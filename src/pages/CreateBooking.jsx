@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { ArrowLeft, Calendar, Wrench, Plus, X, FlaskConical, Sparkles, Loader2, Video, VideoOff, Truck, CreditCard } from 'lucide-react';
+import { ArrowLeft, Wrench, Plus, X, Sparkles, Loader2, Video, VideoOff, Truck } from 'lucide-react';
 import ReviewBookingPanel from '@/components/bookings/ReviewBookingPanel';
 
 const CATEGORIES = [
@@ -25,7 +25,7 @@ export default function CreateBooking() {
   const queryClient = useQueryClient();
   const [checkoutLoading, setCheckoutLoading] = useState(false);
   const [error, setError] = useState('');
-  const [freeTest, setFreeTest] = useState(false);
+
   const [step, setStep] = useState('form');
   const [newEquipment, setNewEquipment] = useState('');
   const [aiDescription, setAiDescription] = useState('');
@@ -137,11 +137,11 @@ Based on this, return:
         transport_required: form.transport_required,
         transport_notes: form.transport_notes,
         equipment_needed: form.equipment_needed,
-        live_premium: freeTest ? 0 : livePremium,
-        amount: freeTest ? 0 : amount,
-        service_fee: freeTest ? 0 : serviceFee,
-        total_amount: freeTest ? 0 : total,
-        payment_status: freeTest ? 'paid' : 'pending',
+        live_premium: livePremium,
+        amount: amount,
+        service_fee: serviceFee,
+        total_amount: total,
+        payment_status: 'pending',
       });
 
       if (!bookingRes.data.success) throw new Error(bookingRes.data.error || 'Failed to create booking');
@@ -191,7 +191,7 @@ Based on this, return:
           {error && <p className="text-sm text-red-400 bg-red-500/10 border border-red-500/20 rounded-xl px-4 py-3 mb-4">{error}</p>}
           <ReviewBookingPanel
             form={form} avatar={avatar} amount={amount} livePremium={livePremium}
-            serviceFee={serviceFee} total={total} freeTest={freeTest}
+            serviceFee={serviceFee} total={total}
             loading={checkoutLoading} onBack={() => setStep('form')} onConfirm={createAndPay}
           />
         </div>
@@ -415,19 +415,6 @@ Based on this, return:
               <div className="border-t border-white/5 pt-2 flex justify-between font-bold text-base"><span>Total</span><span className="text-primary">${total.toFixed(2)}</span></div>
             </div>
           </GlassCard>
-
-          {/* Free test */}
-          <button type="button" onClick={() => setFreeTest(v => !v)}
-            className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl border transition-all text-sm ${freeTest ? 'bg-yellow-500/10 border-yellow-500/30 text-yellow-400' : 'bg-card/40 border-white/5 text-muted-foreground hover:border-white/10'}`}>
-            <FlaskConical className="w-4 h-4 shrink-0" />
-            <div className="text-left flex-1">
-              <p className="font-medium">Free test task</p>
-              <p className="text-xs opacity-70">Skip payment — instantly accepted for testing</p>
-            </div>
-            <div className={`w-9 h-5 rounded-full flex items-center px-0.5 transition-colors ${freeTest ? 'bg-yellow-500' : 'bg-muted'}`}>
-              <div className={`w-4 h-4 rounded-full bg-white shadow transition-transform ${freeTest ? 'translate-x-4' : ''}`} />
-            </div>
-          </button>
 
           {error && <p className="text-sm text-red-400 bg-red-500/10 border border-red-500/20 rounded-xl px-4 py-3">{error}</p>}
 

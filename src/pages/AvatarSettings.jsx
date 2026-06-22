@@ -4,12 +4,10 @@ import { base44 } from '@/api/base44Client';
 import { useCurrentUser } from '@/lib/useCurrentUser';
 import AppShell from '@/components/layout/AppShell';
 import GlassCard from '@/components/ui/GlassCard';
-import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
 import { useToast } from '@/components/ui/use-toast';
 import { getNavItems } from '@/lib/navItems';
-import {
-  Settings, Shield, Radio, Smartphone, Camera, Headphones, Car, Sun, Moon, Palette, ArrowRightLeft, LogOut
+import { Shield, Radio, Smartphone, Camera, Headphones, Car, Sun, Moon, Palette, ArrowRightLeft, LogOut
 } from 'lucide-react';
 import { useTheme } from '@/lib/ThemeContext';
 import { useNavigate } from 'react-router-dom';

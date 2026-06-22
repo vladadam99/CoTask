@@ -8,7 +8,7 @@ import GlassCard from '@/components/ui/GlassCard';
 import StatusBadge from '@/components/ui/StatusBadge';
 import {
   LayoutDashboard, Users, Radio, Building2, Calendar, DollarSign, Shield,
-  Flag, Star, Settings, ArrowRight, TrendingUp, AlertTriangle
+  Flag, Star, Settings, ArrowRight, AlertTriangle
 } from 'lucide-react';
 
 const navItems = [

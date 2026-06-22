@@ -14,9 +14,8 @@ import EditPostModal from '@/components/posts/EditPostModal';
 import { AnimatePresence } from 'framer-motion';
 import { getNavItems } from '@/lib/navItems';
 import { useNavigate } from 'react-router-dom';
-import {
-  Home, Inbox, Calendar, Radio, MessageSquare, DollarSign,
-  Star, User, Settings, Camera, Upload, Loader2, Plus, Grid, MapPin, Pencil, Trash2, X, Navigation, FileText
+import { MessageSquare, DollarSign,
+  Star, Camera, Upload, Loader2, Plus, Grid, MapPin, Pencil, Trash2, Navigation, FileText
 } from 'lucide-react';
 import ExpertiseManager from '@/components/expertise/ExpertiseManager';
 

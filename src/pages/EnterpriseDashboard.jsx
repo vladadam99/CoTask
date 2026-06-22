@@ -8,7 +8,7 @@ import GlassCard from '@/components/ui/GlassCard';
 import StatusBadge from '@/components/ui/StatusBadge';
 import { Button } from '@/components/ui/button';
 import {
-  Plus, MessageSquare, Settings,
+  Plus,
   ArrowRight, Calendar, FileText, DollarSign, Clock, Rocket, Star
 } from 'lucide-react';
 import { getNavItems } from '@/lib/navItems';

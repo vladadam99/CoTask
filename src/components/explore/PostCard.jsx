@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import SmartImage from '@/components/media/SmartImage';
-import { Heart, MessageCircle, Send, X, Play, Pause, Volume2, VolumeX } from 'lucide-react';
+import { Heart, MessageCircle, Send, X, Play, Volume2, VolumeX } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 // Fullscreen modal for a single post

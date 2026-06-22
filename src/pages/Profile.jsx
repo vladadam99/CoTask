@@ -6,7 +6,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
   ArrowLeft, MoreVertical, Star, MapPin, Upload, Loader2,
-  Briefcase, MessageCircle, User, X, Pencil, Check, FileText, Heart,
+  Briefcase, X, Pencil, FileText,
   DollarSign, TrendingUp, Wallet, Clock, ArrowUpRight, Download, CheckCircle
 } from 'lucide-react';
 import { base44 } from '@/api/base44Client';

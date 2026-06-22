@@ -4,7 +4,6 @@ import { base44 } from '@/api/base44Client';
 import { useCurrentUser } from '@/lib/useCurrentUser';
 import AppShell from '@/components/layout/AppShell';
 import GlassCard from '@/components/ui/GlassCard';
-import StatusBadge from '@/components/ui/StatusBadge';
 import { Link } from 'react-router-dom';
 import { getNavItems } from '@/lib/navItems';
 import {

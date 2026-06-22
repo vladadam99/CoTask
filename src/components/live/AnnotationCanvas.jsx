@@ -1,5 +1,5 @@
 import React, { useRef, useState, useEffect, useCallback } from 'react';
-import { Pen, Eraser, Circle, Square, Trash2, Minus, Plus } from 'lucide-react';
+import { Pen, Eraser, Trash2, Minus, Plus } from 'lucide-react';
 
 const COLORS = ['#ef4444', '#f97316', '#eab308', '#22c55e', '#3b82f6', '#a855f7', '#ffffff'];
 

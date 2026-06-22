@@ -1,6 +1,5 @@
 import React from 'react';
 import { Mic, MicOff, VideoOff, Video, Square, Users, Clock, Signal } from 'lucide-react';
-import { Button } from '@/components/ui/button';
 
 export default function StreamHUD({
   isLive,

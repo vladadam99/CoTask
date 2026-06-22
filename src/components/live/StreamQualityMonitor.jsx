@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { Activity, Wifi, WifiOff, AlertTriangle } from 'lucide-react';
+import { Activity, AlertTriangle } from 'lucide-react';
 
 const POLL_INTERVAL = 2000;
 
