@@ -30,6 +30,7 @@ export default function PostJob() {
   const queryClient = useQueryClient();
   const urlParams = new URLSearchParams(window.location.search);
   const editJobId = urlParams.get('edit');
+  const activeRole = user?.selected_role || user?.role || 'user';
 
   const [form, setForm] = useState({
     title: '', description: '', category: '', location: '',
@@ -123,7 +124,7 @@ export default function PostJob() {
         ...jobPayload,
         posted_by_email: user.email,
         posted_by_name: user.full_name,
-        posted_by_type: user.role === 'enterprise' ? 'enterprise' : 'user',
+        posted_by_type: activeRole === 'enterprise' ? 'enterprise' : 'user',
         status: 'open',
         application_count: 0,
       });
@@ -147,7 +148,7 @@ export default function PostJob() {
 
   if (!user.identity_verified) {
     return (
-      <AppShell navItems={getNavItems(user?.selected_role)} user={user}>
+      <AppShell navItems={getNavItems(activeRole)} user={user}>
         <div className="max-w-2xl mx-auto flex flex-col items-center justify-center py-24 text-center gap-5">
           <div className="w-16 h-16 rounded-full bg-yellow-500/10 flex items-center justify-center">
             <ShieldAlert className="w-8 h-8 text-yellow-400" />
