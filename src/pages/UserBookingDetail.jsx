@@ -117,7 +117,7 @@ export default function UserBookingDetail() {
   const needsPayment = isClient && booking.payment_status === 'pending' && booking.status === 'accepted' && negotiationResolved;
 
   return (
-    <AppShell navItems={getNavItems(user?.selected_role)} user={user}>
+    <AppShell navItems={getNavItems(user?.selected_role || user?.role || 'user')} user={user}>
       <div className="bg-background p-4 lg:p-8 min-h-[calc(100vh-64px)]">
       <div className="max-w-2xl mx-auto">
         <button onClick={() => navigate(-1)} className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground mb-6">
