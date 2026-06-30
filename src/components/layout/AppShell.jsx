@@ -20,9 +20,10 @@ function getNavBadgeCount(path, unreadNotifs) {
 }
 
 function ProfilePanel({ user, onClose, navItems = [] }) {
+  const activeRole = user?.role === 'admin' ? 'admin' : (user?.selected_role || user?.role || 'user');
   let menuItems = [];
 
-  if (user?.role === 'admin') {
+  if (activeRole === 'admin') {
     menuItems = [
       { icon: LayoutDashboard, label: 'Admin Dashboard', path: '/AdminDashboard' },
       { icon: Users, label: 'Users', path: '/AdminDashboard' },
@@ -32,7 +33,7 @@ function ProfilePanel({ user, onClose, navItems = [] }) {
       { icon: Shield, label: 'Verification / Safety', path: '/AdminDashboard' },
       { icon: Settings, label: 'Settings', path: '/AdminDashboard' },
     ];
-  } else if (user?.selected_role === 'enterprise') {
+  } else if (activeRole === 'enterprise') {
     menuItems = [
       { icon: LayoutDashboard, label: 'Enterprise Dashboard', path: '/EnterpriseDashboard' },
       { icon: Users, label: 'Team / Company Profile', path: '/EnterpriseSettings' },
@@ -40,7 +41,7 @@ function ProfilePanel({ user, onClose, navItems = [] }) {
       { icon: Settings, label: 'Settings', path: '/EnterpriseSettings' },
       { icon: HelpCircle, label: 'Help & FAQ', path: '/FAQ' },
     ];
-  } else if (user?.selected_role === 'avatar') {
+  } else if (activeRole === 'avatar') {
     menuItems = [
       { icon: User, label: 'Public Profile', path: '/AvatarProfileEdit' },
       { icon: Shield, label: 'Verification', path: '/IdentityVerification' },
@@ -70,7 +71,7 @@ function ProfilePanel({ user, onClose, navItems = [] }) {
 
       <div className="flex-1 overflow-y-auto pb-24">
         {/* User card */}
-        <Link to={user?.selected_role === 'avatar' ? '/AvatarProfileEdit' : user?.selected_role === 'enterprise' ? '/EnterpriseSettings' : '/UserProfile'} onClick={onClose} className="mx-4 mt-4 mb-2 p-4 rounded-2xl bg-card border border-border shadow-sm flex items-center gap-3 hover:shadow-md transition-shadow">
+        <Link to={activeRole === 'avatar' ? '/AvatarProfileEdit' : activeRole === 'enterprise' ? '/EnterpriseSettings' : '/UserProfile'} onClick={onClose} className="mx-4 mt-4 mb-2 p-4 rounded-2xl bg-card border border-border shadow-sm flex items-center gap-3 hover:shadow-md transition-shadow">
           <div className="w-14 h-14 rounded-full bg-primary/10 flex items-center justify-center text-xl font-bold text-primary flex-shrink-0">
             {user?.full_name?.[0] || 'U'}
           </div>
@@ -227,7 +228,7 @@ export default function AppShell({ children, navItems = [], user, fullBleed = fa
           }
           return <Link to={homePath} className="text-lg font-bold">Co<span className="text-primary">Task</span></Link>;
         })()}
-        <NotificationBell userEmail={user?.email} userRole={user?.selected_role} />
+        <NotificationBell userEmail={user?.email} userRole={activeRole} />
       </div>
 
       {/* Profile Panel (full screen) */}
