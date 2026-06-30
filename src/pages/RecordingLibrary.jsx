@@ -68,7 +68,7 @@ export default function RecordingLibrary() {
   );
 
   return (
-    <AppShell navItems={getNavItems(user?.selected_role)} user={user}>
+    <AppShell navItems={getNavItems(user?.selected_role || user?.role || 'user')} user={user}>
       <div className="mb-8">
         <h1 className="text-2xl lg:text-3xl font-bold mb-1 flex items-center gap-3">
           <Film className="w-7 h-7 text-primary" /> Recording Library
