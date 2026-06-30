@@ -4,6 +4,19 @@ import { appParams } from '@/lib/app-params';
 
 const AuthContext = createContext();
 
+const PUBLIC_ROUTES = new Set([
+  '/',
+  '/Landing',
+  '/Register',
+  '/HowItWorks',
+  '/Pricing',
+  '/FAQ',
+  '/Contact',
+  '/Safety',
+  '/Terms',
+  '/PublicPostView',
+]);
+
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -20,6 +33,15 @@ export const AuthProvider = ({ children }) => {
     try {
       setIsLoadingPublicSettings(true);
       setAuthError(null);
+
+      const isPublicRoute = PUBLIC_ROUTES.has(window.location.pathname);
+      if (!appParams.token && isPublicRoute) {
+        setUser(null);
+        setIsAuthenticated(false);
+        setIsLoadingPublicSettings(false);
+        setIsLoadingAuth(false);
+        return;
+      }
       
       // First, check app public settings (with token if available)
       // This will tell us if auth is required, user not registered, etc.
@@ -41,11 +63,13 @@ export const AuthProvider = ({ children }) => {
         }
         setIsLoadingPublicSettings(false);
       } catch (appError) {
-        console.error('App state check failed:', appError);
+        const reason = appError.status === 403 ? appError.data?.extra_data?.reason : null;
+        if (reason !== 'auth_required') {
+          console.error('App state check failed:', appError);
+        }
         
         // Handle app-level errors
         if (appError.status === 403 && appError.data?.extra_data?.reason) {
-          const reason = appError.data.extra_data.reason;
           if (reason === 'auth_required') {
             setAuthError({
               type: 'auth_required',
