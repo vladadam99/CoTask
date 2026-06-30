@@ -18,10 +18,11 @@ export default function Bookings() {
   const [tab, setTab] = useState('All');
   const [search, setSearch] = useState('');
 
-  const isAvatar = user?.selected_role === 'avatar' || user?.role === 'avatar';
+  const activeRole = user?.selected_role || user?.role || 'user';
+  const isAvatar = activeRole === 'avatar';
   const isClient = !isAvatar;
 
-  const dashPath = user?.role === 'enterprise' ? '/EnterpriseDashboard' : '/UserDashboard';
+  const dashPath = activeRole === 'enterprise' ? '/EnterpriseDashboard' : '/UserDashboard';
 
   const { data: bookings = [], isLoading: bookingsLoading } = useQuery({
     queryKey: ['all-bookings', user?.email, isAvatar],
