@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import AppShell from '@/components/layout/AppShell';
+import { getNavItems } from '@/lib/navItems';
 import { useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
@@ -133,7 +135,7 @@ export default function ConsultationBooking() {
 
   if (!avatarId && !offeringId) {
     return (
-      <div className="min-h-screen pb-12 px-4 flex items-center justify-center">
+      <div className="min-h-screen bg-background flex items-center justify-center p-4">
         <GlassCard className="p-8 max-w-md w-full text-center space-y-5">
           <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-2">
             <span className="text-primary text-2xl">🔍</span>
@@ -195,7 +197,8 @@ export default function ConsultationBooking() {
   }
 
   return (
-    <div className="min-h-screen pb-12 px-4">
+    <AppShell navItems={getNavItems(user?.selected_role)} user={user}>
+      <div className="pb-12 px-4 min-h-[calc(100vh-64px)]">
       <div className="max-w-xl mx-auto pt-8">
         <button onClick={() => navigate(-1)} className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground mb-6">
           <ArrowLeft className="w-4 h-4" /> Back
@@ -358,5 +361,6 @@ export default function ConsultationBooking() {
         </div>
       </div>
     </div>
+    </AppShell>
   );
 }

@@ -1,4 +1,6 @@
 import React from 'react';
+import AppShell from '@/components/layout/AppShell';
+import { getNavItems } from '@/lib/navItems';
 import { Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
@@ -27,7 +29,7 @@ export default function LiveSessions() {
   const dashPath = isAvatar ? '/AvatarDashboard' : user?.role === 'enterprise' ? '/EnterpriseDashboard' : '/UserDashboard';
 
   return (
-    <div className="min-h-screen bg-background p-4 lg:p-8">
+    <AppShell navItems={getNavItems(user?.selected_role || user?.app_role)} user={user}>
       <div className="max-w-3xl mx-auto">
         <Link to={dashPath} className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground mb-6">
           <ArrowLeft className="w-4 h-4" /> Dashboard
@@ -134,6 +136,6 @@ export default function LiveSessions() {
           )}
         </div>
       </div>
-    </div>
+    </AppShell>
   );
 }

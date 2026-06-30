@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import AppShell from '@/components/layout/AppShell';
+import { getNavItems } from '@/lib/navItems';
 import { useNavigate } from 'react-router-dom';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
@@ -99,8 +101,8 @@ Based on this, return:
   };
 
   const handleReview = () => {
-    if (!form.category) { setError('Please select a category.'); return; }
-    if (form.booking_type === 'scheduled' && !form.scheduled_date) { setError('Please select a date.'); return; }
+    if (!form.category) { setError("Please select a category."); return; }
+    if (form.booking_type === "scheduled" && !form.scheduled_date) { setError("Please select a date."); return; }
     setError('');
     setStep('review');
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -119,7 +121,7 @@ Based on this, return:
     setCheckoutLoading(true);
     try {
       const bookingRes = await base44.functions.invoke('createBooking', {
-        client_type: user.app_role === 'enterprise' ? 'enterprise' : 'user',
+        client_type: user.selected_role === 'enterprise' ? 'enterprise' : 'user',
         avatar_profile_id: avatarId || '',
         avatar_email: avatar?.user_email || '',
         avatar_name: avatar?.display_name || '',
@@ -162,7 +164,7 @@ Based on this, return:
 
   if (!avatarId) {
     return (
-      <div className="min-h-screen pb-12 px-4 flex items-center justify-center">
+      <div className="min-h-screen bg-background flex items-center justify-center p-4">
         <GlassCard className="p-8 max-w-md w-full text-center space-y-5">
           <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-2">
             <span className="text-primary text-2xl">🔍</span>
@@ -186,8 +188,8 @@ Based on this, return:
 
   if (step === 'review') {
     return (
-      <div className="min-h-screen pb-12 px-4">
-        <div className="max-w-2xl mx-auto pt-8">
+      <AppShell navItems={getNavItems(user?.selected_role)} user={user}>
+        <div className="max-w-2xl mx-auto pt-8 pb-12">
           {error && <p className="text-sm text-red-400 bg-red-500/10 border border-red-500/20 rounded-xl px-4 py-3 mb-4">{error}</p>}
           <ReviewBookingPanel
             form={form} avatar={avatar} amount={amount} livePremium={livePremium}
@@ -195,13 +197,13 @@ Based on this, return:
             loading={checkoutLoading} onBack={() => setStep('form')} onConfirm={createAndPay}
           />
         </div>
-      </div>
+        </AppShell>
     );
   }
 
   return (
-    <div className="min-h-screen pb-12 px-4">
-      <div className="max-w-xl mx-auto pt-8">
+    <AppShell navItems={getNavItems(user?.selected_role)} user={user}>
+      <div className="max-w-xl mx-auto pt-8 pb-12">
         <button onClick={() => navigate(-1)} className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground mb-6">
           <ArrowLeft className="w-4 h-4" /> Back
         </button>
@@ -424,6 +426,6 @@ Based on this, return:
           <p className="text-xs text-center text-muted-foreground pb-4">You'll review all details before secure payment.</p>
         </div>
       </div>
-    </div>
+    </AppShell>
   );
 }

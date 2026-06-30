@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from 'react';
+import AppShell from '@/components/layout/AppShell';
+import { getNavItems } from '@/lib/navItems';
 import { Link, useNavigate } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
@@ -58,9 +60,9 @@ export default function AvatarBookingDetail() {
   });
 
   if (isLoading) return (
-    <div className="min-h-screen flex items-center justify-center">
-      <div className="w-8 h-8 border-4 border-primary/20 border-t-primary rounded-full animate-spin" />
-    </div>
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="w-8 h-8 border-4 border-primary/20 border-t-primary rounded-full animate-spin" />
+      </div>
   );
 
   if (!booking) return (
@@ -92,7 +94,8 @@ export default function AvatarBookingDetail() {
   const canUploadProof = ['scheduled', 'in_progress'].includes(booking.status) && booking.payment_status === 'held' && !booking.proof_url;
 
   return (
-    <div className="min-h-screen bg-background p-4 lg:p-8">
+    <AppShell navItems={getNavItems(user?.selected_role)} user={user}>
+      <div className="bg-background p-4 lg:p-8 min-h-[calc(100vh-64px)]">
       <div className="max-w-2xl mx-auto">
         <button onClick={() => navigate(-1)} className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground mb-6">
           <ArrowLeft className="w-4 h-4" /> Back to Requests
@@ -289,5 +292,6 @@ export default function AvatarBookingDetail() {
         </div>
       </div>
     </div>
+    </AppShell>
   );
 }

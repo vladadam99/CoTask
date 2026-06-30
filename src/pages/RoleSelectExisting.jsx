@@ -100,8 +100,8 @@ export default function RoleSelectExisting() {
   return (
     <div className="min-h-screen flex items-center justify-center px-4 py-12 relative overflow-hidden">
       <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-background to-background" />
-      <div className="absolute top-0 right-0 w-96 h-96 bg-primary/8 rounded-full blur-3xl" />
-      <div className="absolute bottom-0 left-0 w-64 h-64 bg-blue-500/6 rounded-full blur-3xl" />
+      
+      
 
       <div className="relative z-10 max-w-4xl w-full">
         <div className="text-center mb-12">
