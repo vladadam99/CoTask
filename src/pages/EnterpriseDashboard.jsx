@@ -62,7 +62,7 @@ export default function EnterpriseDashboard() {
   const pendingCount = bookings.filter(b => b.status === 'pending').length;
 
   return (
-    <AppShell navItems={getNavItems(user?.selected_role)} user={user}>
+    <AppShell navItems={getNavItems(user?.selected_role || user?.role || 'user')} user={user}>
       {/* Header */}
       <div className="flex items-center justify-between mb-8">
         <div>
