@@ -87,7 +87,7 @@ export default function EnterpriseSettings() {
   if (loading) return <div className="min-h-screen flex items-center justify-center"><div className="w-8 h-8 border-4 border-primary/20 border-t-primary rounded-full animate-spin" /></div>;
 
   return (
-    <AppShell navItems={getNavItems(user?.selected_role)} user={user}>
+    <AppShell navItems={getNavItems(user?.selected_role || user?.role || 'user')} user={user}>
       <div className="flex items-center justify-between mb-8">
         <div>
           <h1 className="text-2xl lg:text-3xl font-bold mb-1">Company Settings</h1>
