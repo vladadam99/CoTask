@@ -18,6 +18,7 @@ export default function FeedCard({ post, user, isActive = true, isNear = true })
   const [mediaIndex, setMediaIndex] = useState(0);
   const [videoLoading, setVideoLoading] = useState(false);
   const [showShareMenu, setShowShareMenu] = useState(false);
+  const [shareCopied, setShareCopied] = useState(false);
 
   const mediaList = (post.media_urls && post.media_urls.length > 0)
     ? post.media_urls.map((url, i) => ({ url, type: post.media_types?.[i] || 'photo' }))
@@ -144,8 +145,14 @@ export default function FeedCard({ post, user, isActive = true, isNear = true })
       instagram: `https://www.instagram.com/`, // Instagram doesn't have direct sharing
     };
     if (app === 'copy') {
-      navigator.clipboard.writeText(postUrl);
-      alert('Link copied to clipboard!');
+      navigator.clipboard.writeText(postUrl).then(() => {
+        setShareCopied(true);
+        window.setTimeout(() => {
+          setShareCopied(false);
+          setShowShareMenu(false);
+        }, 900);
+      }).catch(() => setShowShareMenu(false));
+      return;
     } else if (shareUrls[app]) {
       window.open(shareUrls[app], '_blank', 'width=600,height=400');
     }
@@ -294,8 +301,8 @@ export default function FeedCard({ post, user, isActive = true, isNear = true })
                 onClick={() => handleShareToApp('copy')}
                 className="w-full flex items-center gap-3 px-4 py-3 text-sm text-foreground hover:bg-primary/10 transition-colors border-b border-white/5"
               >
-                <Copy className="w-4 h-4 text-muted-foreground" />
-                Copy Link
+                <Copy className={`w-4 h-4 ${shareCopied ? 'text-primary' : 'text-muted-foreground'}`} />
+                {shareCopied ? 'Copied' : 'Copy Link'}
               </button>
               <button
                 onClick={() => handleShareToApp('whatsapp')}
