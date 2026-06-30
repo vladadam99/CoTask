@@ -44,7 +44,7 @@ export default function AvatarReviews() {
   const dist = [5, 4, 3, 2, 1].map(n => ({ n, count: reviews.filter(r => r.rating === n).length }));
 
   return (
-    <AppShell navItems={getNavItems(user?.role)} user={user}>
+    <AppShell navItems={getNavItems(user?.selected_role || user?.role || 'user')} user={user}>
       <div className="mb-8">
         <h1 className="text-2xl lg:text-3xl font-bold mb-1">Reviews</h1>
         <p className="text-muted-foreground text-sm">{reviews.length} review{reviews.length !== 1 ? 's' : ''} from clients</p>
