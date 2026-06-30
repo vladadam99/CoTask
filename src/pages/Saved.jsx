@@ -12,7 +12,8 @@ import { Heart, Trash2, ArrowLeft } from 'lucide-react';
 export default function Saved() {
   const { user } = useCurrentUser();
   const queryClient = useQueryClient();
-  const dashPath = user?.role === 'avatar' ? '/AvatarDashboard' : user?.role === 'enterprise' ? '/EnterpriseDashboard' : '/UserDashboard';
+  const activeRole = user?.selected_role || user?.role || 'user';
+  const dashPath = activeRole === 'avatar' ? '/AvatarDashboard' : activeRole === 'enterprise' ? '/EnterpriseDashboard' : '/UserDashboard';
 
   const { data: favorites = [] } = useQuery({
     queryKey: ['favorites', user?.email],
@@ -26,7 +27,7 @@ export default function Saved() {
   });
 
   return (
-    <AppShell navItems={getNavItems(user?.selected_role || user?.app_role)} user={user}>
+    <AppShell navItems={getNavItems(activeRole)} user={user}>
       <div className="max-w-3xl mx-auto">
         <Link to={dashPath} className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground mb-6">
           <ArrowLeft className="w-4 h-4" /> Dashboard
