@@ -12,6 +12,7 @@ import { Radio, Video, Clock, ArrowLeft } from 'lucide-react';
 
 export default function LiveSessions() {
   const { user } = useCurrentUser();
+  const activeRole = user?.selected_role || user?.role || 'user';
 
   const { data: sessions = [], isLoading } = useQuery({
     queryKey: ['live-sessions', user?.email],
@@ -25,11 +26,12 @@ export default function LiveSessions() {
 
   const activeSessions = sessions.filter(s => s.status === 'live' || s.status === 'waiting');
   const pastSessions = sessions.filter(s => s.status === 'ended');
-  const isAvatar = user?.role === 'avatar';
-  const dashPath = isAvatar ? '/AvatarDashboard' : user?.role === 'enterprise' ? '/EnterpriseDashboard' : '/UserDashboard';
+  const isAvatar = activeRole === 'avatar';
+  const dashPath = isAvatar ? '/AvatarDashboard' : activeRole === 'enterprise' ? '/EnterpriseDashboard' : '/UserDashboard';
+  const bookingDetailPath = isAvatar ? '/AvatarBookingDetail' : '/UserBookingDetail';
 
   return (
-    <AppShell navItems={getNavItems(user?.selected_role || user?.app_role)} user={user}>
+    <AppShell navItems={getNavItems(activeRole)} user={user}>
       <div className="max-w-3xl mx-auto">
         <Link to={dashPath} className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground mb-6">
           <ArrowLeft className="w-4 h-4" /> Dashboard
@@ -121,7 +123,7 @@ export default function LiveSessions() {
                   <div className="flex items-center gap-2">
                     <StatusBadge status={s.status} />
                     {s.booking_id && (
-                      <Link to={`/BookingDetail?id=${s.booking_id}`}>
+                      <Link to={`${bookingDetailPath}?id=${s.booking_id}`}>
                         <Button size="sm" variant="outline" className="text-xs h-7">Details</Button>
                       </Link>
                     )}
