@@ -32,7 +32,7 @@ export default function UserSettings() {
   };
 
   return (
-    <AppShell navItems={getNavItems(user?.selected_role)} user={user}>
+    <AppShell navItems={getNavItems(user?.selected_role || user?.role || 'user')} user={user}>
       <div className="max-w-lg mx-auto">
         <div className="flex items-center gap-3 mb-6">
           <button onClick={() => navigate('/Profile')} className="p-1.5 rounded-lg hover:bg-white/10">
