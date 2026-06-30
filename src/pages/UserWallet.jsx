@@ -98,7 +98,7 @@ export default function UserWallet() {
   ].sort((a, b) => new Date(b.date) - new Date(a.date));
 
   return (
-    <AppShell navItems={getNavItems(user?.role)} user={user}>
+    <AppShell navItems={getNavItems(user?.selected_role || user?.role || 'user')} user={user}>
       <div className="mb-8">
         <h1 className="text-2xl lg:text-3xl font-bold mb-1 flex items-center gap-2"><Wallet className="w-7 h-7 text-primary" /> Billing / Payments</h1>
         <p className="text-muted-foreground text-sm">Your spending overview and payment history</p>
