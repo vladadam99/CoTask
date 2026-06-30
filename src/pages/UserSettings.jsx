@@ -26,7 +26,7 @@ export default function UserSettings() {
       const profiles = await base44.entities.EnterpriseProfile.filter({ user_email: user.email });
       navigate(profiles.length > 0 ? '/EnterpriseDashboard' : '/Onboarding?role=enterprise');
     } else {
-      navigate('/FindAvatars');
+      navigate('/FindPeople');
     }
     setSwitchingRole(false);
   };
