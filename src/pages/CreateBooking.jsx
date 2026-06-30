@@ -199,7 +199,7 @@ Based on this, return:
 
   if (step === 'review') {
     return (
-      <AppShell navItems={getNavItems(user?.selected_role)} user={user}>
+      <AppShell navItems={getNavItems(user?.selected_role || user?.role || 'user')} user={user}>
         <div className="max-w-2xl mx-auto pt-8 pb-12">
           {error && <p className="text-sm text-red-400 bg-red-500/10 border border-red-500/20 rounded-xl px-4 py-3 mb-4">{error}</p>}
           <ReviewBookingPanel
@@ -213,7 +213,7 @@ Based on this, return:
   }
 
   return (
-    <AppShell navItems={getNavItems(user?.selected_role)} user={user}>
+    <AppShell navItems={getNavItems(user?.selected_role || user?.role || 'user')} user={user}>
       <div className="max-w-xl mx-auto pt-8 pb-12">
         <button onClick={() => navigate(-1)} className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground mb-6">
           <ArrowLeft className="w-4 h-4" /> Back
