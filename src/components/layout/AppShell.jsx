@@ -150,13 +150,15 @@ export default function AppShell({ children, navItems = [], user, fullBleed = fa
     const load = async () => {
       try {
         const list = await base44.entities.Notification.filter({ user_email: user.email, is_read: false }, '-created_date', 100);
-        setUnreadNotifs(list.filter(n => n.target_role === user.selected_role));
+        const activeRole = user.selected_role || user.role || 'user';
+        setUnreadNotifs(list.filter(n => !n.target_role || n.target_role === activeRole));
       } catch (e) {}
     };
     load();
     const unsub = base44.entities.Notification.subscribe((event) => {
       if (event.data?.user_email === user.email) {
-        if (event.type === 'create' && event.data?.target_role === user.selected_role && !event.data?.is_read) {
+        const activeRole = user.selected_role || user.role || 'user';
+        if (event.type === 'create' && (!event.data?.target_role || event.data?.target_role === activeRole) && !event.data?.is_read) {
           setUnreadNotifs(prev => [event.data, ...prev]);
         } else if (event.type === 'update') {
           setUnreadNotifs(prev => event.data?.is_read ? prev.filter(n => n.id !== event.id) : prev.map(n => n.id === event.id ? event.data : n));
@@ -166,10 +168,11 @@ export default function AppShell({ children, navItems = [], user, fullBleed = fa
       }
     });
     return unsub;
-  }, [user?.email]);
+  }, [user?.email, user?.selected_role, user?.role]);
 
-  const homePath = user?.selected_role === 'avatar' ? '/AvatarDashboard' : user?.selected_role === 'enterprise' ? '/EnterpriseDashboard' : '/FindPeople';
-  const settingsPath = user?.selected_role === 'avatar' ? '/AvatarSettings' : user?.selected_role === 'enterprise' ? '/EnterpriseSettings' : '/UserSettings';
+  const activeRole = user?.selected_role || user?.role || 'user';
+  const homePath = activeRole === 'avatar' ? '/AvatarDashboard' : activeRole === 'enterprise' ? '/EnterpriseDashboard' : activeRole === 'admin' ? '/AdminDashboard' : '/FindPeople';
+  const settingsPath = activeRole === 'avatar' ? '/AvatarSettings' : activeRole === 'enterprise' ? '/EnterpriseSettings' : '/UserSettings';
 
   return (
     <div className="min-h-screen flex overflow-x-hidden">
@@ -196,7 +199,7 @@ export default function AppShell({ children, navItems = [], user, fullBleed = fa
         </nav>
         <div className="p-4 border-t border-border space-y-4">
           <div className="hidden lg:flex justify-end mb-2">
-            <NotificationBell userEmail={user?.email} userRole={user?.selected_role} />
+            <NotificationBell userEmail={user?.email} userRole={activeRole} />
           </div>
           <div className="flex items-center gap-3">
             <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-sm font-medium text-primary">
