@@ -71,7 +71,7 @@ export default function AvatarLive() {
   const pastSessions = sessions.filter(s => s.status === 'ended');
 
   return (
-    <AppShell navItems={getNavItems(user?.role)} user={user}>
+    <AppShell navItems={getNavItems(user?.selected_role || user?.role || 'user')} user={user}>
       <div className="flex items-start justify-between mb-8">
         <div>
           <h1 className="text-2xl lg:text-3xl font-bold mb-1">Live Sessions</h1>
