@@ -15,6 +15,7 @@ export default function PublicPostView() {
   const [loading, setLoading] = useState(true);
   const [mediaIndex, setMediaIndex] = useState(0);
   const [showShareMenu, setShowShareMenu] = useState(false);
+  const [shareCopied, setShareCopied] = useState(false);
   const [liked, setLiked] = useState(false);
 
   useEffect(() => {
@@ -65,8 +66,14 @@ export default function PublicPostView() {
 
   const handleShare = (type) => {
     if (type === 'copy') {
-      navigator.clipboard.writeText(postUrl);
-      alert('Link copied to clipboard!');
+      navigator.clipboard.writeText(postUrl).then(() => {
+        setShareCopied(true);
+        window.setTimeout(() => {
+          setShareCopied(false);
+          setShowShareMenu(false);
+        }, 900);
+      }).catch(() => setShowShareMenu(false));
+      return;
     }
     setShowShareMenu(false);
   };
@@ -193,8 +200,8 @@ export default function PublicPostView() {
                   onClick={() => handleShare('copy')}
                   className="w-full flex items-center gap-2 px-4 py-3 text-sm hover:bg-primary/10 transition-colors border-b border-border"
                 >
-                  <Copy className="w-4 h-4" />
-                  Copy Link
+                  <Copy className={`w-4 h-4 ${shareCopied ? 'text-primary' : ''}`} />
+                  {shareCopied ? 'Copied' : 'Copy Link'}
                 </button>
               </div>
             )}
