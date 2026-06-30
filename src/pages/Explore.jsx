@@ -19,7 +19,7 @@ export default function Explore() {
   });
 
   return (
-    <AppShell navItems={getNavItems(user?.selected_role)} user={user}>
+    <AppShell navItems={getNavItems(user?.selected_role || user?.role || 'user')} user={user}>
       <div className="max-w-6xl mx-auto py-6">
         <div className="mb-8">
           <h1 className="text-3xl font-black mb-2 tracking-tight">Explore Marketplace</h1>
