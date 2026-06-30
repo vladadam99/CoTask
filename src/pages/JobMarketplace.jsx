@@ -40,8 +40,9 @@ export default function JobMarketplace() {
     ? [...filtered].sort((a, b) => aiMatchedIds.indexOf(a.id) - aiMatchedIds.indexOf(b.id))
     : filtered;
 
-  const canPost = user?.role === 'user' || user?.role === 'enterprise';
-  const canApply = user?.role === 'avatar' || user?.role === 'enterprise';
+  const activeRole = user?.selected_role || user?.role || 'user';
+  const canPost = activeRole === 'user' || activeRole === 'enterprise';
+  const canApply = activeRole === 'avatar' || activeRole === 'enterprise';
 
   return (
     <AppShell navItems={getNavItems(user?.selected_role || user?.role || 'user')} user={user}>
