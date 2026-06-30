@@ -62,7 +62,7 @@ export default function UserProfileEdit() {
   };
 
   return (
-    <AppShell navItems={getNavItems(user?.selected_role)} user={user}>
+    <AppShell navItems={getNavItems(user?.selected_role || user?.role || 'user')} user={user}>
       <div className="max-w-lg mx-auto">
         {/* Header */}
         <div className="flex items-center gap-3 mb-6">
