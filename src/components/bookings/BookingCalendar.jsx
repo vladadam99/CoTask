@@ -5,7 +5,7 @@ import StatusBadge from '@/components/ui/StatusBadge';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { format, startOfMonth, endOfMonth, eachDayOfInterval, isSameDay, isSameMonth, addMonths, subMonths } from 'date-fns';
 
-export default function BookingCalendar({ bookings }) {
+export default function BookingCalendar({ bookings, detailPath = '/UserBookingDetail' }) {
   const [month, setMonth] = useState(new Date());
 
   const days = eachDayOfInterval({ start: startOfMonth(month), end: endOfMonth(month) });
@@ -49,7 +49,7 @@ export default function BookingCalendar({ bookings }) {
                 isToday ? 'bg-primary text-primary-foreground' : 'text-foreground'
               }`}>{format(day, 'd')}</span>
               {dayBookings.slice(0, 2).map(b => (
-                <Link key={b.id} to={`/BookingDetail?id=${b.id}`}>
+                <Link key={b.id} to={`${detailPath}?id=${b.id}`}>
                   <div className="truncate rounded px-1 py-0.5 mb-0.5 bg-primary/20 text-primary text-[10px] hover:bg-primary/30 transition-colors">
                     {b.category}
                   </div>
@@ -69,7 +69,7 @@ export default function BookingCalendar({ bookings }) {
           .filter(b => b.scheduled_date && isSameMonth(new Date(b.scheduled_date), month))
           .sort((a, b) => new Date(a.scheduled_date) - new Date(b.scheduled_date))
           .map(b => (
-            <Link key={b.id} to={`/BookingDetail?id=${b.id}`}>
+            <Link key={b.id} to={`${detailPath}?id=${b.id}`}>
               <GlassCard className="p-3 flex items-center gap-3" hover>
                 <div className="text-center min-w-[40px]">
                   <p className="text-xs text-muted-foreground">{format(new Date(b.scheduled_date), 'MMM')}</p>
