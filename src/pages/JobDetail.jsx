@@ -154,7 +154,7 @@ export default function JobDetail() {
   const canApply = isProspectAgent && job?.status === 'open' && !hasSubmittedProposal;
 
   if (isLoading) return (
-    <AppShell navItems={getNavItems(user?.role)} user={user}>
+    <AppShell navItems={getNavItems(user?.selected_role || user?.role || 'user')} user={user}>
       <div className="flex items-center justify-center h-64">
         <div className="w-8 h-8 border-4 border-primary/30 border-t-primary rounded-full animate-spin" />
       </div>
@@ -162,13 +162,13 @@ export default function JobDetail() {
   );
 
   if (!job) return (
-    <AppShell navItems={getNavItems(user?.role)} user={user}>
+    <AppShell navItems={getNavItems(user?.selected_role || user?.role || 'user')} user={user}>
       <div className="flex items-center justify-center h-64 text-muted-foreground">Task not found.</div>
     </AppShell>
   );
 
   return (
-    <AppShell navItems={getNavItems(user?.role)} user={user}>
+    <AppShell navItems={getNavItems(user?.selected_role || user?.role || 'user')} user={user}>
       <div className="max-w-3xl mx-auto space-y-6">
         {/* Back + Delete */}
         <div className="flex items-center justify-between">
