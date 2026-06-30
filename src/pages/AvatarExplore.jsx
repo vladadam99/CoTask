@@ -21,7 +21,7 @@ export default function AvatarExplore() {
   });
 
   return (
-    <AppShell navItems={getNavItems(user?.role)} user={user}>
+    <AppShell navItems={getNavItems(user?.selected_role || user?.role || 'user')} user={user}>
       {/* Category filter bar */}
       <div className="fixed top-14 lg:top-0 left-0 right-0 lg:left-64 z-30 px-4 pt-3 pb-2 bg-gradient-to-b from-background to-transparent">
         <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide">
