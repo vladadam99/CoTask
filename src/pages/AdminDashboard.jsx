@@ -92,7 +92,7 @@ export default function AdminDashboard() {
       <div className="mb-8">
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-lg font-semibold">Recent Bookings</h2>
-          <Link to="/AdminBookings" className="text-sm text-primary hover:underline flex items-center gap-1">
+          <Link to="/AdminDashboard" className="text-sm text-primary hover:underline flex items-center gap-1">
             View all <ArrowRight className="w-3 h-3" />
           </Link>
         </div>
