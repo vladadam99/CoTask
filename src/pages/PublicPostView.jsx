@@ -33,9 +33,18 @@ export default function PublicPostView() {
           }
         }
       } catch (e) {
-        console.error(e);
+        const message = e?.message || String(e || '');
+        const isExpectedAnonymousAuthFailure =
+          e?.status === 401 ||
+          e?.status === 403 ||
+          /must be logged in|auth_required|authentication required/i.test(message);
+
+        if (!isExpectedAnonymousAuthFailure) {
+          console.error(e);
+        }
+      } finally {
+        setLoading(false);
       }
-      setLoading(false);
     };
     load();
   }, [postId]);
