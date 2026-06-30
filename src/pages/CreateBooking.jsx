@@ -101,15 +101,22 @@ Based on this, return:
   };
 
   const handleReview = () => {
+    if (!user) { setError('Please sign in before sending a request.'); return; }
+    if (!avatarId || !avatar) { setError('Please choose a Local Agent before sending a Direct Hire request.'); return; }
     if (!form.category) { setError("Please select a category."); return; }
     if (form.booking_type === "scheduled" && !form.scheduled_date) { setError("Please select a date."); return; }
+    if (form.booking_type === "scheduled" && !form.scheduled_time) { setError("Please select a time."); return; }
     setError('');
     setStep('review');
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const createAndPay = async () => {
-    if (!avatarId) {
+    if (!user) {
+      setError('Please sign in before sending a request.');
+      return;
+    }
+    if (!avatarId || !avatar) {
       setError('Please choose a Local Agent before sending a Direct Hire request.');
       return;
     }
@@ -117,11 +124,15 @@ Based on this, return:
       setError('Please select a category.');
       return;
     }
+    if (form.booking_type === 'scheduled' && (!form.scheduled_date || !form.scheduled_time)) {
+      setError('Please select a date and time.');
+      return;
+    }
     setError('');
     setCheckoutLoading(true);
     try {
       const bookingRes = await base44.functions.invoke('createBooking', {
-        client_type: user.selected_role === 'enterprise' ? 'enterprise' : 'user',
+        client_type: (user.selected_role || user.role) === 'enterprise' ? 'enterprise' : 'user',
         avatar_profile_id: avatarId || '',
         avatar_email: avatar?.user_email || '',
         avatar_name: avatar?.display_name || '',
