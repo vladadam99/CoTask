@@ -97,7 +97,7 @@ export default function AvatarWallet() {
   ].sort((a, b) => new Date(b.released_at || b.updated_date) - new Date(a.released_at || a.updated_date));
 
   return (
-    <AppShell navItems={getNavItems(user?.role)} user={user}>
+    <AppShell navItems={getNavItems(user?.selected_role || user?.role || 'user')} user={user}>
       {/* Withdraw Modal */}
       {showWithdraw && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
