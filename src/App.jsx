@@ -2,12 +2,11 @@ import React, { useState } from 'react';
 import { Toaster } from "@/components/ui/toaster"
 import { QueryClientProvider } from '@tanstack/react-query'
 import { queryClientInstance } from '@/lib/query-client'
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes, useLocation } from 'react-router-dom';
 import PageNotFound from './lib/PageNotFound';
 import { AuthProvider, useAuth } from '@/lib/AuthContext';
 import { ThemeProvider } from '@/lib/ThemeContext';
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';
-import { Navigate } from 'react-router-dom';
 // Pages
 import IdentityVerificationPage from './pages/IdentityVerificationPage';
 import MobileVerify from './pages/MobileVerify';
@@ -67,11 +66,26 @@ import TermsAndConditions from './pages/TermsAndConditions';
 import TermsBanner from './components/legal/TermsBanner';
 import SplashScreen from './components/SplashScreen';
 
+const PUBLIC_ROUTES = new Set([
+  '/',
+  '/Landing',
+  '/Register',
+  '/HowItWorks',
+  '/Pricing',
+  '/FAQ',
+  '/Contact',
+  '/Safety',
+  '/Terms',
+  '/PublicPostView',
+]);
+
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
+  const location = useLocation();
+  const isPublicRoute = PUBLIC_ROUTES.has(location.pathname);
 
-  // Show loading spinner while checking app public settings or auth
-  if (isLoadingPublicSettings || isLoadingAuth) {
+  // Show loading spinner while checking app public settings or auth for protected routes.
+  if (!isPublicRoute && (isLoadingPublicSettings || isLoadingAuth)) {
     return (
       <div className="fixed inset-0 flex items-center justify-center">
         <div className="w-8 h-8 border-4 border-slate-200 border-t-slate-800 rounded-full animate-spin"></div>
@@ -80,7 +94,7 @@ const AuthenticatedApp = () => {
   }
 
   // Handle authentication errors
-  if (authError) {
+  if (authError && !isPublicRoute) {
     if (authError.type === 'user_not_registered') {
       return <UserNotRegisteredError />;
     } else if (authError.type === 'auth_required') {
