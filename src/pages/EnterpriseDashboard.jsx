@@ -140,7 +140,7 @@ export default function EnterpriseDashboard() {
         {bookings.length > 0 ? (
           <div className="space-y-3">
             {bookings.slice(0, 6).map(b => (
-              <Link key={b.id} to={`/BookingDetail?id=${b.id}`}>
+              <Link key={b.id} to={`/UserBookingDetail?id=${b.id}`}>
                 <GlassCard className="p-4 flex items-center justify-between" hover>
                   <div>
                     <p className="font-medium text-sm">{b.category}</p>
