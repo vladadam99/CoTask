@@ -66,7 +66,8 @@ export default function DisputeAgent() {
     setLoading(false);
   };
 
-  const dashPath = user?.role === 'avatar' ? '/AvatarDashboard' : user?.role === 'enterprise' ? '/EnterpriseDashboard' : '/UserDashboard';
+  const activeRole = user?.selected_role || user?.role || 'user';
+  const dashPath = activeRole === 'avatar' ? '/AvatarDashboard' : activeRole === 'enterprise' ? '/EnterpriseDashboard' : '/UserDashboard';
 
   return (
     <div className="flex flex-col h-screen bg-background">
