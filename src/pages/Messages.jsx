@@ -22,6 +22,7 @@ export default function Messages() {
 
   const urlConvoId = new URLSearchParams(window.location.search).get('conversation') ||
     new URLSearchParams(window.location.search).get('conv');
+  const activeRole = user?.selected_role || user?.role || 'user';
 
   // Derive linked job ID from booking_id field (format: job_<jobId>)
   const linkedJobId = activeConvo?.booking_id?.startsWith('job_') ? activeConvo.booking_id.slice(4) : null;
@@ -129,7 +130,7 @@ export default function Messages() {
     },
   });
 
-  const dashPath = user?.role === 'avatar' ? '/AvatarDashboard' : user?.role === 'enterprise' ? '/EnterpriseDashboard' : '/UserDashboard';
+  const dashPath = activeRole === 'avatar' ? '/AvatarDashboard' : activeRole === 'enterprise' ? '/EnterpriseDashboard' : '/UserDashboard';
 
   const getOtherName = (convo) => {
     const idx = (convo.participant_emails || []).findIndex(e => e !== user?.email);
@@ -137,7 +138,7 @@ export default function Messages() {
   };
 
   return (
-    <AppShell navItems={getNavItems(user?.selected_role)} user={user} fullBleed>
+    <AppShell navItems={getNavItems(activeRole)} user={user} fullBleed>
     <div className="flex h-[calc(100vh-56px)] lg:h-screen bg-background overflow-hidden">
       {/* Conversation List */}
       <div className={`w-full md:w-80 lg:w-96 border-r border-border flex-shrink-0 ${activeConvo ? 'hidden md:flex' : 'flex'} flex-col`}>
