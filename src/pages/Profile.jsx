@@ -178,7 +178,7 @@ export default function Profile() {
     : '/UserProfileEdit';
 
   return (
-    <AppShell navItems={getNavItems(user?.selected_role)} user={user}>
+    <AppShell navItems={getNavItems(user?.selected_role || user?.role || 'user')} user={user}>
       <div className="max-w-2xl mx-auto -mt-4 -mx-4 lg:mx-auto lg:mt-0">
 
         {/* Top bar */}
