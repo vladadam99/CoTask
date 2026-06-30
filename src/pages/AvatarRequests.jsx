@@ -199,7 +199,7 @@ export default function AvatarRequests() {
   const pendingCount = allWorkItems.filter(t => t.type === 'direct_hire' && t.status === 'pending').length;
 
   return (
-    <AppShell navItems={getNavItems(user?.selected_role)} user={user}>
+    <AppShell navItems={getNavItems(user?.selected_role || user?.role || 'user')} user={user}>
       <div className="mb-8">
         <h1 className="text-2xl lg:text-3xl font-bold mb-1">My Schedule</h1>
         <p className="text-muted-foreground text-sm">
