@@ -44,7 +44,7 @@ export default function JobMarketplace() {
   const canApply = user?.role === 'avatar' || user?.role === 'enterprise';
 
   return (
-    <AppShell navItems={getNavItems(user?.role)} user={user}>
+    <AppShell navItems={getNavItems(user?.selected_role || user?.role || 'user')} user={user}>
       <div className="space-y-6">
         {/* Header */}
         <div className="flex items-center justify-between">
