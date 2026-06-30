@@ -78,7 +78,7 @@ export default function AvatarDashboard() {
   const firstName = (user?.legal_name || user?.full_name)?.split(' ')[0] || 'Agent';
 
   return (
-    <AppShell navItems={getNavItems(user?.selected_role)} user={user} title="Agent Dashboard">
+    <AppShell navItems={getNavItems(user?.selected_role || user?.role || 'user')} user={user} title="Agent Dashboard">
       {/* Header */}
       <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="flex items-center justify-between mb-8">
         <div>
