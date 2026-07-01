@@ -60,18 +60,18 @@ function ProfilePanel({ user, onClose, navItems = [] }) {
   }
 
   return (
-    <div className="fixed inset-0 z-[60] flex flex-col bg-background">
+    <div className="fixed inset-0 z-[60] flex flex-col bg-background text-foreground">
       {/* Header */}
-      <div className="flex items-center justify-between px-4 h-14 border-b border-border flex-shrink-0">
+      <div className="flex items-center justify-between px-4 h-14 border-b border-border bg-card/95 backdrop-blur-xl flex-shrink-0">
         <h1 className="text-lg font-bold">Profile</h1>
-        <button onClick={onClose} className="p-2 rounded-lg hover:bg-secondary transition-colors">
+        <button onClick={onClose} className="p-2 rounded-lg text-muted-foreground hover:bg-secondary hover:text-foreground transition-colors">
           <X className="w-5 h-5 text-muted-foreground" />
         </button>
       </div>
 
       <div className="flex-1 overflow-y-auto pb-24">
         {/* User card */}
-        <Link to={activeRole === 'avatar' ? '/AvatarProfileEdit' : activeRole === 'enterprise' ? '/EnterpriseSettings' : '/UserProfile'} onClick={onClose} className="mx-4 mt-4 mb-2 p-4 rounded-2xl bg-card border border-border shadow-sm flex items-center gap-3 hover:shadow-md transition-shadow">
+        <Link to={activeRole === 'avatar' ? '/AvatarProfileEdit' : activeRole === 'enterprise' ? '/EnterpriseSettings' : '/UserProfile'} onClick={onClose} className="mx-4 mt-4 mb-3 p-4 rounded-lg bg-card border border-border shadow-sm flex items-center gap-3 hover:border-primary/30 hover:shadow-md transition-all">
           <div className="w-14 h-14 rounded-full bg-primary/10 flex items-center justify-center text-xl font-bold text-primary flex-shrink-0">
             {user?.full_name?.[0] || 'U'}
           </div>
@@ -90,13 +90,13 @@ function ProfilePanel({ user, onClose, navItems = [] }) {
         )}
 
         {/* Menu items */}
-        <div className="mx-4 rounded-2xl bg-card border border-border shadow-sm overflow-hidden mb-4">
+        <div className="mx-4 rounded-lg bg-card border border-border shadow-sm overflow-hidden mb-4">
           {menuItems.map((item, idx) => (
             <Link
               key={item.path}
               to={item.path}
               onClick={onClose}
-              className={`flex items-center gap-3 px-4 py-4 hover:bg-secondary transition-colors text-sm ${
+              className={`flex items-center gap-3 px-4 py-3.5 hover:bg-secondary transition-colors text-sm ${
                 idx !== menuItems.length - 1 ? 'border-b border-border' : ''
               }`}
             >
@@ -111,7 +111,7 @@ function ProfilePanel({ user, onClose, navItems = [] }) {
         <div className="mx-4 mb-8">
           <button
             onClick={() => base44.auth.logout('/Landing')}
-            className="w-full flex items-center gap-3 px-4 py-4 rounded-2xl bg-card border border-border shadow-sm hover:bg-secondary transition-colors text-sm text-destructive"
+            className="w-full flex items-center gap-3 px-4 py-3.5 rounded-lg bg-card border border-border shadow-sm hover:bg-destructive/8 transition-colors text-sm text-destructive"
           >
             <LogOut className="w-5 h-5 flex-shrink-0" />
             <span className="font-medium">Sign out</span>
@@ -120,7 +120,7 @@ function ProfilePanel({ user, onClose, navItems = [] }) {
       </div>
 
       {/* Bottom nav inside profile panel */}
-      <nav className="fixed bottom-0 left-0 right-0 z-50 bg-background border-t border-border flex items-center justify-around px-2 py-2 shadow-[0_-4px_10px_rgba(0,0,0,0.02)]">
+      <nav className="fixed bottom-0 left-0 right-0 z-50 bg-card/95 backdrop-blur-xl border-t border-border flex items-center justify-around px-2 py-2 shadow-[0_-12px_30px_hsl(222_47%_11%/0.08)]">
         {navItems.slice(0, 5).map(item => (
           <Link key={item.path} to={item.path} onClick={onClose}
             className="relative flex flex-col items-center gap-1 px-3 py-1.5 rounded-xl transition-all text-muted-foreground">
@@ -176,21 +176,21 @@ export default function AppShell({ children, navItems = [], user, fullBleed = fa
   const settingsPath = activeRole === 'avatar' ? '/AvatarSettings' : activeRole === 'enterprise' ? '/EnterpriseSettings' : '/UserSettings';
 
   return (
-    <div className="min-h-screen flex overflow-x-hidden">
+    <div className="min-h-screen flex overflow-x-hidden bg-background text-foreground">
       {/* Desktop Sidebar */}
-      <aside className="hidden lg:flex flex-col w-64 bg-card border-r border-border fixed inset-y-0 left-0 z-40">
-        <div className="h-16 flex items-center px-6 border-b border-border">
-          <Link to={homePath} className="text-xl font-bold tracking-tight flex-1 py-3 px-2 rounded-lg hover:bg-secondary transition-colors">
+      <aside className="hidden lg:flex flex-col w-72 bg-card/95 backdrop-blur-xl border-r border-border fixed inset-y-0 left-0 z-40 shadow-[12px_0_40px_hsl(222_47%_11%/0.04)]">
+        <div className="h-16 flex items-center px-5 border-b border-border">
+          <Link to={homePath} className="text-xl font-extrabold tracking-tight flex-1 py-3 px-2 rounded-lg hover:bg-secondary transition-colors">
             Co<span className="text-primary">Task</span>
           </Link>
         </div>
-        <nav className="flex-1 py-4 px-3 space-y-1 overflow-y-auto">
+        <nav className="flex-1 py-5 px-3 space-y-1.5 overflow-y-auto">
           {navItems.map(item => {
             const isActive = location.pathname === item.path;
             return (
               <Link key={item.path} to={item.path}
-                className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-all ${
-                  isActive ? 'bg-primary/10 text-primary font-medium' : 'text-muted-foreground hover:text-foreground hover:bg-secondary'
+                className={`flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-sm transition-all ${
+                  isActive ? 'bg-primary text-primary-foreground font-semibold shadow-sm' : 'text-muted-foreground hover:text-foreground hover:bg-secondary'
                 }`}>
                 <item.icon className="w-4 h-4" />
                 {item.label}
@@ -198,7 +198,7 @@ export default function AppShell({ children, navItems = [], user, fullBleed = fa
             );
           })}
         </nav>
-        <div className="p-4 border-t border-border space-y-4">
+        <div className="p-4 border-t border-border space-y-4 bg-secondary/35">
           <div className="hidden lg:flex justify-end mb-2">
             <NotificationBell userEmail={user?.email} userRole={activeRole} />
           </div>
@@ -219,7 +219,7 @@ export default function AppShell({ children, navItems = [], user, fullBleed = fa
       </aside>
 
       {/* Mobile Top Bar */}
-      <div className="lg:hidden fixed top-0 left-0 right-0 z-50 h-14 bg-background border-b border-border flex items-center justify-between px-4">
+      <div className="lg:hidden fixed top-0 left-0 right-0 z-50 h-14 bg-card/95 backdrop-blur-xl border-b border-border flex items-center justify-between px-4">
         {(() => {
           if (title) return <span className="text-lg font-bold">{title}</span>;
           const currentNav = navItems.find(item => item.path === location.pathname);
@@ -235,7 +235,7 @@ export default function AppShell({ children, navItems = [], user, fullBleed = fa
       {profileOpen && <ProfilePanel user={user} onClose={() => setProfileOpen(false)} navItems={navItems} />}
 
       {/* Mobile Bottom Nav */}
-      <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-50 bg-background border-t border-border flex items-center justify-around px-2 py-2 pb-safe shadow-[0_-4px_10px_rgba(0,0,0,0.02)]">
+      <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-50 bg-card/95 backdrop-blur-xl border-t border-border flex items-center justify-around px-2 py-2 pb-safe shadow-[0_-12px_30px_hsl(222_47%_11%/0.08)]">
         {navItems.slice(0, 5).map(item => {
           const isActive = location.pathname === item.path;
           const badgeCount = getNavBadgeCount(item.path, unreadNotifs);
@@ -254,7 +254,7 @@ export default function AppShell({ children, navItems = [], user, fullBleed = fa
           return (
             <Link key={item.path} to={item.path} onClick={handleNavClick}
               className={`relative flex flex-col items-center gap-1 px-3 py-1.5 rounded-xl transition-all ${
-                isActive ? 'text-primary' : 'text-muted-foreground'
+                isActive ? 'text-primary font-semibold' : 'text-muted-foreground'
               }`}>
               <item.icon className="w-5 h-5" />
               {badgeCount > 0 && (
@@ -282,9 +282,9 @@ export default function AppShell({ children, navItems = [], user, fullBleed = fa
       </nav>
 
       {/* Main Content */}
-      <main className={`flex-1 min-w-0 lg:ml-64 ${fullBleed ? '' : 'overflow-x-hidden pt-14 lg:pt-0 pb-28 lg:pb-0'}`}>
+      <main className={`flex-1 min-w-0 lg:ml-72 ${fullBleed ? '' : 'overflow-x-hidden pt-14 lg:pt-0 pb-28 lg:pb-0'}`}>
         {fullBleed ? children : (
-          <div className="w-full min-w-0 px-4 py-4 lg:p-8 lg:max-w-7xl lg:mx-auto">
+          <div className="page-shell">
             {children}
           </div>
         )}
