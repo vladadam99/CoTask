@@ -88,13 +88,14 @@ export default function EnterpriseSettings() {
 
   return (
     <AppShell navItems={getNavItems(user?.selected_role || user?.role || 'user')} user={user}>
-      <div className="flex items-center justify-between mb-8">
+      <div className="surface-panel rounded-lg p-5 md:p-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-6">
         <div>
+          <p className="section-label">Enterprise account</p>
           <h1 className="text-2xl lg:text-3xl font-bold mb-1">Company Settings</h1>
-          <p className="text-muted-foreground text-sm">Update your enterprise profile</p>
+          <p className="text-muted-foreground text-sm">Update company profile, operations, service cities, and billing preferences.</p>
         </div>
         <Button onClick={handleSave} disabled={updateProfile.isPending || !profile} className="gap-2">
-          <Save className="w-4 h-4" /> {updateProfile.isPending ? 'Saving…' : 'Save Changes'}
+          <Save className="w-4 h-4" /> {updateProfile.isPending ? 'Saving???' : 'Save Changes'}
         </Button>
       </div>
 
@@ -103,7 +104,7 @@ export default function EnterpriseSettings() {
           <p className="text-muted-foreground text-sm">No enterprise profile found. Complete onboarding first.</p>
         </GlassCard>
       ) : (
-        <div className="space-y-6 max-w-2xl">
+        <div className="space-y-6 max-w-3xl">
           {/* Logo */}
           <GlassCard className="p-5">
             <h2 className="font-semibold text-sm mb-4">Company Logo</h2>
@@ -190,3 +191,4 @@ export default function EnterpriseSettings() {
     </AppShell>
   );
 }
+
