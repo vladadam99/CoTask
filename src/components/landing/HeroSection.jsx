@@ -23,7 +23,7 @@ export default function HeroSection() {
             <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}
               className="inline-flex items-center gap-2 mb-10 bg-secondary/60 border border-border rounded-full px-4 py-2">
               <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
-              <span className="text-xs font-medium text-white/70 tracking-wide uppercase">Live in 50+ cities worldwide</span>
+              <span className="text-xs font-medium text-white/70 tracking-wide uppercase">Remote physical tasks</span>
             </motion.div>
 
             {/* Headline */}
@@ -34,20 +34,20 @@ export default function HeroSection() {
             </h1>
 
             <p className="text-white/50 text-xl max-w-md leading-relaxed mb-12">
-              Book a verified local avatar to see, do, and act on your behalf — streamed live, from anywhere in the world.
+              Book a Local Agent to see, check, and act on your behalf with live video where available.
             </p>
 
             {/* CTAs */}
             <div className="flex flex-col sm:flex-row gap-4 mb-16">
               <Link to="/Explore">
                 <button className="group flex items-center justify-center gap-3 bg-white text-black font-bold text-base px-8 py-4 rounded-full hover:bg-white/90 transition-all duration-200 w-full sm:w-auto">
-                  Find an Avatar
+                  Discover Local Agents
                   <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                 </button>
               </Link>
               <Link to="/Onboarding?role=avatar">
                 <button className="flex items-center justify-center gap-3 border border-border text-white font-semibold text-base px-8 py-4 rounded-full hover:border-border0 hover:bg-secondary/60 transition-all duration-200 w-full sm:w-auto">
-                  Become an Avatar
+                  Become a Local Agent
                 </button>
               </Link>
             </div>
@@ -55,18 +55,18 @@ export default function HeroSection() {
             {/* Social proof */}
             <div className="flex items-center gap-8">
               <div>
-                <div className="text-3xl font-black text-white">10K+</div>
-                <div className="text-xs text-white/40 mt-1 uppercase tracking-widest">Active Avatars</div>
+                <div className="text-3xl font-black text-white">Live</div>
+                <div className="text-xs text-white/40 mt-1 uppercase tracking-widest">Video proof</div>
               </div>
               <div className="w-px h-10 bg-secondary" />
               <div>
-                <div className="text-3xl font-black text-white">4.9</div>
-                <div className="text-xs text-white/40 mt-1 uppercase tracking-widest">Avg Rating</div>
+                <div className="text-3xl font-black text-white">Safe</div>
+                <div className="text-xs text-white/40 mt-1 uppercase tracking-widest">Secure Payment</div>
               </div>
               <div className="w-px h-10 bg-secondary" />
               <div>
-                <div className="text-3xl font-black text-white">50+</div>
-                <div className="text-xs text-white/40 mt-1 uppercase tracking-widest">Cities</div>
+                <div className="text-3xl font-black text-white">Proof</div>
+                <div className="text-xs text-white/40 mt-1 uppercase tracking-widest">Task review</div>
               </div>
             </div>
           </motion.div>
@@ -97,7 +97,7 @@ export default function HeroSection() {
                   </div>
                   <div className="ml-auto flex items-center gap-1 bg-black/40 rounded-full px-3 py-1">
                     <Star className="w-3 h-3 fill-yellow-400 text-yellow-400" />
-                    <span className="text-white text-sm font-semibold">4.9</span>
+                    <span className="text-white text-sm font-semibold">Reviewed</span>
                   </div>
                 </div>
               </div>
@@ -106,7 +106,7 @@ export default function HeroSection() {
               <div className="px-6 py-5 flex items-center justify-between">
                 <div>
                   <p className="text-white font-semibold">City Guide Session</p>
-                  <p className="text-white/40 text-sm">312 sessions · Verified</p>
+                  <p className="text-white/40 text-sm">Live session - profile trust</p>
                 </div>
                 <div className="text-right">
                   <p className="text-white font-bold text-lg">$35<span className="text-white/40 text-sm font-normal">/hr</span></p>
@@ -122,7 +122,7 @@ export default function HeroSection() {
                   <div className="w-8 h-8 rounded-full bg-green-500/20 flex items-center justify-center">
                     <span className="text-green-400 text-sm font-bold">✓</span>
                   </div>
-                  <p className="text-white/60 text-xs">Job completed</p>
+                  <p className="text-white/60 text-xs">Task completed</p>
                 </div>
                 <p className="text-white font-black text-2xl">+$45</p>
                 <p className="text-white/30 text-xs mt-1">Property tour · NYC</p>
@@ -134,8 +134,8 @@ export default function HeroSection() {
                   <Zap className="w-4 h-4 text-primary" />
                   <p className="text-white/60 text-xs">Instant match</p>
                 </div>
-                <p className="text-white font-bold text-sm">Avatar nearby</p>
-                <p className="text-primary text-xs mt-1">Starting in 3 min →</p>
+                <p className="text-white font-bold text-sm">Local Agent nearby</p>
+                <p className="text-primary text-xs mt-1">Starting soon</p>
               </motion.div>
             </div>
           </motion.div>
