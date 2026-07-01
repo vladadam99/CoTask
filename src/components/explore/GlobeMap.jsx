@@ -403,7 +403,7 @@ export default function GlobeMap({ avatars = [], focusCity = '', mode = 'explore
       <div className="absolute top-4 left-4 glass rounded-lg px-3 py-2 text-xs text-muted-foreground">
         <div className="flex items-center gap-2 mb-1">
           <span className="w-2 h-2 rounded-full bg-red-500 inline-block" />
-          {mode === 'avatar' ? 'Job location' : 'Avatar location'}
+          {mode === 'avatar' ? 'Task location' : 'Local Agent location'}
         </div>
         <div className="text-muted-foreground/60">Drag · Scroll to zoom · Click marker</div>
       </div>
@@ -411,7 +411,7 @@ export default function GlobeMap({ avatars = [], focusCity = '', mode = 'explore
       {/* Sidebar list */}
       <div className="absolute top-4 right-4 glass rounded-lg p-3 max-h-72 overflow-y-auto w-52">
         <p className="text-xs font-semibold text-muted-foreground mb-2 uppercase tracking-wide">
-          {focusCity ? `Results near "${focusCity}"` : (mode === 'avatar' ? 'Jobs on map' : 'Avatars on map')}
+          {focusCity ? `Results near "${focusCity}"` : (mode === 'avatar' ? 'Tasks on map' : 'Local Agents on map')}
         </p>
         {displayAvatars.length === 0 ? (
           <p className="text-xs text-muted-foreground italic">None found in this area</p>
@@ -451,7 +451,7 @@ export default function GlobeMap({ avatars = [], focusCity = '', mode = 'explore
                   </span>
                 )}
               </div>
-              <p className="text-xs text-muted-foreground mt-1 line-clamp-2">{selectedAvatar.bio || 'Available for bookings'}</p>
+              <p className="text-xs text-muted-foreground mt-1 line-clamp-2">{selectedAvatar.bio || 'Available for tasks'}</p>
               <div className="flex items-center justify-between mt-2">
                 <span className="text-sm font-semibold text-primary">${selectedAvatar.hourly_rate || 30}/hr</span>
                 <Link to={`/AvatarView?id=${selectedAvatar.id}`}
