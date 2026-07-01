@@ -46,7 +46,7 @@ export default function UseCases() {
           <motion.div key={tab} initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }} transition={{ duration: 0.25 }}
             className="grid md:grid-cols-3 gap-5">
             {cases[tab].map((item, i) => (
-              <div key={item.title} className="group rounded-3xl border border-white/8 bg-white/3 hover:bg-white/6 hover:border-white/15 transition-all duration-300 p-8">
+              <div key={item.title} className="group rounded-lg border border-border bg-card hover:bg-secondary/60 hover:border-primary/30 transition-all duration-300 p-6 md:p-8">
                 <div className="flex items-start justify-between mb-8">
                   <div className="w-12 h-12 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
                     <item.icon className="w-5 h-5 text-primary" />
