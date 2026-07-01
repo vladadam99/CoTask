@@ -16,6 +16,8 @@ const buttonVariants = cva(
         ghost: "text-muted-foreground hover:bg-secondary hover:text-foreground",
         link: "text-primary underline-offset-4 hover:underline shadow-none",
         subtle: "bg-primary/10 text-primary hover:bg-primary/20 border border-primary/15",
+        payment: "bg-slate-950 text-white shadow-[0_10px_24px_hsl(222_47%_11%/0.18)] hover:bg-slate-800",
+        live: "bg-red-600 text-white shadow-[0_10px_24px_hsl(0_72%_50%/0.2)] hover:bg-red-700",
       },
       size: {
         default: "h-10 px-4 py-2",
