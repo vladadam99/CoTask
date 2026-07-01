@@ -3,10 +3,10 @@ import { base44 } from '@/api/base44Client';
 import { Car, MapPin, Hammer, Flag, Clock } from 'lucide-react';
 
 const STATUS_CONFIG = {
-  on_the_way:  { label: 'On The Way',  icon: Car,    color: 'text-blue-400',   bg: 'bg-blue-500/10 border-blue-500/20',   emoji: '🚗' },
-  arrived:     { label: 'Arrived',     icon: MapPin,  color: 'text-green-400',  bg: 'bg-green-500/10 border-green-500/20',  emoji: '📍' },
-  working:     { label: 'Working',     icon: Hammer,  color: 'text-yellow-400', bg: 'bg-yellow-500/10 border-yellow-500/20', emoji: '🔨' },
-  wrapping_up: { label: 'Wrapping Up', icon: Flag,    color: 'text-orange-400', bg: 'bg-orange-500/10 border-orange-500/20', emoji: '🏁' },
+  on_the_way:  { label: 'on the way',  icon: Car,    color: 'text-blue-700',   bg: 'bg-blue-50 border-blue-200' },
+  arrived:     { label: 'arrived',     icon: MapPin,  color: 'text-green-700',  bg: 'bg-green-50 border-green-200' },
+  working:     { label: 'working',     icon: Hammer,  color: 'text-amber-700', bg: 'bg-amber-50 border-amber-200' },
+  wrapping_up: { label: 'wrapping up', icon: Flag,    color: 'text-orange-700', bg: 'bg-orange-50 border-orange-200' },
 };
 
 function useElapsed(startIso) {
@@ -53,8 +53,13 @@ export default function JobStatusBanner({ job, onJobUpdated }) {
       <div className="flex items-center gap-3">
         <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse flex-shrink-0" />
         <div>
-          <p className={`text-sm font-semibold ${cfg ? cfg.color : 'text-green-400'}`}>
-            {cfg ? `${cfg.emoji} Avatar is ${cfg.label}` : '🟢 Job is in progress'}
+          <p className={`text-sm font-semibold ${cfg ? cfg.color : 'text-green-700'}`}>
+            {cfg ? (
+              <span className="inline-flex items-center gap-1.5">
+                {Icon && <Icon className="h-3.5 w-3.5" />}
+                Local Agent is {cfg.label}
+              </span>
+            ) : 'Task is in progress'}
           </p>
           {job.arrival_status_updated_at && (
             <p className="text-xs text-muted-foreground mt-0.5">
