@@ -84,7 +84,7 @@ export default function AvatarLive() {
             </Button>
           </Link>
           <Link to="/LiveStreamStudio">
-            <Button className="gap-2 glow-primary-sm">
+            <Button className="gap-2">
               <Clapperboard className="w-4 h-4" /> Launch Studio
             </Button>
           </Link>
@@ -93,13 +93,13 @@ export default function AvatarLive() {
 
       {/* Active Session */}
       {liveSession ? (
-        <GlassCard className="p-6 mb-8 border border-red-500/30 glow-primary">
+        <GlassCard className="p-6 mb-8 border border-red-200 bg-red-50">
           <div className="flex items-center gap-3 mb-4">
             <span className="w-3 h-3 bg-red-500 rounded-full animate-pulse" />
             <span className="text-red-400 font-semibold text-sm uppercase tracking-wide">Live Now</span>
           </div>
           <h2 className="text-xl font-bold mb-1">{liveSession.title}</h2>
-          <p className="text-muted-foreground text-sm mb-4">With {liveSession.client_name}</p>
+          <p className="text-muted-foreground text-sm mb-4">Client: {liveSession.client_name}</p>
           <Button
             variant="destructive"
             onClick={() => endSession.mutate(liveSession)}
@@ -125,7 +125,7 @@ export default function AvatarLive() {
               <GlassCard key={b.id} className="p-4 flex items-center justify-between gap-4">
                 <div>
                   <p className="font-medium text-sm">{b.category}</p>
-                  <p className="text-xs text-muted-foreground mt-1">{b.client_name} · {b.scheduled_date || 'Immediate'}</p>
+                  <p className="text-xs text-muted-foreground mt-1">{b.client_name} - {b.scheduled_date || 'Immediate'}</p>
                 </div>
                 <div className="flex items-center gap-2">
                   <span className="text-primary font-semibold text-sm">${b.total_amount || b.amount || 0}</span>
@@ -135,7 +135,7 @@ export default function AvatarLive() {
                     onClick={() => startSession.mutate(b)}
                     disabled={startSession.isPending || !!liveSession}
                   >
-                    <Play className="w-3 h-3" /> Start
+                    <Play className="w-3 h-3" /> Start Live Session
                   </Button>
                 </div>
               </GlassCard>
