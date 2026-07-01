@@ -46,8 +46,8 @@ export default function AvatarMap({ avatars }) {
 
   if (avatarsWithCoords.length === 0) {
     return (
-      <div className="glass rounded-xl h-96 flex items-center justify-center">
-        <p className="text-muted-foreground text-sm">No avatars with known city locations to display on map.</p>
+      <div className="surface-panel rounded-lg h-96 flex items-center justify-center">
+        <p className="text-muted-foreground text-sm">No Local Agents with known city locations to display on map.</p>
       </div>
     );
   }
