@@ -6,10 +6,11 @@ import { useQuery } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { useCurrentUser } from '@/lib/useCurrentUser';
 import GlassCard from '@/components/ui/GlassCard';
+import { EmptyState, PageHero } from '@/components/ui/PagePrimitives';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { ArrowLeft, Video, Clock, Calendar, Shield, Star, MapPin, Loader2, CheckCircle2 } from 'lucide-react';
+import { ArrowLeft, Video, Clock, Calendar, Shield, Star, MapPin, Loader2, CheckCircle2, Search } from 'lucide-react';
 
 const DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 
@@ -135,28 +136,21 @@ export default function ConsultationBooking() {
 
   if (!avatarId && !offeringId) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center p-4">
-        <GlassCard className="p-8 max-w-md w-full text-center space-y-5">
-          <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-2">
-            <span className="text-primary text-2xl">🔍</span>
-          </div>
-          <h2 className="text-xl font-bold">Choose a Local Agent first</h2>
-          <p className="text-sm text-muted-foreground">
-            Consultations must be connected to a specific expert. Go back to Discover and choose who you want to consult.
-          </p>
-          <div className="flex flex-col gap-3 pt-2">
-            <Button className="w-full" onClick={() => navigate('/FindPeople')}>
-              Discover Experts
-            </Button>
-            <Button variant="outline" className="w-full border-border" onClick={() => navigate('/PostJob')}>
-              Post an Open Task
-            </Button>
-          </div>
-        </GlassCard>
-      </div>
+      <AppShell navItems={getNavItems(user?.selected_role || user?.role || 'user')} user={user}>
+        <EmptyState
+          icon={Search}
+          title="Choose a Local Agent first"
+          description="Consultations must be connected to a specific expert. Choose who you want to consult, or post an open task for proposals."
+          action={(
+            <div className="flex flex-col gap-3 sm:flex-row">
+              <Button onClick={() => navigate('/FindPeople')}>Discover Experts</Button>
+              <Button variant="outline" className="border-border" onClick={() => navigate('/PostJob')}>Post an Open Task</Button>
+            </div>
+          )}
+        />
+      </AppShell>
     );
   }
-
   if (step === 'done') {
     return (
       <div className="min-h-screen flex items-center justify-center px-4">
@@ -165,7 +159,7 @@ export default function ConsultationBooking() {
             <CheckCircle2 className="w-10 h-10 text-green-400" />
           </div>
           <div>
-            <h1 className="text-2xl font-black mb-2">Request Sent! 🎉</h1>
+            <h1 className="text-2xl font-black mb-2">Request Sent! ????</h1>
             <p className="text-muted-foreground text-sm">
               Your consultation request for <strong>{selectedDate}</strong> at <strong>{selectedTime}</strong> has been sent.
               The expert will confirm or decline shortly.
@@ -198,15 +192,22 @@ export default function ConsultationBooking() {
 
   return (
     <AppShell navItems={getNavItems(user?.selected_role || user?.role || 'user')} user={user}>
-      <div className="pb-12 px-4 min-h-[calc(100vh-64px)]">
-      <div className="max-w-xl mx-auto pt-8">
-        <button onClick={() => navigate(-1)} className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground mb-6">
-          <ArrowLeft className="w-4 h-4" /> Back
-        </button>
+      <div className="mx-auto max-w-5xl space-y-6 pb-12">
+        <PageHero
+          eyebrow="Expert session"
+          title="Book a consultation"
+          description="Choose a time, add context, and send the expert a clear session request. Secure Payment is requested after acceptance."
+          icon={Video}
+          actions={(
+            <Button variant="secondary" onClick={() => navigate(-1)}>
+              <ArrowLeft className="mr-2 h-4 w-4" /> Back
+            </Button>
+          )}
+        />
 
         {/* Offering Header */}
         {offering && avatar && (
-          <GlassCard className="p-5 mb-6">
+          <GlassCard className="p-5">
             <div className="flex items-start gap-4">
               <div className="w-14 h-14 rounded-full bg-primary/20 flex items-center justify-center text-xl font-black text-primary overflow-hidden flex-shrink-0">
                 {avatar.photo_url
@@ -240,7 +241,7 @@ export default function ConsultationBooking() {
           </GlassCard>
         )}
 
-        <div className="space-y-5">
+        <div className="mx-auto max-w-3xl space-y-5">
           {/* Date Picker */}
           <GlassCard className="p-5 space-y-3">
             <div className="flex items-center gap-2">
@@ -282,7 +283,7 @@ export default function ConsultationBooking() {
                 <div className="space-y-2">
                   <p className="text-xs text-muted-foreground">
                     {officeHours.length === 0
-                      ? 'No office hours set — pick any time and the expert will confirm.'
+                      ? 'No office hours set ??? pick any time and the expert will confirm.'
                       : `No expert hours on ${todayDay}. Pick another day or enter a time below.`}
                   </p>
                   <Input
@@ -314,7 +315,7 @@ export default function ConsultationBooking() {
             {[
               { icon: Video, text: 'Private video call link auto-generated at booking time' },
               { icon: Clock, text: `${offering?.duration_minutes || 60} minute live session` },
-              { icon: Shield, text: 'Payment held securely — released after session' },
+              { icon: Shield, text: 'Payment held securely ??? released after session' },
             ].map(({ icon: Icon, text }) => (
               <div key={text} className="flex items-center gap-2.5 text-sm text-muted-foreground">
                 <Icon className="w-4 h-4 text-primary flex-shrink-0" />
@@ -360,7 +361,7 @@ export default function ConsultationBooking() {
           </p>
         </div>
       </div>
-    </div>
     </AppShell>
   );
 }
+
