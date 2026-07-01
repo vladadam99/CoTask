@@ -33,7 +33,7 @@ export default function TermsBanner() {
           transition={{ type: 'spring', stiffness: 300, damping: 30 }}
           className="fixed bottom-20 lg:bottom-4 left-4 right-4 z-[100] max-w-xl lg:left-auto lg:right-6 mx-auto lg:mx-0"
         >
-          <div className="glass-strong rounded-2xl border border-white/10 px-5 py-4 flex items-start gap-4 shadow-2xl">
+          <div className="glass-strong rounded-2xl border border-border px-5 py-4 flex items-start gap-4 shadow-2xl">
             <div className="flex-1 min-w-0">
               <p className="text-sm text-foreground font-medium mb-0.5">We use cookies & you agree to our terms</p>
               <p className="text-xs text-muted-foreground leading-relaxed">
@@ -53,7 +53,7 @@ export default function TermsBanner() {
               </button>
               <button
                 onClick={accept}
-                className="p-1.5 hover:bg-white/5 rounded-lg transition-colors text-muted-foreground"
+                className="p-1.5 hover:bg-secondary/60 rounded-lg transition-colors text-muted-foreground"
               >
                 <X className="w-3.5 h-3.5" />
               </button>

@@ -48,7 +48,7 @@ export default function JobReviewForm({ job, user, reviewerType, onDone }) {
   }
 
   return (
-    <div className="space-y-3 pt-3 border-t border-white/5">
+    <div className="space-y-3 pt-3 border-t border-border">
       <p className="text-sm font-medium">{label}</p>
       <div className="flex gap-1">
         {[1, 2, 3, 4, 5].map(s => (
@@ -62,7 +62,7 @@ export default function JobReviewForm({ job, user, reviewerType, onDone }) {
         onChange={e => setComment(e.target.value)}
         rows={2}
         placeholder={`Leave a comment about ${reviewedName}…`}
-        className="w-full text-sm bg-muted/50 border border-white/5 rounded-xl px-3 py-2 focus:outline-none focus:border-primary/40 text-foreground placeholder:text-muted-foreground resize-none"
+        className="w-full text-sm bg-card border border-border rounded-xl px-3 py-2 focus:outline-none focus:border-primary/40 text-foreground placeholder:text-muted-foreground resize-none"
       />
       <Button size="sm" onClick={submit} disabled={!rating || loading} className="gap-2">
         {loading ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Star className="w-3.5 h-3.5" />}

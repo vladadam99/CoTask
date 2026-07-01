@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 import { ArrowLeft, Calendar, Clock, MapPin, Wifi, Truck, Wrench, CreditCard, Loader2, CheckCircle } from 'lucide-react';
 
 const Row = ({ label, value, icon: IconComp }) => (
-  <div className="flex items-start gap-3 py-3 border-b border-white/5 last:border-0">
+  <div className="flex items-start gap-3 py-3 border-b border-border last:border-0">
     {IconComp && <IconComp className="w-4 h-4 text-muted-foreground mt-0.5 shrink-0" />}
     <div className="flex-1 min-w-0">
       <p className="text-xs text-muted-foreground mb-0.5">{label}</p>
@@ -32,7 +32,7 @@ export default function ReviewBookingPanel({ form, avatar, amount, livePremium, 
           <Button className="w-full" asChild>
             <Link to="/FindPeople">Discover Local Agents</Link>
           </Button>
-          <Button variant="outline" className="w-full border-white/10" asChild>
+          <Button variant="outline" className="w-full border-border" asChild>
             <Link to="/PostJob">Post an Open Task</Link>
           </Button>
         </div>
@@ -43,7 +43,7 @@ export default function ReviewBookingPanel({ form, avatar, amount, livePremium, 
   return (
     <div className="space-y-4">
       <div className="flex items-center gap-3 mb-6">
-        <button onClick={onBack} className="p-2 rounded-lg hover:bg-white/5 transition-colors">
+        <button onClick={onBack} className="p-2 rounded-lg hover:bg-secondary/60 transition-colors">
           <ArrowLeft className="w-4 h-4" />
         </button>
         <div>
@@ -56,7 +56,7 @@ export default function ReviewBookingPanel({ form, avatar, amount, livePremium, 
       <GlassCard className="p-5">
         <div className="flex items-center gap-3">
           {avatar?.photo_url ? (
-            <img src={avatar.photo_url} className="w-12 h-12 rounded-full object-cover border border-white/10" alt={avatar.display_name} />
+            <img src={avatar.photo_url} className="w-12 h-12 rounded-full object-cover border border-border" alt={avatar.display_name} />
           ) : (
             <div className="w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center text-primary font-bold text-lg">
               {avatar?.display_name?.[0] || 'A'}
@@ -119,7 +119,7 @@ export default function ReviewBookingPanel({ form, avatar, amount, livePremium, 
           <h3 className="font-semibold text-sm mb-3 text-muted-foreground uppercase tracking-wider flex items-center gap-2"><Wrench className="w-3.5 h-3.5" /> Equipment / Tools</h3>
           <div className="flex flex-wrap gap-2">
             {form.equipment_needed.map((eq, i) => (
-              <span key={i} className="bg-white/5 border border-white/10 text-sm px-3 py-1 rounded-full">{eq}</span>
+              <span key={i} className="bg-secondary/60 border border-border text-sm px-3 py-1 rounded-full">{eq}</span>
             ))}
           </div>
         </GlassCard>
@@ -140,7 +140,7 @@ export default function ReviewBookingPanel({ form, avatar, amount, livePremium, 
           <div className="flex justify-between"><span className="text-muted-foreground">Service ({form.duration_minutes} min × ${rate}/hr)</span><span>${(amount - livePremium).toFixed(2)}</span></div>
           {livePremium > 0 && <div className="flex justify-between"><span className="text-muted-foreground">Live camera premium</span><span className="text-primary">+${livePremium.toFixed(2)}</span></div>}
           <div className="flex justify-between"><span className="text-muted-foreground">Platform fee (15%)</span><span>${serviceFee.toFixed(2)}</span></div>
-          <div className="border-t border-white/5 pt-2 flex justify-between font-bold text-base">
+          <div className="border-t border-border pt-2 flex justify-between font-bold text-base">
             <span>Total</span>
             <span className="text-primary">${total.toFixed(2)}</span>
           </div>

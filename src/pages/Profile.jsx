@@ -56,7 +56,7 @@ function downloadInvoice(job, userEmail, userName) {
 const EarningsTooltip = ({ active, payload, label }) => {
   if (!active || !payload?.length) return null;
   return (
-    <div className="glass border border-white/10 rounded-lg px-3 py-2 text-xs">
+    <div className="glass border border-border rounded-lg px-3 py-2 text-xs">
       <p className="text-muted-foreground mb-1">{label}</p>
       <p className="text-primary font-semibold">${payload[0].value.toFixed(2)}</p>
     </div>
@@ -182,31 +182,31 @@ export default function Profile() {
       <div className="max-w-2xl mx-auto -mt-4 -mx-4 lg:mx-auto lg:mt-0">
 
         {/* Top bar */}
-        <div className="flex items-center justify-between px-4 py-3 sticky top-14 z-20 bg-background/80 backdrop-blur-sm border-b border-white/5">
+        <div className="flex items-center justify-between px-4 py-3 sticky top-14 z-20 bg-background/80 backdrop-blur-sm border-b border-border">
           <div className="flex items-center gap-3">
-            <button onClick={() => navigate(dashPath)} className="p-1.5 rounded-lg hover:bg-white/10">
+            <button onClick={() => navigate(dashPath)} className="p-1.5 rounded-lg hover:bg-secondary">
               <ArrowLeft className="w-5 h-5" />
             </button>
             <span className="font-bold text-base">{user?.display_name || user?.full_name || 'Profile'}</span>
           </div>
           <div className="relative">
-            <button onClick={() => setMenuOpen(v => !v)} className="p-2 rounded-lg hover:bg-white/10">
+            <button onClick={() => setMenuOpen(v => !v)} className="p-2 rounded-lg hover:bg-secondary">
               <MoreVertical className="w-5 h-5" />
             </button>
             {menuOpen && (
               <>
                 <div className="fixed inset-0 z-10" onClick={() => setMenuOpen(false)} />
-                <div className="absolute right-0 top-10 z-20 w-48 bg-card border border-white/10 rounded-xl shadow-xl overflow-hidden">
+                <div className="absolute right-0 top-10 z-20 w-48 bg-card border border-border rounded-xl shadow-xl overflow-hidden">
                   <Link to={editPath} onClick={() => setMenuOpen(false)}
-                    className="flex items-center gap-3 px-4 py-3 text-sm hover:bg-white/5 transition-colors">
+                    className="flex items-center gap-3 px-4 py-3 text-sm hover:bg-secondary/60 transition-colors">
                     <Pencil className="w-4 h-4 text-muted-foreground" /> Edit Profile
                   </Link>
                   <button onClick={() => { fileInputRef.current?.click(); setMenuOpen(false); }}
-                    className="w-full flex items-center gap-3 px-4 py-3 text-sm hover:bg-white/5 transition-colors">
+                    className="w-full flex items-center gap-3 px-4 py-3 text-sm hover:bg-secondary/60 transition-colors">
                     <Upload className="w-4 h-4 text-muted-foreground" /> Change Photo
                   </button>
                   <button onClick={() => { coverInputRef.current?.click(); setMenuOpen(false); }}
-                    className="w-full flex items-center gap-3 px-4 py-3 text-sm hover:bg-white/5 transition-colors">
+                    className="w-full flex items-center gap-3 px-4 py-3 text-sm hover:bg-secondary/60 transition-colors">
                     <Upload className="w-4 h-4 text-muted-foreground" /> Change Cover
                   </button>
                 </div>
@@ -241,7 +241,7 @@ export default function Profile() {
         </div>
 
         {/* Name / role */}
-        <div className="pt-14 px-4 pb-4 border-b border-white/5">
+        <div className="pt-14 px-4 pb-4 border-b border-border">
           <h1 className="text-xl font-bold">{user?.display_name || user?.full_name || 'User'}</h1>
           <div className="flex items-center gap-2 mt-1 flex-wrap">
             <Badge className="bg-primary/10 text-primary border-primary/20 capitalize text-xs">
@@ -261,7 +261,7 @@ export default function Profile() {
         </div>
 
         {/* Tabs */}
-        <div className="flex border-b border-white/5 sticky top-[calc(3.5rem+56px)] z-10 bg-background/90 backdrop-blur-sm">
+        <div className="flex border-b border-border sticky top-[calc(3.5rem+56px)] z-10 bg-background/90 backdrop-blur-sm">
           {TABS.map(tab => (
             <button key={tab} onClick={() => setActiveTab(tab)}
               className={`flex-1 py-3 text-sm font-medium transition-colors relative ${
@@ -294,7 +294,7 @@ export default function Profile() {
                   <p className="text-sm text-muted-foreground font-medium mb-2">{jobPosts.length} Jobs</p>
                   {jobPosts.map(job => (
                     <Link key={job.id} to={`/JobDetail?id=${job.id}`}>
-                      <div className="bg-card border border-white/5 rounded-2xl p-4 hover:border-primary/20 transition-colors mb-3">
+                      <div className="bg-card border border-border rounded-2xl p-4 hover:border-primary/20 transition-colors mb-3">
                         <div className="flex items-start justify-between gap-2 mb-2">
                           <h3 className="font-semibold text-sm leading-tight flex-1">{job.title}</h3>
                           <span className={`text-xs px-2 py-0.5 rounded-full flex-shrink-0 ${
@@ -334,7 +334,7 @@ export default function Profile() {
               ) : (
                 <>
                   {/* Summary */}
-                  <div className="text-center py-6 border-b border-white/5 mb-4">
+                  <div className="text-center py-6 border-b border-border mb-4">
                     <p className="text-6xl font-bold">{avgRating}</p>
                     <div className="flex items-center justify-center gap-0.5 my-2">
                       {[1,2,3,4,5].map(s => (
@@ -347,7 +347,7 @@ export default function Profile() {
                   {/* Individual reviews */}
                   <div className="space-y-4">
                     {reviews.map(review => (
-                      <div key={review.id} className="border-b border-white/5 pb-4">
+                      <div key={review.id} className="border-b border-border pb-4">
                         <div className="flex items-start gap-3">
                           <div className="w-9 h-9 rounded-full bg-primary/20 flex items-center justify-center text-sm font-bold text-primary flex-shrink-0">
                             {review.reviewer_name?.[0] || 'R'}
@@ -381,7 +381,7 @@ export default function Profile() {
               {/* Withdraw Modal */}
               {showWithdraw && (
                 <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-                  <div className="glass-strong border border-white/10 rounded-2xl p-6 w-full max-w-sm">
+                  <div className="glass-strong border border-border rounded-2xl p-6 w-full max-w-sm">
                     <div className="flex items-center justify-between mb-4">
                       <h2 className="text-lg font-bold">Withdraw Funds</h2>
                       <button onClick={() => { setShowWithdraw(false); setWithdrawDone(false); }} className="text-muted-foreground hover:text-foreground"><X className="w-5 h-5" /></button>
@@ -397,9 +397,9 @@ export default function Profile() {
                       <>
                         <p className="text-sm text-muted-foreground mb-4">Available: <span className="text-green-400 font-bold">${walletStats.totalNet.toFixed(2)}</span></p>
                         <label className="text-xs text-muted-foreground mb-1 block">Amount (USD)</label>
-                        <input type="number" value={withdrawAmount} onChange={e => setWithdrawAmount(e.target.value)} placeholder="0.00" className="w-full bg-muted/50 border border-white/10 rounded-xl px-3 py-2 text-sm mb-3 outline-none" />
+                        <input type="number" value={withdrawAmount} onChange={e => setWithdrawAmount(e.target.value)} placeholder="0.00" className="w-full bg-card border border-border rounded-xl px-3 py-2 text-sm mb-3 outline-none" />
                         <label className="text-xs text-muted-foreground mb-1 block">Payout Method</label>
-                        <select value={withdrawMethod} onChange={e => setWithdrawMethod(e.target.value)} className="w-full bg-muted/50 border border-white/10 rounded-xl px-3 py-2 text-sm mb-4 outline-none">
+                        <select value={withdrawMethod} onChange={e => setWithdrawMethod(e.target.value)} className="w-full bg-card border border-border rounded-xl px-3 py-2 text-sm mb-4 outline-none">
                           <option value="bank_transfer">Bank Transfer</option>
                           <option value="paypal">PayPal</option>
                           <option value="wise">Wise</option>
@@ -517,7 +517,7 @@ export default function Profile() {
             <div>
               {/* Large profile photo */}
               <div className="flex justify-center mb-6">
-                <div className="w-40 h-40 rounded-full border-4 border-white/10 bg-primary/20 flex items-center justify-center text-5xl font-bold text-primary overflow-hidden">
+                <div className="w-40 h-40 rounded-full border-4 border-border bg-primary/20 flex items-center justify-center text-5xl font-bold text-primary overflow-hidden">
                   {profilePicUrl
                     ? <img src={profilePicUrl} alt="Profile" className="w-full h-full object-cover" />
                     : (user?.full_name?.[0] || 'U')}
@@ -552,7 +552,7 @@ export default function Profile() {
                     <p className="text-muted-foreground text-xs mb-1.5">Languages</p>
                     <div className="flex flex-wrap gap-1.5">
                       {avatarProfile.languages.map(l => (
-                        <span key={l} className="px-2.5 py-1 rounded-full bg-white/5 border border-white/10 text-xs">{l}</span>
+                        <span key={l} className="px-2.5 py-1 rounded-full bg-secondary/60 border border-border text-xs">{l}</span>
                       ))}
                     </div>
                   </div>
@@ -572,7 +572,7 @@ export default function Profile() {
                     <p className="text-muted-foreground text-xs mb-1.5">Services</p>
                     <div className="flex flex-wrap gap-1.5">
                       {avatarProfile.categories.map(c => (
-                        <span key={c} className="px-2.5 py-1 rounded-full bg-white/5 border border-white/10 text-xs">{c}</span>
+                        <span key={c} className="px-2.5 py-1 rounded-full bg-secondary/60 border border-border text-xs">{c}</span>
                       ))}
                     </div>
                   </div>
@@ -586,7 +586,7 @@ export default function Profile() {
               </div>
 
               <Link to={editPath}>
-                <Button variant="outline" className="w-full mt-6 border-white/10">
+                <Button variant="outline" className="w-full mt-6 border-border">
                   <Pencil className="w-4 h-4 mr-2" /> Edit Profile
                 </Button>
               </Link>

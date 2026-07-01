@@ -20,14 +20,14 @@ const STEPS = ['What You Need', 'Your Details', 'Identity Verification'];
 
 const Chip = ({ label, active, onClick }) => (
   <button type="button" onClick={onClick}
-    className={`px-3 py-1.5 rounded-lg text-sm transition-all ${active ? 'bg-primary text-primary-foreground' : 'bg-muted/50 text-muted-foreground hover:bg-muted'}`}>
+    className={`px-3 py-1.5 rounded-lg text-sm transition-all ${active ? 'bg-primary text-primary-foreground' : 'bg-card text-muted-foreground hover:bg-muted'}`}>
     {label}
   </button>
 );
 
 const OptionCard = ({ label, description, selected, onClick }) => (
   <button type="button" onClick={onClick}
-    className={`p-4 rounded-xl border text-left transition-all w-full ${selected ? 'bg-primary/10 border-primary/40 text-primary' : 'bg-muted/30 border-white/5 hover:bg-muted/50 text-foreground'}`}>
+    className={`p-4 rounded-xl border text-left transition-all w-full ${selected ? 'bg-primary/10 border-primary/40 text-primary' : 'bg-card border-border hover:bg-card text-foreground'}`}>
     <p className="text-sm font-semibold">{label}</p>
     {description && <p className={`text-xs mt-0.5 ${selected ? 'text-primary/70' : 'text-muted-foreground'}`}>{description}</p>}
   </button>
@@ -125,12 +125,12 @@ export default function UserOnboarding({ user, onComplete, submitting }) {
                 <div>
                   <label className="text-sm font-medium mb-1.5 block">Full Legal Name <span className="text-primary">*</span></label>
                   <Input value={data.legal_name} onChange={e => update('legal_name', e.target.value)}
-                    placeholder="As it appears on your ID" className="bg-muted/50 border-white/5" />
+                    placeholder="As it appears on your ID" className="bg-card border-border" />
                 </div>
                 <div>
                   <label className="text-sm font-medium mb-1.5 block">Date of Birth <span className="text-primary">*</span></label>
                   <Input type="date" value={data.date_of_birth} onChange={e => update('date_of_birth', e.target.value)}
-                    className="bg-muted/50 border-white/5" />
+                    className="bg-card border-border" />
                 </div>
                 {(!data.legal_name.trim() || !data.date_of_birth) && (
                   <p className="text-xs text-yellow-400">Legal name and date of birth are required to continue.</p>
@@ -150,8 +150,8 @@ export default function UserOnboarding({ user, onComplete, submitting }) {
                   <div className="flex gap-2 mt-3">
                     <Input value={customInterest} onChange={e => setCustomInterest(e.target.value)}
                       onKeyDown={e => e.key === 'Enter' && addCustomInterest()}
-                      placeholder="Add something specific..." className="bg-muted/50 border-white/5 text-sm flex-1" />
-                    <Button type="button" variant="outline" onClick={addCustomInterest} className="border-white/10 shrink-0">
+                      placeholder="Add something specific..." className="bg-card border-border text-sm flex-1" />
+                    <Button type="button" variant="outline" onClick={addCustomInterest} className="border-border shrink-0">
                       <Plus className="w-4 h-4" />
                     </Button>
                   </div>
@@ -175,7 +175,7 @@ export default function UserOnboarding({ user, onComplete, submitting }) {
                       onChange={e => { setPostcodeInput(e.target.value); setPostcodeSearched(false); update('full_address', ''); }}
                       onKeyDown={e => e.key === 'Enter' && lookupPostcode()}
                       placeholder="e.g. SW1A 1AA"
-                      className="bg-muted/50 border-white/5 uppercase flex-1"
+                      className="bg-card border-border uppercase flex-1"
                     />
                     <Button type="button" onClick={lookupPostcode} disabled={postcodeLoading || !postcodeInput.trim()} className="bg-primary hover:bg-primary/90 shrink-0">
                       {postcodeLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Search className="w-4 h-4" />}
@@ -191,7 +191,7 @@ export default function UserOnboarding({ user, onComplete, submitting }) {
                       Select your address <span className="text-primary">*</span>
                     </label>
                     {addressOptions.length > 0 ? (
-                      <div className="max-h-48 overflow-y-auto space-y-1 border border-white/10 rounded-xl p-2 bg-muted/20">
+                      <div className="max-h-48 overflow-y-auto space-y-1 border border-border rounded-xl p-2 bg-muted/20">
                         {addressOptions.map((addr, i) => (
                           <button
                             key={i}
@@ -200,7 +200,7 @@ export default function UserOnboarding({ user, onComplete, submitting }) {
                             className={`w-full text-left px-3 py-2.5 rounded-lg text-sm transition-all flex items-start gap-2 ${
                               data.full_address === addr
                                 ? 'bg-primary/15 text-primary border border-primary/30'
-                                : 'hover:bg-muted/50 text-foreground'
+                                : 'hover:bg-card text-foreground'
                             }`}
                           >
                             <MapPin className="w-3.5 h-3.5 mt-0.5 flex-shrink-0" />
@@ -215,7 +215,7 @@ export default function UserOnboarding({ user, onComplete, submitting }) {
                           value={data.full_address}
                           onChange={e => update('full_address', e.target.value)}
                           placeholder="e.g. 10 Downing Street, London, SW1A 2AA"
-                          className="bg-muted/50 border-white/5"
+                          className="bg-card border-border"
                         />
                       </div>
                     )}
@@ -234,12 +234,12 @@ export default function UserOnboarding({ user, onComplete, submitting }) {
                   <div>
                     <label className="text-sm font-medium mb-1.5 block">Your City</label>
                     <Input value={data.city} onChange={e => update('city', e.target.value)}
-                      placeholder="London" className="bg-muted/50 border-white/5" />
+                      placeholder="London" className="bg-card border-border" />
                   </div>
                   <div>
                     <label className="text-sm font-medium mb-1.5 block">Country</label>
                     <Input value={data.country} onChange={e => update('country', e.target.value)}
-                      placeholder="United Kingdom" className="bg-muted/50 border-white/5" />
+                      placeholder="United Kingdom" className="bg-card border-border" />
                   </div>
                 </div>
                 <div>
@@ -248,7 +248,7 @@ export default function UserOnboarding({ user, onComplete, submitting }) {
                   </label>
                   <textarea value={data.what_looking_for} onChange={e => update('what_looking_for', e.target.value)}
                     placeholder="e.g. I prefer avatars who speak French, have experience with property inspections, and are based in Paris..."
-                    className="w-full h-24 px-3 py-2 bg-muted/50 border border-white/5 rounded-md text-sm resize-none text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary/50" />
+                    className="w-full h-24 px-3 py-2 bg-card border border-border rounded-md text-sm resize-none text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary/50" />
                 </div>
               </div>
             )}

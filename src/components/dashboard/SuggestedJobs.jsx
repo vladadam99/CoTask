@@ -29,7 +29,7 @@ export default function SuggestedJobs({ user, profile }) {
       <div className="space-y-3">
         {data.slice(0, 3).map(job => (
           <Link key={job.id} to={`/JobDetail?id=${job.id}`}>
-            <div className="glass border border-white/5 hover:border-primary/30 rounded-2xl p-4 transition-all">
+            <div className="glass border border-border hover:border-primary/30 rounded-2xl p-4 transition-all">
               <div className="flex items-start justify-between gap-3">
                 <div className="flex-1 min-w-0">
                   <p className="font-bold text-sm truncate">{job.title}</p>

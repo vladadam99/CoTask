@@ -196,7 +196,7 @@ export default function AvatarSettings() {
             <div className="space-y-2">
               {user?.selected_role !== 'user' && (
                 <button onClick={() => handleSwitchRole('user')} disabled={switchingRole} className="w-full text-left disabled:opacity-50">
-                  <div className="p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors text-sm flex items-center gap-3">
+                  <div className="p-3 rounded-lg bg-card hover:bg-muted transition-colors text-sm flex items-center gap-3">
                     <ArrowRightLeft className="w-4 h-4 text-muted-foreground" />
                     <span>{switchingRole ? 'Switching...' : 'Switch to User'}</span>
                   </div>
@@ -204,7 +204,7 @@ export default function AvatarSettings() {
               )}
               {user?.selected_role !== 'avatar' && (
                 <button onClick={() => handleSwitchRole('avatar')} disabled={switchingRole} className="w-full text-left disabled:opacity-50">
-                  <div className="p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors text-sm flex items-center gap-3">
+                  <div className="p-3 rounded-lg bg-card hover:bg-muted transition-colors text-sm flex items-center gap-3">
                     <ArrowRightLeft className="w-4 h-4 text-muted-foreground" />
                     <span>{switchingRole ? 'Switching...' : 'Switch to Agent'}</span>
                   </div>
@@ -212,7 +212,7 @@ export default function AvatarSettings() {
               )}
               {user?.selected_role !== 'enterprise' && (
                 <button onClick={() => handleSwitchRole('enterprise')} disabled={switchingRole} className="w-full text-left disabled:opacity-50">
-                  <div className="p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors text-sm flex items-center gap-3">
+                  <div className="p-3 rounded-lg bg-card hover:bg-muted transition-colors text-sm flex items-center gap-3">
                     <ArrowRightLeft className="w-4 h-4 text-muted-foreground" />
                     <span>{switchingRole ? 'Switching...' : 'Switch to Enterprise'}</span>
                   </div>

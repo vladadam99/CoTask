@@ -266,27 +266,27 @@ export default function Register() {
                   <div>
                     <label className="text-sm font-medium mb-1.5 block">First Name *</label>
                     <Input value={formData.first_name} onChange={e => update('first_name', e.target.value)}
-                      placeholder="John" className="bg-muted/50 border-white/5" />
+                      placeholder="John" className="bg-card border-border" />
                   </div>
                   <div>
                     <label className="text-sm font-medium mb-1.5 block">Last Name *</label>
                     <Input value={formData.last_name} onChange={e => update('last_name', e.target.value)}
-                      placeholder="Smith" className="bg-muted/50 border-white/5" />
+                      placeholder="Smith" className="bg-card border-border" />
                   </div>
                 </div>
                 <div>
                   <label className="text-sm font-medium mb-1.5 block">Email Address *</label>
                   <Input type="email" value={formData.email} onChange={e => update('email', e.target.value)}
-                    placeholder="john@example.com" className="bg-muted/50 border-white/5" />
+                    placeholder="john@example.com" className="bg-card border-border" />
                 </div>
                 <div>
                   <label className="text-sm font-medium mb-1.5 block">Phone Number *</label>
                   <Input type="tel" value={formData.phone} onChange={e => update('phone', e.target.value)}
-                    placeholder="+44 7700 000000" className="bg-muted/50 border-white/5" />
+                    placeholder="+44 7700 000000" className="bg-card border-border" />
                 </div>
                 {/* Age confirmation */}
                 <label className="flex items-start gap-3 cursor-pointer group">
-                  <div className={`mt-0.5 w-5 h-5 rounded flex items-center justify-center border-2 shrink-0 transition-colors ${ageConfirmed ? 'bg-primary border-primary' : 'border-white/20 group-hover:border-primary/50'}`}
+                  <div className={`mt-0.5 w-5 h-5 rounded flex items-center justify-center border-2 shrink-0 transition-colors ${ageConfirmed ? 'bg-primary border-primary' : 'border-border group-hover:border-primary/50'}`}
                     onClick={() => setAgeConfirmed(p => !p)}>
                     {ageConfirmed && <Check className="w-3 h-3 text-white" />}
                   </div>
@@ -297,7 +297,7 @@ export default function Register() {
 
                 {/* T&C + Privacy + GDPR */}
                 <label className="flex items-start gap-3 cursor-pointer group">
-                  <div className={`mt-0.5 w-5 h-5 rounded flex items-center justify-center border-2 shrink-0 transition-colors ${termsAccepted ? 'bg-primary border-primary' : 'border-white/20 group-hover:border-primary/50'}`}
+                  <div className={`mt-0.5 w-5 h-5 rounded flex items-center justify-center border-2 shrink-0 transition-colors ${termsAccepted ? 'bg-primary border-primary' : 'border-border group-hover:border-primary/50'}`}
                     onClick={() => setTermsAccepted(p => !p)}>
                     {termsAccepted && <Check className="w-3 h-3 text-white" />}
                   </div>
@@ -334,10 +334,10 @@ export default function Register() {
                       onChange={e => setPostcodeInput(e.target.value)}
                       onKeyDown={e => e.key === 'Enter' && findAddress()}
                       placeholder="e.g. SW1A 1AA"
-                      className="bg-muted/50 border-white/5 flex-1"
+                      className="bg-card border-border flex-1"
                     />
                     <Button onClick={findAddress} disabled={postcodeLoading || !postcodeInput.trim()}
-                      variant="outline" className="border-white/10 shrink-0 px-3">
+                      variant="outline" className="border-border shrink-0 px-3">
                       {postcodeLoading
                         ? <Loader2 className="w-4 h-4 animate-spin" />
                         : <><Search className="w-4 h-4 mr-1" />Find</>}
@@ -351,19 +351,19 @@ export default function Register() {
 
                   {/* Address suggestions dropdown */}
                   {showSuggestions && addressSuggestions.length > 0 && (
-                    <div className="mt-2 rounded-xl border border-white/10 overflow-hidden bg-card shadow-xl">
-                      <p className="text-xs text-muted-foreground px-3 py-2 border-b border-white/5">Select your street — you can add your house number after</p>
+                    <div className="mt-2 rounded-xl border border-border overflow-hidden bg-card shadow-xl">
+                      <p className="text-xs text-muted-foreground px-3 py-2 border-b border-border">Select your street — you can add your house number after</p>
                       <div className="max-h-52 overflow-y-auto">
                         {addressSuggestions.map((s, i) => (
                           <button key={i} onClick={() => selectSuggestion(s)}
-                            className="w-full text-left px-3 py-2.5 text-sm hover:bg-primary/10 hover:text-primary transition-colors border-b border-white/5 last:border-0 flex items-center gap-2">
+                            className="w-full text-left px-3 py-2.5 text-sm hover:bg-primary/10 hover:text-primary transition-colors border-b border-border last:border-0 flex items-center gap-2">
                             <MapPin className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
                             <span>{s.display}</span>
                           </button>
                         ))}
                       </div>
                       <button onClick={() => { setShowSuggestions(false); setShowManual(true); }}
-                        className="w-full text-xs text-primary px-3 py-2 hover:bg-primary/5 text-left transition-colors border-t border-white/5">
+                        className="w-full text-xs text-primary px-3 py-2 hover:bg-primary/5 text-left transition-colors border-t border-border">
                         + Enter address manually instead
                       </button>
                     </div>
@@ -382,7 +382,7 @@ export default function Register() {
                           onChange={e => setHouseNumber(e.target.value)}
                           onKeyDown={e => e.key === 'Enter' && confirmStreet()}
                           placeholder="e.g. 12 or Flat 3B"
-                          className="bg-muted/50 border-white/5 flex-1"
+                          className="bg-card border-border flex-1"
                           autoFocus
                         />
                         <Button onClick={confirmStreet} disabled={!houseNumber.trim()} className="bg-primary hover:bg-primary/90 shrink-0">
@@ -408,31 +408,31 @@ export default function Register() {
                     <div>
                       <label className="text-sm font-medium mb-1.5 block">Address Line 1 *</label>
                       <Input value={formData.address_line1} onChange={e => update('address_line1', e.target.value)}
-                        placeholder="e.g. 12 Main Street" className="bg-muted/50 border-white/5" />
+                        placeholder="e.g. 12 Main Street" className="bg-card border-border" />
                     </div>
                     <div>
                       <label className="text-sm font-medium mb-1.5 block">
                         Address Line 2 <span className="text-muted-foreground font-normal">(optional)</span>
                       </label>
                       <Input value={formData.address_line2} onChange={e => update('address_line2', e.target.value)}
-                        placeholder="Flat, apartment, suite, etc." className="bg-muted/50 border-white/5" />
+                        placeholder="Flat, apartment, suite, etc." className="bg-card border-border" />
                     </div>
                     <div className="grid grid-cols-2 gap-3">
                       <div>
                         <label className="text-sm font-medium mb-1.5 block">City / Town *</label>
                         <Input value={formData.city} onChange={e => update('city', e.target.value)}
-                          placeholder="London" className="bg-muted/50 border-white/5" />
+                          placeholder="London" className="bg-card border-border" />
                       </div>
                       <div>
                         <label className="text-sm font-medium mb-1.5 block">Postcode *</label>
                         <Input value={formData.postcode} onChange={e => update('postcode', e.target.value)}
-                          placeholder="SW1A 1AA" className="bg-muted/50 border-white/5" />
+                          placeholder="SW1A 1AA" className="bg-card border-border" />
                       </div>
                     </div>
                     <div>
                       <label className="text-sm font-medium mb-1.5 block">Country *</label>
                       <select value={formData.country} onChange={e => update('country', e.target.value)}
-                        className="w-full h-9 px-3 rounded-md bg-muted/50 border border-white/5 text-sm text-foreground">
+                        className="w-full h-9 px-3 rounded-md bg-card border border-border text-sm text-foreground">
                         {COUNTRIES.map(c => <option key={c} value={c}>{c}</option>)}
                       </select>
                     </div>
@@ -478,7 +478,7 @@ export default function Register() {
                       value={digit}
                       onChange={e => handleCodeInput(i, e.target.value)}
                       onKeyDown={e => handleCodeKeyDown(i, e)}
-                      className="w-11 h-14 text-center text-xl font-bold bg-muted/50 border border-white/10 rounded-xl focus:outline-none focus:border-primary transition-colors text-foreground"
+                      className="w-11 h-14 text-center text-xl font-bold bg-card border border-border rounded-xl focus:outline-none focus:border-primary transition-colors text-foreground"
                     />
                   ))}
                 </div>

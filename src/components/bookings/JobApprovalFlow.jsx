@@ -99,7 +99,7 @@ export default function JobApprovalFlow({ booking, user, onUpdate }) {
           <Button className="flex-1 bg-green-600 hover:bg-green-700 gap-2" onClick={handleApprove} disabled={loading}>
             {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <CheckCircle className="w-4 h-4" />} Approve Completion
           </Button>
-          <Button variant="outline" className="border-white/10" onClick={() => setMode(null)}>Back</Button>
+          <Button variant="outline" className="border-border" onClick={() => setMode(null)}>Back</Button>
         </div>
       </GlassCard>
     );
@@ -118,13 +118,13 @@ export default function JobApprovalFlow({ booking, user, onUpdate }) {
           value={partialAmount}
           onChange={e => setPartialAmount(e.target.value)}
           placeholder={`e.g. ${(booking.total_amount / 2).toFixed(2)}`}
-          className="w-full text-sm bg-muted/50 border border-white/5 rounded-xl px-3 py-2 focus:outline-none focus:border-primary/40 text-foreground mb-3"
+          className="w-full text-sm bg-card border border-border rounded-xl px-3 py-2 focus:outline-none focus:border-primary/40 text-foreground mb-3"
         />
         <div className="flex gap-2">
           <Button className="flex-1 bg-yellow-600 hover:bg-yellow-700" onClick={handlePartial} disabled={loading || !partialAmount}>
             {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Offer Partial Payment'}
           </Button>
-          <Button variant="outline" className="border-white/10" onClick={() => setMode(null)}>Back</Button>
+          <Button variant="outline" className="border-border" onClick={() => setMode(null)}>Back</Button>
         </div>
       </GlassCard>
     );
@@ -140,13 +140,13 @@ export default function JobApprovalFlow({ booking, user, onUpdate }) {
           onChange={e => setDisputeReason(e.target.value)}
           rows={3}
           placeholder="What went wrong with this job?"
-          className="w-full text-sm bg-muted/50 border border-white/5 rounded-xl px-3 py-2 focus:outline-none focus:border-primary/40 text-foreground placeholder:text-muted-foreground resize-none mb-3"
+          className="w-full text-sm bg-card border border-border rounded-xl px-3 py-2 focus:outline-none focus:border-primary/40 text-foreground placeholder:text-muted-foreground resize-none mb-3"
         />
         <div className="flex gap-2">
           <Button className="flex-1 bg-red-600 hover:bg-red-700 gap-2" onClick={handleDispute} disabled={loading || !disputeReason.trim()}>
             {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <><AlertTriangle className="w-4 h-4" /> Submit Dispute</>}
           </Button>
-          <Button variant="outline" className="border-white/10" onClick={() => setMode(null)}>Back</Button>
+          <Button variant="outline" className="border-border" onClick={() => setMode(null)}>Back</Button>
         </div>
       </GlassCard>
     );

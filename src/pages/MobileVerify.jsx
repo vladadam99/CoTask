@@ -22,7 +22,7 @@ function CameraStep({ label, icon: Icon, facingMode, onCapture }) {
   const captureAttr = facingMode === 'user' ? 'user' : 'environment';
 
   return (
-    <div className="rounded-2xl border border-white/10 bg-white/5 p-4 space-y-3">
+    <div className="rounded-2xl border border-border bg-secondary/60 p-4 space-y-3">
       <div className="flex items-center gap-2">
         <Icon className="w-4 h-4 text-red-400" />
         <span className="text-sm font-medium text-white">{label}</span>
@@ -39,7 +39,7 @@ function CameraStep({ label, icon: Icon, facingMode, onCapture }) {
 
       {!preview ? (
         <button onClick={() => inputRef.current?.click()}
-          className="w-full h-36 rounded-xl border-2 border-dashed border-white/20 flex flex-col items-center justify-center gap-2 text-white/50 hover:border-red-400/50 hover:text-red-400 transition-all">
+          className="w-full h-36 rounded-xl border-2 border-dashed border-border flex flex-col items-center justify-center gap-2 text-white/50 hover:border-red-400/50 hover:text-red-400 transition-all">
           <Camera className="w-7 h-7" />
           <span className="text-xs">Tap to open camera</span>
         </button>
@@ -153,7 +153,7 @@ export default function MobileVerify() {
         </div>
       </div>
 
-      <div className="bg-white/5 border border-white/10 rounded-xl p-3 text-xs text-gray-400 space-y-1">
+      <div className="bg-secondary/60 border border-border rounded-xl p-3 text-xs text-gray-400 space-y-1">
         <p className="font-medium text-white text-sm">How it works</p>
         <p>1. Take a clear photo of your ID document</p>
         <p>2. Take a selfie showing your face</p>

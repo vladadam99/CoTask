@@ -13,7 +13,7 @@ export default function CameraOptionPicker({ value, onChange, premiumRate = 5 })
           className={`flex flex-col gap-2 p-4 rounded-xl border text-left transition-all ${
             value === 'no_camera'
               ? 'border-primary/50 bg-primary/5 text-foreground'
-              : 'border-white/10 bg-muted/30 text-muted-foreground hover:border-white/20'
+              : 'border-border bg-card text-muted-foreground hover:border-border'
           }`}
         >
           <div className="flex items-center gap-2">
@@ -33,7 +33,7 @@ export default function CameraOptionPicker({ value, onChange, premiumRate = 5 })
           className={`flex flex-col gap-2 p-4 rounded-xl border text-left transition-all ${
             value === 'live_camera'
               ? 'border-primary/50 bg-primary/5 text-foreground'
-              : 'border-white/10 bg-muted/30 text-muted-foreground hover:border-white/20'
+              : 'border-border bg-card text-muted-foreground hover:border-border'
           }`}
         >
           <div className="flex items-center gap-2">

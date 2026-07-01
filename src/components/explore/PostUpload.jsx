@@ -132,9 +132,9 @@ export default function PostUpload({ user, profile, onClose }) {
         initial={{ opacity: 0, y: 40 }}
         animate={{ opacity: 1, y: 0 }}
         exit={{ opacity: 0, y: 40 }}
-        className="bg-card border border-white/10 rounded-2xl w-full max-w-md overflow-hidden"
+        className="bg-card border border-border rounded-2xl w-full max-w-md overflow-hidden"
       >
-        <div className="flex items-center justify-between px-5 py-4 border-b border-white/5">
+        <div className="flex items-center justify-between px-5 py-4 border-b border-border">
           <h3 className="font-bold">New Post{items.length > 1 ? ` (${items.length} files)` : ''}</h3>
           <button onClick={onClose}><X className="w-5 h-5 text-muted-foreground" /></button>
         </div>
@@ -164,7 +164,7 @@ export default function PostUpload({ user, profile, onClose }) {
               {/* Add more button */}
               <button
                 onClick={() => inputRef.current?.click()}
-                className="aspect-square rounded-xl border-2 border-dashed border-white/10 flex flex-col items-center justify-center gap-1 hover:border-primary/30 transition-colors"
+                className="aspect-square rounded-xl border-2 border-dashed border-border flex flex-col items-center justify-center gap-1 hover:border-primary/30 transition-colors"
               >
                 <Plus className="w-5 h-5 text-muted-foreground" />
                 <span className="text-[10px] text-muted-foreground">Add</span>
@@ -173,7 +173,7 @@ export default function PostUpload({ user, profile, onClose }) {
           ) : (
             <button
               onClick={() => inputRef.current?.click()}
-              className="w-full h-48 rounded-xl border-2 border-dashed border-white/10 flex flex-col items-center justify-center gap-3 hover:border-primary/30 transition-colors"
+              className="w-full h-48 rounded-xl border-2 border-dashed border-border flex flex-col items-center justify-center gap-3 hover:border-primary/30 transition-colors"
             >
               <div className="flex gap-4">
                 <div className="flex flex-col items-center gap-1 text-muted-foreground">
@@ -204,17 +204,17 @@ export default function PostUpload({ user, profile, onClose }) {
             value={caption}
             onChange={e => setCaption(e.target.value)}
             placeholder="Write a caption..."
-            className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-primary/40 text-foreground placeholder:text-muted-foreground"
+            className="w-full bg-secondary/60 border border-border rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-primary/40 text-foreground placeholder:text-muted-foreground"
           />
           <input
             value={category}
             onChange={e => setCategory(e.target.value)}
             placeholder="Category (e.g. City Guide)"
-            className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-primary/40 text-foreground placeholder:text-muted-foreground"
+            className="w-full bg-secondary/60 border border-border rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-primary/40 text-foreground placeholder:text-muted-foreground"
           />
 
           {uploading && (
-            <div className="w-full bg-white/5 rounded-full h-2 overflow-hidden">
+            <div className="w-full bg-secondary/60 rounded-full h-2 overflow-hidden">
               <div className="h-full bg-primary transition-all duration-300" style={{ width: `${progress}%` }} />
             </div>
           )}

@@ -71,9 +71,9 @@ export default function TermsAndConditions() {
   return (
     <div className="min-h-screen bg-background text-foreground">
       {/* Header */}
-      <div className="sticky top-0 z-10 glass-strong border-b border-white/5">
+      <div className="sticky top-0 z-10 glass-strong border-b border-border">
         <div className="max-w-3xl mx-auto px-4 h-14 flex items-center gap-3">
-          <button onClick={() => navigate(-1)} className="p-2 hover:bg-white/5 rounded-lg transition-colors">
+          <button onClick={() => navigate(-1)} className="p-2 hover:bg-secondary/60 rounded-lg transition-colors">
             <ArrowLeft className="w-4 h-4" />
           </button>
           <span className="font-semibold text-sm">Terms & Conditions</span>

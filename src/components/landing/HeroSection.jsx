@@ -21,7 +21,7 @@ export default function HeroSection() {
 
             {/* Pill badge */}
             <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}
-              className="inline-flex items-center gap-2 mb-10 bg-white/5 border border-white/10 rounded-full px-4 py-2">
+              className="inline-flex items-center gap-2 mb-10 bg-secondary/60 border border-border rounded-full px-4 py-2">
               <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
               <span className="text-xs font-medium text-white/70 tracking-wide uppercase">Live in 50+ cities worldwide</span>
             </motion.div>
@@ -46,7 +46,7 @@ export default function HeroSection() {
                 </button>
               </Link>
               <Link to="/Onboarding?role=avatar">
-                <button className="flex items-center justify-center gap-3 border border-white/20 text-white font-semibold text-base px-8 py-4 rounded-full hover:border-white/50 hover:bg-white/5 transition-all duration-200 w-full sm:w-auto">
+                <button className="flex items-center justify-center gap-3 border border-border text-white font-semibold text-base px-8 py-4 rounded-full hover:border-border0 hover:bg-secondary/60 transition-all duration-200 w-full sm:w-auto">
                   Become an Avatar
                 </button>
               </Link>
@@ -58,12 +58,12 @@ export default function HeroSection() {
                 <div className="text-3xl font-black text-white">10K+</div>
                 <div className="text-xs text-white/40 mt-1 uppercase tracking-widest">Active Avatars</div>
               </div>
-              <div className="w-px h-10 bg-white/10" />
+              <div className="w-px h-10 bg-secondary" />
               <div>
                 <div className="text-3xl font-black text-white">4.9</div>
                 <div className="text-xs text-white/40 mt-1 uppercase tracking-widest">Avg Rating</div>
               </div>
-              <div className="w-px h-10 bg-white/10" />
+              <div className="w-px h-10 bg-secondary" />
               <div>
                 <div className="text-3xl font-black text-white">50+</div>
                 <div className="text-xs text-white/40 mt-1 uppercase tracking-widest">Cities</div>
@@ -76,7 +76,7 @@ export default function HeroSection() {
             className="hidden lg:flex flex-col gap-4">
 
             {/* Main card */}
-            <div className="rounded-3xl overflow-hidden border border-white/10 bg-white/5 backdrop-blur-sm">
+            <div className="rounded-3xl overflow-hidden border border-border bg-secondary/60 backdrop-blur-sm">
               {/* Video area */}
               <div className="relative h-72 bg-gradient-to-br from-zinc-900 to-zinc-800 flex items-end p-6">
                 <div className="absolute inset-0 bg-gradient-to-br from-primary/30 to-transparent" />
@@ -117,7 +117,7 @@ export default function HeroSection() {
             {/* Two floating cards */}
             <div className="grid grid-cols-2 gap-4">
               <motion.div animate={{ y: [0, -6, 0] }} transition={{ repeat: Infinity, duration: 4, ease: 'easeInOut' }}
-                className="rounded-2xl border border-white/10 bg-white/5 p-5">
+                className="rounded-2xl border border-border bg-secondary/60 p-5">
                 <div className="flex items-center gap-2 mb-3">
                   <div className="w-8 h-8 rounded-full bg-green-500/20 flex items-center justify-center">
                     <span className="text-green-400 text-sm font-bold">✓</span>
@@ -129,7 +129,7 @@ export default function HeroSection() {
               </motion.div>
 
               <motion.div animate={{ y: [0, 6, 0] }} transition={{ repeat: Infinity, duration: 5, ease: 'easeInOut', delay: 0.5 }}
-                className="rounded-2xl border border-white/10 bg-white/5 p-5">
+                className="rounded-2xl border border-border bg-secondary/60 p-5">
                 <div className="flex items-center gap-2 mb-3">
                   <Zap className="w-4 h-4 text-primary" />
                   <p className="text-white/60 text-xs">Instant match</p>

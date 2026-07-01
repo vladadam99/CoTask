@@ -105,7 +105,7 @@ export default function UserBookingDetail() {
           <Button className="w-full" onClick={() => navigate('/Bookings')}>
             Back to My Tasks
           </Button>
-          <Button variant="outline" className="w-full border-white/10" onClick={() => navigate('/FindPeople')}>
+          <Button variant="outline" className="w-full border-border" onClick={() => navigate('/FindPeople')}>
             Discover Local Agents
           </Button>
         </div>
@@ -168,7 +168,7 @@ export default function UserBookingDetail() {
                   <Video className="w-3 h-3" /> Live Camera
                 </span>
               ) : (
-                <span className="flex items-center gap-1.5 text-xs bg-muted text-muted-foreground border border-white/10 px-2.5 py-1 rounded-full">
+                <span className="flex items-center gap-1.5 text-xs bg-muted text-muted-foreground border border-border px-2.5 py-1 rounded-full">
                   <VideoOff className="w-3 h-3" /> No Camera
                 </span>
               )}
@@ -235,7 +235,7 @@ export default function UserBookingDetail() {
                   <h3 className="font-semibold mb-2 text-sm flex items-center gap-1.5"><Wrench className="w-3.5 h-3.5 text-primary" /> Equipment / Tools Needed</h3>
                   <div className="flex flex-wrap gap-2">
                     {booking.equipment_needed.map((eq, i) => (
-                      <span key={i} className="bg-white/5 border border-white/10 text-xs px-3 py-1 rounded-full">{eq}</span>
+                      <span key={i} className="bg-secondary/60 border border-border text-xs px-3 py-1 rounded-full">{eq}</span>
                     ))}
                   </div>
                 </div>
@@ -248,7 +248,7 @@ export default function UserBookingDetail() {
             <div className="space-y-2 text-sm">
               <div className="flex justify-between"><span className="text-muted-foreground">Service</span><span>${booking.amount?.toFixed(2)}</span></div>
               <div className="flex justify-between"><span className="text-muted-foreground">Platform fee (10%)</span><span>${booking.service_fee?.toFixed(2)}</span></div>
-              <div className="border-t border-white/5 pt-2 flex justify-between font-semibold">
+              <div className="border-t border-border pt-2 flex justify-between font-semibold">
                 <span>Total</span><span className="text-primary">${booking.total_amount?.toFixed(2)}</span>
               </div>
               <div className="pt-1"><StatusBadge status={booking.payment_status} /></div>
@@ -277,7 +277,7 @@ export default function UserBookingDetail() {
           {booking.proof_url && (
             <GlassCard className="p-5">
               <h3 className="font-semibold text-sm mb-3 flex items-center gap-2"><Camera className="w-4 h-4 text-primary" /> Task Completion Proof</h3>
-              <img src={booking.proof_url} alt="Task proof" className="w-full max-h-64 object-cover rounded-xl border border-white/10 mb-2" />
+              <img src={booking.proof_url} alt="Task proof" className="w-full max-h-64 object-cover rounded-xl border border-border mb-2" />
               {booking.proof_note && <p className="text-xs text-muted-foreground">"{booking.proof_note}"</p>}
             </GlassCard>
           )}

@@ -12,7 +12,7 @@ const perks = [
 
 export default function AvatarEarnings() {
   return (
-    <section className="py-32 px-6 lg:px-12 border-t border-white/5 bg-white/[0.02]">
+    <section className="py-32 px-6 lg:px-12 border-t border-border bg-white/[0.02]">
       <div className="max-w-7xl mx-auto">
         <div className="grid lg:grid-cols-2 gap-24 items-center">
 
@@ -27,14 +27,14 @@ export default function AvatarEarnings() {
             </p>
 
             {/* Earnings stat block */}
-            <div className="border border-white/10 rounded-3xl p-8 mb-10 bg-white/3">
+            <div className="border border-border rounded-3xl p-8 mb-10 bg-white/3">
               <p className="text-white/40 text-sm mb-2">Top avatars earn</p>
               <div className="flex items-end gap-2 mb-1">
                 <span className="text-6xl font-black text-white">$1,200</span>
                 <span className="text-white/30 text-xl mb-2">/mo</span>
               </div>
               <div className="flex items-center gap-2 mt-3">
-                <div className="flex-1 h-1.5 bg-white/5 rounded-full overflow-hidden">
+                <div className="flex-1 h-1.5 bg-secondary/60 rounded-full overflow-hidden">
                   <div className="h-full bg-primary rounded-full" style={{ width: '78%' }} />
                 </div>
                 <span className="text-green-400 text-xs font-semibold">↑ 24% this quarter</span>

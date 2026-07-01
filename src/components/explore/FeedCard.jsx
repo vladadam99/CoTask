@@ -242,7 +242,7 @@ export default function FeedCard({ post, user, isActive = true, isNear = true })
           onClick={() => navigate(`/AvatarView?id=${post.avatar_profile_id}`)}
           className="flex items-center gap-2"
         >
-          <div className="w-9 h-9 rounded-full bg-primary/30 overflow-hidden border-2 border-white/20 flex-shrink-0 flex items-center justify-center text-sm font-bold text-white">
+          <div className="w-9 h-9 rounded-full bg-primary/30 overflow-hidden border-2 border-border flex-shrink-0 flex items-center justify-center text-sm font-bold text-white">
             {post.avatar_photo_url
               ? <SmartImage src={post.avatar_photo_url} alt={post.avatar_name} className="w-full h-full" width={64} />
               : post.avatar_name?.[0] || 'A'}
@@ -296,17 +296,17 @@ export default function FeedCard({ post, user, isActive = true, isNear = true })
           </button>
 
           {showShareMenu && (
-            <div className="absolute bottom-14 right-0 bg-card border border-white/10 rounded-xl shadow-xl z-30 min-w-[160px] overflow-hidden">
+            <div className="absolute bottom-14 right-0 bg-card border border-border rounded-xl shadow-xl z-30 min-w-[160px] overflow-hidden">
               <button
                 onClick={() => handleShareToApp('copy')}
-                className="w-full flex items-center gap-3 px-4 py-3 text-sm text-foreground hover:bg-primary/10 transition-colors border-b border-white/5"
+                className="w-full flex items-center gap-3 px-4 py-3 text-sm text-foreground hover:bg-primary/10 transition-colors border-b border-border"
               >
                 <Copy className={`w-4 h-4 ${shareCopied ? 'text-primary' : 'text-muted-foreground'}`} />
                 {shareCopied ? 'Copied' : 'Copy Link'}
               </button>
               <button
                 onClick={() => handleShareToApp('whatsapp')}
-                className="w-full flex items-center gap-3 px-4 py-3 text-sm text-foreground hover:bg-primary/10 transition-colors border-b border-white/5"
+                className="w-full flex items-center gap-3 px-4 py-3 text-sm text-foreground hover:bg-primary/10 transition-colors border-b border-border"
               >
                 <MessageSquare className="w-4 h-4 text-green-400" />
                 WhatsApp
@@ -344,7 +344,7 @@ export default function FeedCard({ post, user, isActive = true, isNear = true })
             className="absolute inset-x-0 bottom-0 bg-card/95 backdrop-blur-xl rounded-t-3xl z-30 flex flex-col max-h-[60%]"
             onClick={e => e.stopPropagation()}
           >
-            <div className="flex items-center justify-between px-5 py-4 border-b border-white/10">
+            <div className="flex items-center justify-between px-5 py-4 border-b border-border">
               <h3 className="font-bold text-sm">{post.comments_count || 0} Comments</h3>
               <button onClick={() => setShowComments(false)}><X className="w-5 h-5 text-muted-foreground" /></button>
             </div>
@@ -363,13 +363,13 @@ export default function FeedCard({ post, user, isActive = true, isNear = true })
               ))}
             </div>
             {user && (
-              <div className="px-4 py-3 border-t border-white/10 flex gap-2">
+              <div className="px-4 py-3 border-t border-border flex gap-2">
                 <input
                   value={commentText}
                   onChange={e => setCommentText(e.target.value)}
                   onKeyDown={e => { if (e.key === 'Enter' && commentText.trim()) addComment.mutate(); }}
                   placeholder="Add a comment..."
-                  className="flex-1 bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-primary/40 text-foreground placeholder:text-muted-foreground"
+                  className="flex-1 bg-secondary/60 border border-border rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-primary/40 text-foreground placeholder:text-muted-foreground"
                 />
                 <button
                   onClick={() => commentText.trim() && addComment.mutate()}

@@ -45,27 +45,27 @@ export default function UserProfile() {
       <div className="max-w-2xl mx-auto -mt-4 -mx-4 lg:mx-auto lg:mt-0 pb-24 lg:pb-0">
 
         {/* Top bar */}
-        <div className="flex items-center justify-between px-4 py-3 sticky top-14 z-20 bg-background/80 backdrop-blur-sm border-b border-white/5">
+        <div className="flex items-center justify-between px-4 py-3 sticky top-14 z-20 bg-background/80 backdrop-blur-sm border-b border-border">
           <div className="flex items-center gap-3">
-            <button onClick={() => navigate(dashPath)} className="p-1.5 rounded-lg hover:bg-white/10">
+            <button onClick={() => navigate(dashPath)} className="p-1.5 rounded-lg hover:bg-secondary">
               <ArrowLeft className="w-5 h-5" />
             </button>
             <span className="font-bold text-base">{user?.display_name || user?.full_name || 'Profile'}</span>
           </div>
           <div className="relative">
-            <button onClick={() => setMenuOpen(v => !v)} className="p-2 rounded-lg hover:bg-white/10">
+            <button onClick={() => setMenuOpen(v => !v)} className="p-2 rounded-lg hover:bg-secondary">
               <MoreVertical className="w-5 h-5" />
             </button>
             {menuOpen && (
               <>
                 <div className="fixed inset-0 z-10" onClick={() => setMenuOpen(false)} />
-                <div className="absolute right-0 top-10 z-20 w-48 bg-card border border-white/10 rounded-xl shadow-xl overflow-hidden">
+                <div className="absolute right-0 top-10 z-20 w-48 bg-card border border-border rounded-xl shadow-xl overflow-hidden">
                   <Link to="/UserProfileEdit" onClick={() => setMenuOpen(false)}
-                    className="flex items-center gap-3 px-4 py-3 text-sm hover:bg-white/5 transition-colors">
+                    className="flex items-center gap-3 px-4 py-3 text-sm hover:bg-secondary/60 transition-colors">
                     <Pencil className="w-4 h-4 text-muted-foreground" /> Edit Profile
                   </Link>
                   <Link to="/UserSettings" onClick={() => setMenuOpen(false)}
-                    className="flex items-center gap-3 px-4 py-3 text-sm hover:bg-white/5 transition-colors">
+                    className="flex items-center gap-3 px-4 py-3 text-sm hover:bg-secondary/60 transition-colors">
                     <FileText className="w-4 h-4 text-muted-foreground" /> Settings
                   </Link>
                 </div>
@@ -91,7 +91,7 @@ export default function UserProfile() {
         </div>
 
         {/* Name / role */}
-        <div className="pt-14 px-4 pb-4 border-b border-white/5">
+        <div className="pt-14 px-4 pb-4 border-b border-border">
           <h1 className="text-xl font-bold">{user?.display_name || user?.full_name || 'User'}</h1>
           <div className="flex items-center gap-2 mt-1 flex-wrap">
             <Badge className="bg-primary/10 text-primary border-primary/20 capitalize text-xs">
@@ -116,7 +116,7 @@ export default function UserProfile() {
         </div>
 
         {/* Tabs */}
-        <div className="flex border-b border-white/5 sticky top-[calc(3.5rem+56px)] z-10 bg-background/90 backdrop-blur-sm">
+        <div className="flex border-b border-border sticky top-[calc(3.5rem+56px)] z-10 bg-background/90 backdrop-blur-sm">
           {TABS.map(tab => (
             <button key={tab} onClick={() => setActiveTab(tab)}
               className={`flex-1 py-3 text-sm font-medium transition-colors relative ${
@@ -149,7 +149,7 @@ export default function UserProfile() {
                   <p className="text-sm text-muted-foreground font-medium mb-2">{jobPosts.length} Jobs</p>
                   {jobPosts.map(job => (
                     <Link key={job.id} to={`/JobDetail?id=${job.id}`}>
-                      <div className="bg-card border border-white/5 rounded-2xl p-4 hover:border-primary/20 transition-colors mb-3">
+                      <div className="bg-card border border-border rounded-2xl p-4 hover:border-primary/20 transition-colors mb-3">
                         <div className="flex items-start justify-between gap-2 mb-2">
                           <h3 className="font-semibold text-sm leading-tight flex-1">{job.title}</h3>
                           <span className={`text-xs px-2 py-0.5 rounded-full flex-shrink-0 ${
@@ -207,7 +207,7 @@ export default function UserProfile() {
                 </div>
               ) : (
                 <>
-                  <div className="text-center py-6 border-b border-white/5 mb-4">
+                  <div className="text-center py-6 border-b border-border mb-4">
                     <p className="text-6xl font-bold">{avgRating}</p>
                     <div className="flex items-center justify-center gap-0.5 my-2">
                       {[1,2,3,4,5].map(s => (
@@ -218,7 +218,7 @@ export default function UserProfile() {
                   </div>
                   <div className="space-y-4">
                     {reviews.map(review => (
-                      <div key={review.id} className="border-b border-white/5 pb-4">
+                      <div key={review.id} className="border-b border-border pb-4">
                         <div className="flex items-start gap-3">
                           <div className="w-9 h-9 rounded-full bg-primary/20 flex items-center justify-center text-sm font-bold text-primary flex-shrink-0">
                             {review.reviewer_name?.[0] || 'R'}
@@ -250,7 +250,7 @@ export default function UserProfile() {
           {activeTab === 'About' && (
             <div>
               <div className="flex justify-center mb-6">
-                <div className="w-40 h-40 rounded-full border-4 border-white/10 bg-primary/20 flex items-center justify-center text-5xl font-bold text-primary overflow-hidden">
+                <div className="w-40 h-40 rounded-full border-4 border-border bg-primary/20 flex items-center justify-center text-5xl font-bold text-primary overflow-hidden">
                   {profilePicUrl
                     ? <img src={profilePicUrl} alt="Profile" className="w-full h-full object-cover" />
                     : (user?.full_name?.[0] || 'U')}
@@ -267,7 +267,7 @@ export default function UserProfile() {
                 </div>
               )}
               <Link to="/UserProfileEdit">
-                <Button variant="outline" className="w-full mt-4 border-white/10">
+                <Button variant="outline" className="w-full mt-4 border-border">
                   <Pencil className="w-4 h-4 mr-2" /> Edit Profile
                 </Button>
               </Link>

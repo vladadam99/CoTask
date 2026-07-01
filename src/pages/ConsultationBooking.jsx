@@ -148,7 +148,7 @@ export default function ConsultationBooking() {
             <Button className="w-full" onClick={() => navigate('/FindPeople')}>
               Discover Experts
             </Button>
-            <Button variant="outline" className="w-full border-white/10" onClick={() => navigate('/PostJob')}>
+            <Button variant="outline" className="w-full border-border" onClick={() => navigate('/PostJob')}>
               Post an Open Task
             </Button>
           </div>
@@ -189,7 +189,7 @@ export default function ConsultationBooking() {
 
           <div className="flex flex-col gap-2">
             <Button onClick={() => navigate('/Bookings')} className="w-full">View My Tasks</Button>
-            <Button variant="outline" className="w-full border-white/10" onClick={() => navigate(-1)}>Back to Profile</Button>
+            <Button variant="outline" className="w-full border-border" onClick={() => navigate(-1)}>Back to Profile</Button>
           </div>
         </div>
       </div>
@@ -224,7 +224,7 @@ export default function ConsultationBooking() {
                   )}
                 </div>
                 {avatar.city && <p className="text-xs text-muted-foreground flex items-center gap-1"><MapPin className="w-3 h-3" /> {avatar.city}</p>}
-                <div className="mt-3 pt-3 border-t border-white/5">
+                <div className="mt-3 pt-3 border-t border-border">
                   <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-primary/10 text-primary border border-primary/20">
                     {SESSION_TYPE_LABELS[offering.session_type] || offering.session_type}
                   </span>
@@ -252,7 +252,7 @@ export default function ConsultationBooking() {
               value={selectedDate}
               min={new Date().toISOString().split('T')[0]}
               onChange={e => { setSelectedDate(e.target.value); setSelectedTime(''); }}
-              className="bg-muted/50 border-white/5"
+              className="bg-card border-border"
             />
           </GlassCard>
 
@@ -272,7 +272,7 @@ export default function ConsultationBooking() {
                       className={`py-2 rounded-xl border text-sm font-medium transition-all ${
                         selectedTime === t
                           ? 'bg-primary/20 border-primary/40 text-primary'
-                          : 'bg-muted/30 border-white/5 text-muted-foreground hover:border-white/20'
+                          : 'bg-card border-border text-muted-foreground hover:border-border'
                       }`}>
                       {t}
                     </button>
@@ -289,7 +289,7 @@ export default function ConsultationBooking() {
                     type="time"
                     value={selectedTime}
                     onChange={e => setSelectedTime(e.target.value)}
-                    className="bg-muted/50 border-white/5"
+                    className="bg-card border-border"
                   />
                 </div>
               )}
@@ -304,7 +304,7 @@ export default function ConsultationBooking() {
               onChange={e => setNotes(e.target.value)}
               placeholder="e.g. I'm a beginner learning React and need help with state management..."
               rows={3}
-              className="bg-muted/50 border-white/5 text-sm resize-none"
+              className="bg-card border-border text-sm resize-none"
             />
           </GlassCard>
 
@@ -335,7 +335,7 @@ export default function ConsultationBooking() {
                 <span>Platform fee (15%)</span>
                 <span className="text-foreground">${serviceFee.toFixed(2)}</span>
               </div>
-              <div className="border-t border-white/5 pt-2 flex justify-between font-bold text-base">
+              <div className="border-t border-border pt-2 flex justify-between font-bold text-base">
                 <span>Total</span>
                 <span className="text-primary">${total.toFixed(2)}</span>
               </div>

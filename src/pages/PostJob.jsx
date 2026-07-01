@@ -189,7 +189,7 @@ export default function PostJob() {
             <div>
               <label className="text-sm font-medium mb-1.5 block">Category *</label>
               <select value={form.category} onChange={e => set('category', e.target.value)}
-                className="w-full bg-background border border-input rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-primary/50 text-foreground">
+                className="w-full bg-background border border-input rounded-lg px-3.5 py-2.5 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-primary/18 focus:border-primary/45 text-foreground">
                 <option value="" className="bg-card text-muted-foreground">Select a category</option>
                 {CATEGORIES.map(c => <option key={c} value={c} className="bg-card">{c}</option>)}
               </select>

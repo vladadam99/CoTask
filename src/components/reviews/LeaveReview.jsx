@@ -64,7 +64,7 @@ export default function LeaveReview({ booking, user, onDone }) {
         value={comment}
         onChange={e => setComment(e.target.value)}
         placeholder="Share your experience…"
-        className="bg-muted/50 border-white/5 h-20 mb-4"
+        className="bg-card border-border h-20 mb-4"
       />
       <Button
         className="bg-primary hover:bg-primary/90 w-full"

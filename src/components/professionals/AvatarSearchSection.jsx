@@ -90,7 +90,7 @@ export default function AvatarSearchSection({ user }) {
           className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold border transition-all ${
             onlineOnly
               ? 'bg-green-500/20 text-green-400 border-green-500/30'
-              : 'bg-white/5 text-muted-foreground border-white/10 hover:border-white/20'
+              : 'bg-secondary/60 text-muted-foreground border-border hover:border-border'
           }`}
         >
           <span className={`w-1.5 h-1.5 rounded-full ${onlineOnly ? 'bg-green-400 animate-pulse' : 'bg-muted-foreground'}`} />
@@ -102,7 +102,7 @@ export default function AvatarSearchSection({ user }) {
           className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold border transition-all ${
             selectedCategories.length > 0
               ? 'bg-primary/20 text-primary border-primary/30'
-              : 'bg-white/5 text-muted-foreground border-white/10 hover:border-white/20'
+              : 'bg-secondary/60 text-muted-foreground border-border hover:border-border'
           }`}
         >
           <Filter className="w-3 h-3" />
@@ -116,7 +116,7 @@ export default function AvatarSearchSection({ user }) {
       </div>
 
       {showCategoryFilter && (
-        <div className="mb-5 p-3 rounded-2xl bg-card/40 border border-white/5">
+        <div className="mb-5 p-3 rounded-2xl bg-card/40 border border-border">
           <div className="flex flex-wrap gap-2">
             {CATEGORIES.map(c => {
               const isSelected = selectedCategories.includes(c.label);
@@ -129,7 +129,7 @@ export default function AvatarSearchSection({ user }) {
                   className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs border transition-all ${
                     isSelected
                       ? 'bg-primary/20 text-primary border-primary/30'
-                      : 'bg-white/5 text-muted-foreground border-white/10 hover:border-white/20'
+                      : 'bg-secondary/60 text-muted-foreground border-border hover:border-border'
                   }`}
                 >
                   <span>{c.icon}</span> {c.label}
@@ -146,13 +146,13 @@ export default function AvatarSearchSection({ user }) {
 
       {isLoading ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
-          {[1,2,3,4,5,6,7,8].map(i => <div key={i} className="rounded-2xl bg-card/40 border border-white/5 h-32 animate-pulse" />)}
+          {[1,2,3,4,5,6,7,8].map(i => <div key={i} className="rounded-2xl bg-card/40 border border-border h-32 animate-pulse" />)}
         </div>
       ) : filtered.length === 0 ? (
         <div className="text-center py-20 space-y-3">
           <p className="text-3xl">🔍</p>
           <h3 className="font-bold">No local agents found</h3>
-          <Button variant="outline" className="border-white/10" onClick={() => { setOnlineOnly(false); setSelectedCategories([]); setAiMatchedIds(null); }}>Clear filters</Button>
+          <Button variant="outline" className="border-border" onClick={() => { setOnlineOnly(false); setSelectedCategories([]); setAiMatchedIds(null); }}>Clear filters</Button>
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
@@ -190,7 +190,7 @@ function AvatarCard({ avatar, i, user, queryClient }) {
 
   return (
     <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: Math.min(i * 0.04, 0.3) }}>
-      <div className="glass border border-white/5 hover:border-primary/30 rounded-2xl p-4 transition-all hover:scale-[1.02] relative group">
+      <div className="glass border border-border hover:border-primary/30 rounded-2xl p-4 transition-all hover:scale-[1.02] relative group">
         <Link to={`/AvatarView?id=${avatar.id}`} className="absolute inset-0 z-0"></Link>
         <div className="relative z-10 pointer-events-none">
           {user && (
@@ -230,7 +230,7 @@ function AvatarCard({ avatar, i, user, queryClient }) {
           {avatar.categories?.length > 0 && avatar.bio && (
             <div className="flex flex-wrap gap-1 mb-2">
               {(avatar.categories || []).slice(0, 2).map(c => (
-                <span key={c} className="text-[10px] bg-white/5 border border-white/5 rounded px-1.5 py-0.5">{c}</span>
+                <span key={c} className="text-[10px] bg-secondary/60 border border-border rounded px-1.5 py-0.5">{c}</span>
               ))}
             </div>
           )}

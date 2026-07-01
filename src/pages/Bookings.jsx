@@ -149,14 +149,14 @@ export default function Bookings() {
 
         <div className="relative mb-6">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-          <Input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search tasks..." className="pl-10 bg-muted/50 border-border" />
+          <Input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search tasks..." className="pl-10 bg-card border-border" />
         </div>
 
         <div className="flex gap-2 mb-6 overflow-x-auto">
           {TABS.map(t => (
             <button key={t} onClick={() => setTab(t)}
               className={`px-4 py-1.5 rounded-full text-sm whitespace-nowrap transition-all ${
-                t === tab ? 'bg-primary text-primary-foreground' : 'bg-muted/50 text-muted-foreground hover:bg-muted'
+                t === tab ? 'bg-primary text-primary-foreground' : 'bg-card text-muted-foreground hover:bg-muted'
               }`}>{t}</button>
           ))}
         </div>

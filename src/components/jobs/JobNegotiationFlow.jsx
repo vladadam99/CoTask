@@ -102,7 +102,7 @@ export default function JobNegotiationFlow({ application, job, user, onRateAgree
               <div key={offer.id} className={`flex items-start gap-3 text-sm p-2.5 rounded-xl ${
                 offer.status === 'accepted' ? 'bg-green-500/10 border border-green-500/20' :
                 offer.status === 'declined' ? 'bg-red-500/10 border border-red-500/10' :
-                'bg-white/5 border border-white/10'
+                'bg-secondary/60 border border-border'
               }`}>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2">
@@ -161,7 +161,7 @@ export default function JobNegotiationFlow({ application, job, user, onRateAgree
             </button>
           </div>
 
-          <div className="flex items-center gap-2 bg-white/5 border border-white/10 rounded-xl px-3 py-2">
+          <div className="flex items-center gap-2 bg-secondary/60 border border-border rounded-xl px-3 py-2">
             <DollarSign className="w-4 h-4 text-muted-foreground shrink-0" />
             <input
               type="number"
@@ -178,7 +178,7 @@ export default function JobNegotiationFlow({ application, job, user, onRateAgree
             onChange={e => setNote(e.target.value)}
             placeholder="Optional note..."
             rows={2}
-            className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-yellow-500/40 text-foreground placeholder:text-muted-foreground resize-none"
+            className="w-full bg-secondary/60 border border-border rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-yellow-500/40 text-foreground placeholder:text-muted-foreground resize-none"
           />
 
           <Button

@@ -5,13 +5,13 @@ import { motion } from 'framer-motion';
 
 export default function CTASection() {
   return (
-    <section className="py-32 px-6 lg:px-12 border-t border-white/5">
+    <section className="py-32 px-6 lg:px-12 border-t border-border">
       <div className="max-w-7xl mx-auto">
         <motion.div initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
           className="relative rounded-[2.5rem] overflow-hidden bg-primary p-16 md:p-24">
           {/* Background elements */}
           <div className="absolute inset-0 bg-gradient-to-br from-primary via-primary to-red-700" />
-          <div className="absolute -top-32 -right-32 w-96 h-96 bg-white/10 rounded-full" />
+          <div className="absolute -top-32 -right-32 w-96 h-96 bg-secondary rounded-full" />
           <div className="absolute -bottom-20 -left-20 w-72 h-72 bg-black/20 rounded-full" />
           <div className="absolute inset-0 opacity-5"
             style={{backgroundImage: 'linear-gradient(white 1px, transparent 1px), linear-gradient(90deg, white 1px, transparent 1px)', backgroundSize: '40px 40px'}}
@@ -32,7 +32,7 @@ export default function CTASection() {
                 </button>
               </Link>
               <Link to="/Onboarding?role=avatar">
-                <button className="flex items-center justify-center gap-3 border-2 border-white/30 hover:border-white text-white font-bold text-base px-10 py-4 rounded-full hover:bg-white/10 transition-all w-full sm:w-auto">
+                <button className="flex items-center justify-center gap-3 border-2 border-white/30 hover:border-white text-white font-bold text-base px-10 py-4 rounded-full hover:bg-secondary transition-all w-full sm:w-auto">
                   Become an Avatar
                 </button>
               </Link>

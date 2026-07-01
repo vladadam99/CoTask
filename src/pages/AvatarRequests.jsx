@@ -217,13 +217,13 @@ export default function AvatarRequests() {
             className={`flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
               activeTab === tab.key
                 ? 'bg-primary text-primary-foreground'
-                : 'bg-muted/50 text-muted-foreground hover:bg-muted'
+                : 'bg-card text-muted-foreground hover:bg-muted'
             }`}
           >
             <tab.icon className="w-4 h-4" />
             {tab.label}
             {tab.key === 'pending' && pendingCount > 0 && (
-              <span className="ml-1 bg-white/20 text-xs px-1.5 py-0.5 rounded-full">{pendingCount}</span>
+              <span className="ml-1 bg-secondary text-xs px-1.5 py-0.5 rounded-full">{pendingCount}</span>
             )}
           </button>
         ))}

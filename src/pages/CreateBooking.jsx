@@ -188,7 +188,7 @@ Based on this, return:
             <Button className="w-full" onClick={() => navigate('/FindPeople')}>
               Discover Local Agents
             </Button>
-            <Button variant="outline" className="w-full border-white/10" onClick={() => navigate('/PostJob')}>
+            <Button variant="outline" className="w-full border-border" onClick={() => navigate('/PostJob')}>
               Post an Open Task
             </Button>
           </div>
@@ -222,7 +222,7 @@ Based on this, return:
         <h1 className="text-2xl font-bold mb-1">Request Direct Hire</h1>
         <p className="text-sm text-muted-foreground mb-6">Send a task request to this Local Agent. They can accept, decline, or discuss details before starting.</p>
         
-        <div className="bg-muted/50 border border-border rounded-xl p-3 mb-8">
+        <div className="bg-card border border-border rounded-xl p-3 mb-8">
           <p className="text-xs text-muted-foreground">
             <strong className="text-foreground">Tip:</strong> Direct Hire is best when you already selected a Local Agent. If you want multiple proposals, <a href="/PostJob" className="text-primary hover:underline">post an Open Task</a> instead.
           </p>
@@ -231,7 +231,7 @@ Based on this, return:
         {avatar && (
           <div className="flex items-center gap-3 mb-8">
             {avatar.photo_url
-              ? <img src={avatar.photo_url} className="w-9 h-9 rounded-full object-cover border border-white/10" alt={avatar.display_name} />
+              ? <img src={avatar.photo_url} className="w-9 h-9 rounded-full object-cover border border-border" alt={avatar.display_name} />
               : <div className="w-9 h-9 rounded-full bg-primary/20 flex items-center justify-center text-primary font-bold">{avatar.display_name?.[0]}</div>
             }
             <p className="text-muted-foreground text-sm">with <span className="text-foreground font-medium">{avatar.display_name}</span> · ${rate}/hr</p>
@@ -250,7 +250,7 @@ Based on this, return:
               value={aiDescription}
               onChange={e => setAiDescription(e.target.value)}
               placeholder="e.g. I need someone to pick up my dry cleaning from the shop on Oxford Street and drop it at my flat…"
-              className="bg-muted/50 border-white/5 h-20 text-sm"
+              className="bg-card border-border h-20 text-sm"
             />
             <Button
               type="button"
@@ -275,7 +275,7 @@ Based on this, return:
                 const Icon = opt.icon;
                 return (
                   <button key={opt.value} type="button" onClick={() => update('stream_mode', opt.value)} title={opt.tooltip}
-                    className={`p-4 rounded-xl border text-left transition-all ${form.stream_mode === opt.value ? 'bg-primary/10 border-primary/40' : 'bg-muted/30 border-border hover:border-primary/30'}`}>
+                    className={`p-4 rounded-xl border text-left transition-all ${form.stream_mode === opt.value ? 'bg-primary/10 border-primary/40' : 'bg-card border-border hover:border-primary/30'}`}>
                     <Icon className={`w-5 h-5 mb-2 ${form.stream_mode === opt.value ? 'text-primary' : 'text-muted-foreground'}`} />
                     <p className={`font-medium text-sm ${form.stream_mode === opt.value ? 'text-foreground' : 'text-muted-foreground'}`}>{opt.label}</p>
                     <p className="text-xs text-muted-foreground mt-0.5">{opt.sub}</p>
@@ -289,7 +289,7 @@ Based on this, return:
           <GlassCard className="p-5 space-y-3">
             <h2 className="font-semibold text-sm">Category</h2>
             <Select value={form.category} onValueChange={v => update('category', v)}>
-              <SelectTrigger className="bg-muted/50 border-white/5"><SelectValue placeholder="Select service type" /></SelectTrigger>
+              <SelectTrigger className="bg-card border-border"><SelectValue placeholder="Select service type" /></SelectTrigger>
               <SelectContent>
                 {CATEGORIES.map(c => <SelectItem key={c} value={c}>{c}</SelectItem>)}
               </SelectContent>
@@ -297,10 +297,10 @@ Based on this, return:
             {form.notes ? (
               <div>
                 <label className="text-xs text-muted-foreground mb-1 block">Task description</label>
-                <Textarea value={form.notes} onChange={e => update('notes', e.target.value)} className="bg-muted/50 border-white/5 h-20 text-sm" placeholder="Describe the task in detail…" />
+                <Textarea value={form.notes} onChange={e => update('notes', e.target.value)} className="bg-card border-border h-20 text-sm" placeholder="Describe the task in detail…" />
               </div>
             ) : (
-              <Textarea value={form.notes} onChange={e => update('notes', e.target.value)} className="bg-muted/50 border-white/5 h-20 text-sm" placeholder="Any specific instructions for the agent…" />
+              <Textarea value={form.notes} onChange={e => update('notes', e.target.value)} className="bg-card border-border h-20 text-sm" placeholder="Any specific instructions for the agent…" />
             )}
           </GlassCard>
 
@@ -313,7 +313,7 @@ Based on this, return:
                 { value: 'scheduled', label: '📅 Schedule', sub: 'Pick a date & time' },
               ].map(opt => (
                 <button key={opt.value} type="button" onClick={() => update('booking_type', opt.value)}
-                  className={`p-4 rounded-xl border text-left transition-all ${form.booking_type === opt.value ? 'bg-primary/10 border-primary/40' : 'bg-muted/30 border-white/5 hover:border-white/10'}`}>
+                  className={`p-4 rounded-xl border text-left transition-all ${form.booking_type === opt.value ? 'bg-primary/10 border-primary/40' : 'bg-card border-border hover:border-border'}`}>
                   <p className={`font-medium text-sm ${form.booking_type === opt.value ? 'text-foreground' : 'text-muted-foreground'}`}>{opt.label}</p>
                   <p className="text-xs text-muted-foreground mt-0.5">{opt.sub}</p>
                 </button>
@@ -324,11 +324,11 @@ Based on this, return:
                 <div className="grid grid-cols-2 gap-3">
                   <div>
                     <label className="text-xs text-muted-foreground mb-1 block">Date</label>
-                    <Input type="date" value={form.scheduled_date} onChange={e => update('scheduled_date', e.target.value)} className="bg-muted/50 border-white/5 text-sm" />
+                    <Input type="date" value={form.scheduled_date} onChange={e => update('scheduled_date', e.target.value)} className="bg-card border-border text-sm" />
                   </div>
                   <div>
                     <label className="text-xs text-muted-foreground mb-1 block">Time</label>
-                    <Input type="time" value={form.scheduled_time} onChange={e => update('scheduled_time', e.target.value)} className="bg-muted/50 border-white/5 text-sm" />
+                    <Input type="time" value={form.scheduled_time} onChange={e => update('scheduled_time', e.target.value)} className="bg-card border-border text-sm" />
                   </div>
                 </div>
                 <div>
@@ -340,7 +340,7 @@ Based on this, return:
                         min="0"
                         value={Math.floor(form.duration_minutes / 60).toString()}
                         onChange={e => update('duration_minutes', (parseInt(e.target.value) || 0) * 60 + (form.duration_minutes % 60))}
-                        className="bg-muted/50 border-white/5 text-sm"
+                        className="bg-card border-border text-sm"
                       />
                       <span className="text-sm text-muted-foreground">hrs</span>
                     </div>
@@ -351,7 +351,7 @@ Based on this, return:
                         max="59"
                         value={(form.duration_minutes % 60).toString()}
                         onChange={e => update('duration_minutes', Math.floor(form.duration_minutes / 60) * 60 + (parseInt(e.target.value) || 0))}
-                        className="bg-muted/50 border-white/5 text-sm"
+                        className="bg-card border-border text-sm"
                       />
                       <span className="text-sm text-muted-foreground">mins</span>
                     </div>
@@ -370,7 +370,7 @@ Based on this, return:
                 { value: true, label: '🚗 Yes, Travel', sub: 'Agent needs to go somewhere' },
               ].map(opt => (
                 <button key={String(opt.value)} type="button" onClick={() => update('transport_required', opt.value)}
-                  className={`p-4 rounded-xl border text-left transition-all ${form.transport_required === opt.value ? 'bg-primary/10 border-primary/40' : 'bg-muted/30 border-white/5 hover:border-white/10'}`}>
+                  className={`p-4 rounded-xl border text-left transition-all ${form.transport_required === opt.value ? 'bg-primary/10 border-primary/40' : 'bg-card border-border hover:border-border'}`}>
                   <p className={`font-medium text-sm ${form.transport_required === opt.value ? 'text-foreground' : 'text-muted-foreground'}`}>{opt.label}</p>
                   <p className="text-xs text-muted-foreground mt-0.5">{opt.sub}</p>
                 </button>
@@ -379,14 +379,14 @@ Based on this, return:
             {form.transport_required && (
               <Input value={form.transport_notes} onChange={e => update('transport_notes', e.target.value)}
                 placeholder="e.g. Uber provided, public transport from Zone 1…"
-                className="bg-muted/50 border-white/5 text-sm" />
+                className="bg-card border-border text-sm" />
             )}
             {form.transport_required && (
               <div>
                 <label className="text-xs text-muted-foreground mb-1 block">Location / Address</label>
                 <Input value={form.location} onChange={e => update('location', e.target.value)}
                   placeholder="e.g. 12 Baker St, London W1U 3BW"
-                  className="bg-muted/50 border-white/5 text-sm" />
+                  className="bg-card border-border text-sm" />
               </div>
             )}
           </GlassCard>
@@ -398,8 +398,8 @@ Based on this, return:
               <Input value={newEquipment} onChange={e => setNewEquipment(e.target.value)}
                 onKeyDown={e => { if (e.key === 'Enter' && newEquipment.trim()) { e.preventDefault(); update('equipment_needed', [...form.equipment_needed, newEquipment.trim()]); setNewEquipment(''); } }}
                 placeholder="e.g. smartphone, ladder, drill…"
-                className="bg-muted/50 border-white/5 text-sm" />
-              <Button type="button" variant="outline" className="border-white/10 shrink-0"
+                className="bg-card border-border text-sm" />
+              <Button type="button" variant="outline" className="border-border shrink-0"
                 onClick={() => { if (newEquipment.trim()) { update('equipment_needed', [...form.equipment_needed, newEquipment.trim()]); setNewEquipment(''); } }}>
                 <Plus className="w-4 h-4" />
               </Button>
@@ -407,7 +407,7 @@ Based on this, return:
             {form.equipment_needed.length > 0 && (
               <div className="flex flex-wrap gap-2">
                 {form.equipment_needed.map((eq, i) => (
-                  <span key={i} className="flex items-center gap-1.5 bg-white/5 border border-white/10 text-sm px-3 py-1 rounded-full">
+                  <span key={i} className="flex items-center gap-1.5 bg-secondary/60 border border-border text-sm px-3 py-1 rounded-full">
                     {eq}
                     <button type="button" onClick={() => update('equipment_needed', form.equipment_needed.filter((_, idx) => idx !== i))}>
                       <X className="w-3 h-3 text-muted-foreground hover:text-foreground" />
@@ -425,7 +425,7 @@ Based on this, return:
               <div className="flex justify-between text-muted-foreground"><span>Service ({form.duration_minutes} min × ${rate}/hr)</span><span className="text-foreground">${(amount - livePremium).toFixed(2)}</span></div>
               {livePremium > 0 && <div className="flex justify-between"><span className="text-muted-foreground">Live camera premium</span><span className="text-primary">+${livePremium.toFixed(2)}</span></div>}
               <div className="flex justify-between text-muted-foreground"><span>Platform fee (15%)</span><span className="text-foreground">${serviceFee.toFixed(2)}</span></div>
-              <div className="border-t border-white/5 pt-2 flex justify-between font-bold text-base"><span>Total</span><span className="text-primary">${total.toFixed(2)}</span></div>
+              <div className="border-t border-border pt-2 flex justify-between font-bold text-base"><span>Total</span><span className="text-primary">${total.toFixed(2)}</span></div>
             </div>
           </GlassCard>
 

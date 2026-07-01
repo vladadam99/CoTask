@@ -13,7 +13,7 @@ export default function TimePicker({ timeMode, onTimeMode, startTime, onStartTim
     <div className="space-y-5">
 
       {/* Time mode toggle */}
-      <div className="flex rounded-xl border border-white/10 bg-white/5 p-1 gap-1">
+      <div className="flex rounded-xl border border-border bg-secondary/60 p-1 gap-1">
         {[
           { key: 'range', label: 'Specific' },
           { key: 'flexible', label: 'Flexible' },
@@ -38,7 +38,7 @@ export default function TimePicker({ timeMode, onTimeMode, startTime, onStartTim
                 type="time"
                 value={startTime || ''}
                 onChange={e => onStartTime(e.target.value)}
-                className="w-full bg-white/5 border border-white/10 rounded-lg pl-9 pr-3 py-2 text-sm focus:outline-none focus:border-primary/50 text-foreground"
+                className="w-full bg-secondary/60 border border-border rounded-lg pl-9 pr-3 py-2 text-sm focus:outline-none focus:border-primary/50 text-foreground"
               />
             </div>
           </div>
@@ -50,7 +50,7 @@ export default function TimePicker({ timeMode, onTimeMode, startTime, onStartTim
                 type="time"
                 value={endTime || ''}
                 onChange={e => onEndTime(e.target.value)}
-                className="w-full bg-white/5 border border-white/10 rounded-lg pl-9 pr-3 py-2 text-sm focus:outline-none focus:border-primary/50 text-foreground"
+                className="w-full bg-secondary/60 border border-border rounded-lg pl-9 pr-3 py-2 text-sm focus:outline-none focus:border-primary/50 text-foreground"
               />
             </div>
           </div>
@@ -66,7 +66,7 @@ export default function TimePicker({ timeMode, onTimeMode, startTime, onStartTim
               placeholder="e.g. 2"
               value={endTime || ''}
               onChange={e => onEndTime(e.target.value)}
-              className="w-24 bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-primary/50 text-foreground placeholder:text-muted-foreground"
+              className="w-24 bg-secondary/60 border border-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-primary/50 text-foreground placeholder:text-muted-foreground"
             />
             <span className="text-sm text-muted-foreground">hours</span>
           </div>
@@ -85,7 +85,7 @@ export default function TimePicker({ timeMode, onTimeMode, startTime, onStartTim
               className={`px-3 py-1.5 rounded-full text-xs font-medium border transition-all ${
                 repeat === opt.value
                   ? 'bg-foreground text-background border-foreground'
-                  : 'bg-white/5 text-muted-foreground border-white/10 hover:border-white/20'
+                  : 'bg-secondary/60 text-muted-foreground border-border hover:border-border'
               }`}>
               {opt.label}
             </button>

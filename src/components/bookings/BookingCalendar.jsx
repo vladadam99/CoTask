@@ -18,11 +18,11 @@ export default function BookingCalendar({ bookings, detailPath = '/UserBookingDe
     <div>
       {/* Month navigation */}
       <div className="flex items-center justify-between mb-4">
-        <button onClick={() => setMonth(m => subMonths(m, 1))} className="p-2 rounded-lg hover:bg-muted/50 transition-colors">
+        <button onClick={() => setMonth(m => subMonths(m, 1))} className="p-2 rounded-lg hover:bg-card transition-colors">
           <ChevronLeft className="w-4 h-4" />
         </button>
         <h3 className="font-semibold">{format(month, 'MMMM yyyy')}</h3>
-        <button onClick={() => setMonth(m => addMonths(m, 1))} className="p-2 rounded-lg hover:bg-muted/50 transition-colors">
+        <button onClick={() => setMonth(m => addMonths(m, 1))} className="p-2 rounded-lg hover:bg-card transition-colors">
           <ChevronRight className="w-4 h-4" />
         </button>
       </div>
@@ -43,7 +43,7 @@ export default function BookingCalendar({ bookings, detailPath = '/UserBookingDe
           return (
             <div key={day.toISOString()}
               className={`min-h-[60px] rounded-lg p-1 text-xs transition-colors ${
-                isToday ? 'bg-primary/10 border border-primary/30' : 'hover:bg-muted/30'
+                isToday ? 'bg-primary/10 border border-primary/30' : 'hover:bg-card'
               }`}>
               <span className={`block text-center mb-1 w-6 h-6 mx-auto rounded-full flex items-center justify-center font-medium ${
                 isToday ? 'bg-primary text-primary-foreground' : 'text-foreground'

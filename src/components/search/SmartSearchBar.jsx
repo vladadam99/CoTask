@@ -106,7 +106,7 @@ Only include genuinely relevant matches. Return them ranked by relevance (best f
           value={query}
           onChange={e => setQuery(e.target.value)}
           placeholder={placeholder}
-          className="pl-10 pr-8 bg-white/5 border-white/10 rounded-xl text-sm"
+          className="pl-10 pr-8 bg-secondary/60 border-border rounded-xl text-sm"
           onFocus={() => setFocused(true)}
           onBlur={() => setTimeout(() => setFocused(false), 150)}
         />
@@ -120,11 +120,11 @@ Only include genuinely relevant matches. Return them ranked by relevance (best f
 
 
       {showDropdown && (
-        <div className="absolute top-full left-0 right-0 mt-1 bg-card border border-white/10 rounded-xl shadow-xl z-50 overflow-hidden">
+        <div className="absolute top-full left-0 right-0 mt-1 bg-card border border-border rounded-xl shadow-xl z-50 overflow-hidden">
           <p className="text-[10px] text-muted-foreground px-3 pt-2 pb-1">Popular searches</p>
           {suggestions.map((s, i) => (
             <button key={i} onMouseDown={() => applySuggestion(s)}
-              className="w-full text-left px-3 py-2 text-sm hover:bg-white/5 flex items-center gap-2 transition-colors">
+              className="w-full text-left px-3 py-2 text-sm hover:bg-secondary/60 flex items-center gap-2 transition-colors">
               <Search className="w-3 h-3 text-muted-foreground flex-shrink-0" />{s}
             </button>
           ))}

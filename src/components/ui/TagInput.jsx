@@ -22,7 +22,7 @@ export default function TagInput({ tags = [], setTags, placeholder = "Add tag...
   };
 
   return (
-    <div className="flex flex-wrap items-center gap-2 p-2 border border-white/10 rounded-md bg-transparent focus-within:ring-1 focus-within:ring-ring focus-within:border-ring transition-colors">
+    <div className="flex flex-wrap items-center gap-2 p-2 border border-border rounded-md bg-transparent focus-within:ring-1 focus-within:ring-ring focus-within:border-ring transition-colors">
       {tags.map((tag, index) => (
         <span key={index} className="flex items-center gap-1 px-2.5 py-1 bg-primary/20 text-primary font-medium text-xs rounded-full">
           {tag}

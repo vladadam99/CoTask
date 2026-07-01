@@ -314,7 +314,7 @@ export default function JobActionCard({ job, user, userRole, conversationId, onJ
               </div>
               <div className="grid grid-cols-4 gap-2">
                 {[{ label: 'Days', v: countdown.days }, { label: 'Hours', v: countdown.hours }, { label: 'Mins', v: countdown.minutes }, { label: 'Secs', v: countdown.seconds }].map(u => (
-                  <div key={u.label} className="bg-white/5 rounded-xl p-3 text-center border border-white/5">
+                  <div key={u.label} className="bg-secondary/60 rounded-xl p-3 text-center border border-border">
                     <div className="text-2xl font-bold tabular-nums">{String(u.v).padStart(2, '0')}</div>
                     <div className="text-xs text-muted-foreground mt-0.5">{u.label}</div>
                   </div>
@@ -356,7 +356,7 @@ export default function JobActionCard({ job, user, userRole, conversationId, onJ
             {scheduledStr && countdown && !countdown.expired && (
               <div className="grid grid-cols-4 gap-2">
                 {[{ label: 'Days', v: countdown.days }, { label: 'Hours', v: countdown.hours }, { label: 'Mins', v: countdown.minutes }, { label: 'Secs', v: countdown.seconds }].map(u => (
-                  <div key={u.label} className="bg-white/5 rounded-xl p-3 text-center border border-white/5">
+                  <div key={u.label} className="bg-secondary/60 rounded-xl p-3 text-center border border-border">
                     <div className="text-2xl font-bold tabular-nums">{String(u.v).padStart(2, '0')}</div>
                     <div className="text-xs text-muted-foreground mt-0.5">{u.label}</div>
                   </div>
@@ -377,7 +377,7 @@ export default function JobActionCard({ job, user, userRole, conversationId, onJ
           <div className="mx-4 my-3 flex justify-center">
             <button
               onClick={() => setShowProofForm(true)}
-              className="text-xs text-muted-foreground hover:text-foreground border border-white/10 hover:border-primary/30 px-4 py-2 rounded-full transition-all gap-2 flex items-center"
+              className="text-xs text-muted-foreground hover:text-foreground border border-border hover:border-primary/30 px-4 py-2 rounded-full transition-all gap-2 flex items-center"
             >
               <CheckCircle className="w-3.5 h-3.5" /> Mark Ready for Review
             </button>
@@ -402,11 +402,11 @@ export default function JobActionCard({ job, user, userRole, conversationId, onJ
           <p className="text-xs text-muted-foreground">Upload a photo proof. The client will review and release payment.</p>
           {proofPreview ? (
             <div>
-              <img src={proofPreview} alt="Proof" className="w-full max-h-40 object-cover rounded-xl border border-white/10" />
+              <img src={proofPreview} alt="Proof" className="w-full max-h-40 object-cover rounded-xl border border-border" />
               <button type="button" onClick={() => { setProofPreview(null); setProofFile(null); }} className="text-xs text-muted-foreground hover:text-foreground mt-1">Remove photo</button>
             </div>
           ) : (
-            <label className="w-full border-2 border-dashed border-white/10 rounded-xl p-6 flex flex-col items-center gap-2 hover:border-primary/30 transition-colors cursor-pointer">
+            <label className="w-full border-2 border-dashed border-border rounded-xl p-6 flex flex-col items-center gap-2 hover:border-primary/30 transition-colors cursor-pointer">
               <input type="file" accept="image/*" className="hidden"
                 onChange={e => { const f = e.target.files?.[0]; if (f) { setProofFile(f); setProofPreview(URL.createObjectURL(f)); } e.target.value = ''; }} />
               <Camera className="w-6 h-6 text-primary" />
@@ -414,7 +414,7 @@ export default function JobActionCard({ job, user, userRole, conversationId, onJ
             </label>
           )}
           <textarea value={proofNote} onChange={e => setProofNote(e.target.value)} rows={2} placeholder="Optional note about the completed work…"
-            className="w-full text-sm bg-muted/50 border border-white/5 rounded-xl px-3 py-2 focus:outline-none focus:border-primary/40 text-foreground placeholder:text-muted-foreground resize-none" />
+            className="w-full text-sm bg-card border border-border rounded-xl px-3 py-2 focus:outline-none focus:border-primary/40 text-foreground placeholder:text-muted-foreground resize-none" />
           <Button className="w-full gap-2" onClick={handleJobDone} disabled={!proofFile || loading}>
             {loading ? <><Loader2 className="w-4 h-4 animate-spin" /> Uploading…</> : <><CheckCircle className="w-4 h-4" /> Submit Proof & Mark Ready for Review</>}
           </Button>
@@ -444,7 +444,7 @@ export default function JobActionCard({ job, user, userRole, conversationId, onJ
             <p className="font-semibold text-sm text-yellow-400">Task Completion — Your Review Needed</p>
           </div>
           <p className="text-xs text-muted-foreground">The agent has marked this task as done. Review the proof and confirm.</p>
-          {job.proof_url && <img src={job.proof_url} alt="Proof" className="w-full max-h-48 object-cover rounded-xl border border-white/10" />}
+          {job.proof_url && <img src={job.proof_url} alt="Proof" className="w-full max-h-48 object-cover rounded-xl border border-border" />}
           {job.proof_note && <p className="text-xs text-muted-foreground italic">"{job.proof_note}"</p>}
           {!showDisputeForm ? (
             <div className="flex gap-2">
@@ -460,14 +460,14 @@ export default function JobActionCard({ job, user, userRole, conversationId, onJ
               <p className="text-xs font-medium text-red-400">Explain why you're not satisfied:</p>
               <textarea value={disputeReason} onChange={e => setDisputeReason(e.target.value)} rows={3}
                 placeholder="Describe what went wrong…"
-                className="w-full text-sm bg-muted/50 border border-white/5 rounded-xl px-3 py-2 focus:outline-none text-foreground placeholder:text-muted-foreground resize-none" />
+                className="w-full text-sm bg-card border border-border rounded-xl px-3 py-2 focus:outline-none text-foreground placeholder:text-muted-foreground resize-none" />
               {disputePreview ? (
                 <div>
-                  <img src={disputePreview} alt="Dispute" className="w-full max-h-32 object-cover rounded-xl border border-white/10" />
+                  <img src={disputePreview} alt="Dispute" className="w-full max-h-32 object-cover rounded-xl border border-border" />
                   <button onClick={() => { setDisputePreview(null); setDisputeFile(null); }} className="text-xs text-muted-foreground mt-1">Remove</button>
                 </div>
               ) : (
-                <label className="w-full border border-dashed border-white/10 rounded-xl p-3 flex items-center gap-2 text-xs text-muted-foreground cursor-pointer">
+                <label className="w-full border border-dashed border-border rounded-xl p-3 flex items-center gap-2 text-xs text-muted-foreground cursor-pointer">
                   <input type="file" accept="image/*" className="hidden"
                     onChange={e => { const f = e.target.files?.[0]; if (f) { setDisputeFile(f); setDisputePreview(URL.createObjectURL(f)); } e.target.value = ''; }} />
                   <Camera className="w-4 h-4" /> Attach photo evidence (optional)
@@ -477,7 +477,7 @@ export default function JobActionCard({ job, user, userRole, conversationId, onJ
                 <Button className="flex-1 bg-red-600 hover:bg-red-700 text-white gap-1.5" onClick={handleDispute} disabled={!disputeReason || loading}>
                   {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <><AlertTriangle className="w-4 h-4" /> Submit Dispute</>}
                 </Button>
-                <Button variant="outline" className="border-white/10" onClick={() => setShowDisputeForm(false)} disabled={loading}>Cancel</Button>
+                <Button variant="outline" className="border-border" onClick={() => setShowDisputeForm(false)} disabled={loading}>Cancel</Button>
               </div>
             </div>
           )}
@@ -524,14 +524,14 @@ export default function JobActionCard({ job, user, userRole, conversationId, onJ
           <p className="font-semibold text-sm text-orange-400">Dispute — Choose a Resolution</p>
         </div>
         {job.dispute_reason && <p className="text-xs italic text-muted-foreground">Client's reason: "{job.dispute_reason}"</p>}
-        {job.dispute_photo_url && <img src={job.dispute_photo_url} alt="Dispute" className="w-full max-h-32 object-cover rounded-xl border border-white/10" />}
+        {job.dispute_photo_url && <img src={job.dispute_photo_url} alt="Dispute" className="w-full max-h-32 object-cover rounded-xl border border-border" />}
         <div className="space-y-2">
           <Button variant="outline" className="w-full gap-2 border-green-500/30 text-green-400 hover:bg-green-500/10" onClick={handleFullRefund} disabled={loading}>
             {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <><RefreshCw className="w-4 h-4" /> Give Full Refund</>}
           </Button>
           <div className="flex gap-2">
             <input type="number" value={partialAmount} onChange={e => setPartialAmount(e.target.value)} placeholder="Partial amount ($)"
-              className="flex-1 bg-muted/50 border border-white/5 rounded-xl px-3 py-2 text-sm focus:outline-none text-foreground placeholder:text-muted-foreground" />
+              className="flex-1 bg-card border border-border rounded-xl px-3 py-2 text-sm focus:outline-none text-foreground placeholder:text-muted-foreground" />
             <Button variant="outline" className="gap-1.5 border-blue-500/30 text-blue-400 hover:bg-blue-500/10" onClick={handlePartialRefund} disabled={!partialAmount || loading}>
               <DollarSign className="w-4 h-4" /> Partial
             </Button>

@@ -64,7 +64,7 @@ export default function SecurePaymentModal({ job, onSuccess, onCancel }) {
         <Button className="flex-1 gap-2" onClick={handleConfirm} disabled={loading}>
           {loading ? <><Loader2 className="w-4 h-4 animate-spin" /> Preparing secure payment...</> : <>Fund Secure Payment</>}
         </Button>
-        <Button type="button" variant="outline" className="border-white/10" onClick={onCancel} disabled={loading}>
+        <Button type="button" variant="outline" className="border-border" onClick={onCancel} disabled={loading}>
           Cancel
         </Button>
       </div>

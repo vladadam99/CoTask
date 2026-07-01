@@ -110,7 +110,7 @@ export default function AvatarLive() {
           </Button>
         </GlassCard>
       ) : (
-        <GlassCard className="p-6 mb-8 text-center border border-dashed border-white/10">
+        <GlassCard className="p-6 mb-8 text-center border border-dashed border-border">
           <Radio className="w-10 h-10 text-muted-foreground mx-auto mb-3" />
           <p className="text-muted-foreground text-sm">No active session</p>
         </GlassCard>

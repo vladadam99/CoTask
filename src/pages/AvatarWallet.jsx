@@ -117,9 +117,9 @@ export default function AvatarWallet() {
               <>
                 <p className="text-sm text-muted-foreground mb-4">Available: <span className="text-green-400 font-bold">${totalNet.toFixed(2)}</span></p>
                 <label className="text-xs text-muted-foreground mb-1 block">Amount (USD)</label>
-                <input type="number" value={withdrawAmount} onChange={e => setWithdrawAmount(e.target.value)} placeholder="0.00" className="w-full bg-muted/50 border border-border rounded-xl px-3 py-2 text-sm mb-3 outline-none" />
+                <input type="number" value={withdrawAmount} onChange={e => setWithdrawAmount(e.target.value)} placeholder="0.00" className="w-full bg-card border border-border rounded-xl px-3 py-2 text-sm mb-3 outline-none" />
                 <label className="text-xs text-muted-foreground mb-1 block">Payout Method</label>
-                <select value={withdrawMethod} onChange={e => setWithdrawMethod(e.target.value)} className="w-full bg-muted/50 border border-border rounded-xl px-3 py-2 text-sm mb-4 outline-none">
+                <select value={withdrawMethod} onChange={e => setWithdrawMethod(e.target.value)} className="w-full bg-card border border-border rounded-xl px-3 py-2 text-sm mb-4 outline-none">
                   <option value="bank_transfer">Bank Transfer</option>
                   <option value="paypal">PayPal</option>
                   <option value="wise">Wise</option>

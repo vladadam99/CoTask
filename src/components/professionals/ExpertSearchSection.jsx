@@ -85,7 +85,7 @@ export default function ExpertSearchSection({ user }) {
           value={search}
           onChange={e => setSearch(e.target.value)}
           placeholder="Search by topic, skill, or expert name..."
-          className="w-full pl-10 pr-4 py-3 rounded-xl bg-card/50 border border-white/10 text-sm focus:outline-none focus:border-primary/50 transition-colors"
+          className="w-full pl-10 pr-4 py-3 rounded-xl bg-card/50 border border-border text-sm focus:outline-none focus:border-primary/50 transition-colors"
         />
         {search && (
           <button onClick={() => setSearch('')} className="absolute right-3 top-1/2 -translate-y-1/2">
@@ -100,7 +100,7 @@ export default function ExpertSearchSection({ user }) {
           className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold border transition-all ${
             onlineOnly
               ? 'bg-green-500/20 text-green-400 border-green-500/30'
-              : 'bg-white/5 text-muted-foreground border-white/10 hover:border-white/20'
+              : 'bg-secondary/60 text-muted-foreground border-border hover:border-border'
           }`}
         >
           <span className={`w-1.5 h-1.5 rounded-full ${onlineOnly ? 'bg-green-400 animate-pulse' : 'bg-muted-foreground'}`} />
@@ -116,7 +116,7 @@ export default function ExpertSearchSection({ user }) {
             className={`flex items-center gap-1.5 px-3 py-2 rounded-full text-xs font-semibold border whitespace-nowrap transition-all flex-shrink-0 ${
               selectedTopic === t.label
                 ? 'bg-primary/20 text-primary border-primary/30'
-                : 'bg-white/5 text-muted-foreground border-white/10 hover:border-white/20'
+                : 'bg-secondary/60 text-muted-foreground border-border hover:border-border'
             }`}
           >
             <span>{t.icon}</span> {t.label}
@@ -131,7 +131,7 @@ export default function ExpertSearchSection({ user }) {
       {isLoading ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {[1,2,3,4,5,6].map(i => (
-            <div key={i} className="rounded-2xl bg-card/40 border border-white/5 h-48 animate-pulse" />
+            <div key={i} className="rounded-2xl bg-card/40 border border-border h-48 animate-pulse" />
           ))}
         </div>
       ) : filtered.length === 0 ? (
@@ -139,7 +139,7 @@ export default function ExpertSearchSection({ user }) {
           <p className="text-4xl">🔍</p>
           <h3 className="font-bold">No sessions found</h3>
           <p className="text-sm text-muted-foreground">Try a different topic or clear your filters</p>
-          <Button variant="outline" className="border-white/10" onClick={() => { setSearch(''); setSelectedTopic('All'); setOnlineOnly(false); }}>
+          <Button variant="outline" className="border-border" onClick={() => { setSearch(''); setSelectedTopic('All'); setOnlineOnly(false); }}>
             Clear filters
           </Button>
         </div>
@@ -161,11 +161,11 @@ function OfferingCard({ offering, avatar, i }) {
   return (
     <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: Math.min(i * 0.04, 0.3) }}>
       <Link to={`/ConsultationBooking?avatar=${offering.avatar_profile_id}&offering=${offering.id}`}>
-        <div className="glass border border-white/5 hover:border-primary/30 rounded-2xl p-5 transition-all hover:scale-[1.02] flex flex-col gap-4">
+        <div className="glass border border-border hover:border-primary/30 rounded-2xl p-5 transition-all hover:scale-[1.02] flex flex-col gap-4">
           <div>
             <h3 className="font-black text-lg leading-snug mb-2">{offering.title}</h3>
             <div className="flex items-center justify-between gap-2">
-              <span className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-white/5 text-muted-foreground border border-white/10">
+              <span className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-secondary/60 text-muted-foreground border border-border">
                 {SESSION_TYPE_ICONS[offering.session_type]} {SESSION_TYPE_LABELS[offering.session_type] || offering.session_type}
               </span>
               {avatar?.is_available && (
@@ -205,7 +205,7 @@ function OfferingCard({ offering, avatar, i }) {
             )}
           </div>
 
-          <div className="flex items-center justify-between pt-1 border-t border-white/5">
+          <div className="flex items-center justify-between pt-1 border-t border-border">
             <div className="flex items-center gap-1 text-xs text-muted-foreground">
               <Clock className="w-3 h-3" /> {offering.duration_minutes} min
             </div>

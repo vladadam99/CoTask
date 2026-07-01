@@ -131,26 +131,26 @@ export default function EnterpriseSettings() {
             <h2 className="font-semibold text-sm">Company Information</h2>
             <div>
               <label className="text-xs text-muted-foreground mb-1 block">Company Name</label>
-              <Input value={form.company_name} onChange={set('company_name')} className="bg-muted/30 border-white/5" />
+              <Input value={form.company_name} onChange={set('company_name')} className="bg-card border-border" />
             </div>
             <div className="grid grid-cols-2 gap-3">
               <div>
                 <label className="text-xs text-muted-foreground mb-1 block">Contact Person</label>
-                <Input value={form.contact_person} onChange={set('contact_person')} className="bg-muted/30 border-white/5" />
+                <Input value={form.contact_person} onChange={set('contact_person')} className="bg-card border-border" />
               </div>
               <div>
                 <label className="text-xs text-muted-foreground mb-1 block">Industry</label>
-                <Input value={form.industry} onChange={set('industry')} className="bg-muted/30 border-white/5" />
+                <Input value={form.industry} onChange={set('industry')} className="bg-card border-border" />
               </div>
             </div>
             <div className="grid grid-cols-2 gap-3">
               <div>
                 <label className="text-xs text-muted-foreground mb-1 block">Email</label>
-                <Input type="email" value={form.company_email} onChange={set('company_email')} className="bg-muted/30 border-white/5" />
+                <Input type="email" value={form.company_email} onChange={set('company_email')} className="bg-card border-border" />
               </div>
               <div>
                 <label className="text-xs text-muted-foreground mb-1 block">Phone</label>
-                <Input value={form.phone} onChange={set('phone')} className="bg-muted/30 border-white/5" />
+                <Input value={form.phone} onChange={set('phone')} className="bg-card border-border" />
               </div>
             </div>
           </GlassCard>
@@ -160,7 +160,7 @@ export default function EnterpriseSettings() {
             <h2 className="font-semibold text-sm">Operations</h2>
             <div>
               <label className="text-xs text-muted-foreground mb-1 block">Company Size</label>
-              <select value={form.company_size} onChange={set('company_size')} className="w-full px-3 py-2 bg-muted/30 border border-white/5 rounded-md text-sm">
+              <select value={form.company_size} onChange={set('company_size')} className="w-full px-3 py-2 bg-card border border-border rounded-md text-sm">
                 <option value="1-10">1-10 employees</option>
                 <option value="11-50">11-50 employees</option>
                 <option value="51-200">51-200 employees</option>
@@ -170,11 +170,11 @@ export default function EnterpriseSettings() {
             </div>
             <div>
               <label className="text-xs text-muted-foreground mb-1 block">Service Cities (comma-separated)</label>
-              <Input value={form.cities} onChange={set('cities')} className="bg-muted/30 border-white/5" placeholder="e.g. New York, London, Tokyo" />
+              <Input value={form.cities} onChange={set('cities')} className="bg-card border-border" placeholder="e.g. New York, London, Tokyo" />
             </div>
             <div>
               <label className="text-xs text-muted-foreground mb-1 block">Invoice Preference</label>
-              <select value={form.invoice_preference} onChange={set('invoice_preference')} className="w-full px-3 py-2 bg-muted/30 border border-white/5 rounded-md text-sm">
+              <select value={form.invoice_preference} onChange={set('invoice_preference')} className="w-full px-3 py-2 bg-card border border-border rounded-md text-sm">
                 <option value="per_booking">Per Booking</option>
                 <option value="monthly">Monthly</option>
                 <option value="quarterly">Quarterly</option>
@@ -182,7 +182,7 @@ export default function EnterpriseSettings() {
             </div>
             <div>
               <label className="text-xs text-muted-foreground mb-1 block">Booking Needs</label>
-              <Textarea value={form.booking_needs} onChange={set('booking_needs')} rows={3} className="bg-muted/30 border-white/5 resize-none" placeholder="Describe your typical booking needs..." />
+              <Textarea value={form.booking_needs} onChange={set('booking_needs')} rows={3} className="bg-card border-border resize-none" placeholder="Describe your typical booking needs..." />
             </div>
           </GlassCard>
         </div>

@@ -38,11 +38,11 @@ export default function OfficeHoursManager({ value, onChange }) {
         <span className="text-xs text-muted-foreground">(when you're available for consultations)</span>
       </div>
       {slots.map((slot, idx) => (
-        <div key={slot.day} className={`flex items-center gap-3 p-3 rounded-xl border transition-all ${slot.enabled ? 'bg-card/50 border-white/10' : 'bg-muted/10 border-white/5 opacity-60'}`}>
+        <div key={slot.day} className={`flex items-center gap-3 p-3 rounded-xl border transition-all ${slot.enabled ? 'bg-card/50 border-border' : 'bg-muted/10 border-border opacity-60'}`}>
           <button
             type="button"
             onClick={() => update(idx, { enabled: !slot.enabled })}
-            className={`w-4 h-4 rounded border-2 flex items-center justify-center flex-shrink-0 transition-colors ${slot.enabled ? 'bg-primary border-primary' : 'border-white/20'}`}
+            className={`w-4 h-4 rounded border-2 flex items-center justify-center flex-shrink-0 transition-colors ${slot.enabled ? 'bg-primary border-primary' : 'border-border'}`}
           >
             {slot.enabled && <span className="text-white text-[9px] font-black">✓</span>}
           </button>
@@ -53,14 +53,14 @@ export default function OfficeHoursManager({ value, onChange }) {
                 type="time"
                 value={slot.from}
                 onChange={e => update(idx, { from: e.target.value })}
-                className="bg-transparent border-white/10 text-sm h-8 w-28"
+                className="bg-transparent border-border text-sm h-8 w-28"
               />
               <span className="text-xs text-muted-foreground">to</span>
               <Input
                 type="time"
                 value={slot.to}
                 onChange={e => update(idx, { to: e.target.value })}
-                className="bg-transparent border-white/10 text-sm h-8 w-28"
+                className="bg-transparent border-border text-sm h-8 w-28"
               />
             </div>
           ) : (

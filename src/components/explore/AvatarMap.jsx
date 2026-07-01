@@ -55,7 +55,7 @@ export default function AvatarMap({ avatars }) {
   const center = avatarsWithCoords[0].coords;
 
   return (
-    <div className="rounded-xl overflow-hidden border border-white/5" style={{ height: 420 }}>
+    <div className="rounded-xl overflow-hidden border border-border" style={{ height: 420 }}>
       <MapContainer center={center} zoom={3} style={{ height: '100%', width: '100%' }} className="z-0">
         <TileLayer
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'

@@ -44,7 +44,7 @@ export default function AvailabilityManager({ avatarProfile }) {
 
       <div className="space-y-3">
         {slots.map(slot => (
-          <div key={slot.day} className={`flex items-center gap-3 p-3 rounded-xl border transition-colors ${slot.enabled ? 'border-primary/20 bg-primary/5' : 'border-white/5 bg-muted/20'}`}>
+          <div key={slot.day} className={`flex items-center gap-3 p-3 rounded-xl border transition-colors ${slot.enabled ? 'border-primary/20 bg-primary/5' : 'border-border bg-muted/20'}`}>
             {/* Toggle */}
             <button
               onClick={() => toggle(slot.day)}
@@ -63,14 +63,14 @@ export default function AvailabilityManager({ avatarProfile }) {
                   type="time"
                   value={slot.from}
                   onChange={e => update(slot.day, 'from', e.target.value)}
-                  className="text-xs bg-card/60 border border-white/10 rounded-lg px-2 py-1.5 text-foreground focus:outline-none focus:border-primary/40"
+                  className="text-xs bg-card/60 border border-border rounded-lg px-2 py-1.5 text-foreground focus:outline-none focus:border-primary/40"
                 />
                 <span className="text-xs text-muted-foreground">to</span>
                 <input
                   type="time"
                   value={slot.to}
                   onChange={e => update(slot.day, 'to', e.target.value)}
-                  className="text-xs bg-card/60 border border-white/10 rounded-lg px-2 py-1.5 text-foreground focus:outline-none focus:border-primary/40"
+                  className="text-xs bg-card/60 border border-border rounded-lg px-2 py-1.5 text-foreground focus:outline-none focus:border-primary/40"
                 />
               </div>
             ) : (

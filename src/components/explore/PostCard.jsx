@@ -155,7 +155,7 @@ function MediaModal({ post, user, onClose }) {
           </div>
           <AnimatePresence>
             {showComments && (
-              <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} className="overflow-hidden border-t border-white/10 pt-2">
+              <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} className="overflow-hidden border-t border-border pt-2">
                 <div className="space-y-2 max-h-36 overflow-y-auto mb-2">
                   {comments.length === 0 && <p className="text-xs text-white/50">No comments yet.</p>}
                   {comments.map(c => (
@@ -177,7 +177,7 @@ function MediaModal({ post, user, onClose }) {
                       onChange={e => setCommentText(e.target.value)}
                       onKeyDown={e => { if (e.key === 'Enter' && commentText.trim()) addComment.mutate(); }}
                       placeholder="Add a comment..."
-                      className="flex-1 bg-white/10 border border-white/20 rounded-xl px-3 py-2 text-sm text-white placeholder:text-white/40 focus:outline-none"
+                      className="flex-1 bg-secondary border border-border rounded-xl px-3 py-2 text-sm text-white placeholder:text-white/40 focus:outline-none"
                     />
                     <button onClick={() => commentText.trim() && addComment.mutate()} disabled={!commentText.trim()} className="w-9 h-9 rounded-xl bg-primary/20 flex items-center justify-center">
                       <Send className="w-4 h-4 text-primary" />
@@ -307,7 +307,7 @@ export default function PostCard({ post, user }) {
         {modalOpen && <MediaModal post={post} user={user} onClose={() => setModalOpen(false)} />}
       </AnimatePresence>
 
-      <div ref={cardRef} className="bg-card/50 border border-white/5 rounded-2xl overflow-hidden">
+      <div ref={cardRef} className="bg-card/50 border border-border rounded-2xl overflow-hidden">
         {/* Header — only this navigates to profile */}
         <div className="flex items-center gap-3 px-4 py-3 cursor-pointer" onClick={goToProfile}>
           <div className="w-9 h-9 rounded-full bg-primary/20 flex items-center justify-center text-sm font-bold text-primary overflow-hidden flex-shrink-0">
@@ -405,7 +405,7 @@ export default function PostCard({ post, user }) {
               initial={{ height: 0, opacity: 0 }}
               animate={{ height: 'auto', opacity: 1 }}
               exit={{ height: 0, opacity: 0 }}
-              className="overflow-hidden border-t border-white/5"
+              className="overflow-hidden border-t border-border"
             >
               <div className="px-4 py-3 space-y-3 max-h-48 overflow-y-auto">
                 {comments.length === 0 && <p className="text-xs text-muted-foreground">No comments yet. Be first!</p>}
@@ -428,7 +428,7 @@ export default function PostCard({ post, user }) {
                     onChange={e => setCommentText(e.target.value)}
                     onKeyDown={e => { if (e.key === 'Enter' && commentText.trim()) addComment.mutate(); }}
                     placeholder="Add a comment..."
-                    className="flex-1 bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-primary/40 text-foreground placeholder:text-muted-foreground"
+                    className="flex-1 bg-secondary/60 border border-border rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-primary/40 text-foreground placeholder:text-muted-foreground"
                   />
                   <button onClick={() => commentText.trim() && addComment.mutate()} disabled={!commentText.trim() || addComment.isPending} className="w-9 h-9 rounded-xl bg-primary/10 flex items-center justify-center hover:bg-primary/20 transition-colors disabled:opacity-40">
                     <Send className="w-4 h-4 text-primary" />

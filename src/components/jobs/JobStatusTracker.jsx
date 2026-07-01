@@ -71,9 +71,9 @@ export default function JobStatusTracker({ job, user, conversationId, onJobUpdat
   };
 
   return (
-    <div className="mx-4 my-2 glass rounded-2xl border border-white/10 overflow-hidden">
+    <div className="mx-4 my-2 glass rounded-2xl border border-border overflow-hidden">
       {/* Header */}
-      <div className="px-4 py-3 border-b border-white/5 flex items-center justify-between">
+      <div className="px-4 py-3 border-b border-border flex items-center justify-between">
         <div className="flex items-center gap-2">
           <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
           <span className="text-xs font-semibold text-green-400">Task Live — Update Your Status</span>
@@ -98,7 +98,7 @@ export default function JobStatusTracker({ job, user, conversationId, onJobUpdat
               className={`flex flex-col items-center gap-1.5 py-3 px-1 rounded-xl border text-center transition-all ${
                 isActive
                   ? `${s.bg} ${s.color} border-opacity-60 scale-105`
-                  : 'border-white/10 text-muted-foreground hover:bg-white/5 hover:text-foreground'
+                  : 'border-border text-muted-foreground hover:bg-secondary/60 hover:text-foreground'
               }`}
             >
               {isLoading
@@ -113,7 +113,7 @@ export default function JobStatusTracker({ job, user, conversationId, onJobUpdat
 
       {/* Progress Photo */}
       <div className="px-3 pb-3">
-        <label className={`flex items-center justify-center gap-2 w-full py-2 rounded-xl border border-dashed border-white/10 text-xs text-muted-foreground cursor-pointer hover:bg-white/5 hover:text-foreground transition-colors ${uploading ? 'opacity-50 pointer-events-none' : ''}`}>
+        <label className={`flex items-center justify-center gap-2 w-full py-2 rounded-xl border border-dashed border-border text-xs text-muted-foreground cursor-pointer hover:bg-secondary/60 hover:text-foreground transition-colors ${uploading ? 'opacity-50 pointer-events-none' : ''}`}>
           <input type="file" accept="image/*" className="hidden"
             onChange={e => { const f = e.target.files?.[0]; if (f) uploadProgressPhoto(f); e.target.value = ''; }} />
           {uploading ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Camera className="w-3.5 h-3.5" />}

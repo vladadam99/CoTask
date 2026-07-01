@@ -67,7 +67,7 @@ export default function SessionEndedScreen({ session, user }) {
             onChange={e => setComment(e.target.value)}
             placeholder="Leave a comment (optional)…"
             rows={3}
-            className="w-full text-sm bg-muted/50 border border-white/5 rounded-xl px-3 py-2 focus:outline-none focus:border-primary/40 text-foreground placeholder:text-muted-foreground resize-none mb-3"
+            className="w-full text-sm bg-card border border-border rounded-xl px-3 py-2 focus:outline-none focus:border-primary/40 text-foreground placeholder:text-muted-foreground resize-none mb-3"
           />
           <Button
             className="w-full bg-primary hover:bg-primary/90"
@@ -90,10 +90,10 @@ export default function SessionEndedScreen({ session, user }) {
 
       <div className="flex gap-3">
         <Link to="/Bookings">
-          <Button variant="outline" className="border-white/10 gap-2">View Bookings</Button>
+          <Button variant="outline" className="border-border gap-2">View Bookings</Button>
         </Link>
         <Link to="/Messages">
-          <Button variant="outline" className="border-white/10 gap-2">
+          <Button variant="outline" className="border-border gap-2">
             <MessageSquare className="w-4 h-4" /> Message Avatar
           </Button>
         </Link>

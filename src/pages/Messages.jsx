@@ -186,7 +186,7 @@ export default function Messages() {
         {activeConvo ? (
           <>
             <div className="p-4 border-b border-border flex items-center gap-3">
-              <button onClick={() => setActiveConvo(null)} className="p-2 -ml-2 rounded-full hover:bg-white/10 transition-colors">
+              <button onClick={() => setActiveConvo(null)} className="p-2 -ml-2 rounded-full hover:bg-secondary transition-colors">
                 <ArrowLeft className="w-5 h-5" />
               </button>
               <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-sm font-bold text-primary">
@@ -244,11 +244,11 @@ export default function Messages() {
             </div>
             <div className="p-4 border-t border-border">
               <form onSubmit={e => { e.preventDefault(); if (newMsg.trim()) sendMessage.mutate(); }} className="flex gap-2">
-                <label className={`inline-flex items-center justify-center w-9 h-9 rounded-xl bg-muted/50 border border-border text-muted-foreground hover:text-foreground transition-colors shrink-0 cursor-pointer ${uploadingPhoto ? 'opacity-50 pointer-events-none' : ''}`} title="Photo">
+                <label className={`inline-flex items-center justify-center w-9 h-9 rounded-xl bg-card border border-border text-muted-foreground hover:text-foreground transition-colors shrink-0 cursor-pointer ${uploadingPhoto ? 'opacity-50 pointer-events-none' : ''}`} title="Photo">
                   <input type="file" accept="image/*" style={{position:'absolute',width:0,height:0,opacity:0}} onChange={e => { const f = e.target.files?.[0]; if (f) sendPhoto(f); e.target.value = ''; }} />
                   {uploadingPhoto ? <Loader2 className="w-4 h-4 animate-spin" /> : <Camera className="w-4 h-4" />}
                 </label>
-                <Input value={newMsg} onChange={e => setNewMsg(e.target.value)} placeholder="Type a message..." className="bg-muted/50 border-border" />
+                <Input value={newMsg} onChange={e => setNewMsg(e.target.value)} placeholder="Type a message..." className="bg-card border-border" />
                 <Button type="submit" className="bg-primary hover:bg-primary/90" disabled={!newMsg.trim()}>
                   <Send className="w-4 h-4" />
                 </Button>

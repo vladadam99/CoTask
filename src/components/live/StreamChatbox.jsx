@@ -44,9 +44,9 @@ export default function StreamChatbox({ clientName, avatarName, isOpen, onClose 
   if (!isOpen) return null;
 
   return (
-    <div className="flex flex-col h-full bg-card/80 backdrop-blur-xl border border-white/10 rounded-xl overflow-hidden">
+    <div className="flex flex-col h-full bg-card/80 backdrop-blur-xl border border-border rounded-xl overflow-hidden">
       {/* Header */}
-      <div className="flex items-center justify-between px-4 py-3 border-b border-white/10">
+      <div className="flex items-center justify-between px-4 py-3 border-b border-border">
         <div className="flex items-center gap-2">
           <MessageCircle className="w-4 h-4 text-primary" />
           <span className="text-sm font-semibold">Live Chat</span>
@@ -86,13 +86,13 @@ export default function StreamChatbox({ clientName, avatarName, isOpen, onClose 
       </div>
 
       {/* Input */}
-      <div className="p-3 border-t border-white/10 flex gap-2">
+      <div className="p-3 border-t border-border flex gap-2">
         <input
           value={input}
           onChange={e => setInput(e.target.value)}
           onKeyDown={e => e.key === 'Enter' && send()}
           placeholder="Type a message…"
-          className="flex-1 bg-secondary/60 border border-white/10 rounded-lg px-3 py-2 text-sm outline-none focus:border-primary/50"
+          className="flex-1 bg-secondary/60 border border-border rounded-lg px-3 py-2 text-sm outline-none focus:border-primary/50"
         />
         <Button size="icon" onClick={send} className="shrink-0">
           <Send className="w-4 h-4" />

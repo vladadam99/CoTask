@@ -68,7 +68,7 @@ export default function CameraSourcePicker({ selected, onSelect, availableSource
               ${isComingSoon ? 'cursor-not-allowed opacity-50' : isAvailable ? 'cursor-pointer' : 'cursor-not-allowed opacity-40'}
               ${isSelected
                 ? `${src.bg} ${src.border} border`
-                : 'bg-card/40 border-white/5 hover:border-white/10 hover:bg-card/60'
+                : 'bg-card/40 border-border hover:border-border hover:bg-card/60'
               }`}
           >
             {isSelected && (

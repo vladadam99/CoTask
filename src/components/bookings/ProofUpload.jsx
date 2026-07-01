@@ -43,13 +43,13 @@ export default function ProofUpload({ booking, onUpload }) {
 
       {previewUrl ? (
         <div className="mb-3">
-          <img src={previewUrl} alt="Proof preview" className="w-full max-h-48 object-cover rounded-xl border border-white/10" />
+          <img src={previewUrl} alt="Proof preview" className="w-full max-h-48 object-cover rounded-xl border border-border" />
           <button onClick={() => { setPreviewUrl(null); setFile(null); }} className="text-xs text-muted-foreground hover:text-foreground mt-1.5">Remove</button>
         </div>
       ) : (
         <button
           onClick={() => inputRef.current?.click()}
-          className="w-full border-2 border-dashed border-white/10 rounded-xl p-8 flex flex-col items-center gap-2 hover:border-primary/30 transition-colors mb-3"
+          className="w-full border-2 border-dashed border-border rounded-xl p-8 flex flex-col items-center gap-2 hover:border-primary/30 transition-colors mb-3"
         >
           <Upload className="w-6 h-6 text-muted-foreground" />
           <span className="text-sm text-muted-foreground">Tap to take or upload a photo</span>
@@ -62,7 +62,7 @@ export default function ProofUpload({ booking, onUpload }) {
         onChange={e => setNote(e.target.value)}
         rows={2}
         placeholder="Optional note about the completed task…"
-        className="w-full text-sm bg-muted/50 border border-white/5 rounded-xl px-3 py-2 focus:outline-none focus:border-primary/40 text-foreground placeholder:text-muted-foreground resize-none mb-3"
+        className="w-full text-sm bg-card border border-border rounded-xl px-3 py-2 focus:outline-none focus:border-primary/40 text-foreground placeholder:text-muted-foreground resize-none mb-3"
       />
 
       <Button

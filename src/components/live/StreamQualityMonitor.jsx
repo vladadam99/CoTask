@@ -91,7 +91,7 @@ export default function StreamQualityMonitor({ streamRef, isLive }) {
   ];
 
   return (
-    <div className="glass border border-white/10 rounded-xl p-3 space-y-2">
+    <div className="glass border border-border rounded-xl p-3 space-y-2">
       <div className="flex items-center justify-between">
         <h3 className="text-xs font-semibold flex items-center gap-1.5">
           <Activity className="w-3.5 h-3.5 text-primary" /> Stream Quality
@@ -106,7 +106,7 @@ export default function StreamQualityMonitor({ streamRef, isLive }) {
         {bars.map((active, i) => (
           <div
             key={i}
-            className={`w-2 rounded-sm transition-colors ${active ? qualityBg[stats.quality] : 'bg-white/10'}`}
+            className={`w-2 rounded-sm transition-colors ${active ? qualityBg[stats.quality] : 'bg-secondary'}`}
             style={{ height: `${(i + 1) * 25}%` }}
           />
         ))}

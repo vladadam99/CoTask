@@ -71,7 +71,7 @@ export default function CameraCapture({ label, icon: Icon, facingMode = 'user', 
         ) : streaming ? (
           <video ref={videoRef} className="w-full h-full object-cover" playsInline muted />
         ) : (
-          <div className="flex flex-col items-center justify-center h-full gap-3 p-4 bg-muted/30 rounded-xl border-2 border-dashed border-border" style={{ minHeight: 160 }}>
+          <div className="flex flex-col items-center justify-center h-full gap-3 p-4 bg-card rounded-xl border-2 border-dashed border-border" style={{ minHeight: 160 }}>
             <Camera className="w-8 h-8 text-muted-foreground" />
             <p className="text-sm text-muted-foreground text-center">{label}</p>
             {error && <p className="text-xs text-red-400 text-center">{error}</p>}
@@ -107,7 +107,7 @@ export default function CameraCapture({ label, icon: Icon, facingMode = 'user', 
           </Button>
         )}
         {captured && (
-          <Button type="button" size="sm" variant="outline" onClick={retake} className="w-full border-white/10">
+          <Button type="button" size="sm" variant="outline" onClick={retake} className="w-full border-border">
             <RotateCcw className="w-3.5 h-3.5 mr-1" /> Retake
           </Button>
         )}

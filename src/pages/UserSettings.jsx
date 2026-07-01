@@ -35,7 +35,7 @@ export default function UserSettings() {
     <AppShell navItems={getNavItems(user?.selected_role || user?.role || 'user')} user={user}>
       <div className="max-w-lg mx-auto">
         <div className="flex items-center gap-3 mb-6">
-          <button onClick={() => navigate('/Profile')} className="p-1.5 rounded-lg hover:bg-white/10">
+          <button onClick={() => navigate('/Profile')} className="p-1.5 rounded-lg hover:bg-secondary">
             <ArrowLeft className="w-5 h-5" />
           </button>
           <h1 className="text-xl font-bold">Settings</h1>
@@ -91,7 +91,7 @@ export default function UserSettings() {
             <div className="space-y-2">
               {['user', 'avatar', 'enterprise'].filter(r => r !== user?.selected_role).map(role => (
                 <button key={role} onClick={() => handleSwitchRole(role)} disabled={switchingRole}
-                  className="w-full p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors text-sm flex items-center gap-3 disabled:opacity-50">
+                  className="w-full p-3 rounded-lg bg-card hover:bg-muted transition-colors text-sm flex items-center gap-3 disabled:opacity-50">
                   <ArrowRightLeft className="w-4 h-4 text-muted-foreground" />
                   <span className="capitalize">{switchingRole ? 'Switching...' : `Switch to ${role === 'avatar' ? 'agent' : role}`}</span>
                 </button>

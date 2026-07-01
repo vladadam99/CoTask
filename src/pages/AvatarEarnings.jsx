@@ -21,7 +21,7 @@ import {
 const CustomTooltip = ({ active, payload, label }) => {
   if (!active || !payload?.length) return null;
   return (
-    <div className="glass border border-white/10 rounded-lg px-3 py-2 text-xs">
+    <div className="glass border border-border rounded-lg px-3 py-2 text-xs">
       <p className="text-muted-foreground mb-1">{label}</p>
       <p className="text-primary font-semibold">${payload[0].value.toFixed(2)}</p>
     </div>

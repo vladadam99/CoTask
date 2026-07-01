@@ -418,7 +418,7 @@ export default function GlobeMap({ avatars = [], focusCity = '', mode = 'explore
         ) : (
           displayAvatars.map(a => (
             <button key={a.id} onClick={() => setSelectedAvatar(a)}
-              className="w-full text-left flex items-center gap-2 py-1.5 hover:bg-white/5 rounded px-1 transition-colors">
+              className="w-full text-left flex items-center gap-2 py-1.5 hover:bg-secondary/60 rounded px-1 transition-colors">
               <div className="w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center text-xs font-bold text-primary flex-shrink-0">
                 {a.display_name?.[0]}
               </div>
@@ -433,7 +433,7 @@ export default function GlobeMap({ avatars = [], focusCity = '', mode = 'explore
 
       {/* Avatar popup */}
       {selectedAvatar && (
-        <div className="absolute bottom-6 left-1/2 -translate-x-1/2 glass-strong rounded-xl p-4 w-72 shadow-xl border border-white/10 animate-fade-in">
+        <div className="absolute bottom-6 left-1/2 -translate-x-1/2 glass-strong rounded-xl p-4 w-72 shadow-xl border border-border animate-fade-in">
           <button onClick={() => setSelectedAvatar(null)} className="absolute top-3 right-3 text-muted-foreground hover:text-foreground">
             <X className="w-4 h-4" />
           </button>

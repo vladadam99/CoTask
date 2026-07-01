@@ -156,20 +156,20 @@ export default function ExpertiseManager({ profile, user }) {
       </div>
 
       {showForm && (
-        <div className="bg-card/40 border border-white/10 rounded-xl p-4 mb-4 space-y-3">
+        <div className="bg-card/40 border border-border rounded-xl p-4 mb-4 space-y-3">
           <h4 className="text-sm font-semibold">{editingId ? 'Edit Offering' : 'New Offering'}</h4>
           <Input
             placeholder="Title e.g. Python for Beginners *"
             value={form.title}
             onChange={set('title')}
-            className={`bg-transparent ${!form.title ? 'border-red-500/50' : 'border-white/10'}`}
+            className={`bg-transparent ${!form.title ? 'border-red-500/50' : 'border-border'}`}
           />
           <Textarea
             placeholder="What will you cover? What's the outcome?"
             value={form.description}
             onChange={set('description')}
             rows={2}
-            className="bg-transparent border-white/10 resize-none"
+            className="bg-transparent border-border resize-none"
           />
           <div className="grid grid-cols-2 gap-3">
             <div>
@@ -177,7 +177,7 @@ export default function ExpertiseManager({ profile, user }) {
               <select
                 value={form.topic}
                 onChange={set('topic')}
-                className="w-full text-sm bg-card border border-white/10 rounded-lg px-3 py-2 focus:outline-none focus:border-primary/50"
+                className="w-full text-sm bg-card border border-border rounded-lg px-3 py-2 focus:outline-none focus:border-primary/50"
               >
                 {TOPICS.map(t => <option key={t} value={t}>{t}</option>)}
               </select>
@@ -187,7 +187,7 @@ export default function ExpertiseManager({ profile, user }) {
               <select
                 value={form.session_type}
                 onChange={set('session_type')}
-                className="w-full text-sm bg-card border border-white/10 rounded-lg px-3 py-2 focus:outline-none focus:border-primary/50"
+                className="w-full text-sm bg-card border border-border rounded-lg px-3 py-2 focus:outline-none focus:border-primary/50"
               >
                 {SESSION_TYPES.map(t => <option key={t.value} value={t.value}>{t.label}</option>)}
               </select>
@@ -200,7 +200,7 @@ export default function ExpertiseManager({ profile, user }) {
                 type="number"
                 value={form.duration_minutes}
                 onChange={set('duration_minutes')}
-                className="bg-transparent border-white/10"
+                className="bg-transparent border-border"
                 placeholder="60"
               />
             </div>
@@ -210,13 +210,13 @@ export default function ExpertiseManager({ profile, user }) {
                 type="number"
                 value={form.rate}
                 onChange={set('rate')}
-                className={`bg-transparent ${!form.rate ? 'border-red-500/50' : 'border-white/10'}`}
+                className={`bg-transparent ${!form.rate ? 'border-red-500/50' : 'border-border'}`}
                 placeholder="50"
               />
             </div>
           </div>
           {/* Office Hours */}
-          <div className="pt-2 border-t border-white/10">
+          <div className="pt-2 border-t border-border">
             <OfficeHoursManager
               value={form.office_hours}
               onChange={(hours) => setForm(f => ({ ...f, office_hours: hours }))}
@@ -227,7 +227,7 @@ export default function ExpertiseManager({ profile, user }) {
             <Button type="button" size="sm" onClick={handleSubmit} disabled={createOffering.isPending || updateOffering.isPending} className="gap-1.5">
               <Check className="w-3.5 h-3.5" /> {editingId ? 'Update' : 'Save'}
             </Button>
-            <Button type="button" size="sm" variant="outline" className="border-white/10" onClick={handleCancel}>
+            <Button type="button" size="sm" variant="outline" className="border-border" onClick={handleCancel}>
               <X className="w-3.5 h-3.5" /> Cancel
             </Button>
           </div>
@@ -242,17 +242,17 @@ export default function ExpertiseManager({ profile, user }) {
       ) : (
         <div className="space-y-3">
           {offerings.map(o => (
-            <div key={o.id} className="flex items-center gap-3 p-3 bg-card/40 border border-white/5 rounded-xl">
+            <div key={o.id} className="flex items-center gap-3 p-3 bg-card/40 border border-border rounded-xl">
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-semibold truncate">{o.title}</p>
                 <p className="text-xs text-muted-foreground">{o.topic} · {o.session_type?.replace('_', ' ')} · {o.duration_minutes}min</p>
               </div>
               <span className="text-sm font-bold text-primary flex-shrink-0">${o.rate}</span>
               <div className="flex gap-1 flex-shrink-0">
-                <button onClick={() => handleEdit(o)} className="w-7 h-7 rounded-lg bg-white/5 hover:bg-blue-500/20 flex items-center justify-center transition-colors">
+                <button onClick={() => handleEdit(o)} className="w-7 h-7 rounded-lg bg-secondary/60 hover:bg-blue-500/20 flex items-center justify-center transition-colors">
                   <Pencil className="w-3.5 h-3.5 text-blue-400" />
                 </button>
-                <button onClick={() => deleteOffering.mutate(o.id)} disabled={deleteOffering.isPending} className="w-7 h-7 rounded-lg bg-white/5 hover:bg-red-500/20 flex items-center justify-center transition-colors">
+                <button onClick={() => deleteOffering.mutate(o.id)} disabled={deleteOffering.isPending} className="w-7 h-7 rounded-lg bg-secondary/60 hover:bg-red-500/20 flex items-center justify-center transition-colors">
                   <Trash2 className="w-3.5 h-3.5 text-red-400" />
                 </button>
               </div>

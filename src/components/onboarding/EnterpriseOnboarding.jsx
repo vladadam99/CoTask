@@ -26,7 +26,7 @@ const STEPS = ['Company Info', 'Contact & Locations', 'Operations & Services', '
 
 const Chip = ({ label, active, onClick }) => (
   <button type="button" onClick={onClick}
-    className={`px-3 py-1.5 rounded-lg text-sm transition-all ${active ? 'bg-primary text-primary-foreground' : 'bg-muted/50 text-muted-foreground hover:bg-muted'}`}>
+    className={`px-3 py-1.5 rounded-lg text-sm transition-all ${active ? 'bg-primary text-primary-foreground' : 'bg-card text-muted-foreground hover:bg-muted'}`}>
     {label}
   </button>
 );
@@ -89,7 +89,7 @@ export default function EnterpriseOnboarding({ user, onComplete, submitting }) {
                 <div>
                   <label className="text-sm font-medium mb-1.5 block">Company Name *</label>
                   <Input value={data.company_name} onChange={e => update('company_name', e.target.value)}
-                    placeholder="Acme Corporation" className="bg-muted/50 border-white/5" />
+                    placeholder="Acme Corporation" className="bg-card border-border" />
                 </div>
                 <div>
                   <label className="text-sm font-medium mb-2 block">Industry *</label>
@@ -104,7 +104,7 @@ export default function EnterpriseOnboarding({ user, onComplete, submitting }) {
                   <div className="flex gap-2 flex-wrap">
                     {COMPANY_SIZES.map(size => (
                       <button key={size} type="button" onClick={() => update('company_size', size)}
-                        className={`px-4 py-2 rounded-lg text-sm transition-all border ${data.company_size === size ? 'bg-primary/15 border-primary/40 text-primary' : 'bg-muted/30 border-white/5 text-muted-foreground hover:bg-muted/50'}`}>
+                        className={`px-4 py-2 rounded-lg text-sm transition-all border ${data.company_size === size ? 'bg-primary/15 border-primary/40 text-primary' : 'bg-card border-border text-muted-foreground hover:bg-card'}`}>
                         {size} employees
                       </button>
                     ))}
@@ -120,33 +120,33 @@ export default function EnterpriseOnboarding({ user, onComplete, submitting }) {
                   <div>
                     <label className="text-sm font-medium mb-1.5 block">Contact Person *</label>
                     <Input value={data.contact_person} onChange={e => update('contact_person', e.target.value)}
-                      placeholder="Your full name" className="bg-muted/50 border-white/5" />
+                      placeholder="Your full name" className="bg-card border-border" />
                   </div>
                   <div>
                     <label className="text-sm font-medium mb-1.5 block">Phone Number *</label>
                     <Input type="tel" value={data.phone} onChange={e => update('phone', e.target.value)}
-                      placeholder="+44 20 0000 0000" className="bg-muted/50 border-white/5" />
+                      placeholder="+44 20 0000 0000" className="bg-card border-border" />
                   </div>
                 </div>
                 <div>
                   <label className="text-sm font-medium mb-1.5 block">Business Email</label>
                   <Input type="email" value={data.company_email} onChange={e => update('company_email', e.target.value)}
-                    placeholder="ops@company.com" className="bg-muted/50 border-white/5" />
+                    placeholder="ops@company.com" className="bg-card border-border" />
                 </div>
                 <div>
                   <label className="text-sm font-medium mb-1.5 block">Cities where you operate</label>
                   <div className="flex gap-2 mb-2">
                     <Input value={cityInput} onChange={e => setCityInput(e.target.value)}
                       onKeyDown={e => e.key === 'Enter' && addCity()}
-                      placeholder="Add a city..." className="bg-muted/50 border-white/5 flex-1 text-sm" />
-                    <Button type="button" variant="outline" onClick={addCity} className="border-white/10 shrink-0">
+                      placeholder="Add a city..." className="bg-card border-border flex-1 text-sm" />
+                    <Button type="button" variant="outline" onClick={addCity} className="border-border shrink-0">
                       <Plus className="w-4 h-4" />
                     </Button>
                   </div>
                   {data.cities.length > 0 && (
                     <div className="flex flex-wrap gap-2">
                       {data.cities.map(city => (
-                        <span key={city} className="flex items-center gap-1 px-3 py-1.5 bg-muted/50 rounded-lg text-sm">
+                        <span key={city} className="flex items-center gap-1 px-3 py-1.5 bg-card rounded-lg text-sm">
                           {city}
                           <button onClick={() => toggle('cities', city)} className="text-muted-foreground hover:text-foreground">
                             <X className="w-3 h-3" />
@@ -161,7 +161,7 @@ export default function EnterpriseOnboarding({ user, onComplete, submitting }) {
                   <div className="flex gap-2 flex-wrap">
                     {['1', '2–5', '5–10', '10–20', '20+'].map(n => (
                       <button key={n} type="button" onClick={() => update('typical_team_size', n)}
-                        className={`px-4 py-2 rounded-lg text-sm transition-all border ${data.typical_team_size === n ? 'bg-primary/15 border-primary/40 text-primary' : 'bg-muted/30 border-white/5 text-muted-foreground hover:bg-muted/50'}`}>
+                        className={`px-4 py-2 rounded-lg text-sm transition-all border ${data.typical_team_size === n ? 'bg-primary/15 border-primary/40 text-primary' : 'bg-card border-border text-muted-foreground hover:bg-card'}`}>
                         {n}
                       </button>
                     ))}
@@ -177,7 +177,7 @@ export default function EnterpriseOnboarding({ user, onComplete, submitting }) {
                   <label className="text-sm font-medium mb-1.5 block">What will you be using CoTask for?</label>
                   <textarea value={data.booking_needs} onChange={e => update('booking_needs', e.target.value)}
                     placeholder="e.g. We need avatars to conduct property inspections across multiple cities, attend trade shows on our behalf, manage on-site deliveries, and provide live updates to our operations team..."
-                    className="w-full h-24 px-3 py-2 bg-muted/50 border border-white/5 rounded-md text-sm resize-none text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary/50" />
+                    className="w-full h-24 px-3 py-2 bg-card border border-border rounded-md text-sm resize-none text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary/50" />
                 </div>
                 <div>
                   <label className="text-sm font-medium mb-2 block">
@@ -194,7 +194,7 @@ export default function EnterpriseOnboarding({ user, onComplete, submitting }) {
                   <div className="grid grid-cols-3 gap-2">
                     {[{v:'per_booking',l:'Per Booking',d:'Invoiced each job'},{v:'monthly',l:'Monthly',d:'One invoice/month'},{v:'quarterly',l:'Quarterly',d:'Every 3 months'}].map(({v,l,d}) => (
                       <button key={v} type="button" onClick={() => update('invoice_preference', v)}
-                        className={`p-3 rounded-xl border text-left transition-all ${data.invoice_preference === v ? 'bg-primary/10 border-primary/40 text-primary' : 'bg-muted/30 border-white/5 text-muted-foreground hover:bg-muted/50'}`}>
+                        className={`p-3 rounded-xl border text-left transition-all ${data.invoice_preference === v ? 'bg-primary/10 border-primary/40 text-primary' : 'bg-card border-border text-muted-foreground hover:bg-card'}`}>
                         <p className="text-sm font-semibold">{l}</p>
                         <p className="text-xs mt-0.5 opacity-70">{d}</p>
                       </button>

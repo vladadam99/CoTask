@@ -99,7 +99,7 @@ Format as JSON.`;
             ))}
           </ul>
           {highlights.caption && (
-            <div className="bg-card/60 border border-white/5 rounded-lg p-3">
+            <div className="bg-card/60 border border-border rounded-lg p-3">
               <p className="text-xs text-muted-foreground leading-relaxed mb-2">{highlights.caption}</p>
               <button
                 onClick={copyCaption}

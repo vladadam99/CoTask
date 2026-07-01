@@ -21,7 +21,7 @@ const TYPE_COLORS = {
   review: 'bg-yellow-500/10 text-yellow-400',
   session_live: 'bg-primary/10 text-primary',
   message: 'bg-purple-500/10 text-purple-400',
-  system: 'bg-muted/50 text-muted-foreground',
+  system: 'bg-card text-muted-foreground',
 };
 
 export default function NotificationBell({ userEmail, userRole }) {
@@ -98,7 +98,7 @@ export default function NotificationBell({ userEmail, userRole }) {
     <div className="relative" ref={dropdownRef}>
       <button
         onClick={() => setOpen(v => !v)}
-        className="relative p-2 rounded-lg hover:bg-white/5 transition-colors"
+        className="relative p-2 rounded-lg hover:bg-secondary/60 transition-colors"
       >
         <Bell className="w-5 h-5 text-muted-foreground" />
         {unread.length > 0 && (
@@ -109,9 +109,9 @@ export default function NotificationBell({ userEmail, userRole }) {
       </button>
 
       {open && (
-        <div className="absolute right-0 top-full mt-2 w-80 glass-strong border border-white/10 rounded-xl shadow-2xl z-50 overflow-hidden">
+        <div className="absolute right-0 top-full mt-2 w-80 glass-strong border border-border rounded-xl shadow-2xl z-50 overflow-hidden">
           {/* Header */}
-          <div className="flex items-center justify-between px-4 py-3 border-b border-white/5">
+          <div className="flex items-center justify-between px-4 py-3 border-b border-border">
             <span className="text-sm font-semibold">Notifications</span>
             <div className="flex items-center gap-2">
               {unread.length > 0 && (
@@ -137,7 +137,7 @@ export default function NotificationBell({ userEmail, userRole }) {
                 <div
                   key={n.id}
                   onClick={() => handleNotifClick(n)}
-                  className={`px-4 py-3 border-b border-white/5 last:border-0 cursor-pointer hover:bg-white/5 transition-colors ${!n.is_read ? 'bg-primary/5' : ''}`}
+                  className={`px-4 py-3 border-b border-border last:border-0 cursor-pointer hover:bg-secondary/60 transition-colors ${!n.is_read ? 'bg-primary/5' : ''}`}
                 >
                   <div className="flex items-start gap-3">
                     <span className={`w-2 h-2 rounded-full mt-1.5 flex-shrink-0 ${!n.is_read ? 'bg-primary' : 'bg-transparent'}`} />

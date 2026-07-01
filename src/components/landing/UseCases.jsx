@@ -19,7 +19,7 @@ export default function UseCases() {
   const [tab, setTab] = useState('personal');
 
   return (
-    <section className="py-32 px-6 lg:px-12 border-t border-white/5">
+    <section className="py-32 px-6 lg:px-12 border-t border-border">
       <div className="max-w-7xl mx-auto">
         <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-16">
           <div>
@@ -30,7 +30,7 @@ export default function UseCases() {
           </div>
 
           {/* Toggle */}
-          <div className="flex bg-white/5 border border-white/10 rounded-full p-1 self-start md:self-auto">
+          <div className="flex bg-secondary/60 border border-border rounded-full p-1 self-start md:self-auto">
             <button onClick={() => setTab('personal')}
               className={`px-6 py-2.5 rounded-full text-sm font-semibold transition-all ${tab === 'personal' ? 'bg-white text-black' : 'text-white/50 hover:text-white'}`}>
               Personal
@@ -51,7 +51,7 @@ export default function UseCases() {
                   <div className="w-12 h-12 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
                     <item.icon className="w-5 h-5 text-primary" />
                   </div>
-                  <span className="text-xs text-white/30 border border-white/10 rounded-full px-3 py-1">{item.tag}</span>
+                  <span className="text-xs text-white/30 border border-border rounded-full px-3 py-1">{item.tag}</span>
                 </div>
                 <h3 className="text-xl font-black text-white mb-3">{item.title}</h3>
                 <p className="text-white/40 text-sm leading-relaxed">{item.desc}</p>

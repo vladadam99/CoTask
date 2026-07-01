@@ -62,11 +62,11 @@ export default function AvatarSchedule() {
           <GlassCard className="p-5">
             {/* Month Nav */}
             <div className="flex items-center justify-between mb-5">
-              <button onClick={() => setCurrentMonth(subMonths(currentMonth, 1))} className="p-1.5 hover:bg-white/10 rounded-lg transition-colors">
+              <button onClick={() => setCurrentMonth(subMonths(currentMonth, 1))} className="p-1.5 hover:bg-secondary rounded-lg transition-colors">
                 <ChevronLeft className="w-5 h-5" />
               </button>
               <h2 className="font-semibold text-base">{format(currentMonth, 'MMMM yyyy')}</h2>
-              <button onClick={() => setCurrentMonth(addMonths(currentMonth, 1))} className="p-1.5 hover:bg-white/10 rounded-lg transition-colors">
+              <button onClick={() => setCurrentMonth(addMonths(currentMonth, 1))} className="p-1.5 hover:bg-secondary rounded-lg transition-colors">
                 <ChevronRight className="w-5 h-5" />
               </button>
             </div>
@@ -90,7 +90,7 @@ export default function AvatarSchedule() {
                     key={day.toISOString()}
                     onClick={() => setSelectedDay(day)}
                     className={`relative aspect-square flex flex-col items-center justify-center rounded-lg text-sm transition-colors
-                      ${isSelected ? 'bg-primary text-primary-foreground' : today ? 'bg-primary/20 text-primary' : 'hover:bg-white/5'}
+                      ${isSelected ? 'bg-primary text-primary-foreground' : today ? 'bg-primary/20 text-primary' : 'hover:bg-secondary/60'}
                     `}
                   >
                     <span className="font-medium">{format(day, 'd')}</span>

@@ -75,7 +75,7 @@ export default function StreamPoll({ isLive }) {
             value={question}
             onChange={e => setQuestion(e.target.value)}
             placeholder="Ask your client something…"
-            className="w-full text-xs bg-card/60 border border-white/10 rounded-lg px-3 py-2 text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-blue-500/50"
+            className="w-full text-xs bg-card/60 border border-border rounded-lg px-3 py-2 text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-blue-500/50"
           />
           <div className="space-y-1.5">
             {options.map((opt, i) => (
@@ -85,7 +85,7 @@ export default function StreamPoll({ isLive }) {
                   value={opt}
                   onChange={e => updateOption(i, e.target.value)}
                   placeholder={`Option ${i + 1}`}
-                  className="flex-1 text-xs bg-card/60 border border-white/10 rounded-lg px-3 py-1.5 text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-blue-500/50"
+                  className="flex-1 text-xs bg-card/60 border border-border rounded-lg px-3 py-1.5 text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-blue-500/50"
                 />
                 {options.length > 2 && (
                   <button onClick={() => removeOption(i)} className="text-muted-foreground hover:text-red-400">
@@ -130,7 +130,7 @@ export default function StreamPoll({ isLive }) {
                     <span className="text-foreground group-hover:text-blue-300 transition-colors">{opt.label}</span>
                     <span className="text-muted-foreground">{pct}% ({opt.votes})</span>
                   </div>
-                  <div className="h-1.5 bg-white/5 rounded-full overflow-hidden">
+                  <div className="h-1.5 bg-secondary/60 rounded-full overflow-hidden">
                     <div
                       className="h-full bg-blue-500 rounded-full transition-all duration-500"
                       style={{ width: `${pct}%` }}

@@ -72,8 +72,8 @@ export default function DisputeAgent() {
   return (
     <div className="flex flex-col h-screen bg-background">
       {/* Header */}
-      <div className="p-4 border-b border-white/5 flex items-center gap-3 flex-shrink-0">
-        <Link to={dashPath} className="p-2 -ml-2 rounded-full hover:bg-white/10 transition-colors">
+      <div className="p-4 border-b border-border flex items-center gap-3 flex-shrink-0">
+        <Link to={dashPath} className="p-2 -ml-2 rounded-full hover:bg-secondary transition-colors">
           <ArrowLeft className="w-5 h-5" />
         </Link>
         <div className="w-9 h-9 rounded-xl bg-orange-500/10 border border-orange-500/20 flex items-center justify-center">
@@ -105,7 +105,7 @@ export default function DisputeAgent() {
                 <div className="flex flex-col gap-2 w-full max-w-sm">
                   {['I have a dispute about a completed job', 'The avatar didn\'t finish the work', 'Client is not releasing payment'].map(s => (
                     <button key={s} onClick={() => setInput(s)}
-                      className="text-left text-sm px-4 py-3 rounded-xl border border-white/10 hover:bg-white/5 transition-colors text-muted-foreground">
+                      className="text-left text-sm px-4 py-3 rounded-xl border border-border hover:bg-secondary/60 transition-colors text-muted-foreground">
                       {s}
                     </button>
                   ))}
@@ -122,7 +122,7 @@ export default function DisputeAgent() {
                 <div className={`max-w-[80%] rounded-2xl px-4 py-3 text-sm ${
                   m.role === 'user'
                     ? 'bg-primary text-primary-foreground rounded-br-md'
-                    : 'glass border border-white/5 rounded-bl-md'
+                    : 'glass border border-border rounded-bl-md'
                 }`}>
                   {m.role === 'user' ? (
                     <p>{m.content}</p>
@@ -139,7 +139,7 @@ export default function DisputeAgent() {
                 <div className="w-8 h-8 rounded-xl bg-orange-500/10 border border-orange-500/20 flex items-center justify-center flex-shrink-0">
                   <Scale className="w-4 h-4 text-orange-400" />
                 </div>
-                <div className="glass border border-white/5 rounded-2xl rounded-bl-md px-4 py-3">
+                <div className="glass border border-border rounded-2xl rounded-bl-md px-4 py-3">
                   <Loader2 className="w-4 h-4 animate-spin text-muted-foreground" />
                 </div>
               </div>
@@ -149,13 +149,13 @@ export default function DisputeAgent() {
       </div>
 
       {/* Input */}
-      <div className="p-4 border-t border-white/5 flex-shrink-0">
+      <div className="p-4 border-t border-border flex-shrink-0">
         <form onSubmit={sendMessage} className="flex gap-2">
           <Input
             value={input}
             onChange={e => setInput(e.target.value)}
             placeholder="Describe your dispute..."
-            className="bg-muted/50 border-white/5"
+            className="bg-card border-border"
             disabled={initializing || loading}
           />
           <Button type="submit" disabled={!input.trim() || initializing || loading} className="bg-orange-600 hover:bg-orange-700">

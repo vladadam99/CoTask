@@ -29,7 +29,7 @@ export default function SmartImage({ src, alt = '', className = '', width, style
     <div className={`relative overflow-hidden bg-background ${className}`} style={style} onClick={onClick}>
       {/* Skeleton shown while loading */}
       {!loaded && !error && (
-        <div className="absolute inset-0 bg-white/5 animate-pulse" />
+        <div className="absolute inset-0 bg-secondary/60 animate-pulse" />
       )}
 
       {/* Actual image */}
@@ -47,7 +47,7 @@ export default function SmartImage({ src, alt = '', className = '', width, style
 
       {/* Fallback on error */}
       {error && (
-        <div className="absolute inset-0 bg-white/5 flex items-center justify-center">
+        <div className="absolute inset-0 bg-secondary/60 flex items-center justify-center">
           <span className="text-xs text-muted-foreground">Media unavailable</span>
         </div>
       )}

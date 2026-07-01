@@ -23,7 +23,7 @@ export default function EditPostModal({ post, onClose, onSuccess }) {
 
   return (
     <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-      <div className="bg-card rounded-2xl p-6 max-w-md w-full border border-white/10">
+      <div className="bg-card rounded-2xl p-6 max-w-md w-full border border-border">
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-lg font-bold">Edit Post</h3>
           <button onClick={onClose} className="text-muted-foreground hover:text-foreground">
@@ -32,7 +32,7 @@ export default function EditPostModal({ post, onClose, onSuccess }) {
         </div>
 
         {/* Preview */}
-        <div className="aspect-video rounded-xl overflow-hidden bg-white/5 mb-4">
+        <div className="aspect-video rounded-xl overflow-hidden bg-secondary/60 mb-4">
           {post.type === 'video'
             ? <video src={post.media_url} className="w-full h-full object-cover" controls />
             : <img src={post.media_url} alt={post.caption} className="w-full h-full object-cover" />}
@@ -45,7 +45,7 @@ export default function EditPostModal({ post, onClose, onSuccess }) {
             value={caption}
             onChange={(e) => setCaption(e.target.value)}
             rows={3}
-            className="bg-transparent border-white/10 resize-none"
+            className="bg-transparent border-border resize-none"
             placeholder="Add a caption..."
           />
         </div>
@@ -56,14 +56,14 @@ export default function EditPostModal({ post, onClose, onSuccess }) {
           <Input
             value={category}
             onChange={(e) => setCategory(e.target.value)}
-            className="bg-transparent border-white/10"
+            className="bg-transparent border-border"
             placeholder="e.g. Tourism, Events"
           />
         </div>
 
         {/* Actions */}
         <div className="flex gap-3">
-          <Button variant="outline" className="flex-1 border-white/10" onClick={onClose}>
+          <Button variant="outline" className="flex-1 border-border" onClick={onClose}>
             Cancel
           </Button>
           <Button className="flex-1" onClick={handleSave} disabled={isSaving}>

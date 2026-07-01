@@ -10,7 +10,7 @@ const cols = [
 
 export default function Footer() {
   return (
-    <footer className="border-t border-white/5 py-20 px-6 lg:px-12">
+    <footer className="border-t border-border py-20 px-6 lg:px-12">
       <div className="max-w-7xl mx-auto">
         <div className="grid grid-cols-2 md:grid-cols-5 gap-12 mb-16">
           <div className="col-span-2 md:col-span-1">
@@ -30,7 +30,7 @@ export default function Footer() {
             </div>
           ))}
         </div>
-        <div className="border-t border-white/5 pt-8 flex flex-col md:flex-row items-center justify-between gap-3">
+        <div className="border-t border-border pt-8 flex flex-col md:flex-row items-center justify-between gap-3">
           <p className="text-xs text-white/20">© 2026 CoTask. All rights reserved.</p>
           <p className="text-xs text-white/20">Be there without being there.</p>
         </div>

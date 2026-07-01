@@ -51,7 +51,7 @@ export default function JobCountdown({ scheduledDate }) {
       </div>
       <div className="grid grid-cols-4 gap-2">
         {units.map(u => (
-          <div key={u.label} className="bg-white/5 rounded-xl p-3 text-center border border-white/5">
+          <div key={u.label} className="bg-secondary/60 rounded-xl p-3 text-center border border-border">
             <div className="text-2xl font-bold tabular-nums">{String(u.value).padStart(2, '0')}</div>
             <div className="text-xs text-muted-foreground mt-0.5">{u.label}</div>
           </div>

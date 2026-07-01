@@ -283,20 +283,20 @@ export default function CameraStudio({ sessionTitle = 'Live Session', onEnd }) {
           <div className="relative">
             <button
               onClick={() => setShowSourceMenu(m => !m)}
-              className="flex items-center gap-2 glass rounded-lg px-3 py-2 text-sm hover:bg-white/5 transition-colors"
+              className="flex items-center gap-2 glass rounded-lg px-3 py-2 text-sm hover:bg-secondary/60 transition-colors"
             >
               <selectedSource.icon className="w-4 h-4 text-primary" />
               <span>{selectedSource.label}</span>
               <ChevronDown className="w-3 h-3 text-muted-foreground" />
             </button>
             {showSourceMenu && (
-              <div className="absolute top-full left-0 mt-2 z-50 glass-strong rounded-xl p-2 min-w-56 shadow-xl border border-white/10">
+              <div className="absolute top-full left-0 mt-2 z-50 glass-strong rounded-xl p-2 min-w-56 shadow-xl border border-border">
                 <p className="text-xs text-muted-foreground px-2 mb-2 font-semibold uppercase tracking-wide">Camera Source</p>
                 {allSources.map(src => (
                   <button
                     key={src.id}
                     onClick={() => selectSource(src, src.deviceId)}
-                    className={`w-full text-left flex items-center gap-2 px-2 py-2 rounded-lg text-sm hover:bg-white/5 transition-colors ${selectedSource.id === src.id ? 'text-primary' : ''}`}
+                    className={`w-full text-left flex items-center gap-2 px-2 py-2 rounded-lg text-sm hover:bg-secondary/60 transition-colors ${selectedSource.id === src.id ? 'text-primary' : ''}`}
                   >
                     <src.icon className="w-4 h-4 flex-shrink-0" />
                     <span className="flex-1">{src.label}</span>
@@ -375,7 +375,7 @@ export default function CameraStudio({ sessionTitle = 'Live Session', onEnd }) {
           { icon: Eye, label: 'Insta360', desc: insta360Device ? 'Detected & ready — select above' : 'Connect via USB or pair via app', available: !!insta360Device },
           { icon: Glasses, label: 'Meta Glasses', desc: metaDevice ? 'Detected & ready — select above' : 'Pair via Bluetooth / USB', available: !!metaDevice },
         ].map(d => (
-          <div key={d.label} className={`glass rounded-xl p-3 flex items-start gap-3 border ${d.available ? 'border-green-500/20' : 'border-white/5'}`}>
+          <div key={d.label} className={`glass rounded-xl p-3 flex items-start gap-3 border ${d.available ? 'border-green-500/20' : 'border-border'}`}>
             <d.icon className={`w-4 h-4 mt-0.5 flex-shrink-0 ${d.available ? 'text-green-400' : 'text-muted-foreground'}`} />
             <div>
               <p className="text-xs font-semibold">{d.label}</p>

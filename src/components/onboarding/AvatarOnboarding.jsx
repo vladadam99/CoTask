@@ -44,13 +44,13 @@ const STEPS = ['Your Profile', 'Location & Travel', 'Services & Skills', 'Availa
 
 const Chip = ({ label, active, onClick }) => (
   <button type="button" onClick={onClick}
-    className={`px-3 py-1.5 rounded-lg text-sm transition-all ${active ? 'bg-primary text-primary-foreground' : 'bg-muted/50 text-muted-foreground hover:bg-muted'}`}>
+    className={`px-3 py-1.5 rounded-lg text-sm transition-all ${active ? 'bg-primary text-primary-foreground' : 'bg-card text-muted-foreground hover:bg-muted'}`}>
     {label}
   </button>
 );
 
 const Toggle = ({ label, description, value, onChange }) => (
-  <div className="flex items-center justify-between p-3 bg-muted/30 rounded-lg">
+  <div className="flex items-center justify-between p-3 bg-card rounded-lg">
     <div>
       <p className="text-sm font-medium">{label}</p>
       {description && <p className="text-xs text-muted-foreground mt-0.5">{description}</p>}
@@ -210,12 +210,12 @@ export default function AvatarOnboarding({ user, onComplete, submitting }) {
                 <div>
                   <label className="text-sm font-medium mb-1.5 block">Full Legal Name <span className="text-primary">*</span></label>
                   <Input value={data.legal_name} onChange={e => update('legal_name', e.target.value)}
-                    placeholder="As it appears on your ID" className="bg-muted/50 border-white/5" />
+                    placeholder="As it appears on your ID" className="bg-card border-border" />
                 </div>
                 <div>
                   <label className="text-sm font-medium mb-1.5 block">Date of Birth <span className="text-primary">*</span></label>
                   <Input type="date" value={data.date_of_birth} onChange={e => update('date_of_birth', e.target.value)}
-                    className="bg-muted/50 border-white/5" />
+                    className="bg-card border-border" />
                 </div>
                 {(!data.legal_name.trim() || !data.date_of_birth) && (
                   <p className="text-xs text-yellow-400">Legal name and date of birth are required to continue.</p>
@@ -224,13 +224,13 @@ export default function AvatarOnboarding({ user, onComplete, submitting }) {
                 <div>
                   <label className="text-sm font-medium mb-1.5 block">Display Name</label>
                   <Input value={data.display_name} onChange={e => update('display_name', e.target.value)}
-                    placeholder="Your name or nickname" className="bg-muted/50 border-white/5" />
+                    placeholder="Your name or nickname" className="bg-card border-border" />
                 </div>
                 <div>
                   <label className="text-sm font-medium mb-1.5 block">Bio</label>
                   <Textarea value={data.bio} onChange={e => update('bio', e.target.value)}
                     placeholder="Tell clients about yourself — your personality, experience, what makes you a great avatar, and what kind of jobs you enjoy..."
-                    className="bg-muted/50 border-white/5 h-28 resize-none" />
+                    className="bg-card border-border h-28 resize-none" />
                   <p className="text-xs text-muted-foreground mt-1">{data.bio.length}/500 characters</p>
                 </div>
 
@@ -252,7 +252,7 @@ export default function AvatarOnboarding({ user, onComplete, submitting }) {
                   ) : (
                     <button type="button" onClick={() => cvInputRef.current?.click()}
                       disabled={cvUploading}
-                      className="w-full h-16 rounded-xl border-2 border-dashed border-white/10 flex items-center justify-center gap-2 text-muted-foreground hover:border-primary/40 hover:text-primary transition-all disabled:opacity-50">
+                      className="w-full h-16 rounded-xl border-2 border-dashed border-border flex items-center justify-center gap-2 text-muted-foreground hover:border-primary/40 hover:text-primary transition-all disabled:opacity-50">
                       {cvUploading ? (
                         <><Loader2 className="w-4 h-4 animate-spin" /><span className="text-sm">Uploading...</span></>
                       ) : (
@@ -288,7 +288,7 @@ export default function AvatarOnboarding({ user, onComplete, submitting }) {
                       onChange={e => { setPostcodeInput(e.target.value); setPostcodeSearched(false); update('full_address', ''); }}
                       onKeyDown={e => e.key === 'Enter' && lookupPostcode()}
                       placeholder="e.g. SW1A 1AA"
-                      className="bg-muted/50 border-white/5 uppercase flex-1"
+                      className="bg-card border-border uppercase flex-1"
                     />
                     <Button type="button" onClick={lookupPostcode} disabled={postcodeLoading || !postcodeInput.trim()} className="bg-primary hover:bg-primary/90 shrink-0">
                       {postcodeLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Search className="w-4 h-4" />}
@@ -304,7 +304,7 @@ export default function AvatarOnboarding({ user, onComplete, submitting }) {
                       Select your address <span className="text-primary">*</span>
                     </label>
                     {addressOptions.length > 0 ? (
-                      <div className="max-h-48 overflow-y-auto space-y-1 border border-white/10 rounded-xl p-2 bg-muted/20">
+                      <div className="max-h-48 overflow-y-auto space-y-1 border border-border rounded-xl p-2 bg-muted/20">
                         {addressOptions.map((addr, i) => (
                           <button
                             key={i}
@@ -313,7 +313,7 @@ export default function AvatarOnboarding({ user, onComplete, submitting }) {
                             className={`w-full text-left px-3 py-2.5 rounded-lg text-sm transition-all flex items-start gap-2 ${
                               data.full_address === addr
                                 ? 'bg-primary/15 text-primary border border-primary/30'
-                                : 'hover:bg-muted/50 text-foreground'
+                                : 'hover:bg-card text-foreground'
                             }`}
                           >
                             <MapPin className="w-3.5 h-3.5 mt-0.5 flex-shrink-0" />
@@ -328,7 +328,7 @@ export default function AvatarOnboarding({ user, onComplete, submitting }) {
                           value={data.full_address}
                           onChange={e => update('full_address', e.target.value)}
                           placeholder="e.g. 10 Downing Street, London, SW1A 2AA"
-                          className="bg-muted/50 border-white/5"
+                          className="bg-card border-border"
                         />
                       </div>
                     )}
@@ -353,12 +353,12 @@ export default function AvatarOnboarding({ user, onComplete, submitting }) {
                   <div>
                     <label className="text-sm font-medium mb-1.5 block">City / Town</label>
                     <Input value={data.city} onChange={e => update('city', e.target.value)}
-                      placeholder="London" className="bg-muted/50 border-white/5" />
+                      placeholder="London" className="bg-card border-border" />
                   </div>
                   <div>
                     <label className="text-sm font-medium mb-1.5 block">Country</label>
                     <Input value={data.country} onChange={e => update('country', e.target.value)}
-                      placeholder="United Kingdom" className="bg-muted/50 border-white/5" />
+                      placeholder="United Kingdom" className="bg-card border-border" />
                   </div>
                 </div>
                 <Toggle
@@ -371,7 +371,7 @@ export default function AvatarOnboarding({ user, onComplete, submitting }) {
                   <div>
                     <label className="text-sm font-medium mb-1.5 block">Maximum travel distance</label>
                     <select value={data.travel_radius_km} onChange={e => update('travel_radius_km', e.target.value)}
-                      className="w-full h-9 px-3 rounded-md bg-muted/50 border border-white/5 text-sm text-foreground">
+                      className="w-full h-9 px-3 rounded-md bg-card border border-border text-sm text-foreground">
                       {['10', '25', '50', '100', '200', 'Anywhere'].map(v => (
                         <option key={v} value={v}>{v === 'Anywhere' ? 'Anywhere' : `Up to ${v}km`}</option>
                       ))}
@@ -383,15 +383,15 @@ export default function AvatarOnboarding({ user, onComplete, submitting }) {
                   <div className="flex gap-2">
                     <Input value={extraCityInput} onChange={e => setExtraCityInput(e.target.value)}
                       onKeyDown={e => e.key === 'Enter' && addExtraCity()}
-                      placeholder="Add a city..." className="bg-muted/50 border-white/5 flex-1 text-sm" />
-                    <Button type="button" variant="outline" onClick={addExtraCity} className="border-white/10 shrink-0">
+                      placeholder="Add a city..." className="bg-card border-border flex-1 text-sm" />
+                    <Button type="button" variant="outline" onClick={addExtraCity} className="border-border shrink-0">
                       <Plus className="w-4 h-4" />
                     </Button>
                   </div>
                   {data.extra_cities.length > 0 && (
                     <div className="flex flex-wrap gap-2 mt-2">
                       {data.extra_cities.map(city => (
-                        <span key={city} className="flex items-center gap-1 px-3 py-1 bg-muted/50 rounded-lg text-sm">
+                        <span key={city} className="flex items-center gap-1 px-3 py-1 bg-card rounded-lg text-sm">
                           {city}
                           <button onClick={() => toggle('extra_cities', city)} className="text-muted-foreground hover:text-foreground">
                             <X className="w-3 h-3" />
@@ -419,8 +419,8 @@ export default function AvatarOnboarding({ user, onComplete, submitting }) {
                   <div className="flex gap-2">
                     <Input value={customCategory} onChange={e => setCustomCategory(e.target.value)}
                       onKeyDown={e => e.key === 'Enter' && addCustomCategory()}
-                      placeholder="Add a custom service..." className="bg-muted/50 border-white/5 text-sm flex-1" />
-                    <Button type="button" variant="outline" onClick={addCustomCategory} className="border-white/10 shrink-0">
+                      placeholder="Add a custom service..." className="bg-card border-border text-sm flex-1" />
+                    <Button type="button" variant="outline" onClick={addCustomCategory} className="border-border shrink-0">
                       <Plus className="w-4 h-4" />
                     </Button>
                   </div>
@@ -447,8 +447,8 @@ export default function AvatarOnboarding({ user, onComplete, submitting }) {
                   <div className="flex gap-2">
                     <Input value={customSkill} onChange={e => setCustomSkill(e.target.value)}
                       onKeyDown={e => e.key === 'Enter' && addCustomSkill()}
-                      placeholder="Add a custom skill..." className="bg-muted/50 border-white/5 text-sm flex-1" />
-                    <Button type="button" variant="outline" onClick={addCustomSkill} className="border-white/10 shrink-0">
+                      placeholder="Add a custom skill..." className="bg-card border-border text-sm flex-1" />
+                    <Button type="button" variant="outline" onClick={addCustomSkill} className="border-border shrink-0">
                       <Plus className="w-4 h-4" />
                     </Button>
                   </div>
@@ -466,7 +466,7 @@ export default function AvatarOnboarding({ user, onComplete, submitting }) {
                   <label className="text-sm font-medium mb-1.5 block">What are you willing to do? <span className="text-muted-foreground font-normal">(in your own words)</span></label>
                   <Textarea value={data.willing_to_do} onChange={e => update('willing_to_do', e.target.value)}
                     placeholder="e.g. I'm happy to stand in queues, visit properties, run errands, attend events, do live tours, inspect vehicles, help with shopping, etc."
-                    className="bg-muted/50 border-white/5 h-20 resize-none text-sm" />
+                    className="bg-card border-border h-20 resize-none text-sm" />
                 </div>
               </div>
             )}
@@ -479,7 +479,7 @@ export default function AvatarOnboarding({ user, onComplete, submitting }) {
                   <div className="grid grid-cols-3 gap-2">
                     {[{v:'scheduled',l:'Scheduled Only',d:'Plan ahead jobs'},{v:'instant',l:'Instant Only',d:'On-demand jobs'},{v:'both',l:'Both',d:'Open to all'}].map(({v,l,d}) => (
                       <button key={v} type="button" onClick={() => update('booking_type', v)}
-                        className={`p-3 rounded-xl border text-left transition-all ${data.booking_type === v ? 'bg-primary/10 border-primary/40 text-primary' : 'bg-muted/30 border-white/5 text-muted-foreground hover:bg-muted/50'}`}>
+                        className={`p-3 rounded-xl border text-left transition-all ${data.booking_type === v ? 'bg-primary/10 border-primary/40 text-primary' : 'bg-card border-border text-muted-foreground hover:bg-card'}`}>
                         <p className="text-sm font-semibold">{l}</p>
                         <p className="text-xs mt-0.5 opacity-70">{d}</p>
                       </button>
@@ -491,7 +491,7 @@ export default function AvatarOnboarding({ user, onComplete, submitting }) {
                   <div className="flex gap-2">
                     {DAYS.map(day => (
                       <button key={day} type="button" onClick={() => toggle('available_days', day)}
-                        className={`flex-1 h-9 rounded-lg text-xs font-medium transition-all ${data.available_days.includes(day) ? 'bg-primary text-white' : 'bg-muted/50 text-muted-foreground hover:bg-muted'}`}>
+                        className={`flex-1 h-9 rounded-lg text-xs font-medium transition-all ${data.available_days.includes(day) ? 'bg-primary text-white' : 'bg-card text-muted-foreground hover:bg-muted'}`}>
                         {day}
                       </button>
                     ))}
@@ -501,14 +501,14 @@ export default function AvatarOnboarding({ user, onComplete, submitting }) {
                   <div>
                     <label className="text-sm font-medium mb-1.5 block">Available from</label>
                     <select value={data.available_from} onChange={e => update('available_from', e.target.value)}
-                      className="w-full h-9 px-3 rounded-md bg-muted/50 border border-white/5 text-sm text-foreground">
+                      className="w-full h-9 px-3 rounded-md bg-card border border-border text-sm text-foreground">
                       {HOURS.map(h => <option key={h} value={h}>{h}</option>)}
                     </select>
                   </div>
                   <div>
                     <label className="text-sm font-medium mb-1.5 block">Available until</label>
                     <select value={data.available_to} onChange={e => update('available_to', e.target.value)}
-                      className="w-full h-9 px-3 rounded-md bg-muted/50 border border-white/5 text-sm text-foreground">
+                      className="w-full h-9 px-3 rounded-md bg-card border border-border text-sm text-foreground">
                       {HOURS.map(h => <option key={h} value={h}>{h}</option>)}
                     </select>
                   </div>
@@ -519,7 +519,7 @@ export default function AvatarOnboarding({ user, onComplete, submitting }) {
                     <Toggle label="Smartphone" description="Can receive calls and stream video" value={data.has_smartphone} onChange={v => update('has_smartphone', v)} />
                     <Toggle label="Reliable Mobile Data" description="4G/5G connection for live streaming" value={data.has_data_connection} onChange={v => update('has_data_connection', v)} />
                     <Toggle label="Vehicle" description="Car, motorbike or other transport" value={data.has_vehicle} onChange={v => update('has_vehicle', v)} />
-                    <div className="flex items-center justify-between p-3 bg-muted/30 rounded-lg opacity-50 cursor-not-allowed">
+                    <div className="flex items-center justify-between p-3 bg-card rounded-lg opacity-50 cursor-not-allowed">
                       <div>
                         <p className="text-sm font-medium">360° Camera</p>
                         <p className="text-xs text-muted-foreground mt-0.5">Offer immersive view experiences</p>
@@ -542,7 +542,7 @@ export default function AvatarOnboarding({ user, onComplete, submitting }) {
                   <div>
                     <label className="text-sm font-medium mb-1.5 block">Currency</label>
                     <select value={data.currency} onChange={e => update('currency', e.target.value)}
-                      className="w-full h-9 px-3 rounded-md bg-muted/50 border border-white/5 text-sm text-foreground">
+                      className="w-full h-9 px-3 rounded-md bg-card border border-border text-sm text-foreground">
                       {CURRENCIES.map(c => <option key={c} value={c}>{c}</option>)}
                     </select>
                   </div>
@@ -551,7 +551,7 @@ export default function AvatarOnboarding({ user, onComplete, submitting }) {
                     <div className="relative">
                       <span className="absolute left-3 top-1/2 -translate-y-1/2 text-xs text-muted-foreground font-medium">{data.currency}</span>
                       <Input type="number" value={data.hourly_rate} onChange={e => update('hourly_rate', e.target.value)}
-                        placeholder="25" className="bg-muted/50 border-white/5 pl-12" />
+                        placeholder="25" className="bg-card border-border pl-12" />
                     </div>
                   </div>
                 </div>
@@ -562,7 +562,7 @@ export default function AvatarOnboarding({ user, onComplete, submitting }) {
                   <div className="relative">
                     <span className="absolute left-3 top-1/2 -translate-y-1/2 text-xs text-muted-foreground font-medium">{data.currency}</span>
                     <Input type="number" value={data.per_session_rate} onChange={e => update('per_session_rate', e.target.value)}
-                      placeholder="Leave blank to only charge hourly" className="bg-muted/50 border-white/5 pl-12" />
+                      placeholder="Leave blank to only charge hourly" className="bg-card border-border pl-12" />
                   </div>
                 </div>
                 {data.does_live_jobs && (
@@ -573,7 +573,7 @@ export default function AvatarOnboarding({ user, onComplete, submitting }) {
                     <div className="relative">
                       <span className="absolute left-3 top-1/2 -translate-y-1/2 text-xs text-muted-foreground font-medium">{data.currency}</span>
                       <Input type="number" value={data.live_premium} onChange={e => update('live_premium', e.target.value)}
-                        placeholder="0" className="bg-muted/50 border-white/5 pl-12" />
+                        placeholder="0" className="bg-card border-border pl-12" />
                     </div>
                   </div>
                 )}

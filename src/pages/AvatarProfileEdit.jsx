@@ -233,7 +233,7 @@ export default function AvatarProfileEdit() {
             {uploadingCover ? (
               <Loader2 className="w-6 h-6 animate-spin text-white" />
             ) : (
-              <div className="flex items-center gap-2 bg-white/20 backdrop-blur px-4 py-2 rounded-full">
+              <div className="flex items-center gap-2 bg-secondary backdrop-blur px-4 py-2 rounded-full">
                 <Camera className="w-4 h-4 text-white" />
                 <span className="text-white text-sm font-semibold">{form.cover_url ? 'Change Banner' : 'Add Banner Photo'}</span>
               </div>
@@ -273,7 +273,7 @@ export default function AvatarProfileEdit() {
                 <div className="flex items-center gap-2 text-xs text-muted-foreground">
                   <button
                     onClick={() => navigate(`/AvatarView?id=${profile.id}`)}
-                    className="px-3 py-1 rounded-full bg-white/10 border border-white/10 text-xs hover:bg-white/20 transition-colors"
+                    className="px-3 py-1 rounded-full bg-secondary border border-border text-xs hover:bg-secondary transition-colors"
                   >
                     Preview Profile →
                   </button>
@@ -296,19 +296,19 @@ export default function AvatarProfileEdit() {
 
         {/* Stats & Info Grid */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3 px-4 mb-6">
-          <div className="bg-card/50 rounded-xl p-4 text-center border border-white/5">
+          <div className="bg-card/50 rounded-xl p-4 text-center border border-border">
             <p className="text-2xl font-bold text-primary">${form.hourly_rate || 0}</p>
             <p className="text-xs text-muted-foreground mt-1">Per Hour</p>
           </div>
-          <div className="bg-card/50 rounded-xl p-4 text-center border border-white/5">
+          <div className="bg-card/50 rounded-xl p-4 text-center border border-border">
             <p className="text-2xl font-bold text-primary">${form.per_session_rate || 0}</p>
             <p className="text-xs text-muted-foreground mt-1">Per Session</p>
           </div>
-          <div className="bg-card/50 rounded-xl p-4 text-center border border-white/5">
+          <div className="bg-card/50 rounded-xl p-4 text-center border border-border">
             <p className="text-2xl font-bold text-primary">{(form.categories || []).length}</p>
             <p className="text-xs text-muted-foreground mt-1">Categories</p>
           </div>
-          <div className="bg-card/50 rounded-xl p-4 text-center border border-white/5">
+          <div className="bg-card/50 rounded-xl p-4 text-center border border-border">
             <p className="text-2xl font-bold text-primary">{(form.skills || []).length}</p>
             <p className="text-xs text-muted-foreground mt-1">Skills</p>
           </div>
@@ -365,13 +365,13 @@ export default function AvatarProfileEdit() {
               <Input 
                 value={form.city} 
                 onChange={set('city')} 
-                className="bg-transparent border-white/10"
+                className="bg-transparent border-border"
                 placeholder="City"
               />
               <Input 
                 value={form.country} 
                 onChange={set('country')} 
-                className="bg-transparent border-white/10"
+                className="bg-transparent border-border"
                 placeholder="Country"
               />
             </div>
@@ -408,7 +408,7 @@ export default function AvatarProfileEdit() {
                     type="number"
                     value={form.travel_radius_km}
                     onChange={set('travel_radius_km')}
-                    className="bg-transparent border-white/10"
+                    className="bg-transparent border-border"
                     placeholder="e.g. 50"
                   />
                   <p className="text-xs text-muted-foreground mt-1">Jobs further than this won't be matched to you</p>
@@ -430,7 +430,7 @@ export default function AvatarProfileEdit() {
                   type="number" 
                   value={form.hourly_rate} 
                   onChange={set('hourly_rate')} 
-                  className="bg-transparent border-white/10"
+                  className="bg-transparent border-border"
                 />
               </div>
               <div>
@@ -439,7 +439,7 @@ export default function AvatarProfileEdit() {
                   type="number" 
                   value={form.per_session_rate} 
                   onChange={set('per_session_rate')} 
-                  className="bg-transparent border-white/10"
+                  className="bg-transparent border-border"
                 />
               </div>
             </div>
@@ -469,7 +469,7 @@ export default function AvatarProfileEdit() {
               </div>
             ) : (
               <button onClick={() => cvInputRef.current?.click()} disabled={uploadingCv}
-                className="w-full h-16 rounded-xl border-2 border-dashed border-white/10 flex items-center justify-center gap-2 text-muted-foreground hover:border-primary/40 hover:text-primary transition-all disabled:opacity-50">
+                className="w-full h-16 rounded-xl border-2 border-dashed border-border flex items-center justify-center gap-2 text-muted-foreground hover:border-primary/40 hover:text-primary transition-all disabled:opacity-50">
                 {uploadingCv ? (
                   <><Loader2 className="w-4 h-4 animate-spin" /><span className="text-sm">Uploading...</span></>
                 ) : (
@@ -525,12 +525,12 @@ export default function AvatarProfileEdit() {
                   <Camera className="w-8 h-8 text-primary" />
                 </div>
                 <p className="text-sm text-muted-foreground">No portfolio media yet. Share your work!</p>
-                <Button size="sm" variant="outline" className="border-white/10" onClick={() => setShowUpload(true)}>Upload first portfolio item</Button>
+                <Button size="sm" variant="outline" className="border-border" onClick={() => setShowUpload(true)}>Upload first portfolio item</Button>
               </div>
             ) : (
               <div className="grid grid-cols-3 gap-2">
                 {myPosts.map(post => (
-                  <div key={post.id} className="aspect-square rounded-xl overflow-hidden bg-white/5 relative group">
+                  <div key={post.id} className="aspect-square rounded-xl overflow-hidden bg-secondary/60 relative group">
                     {post.type === 'video'
                       ? <video src={post.media_url} className="w-full h-full object-cover" muted />
                       : <img src={post.media_url} alt={post.caption} className="w-full h-full object-cover" />}
@@ -577,11 +577,11 @@ export default function AvatarProfileEdit() {
       {/* Delete Confirmation Modal */}
       {deleteConfirm && (
         <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-card rounded-2xl p-6 max-w-sm w-full border border-white/10">
+          <div className="bg-card rounded-2xl p-6 max-w-sm w-full border border-border">
             <h3 className="text-lg font-bold mb-2">Delete Media?</h3>
             <p className="text-sm text-muted-foreground mb-6">Are you sure you want to delete this media? This action cannot be undone.</p>
             <div className="flex gap-3">
-              <Button variant="outline" className="flex-1 border-white/10" onClick={() => setDeleteConfirm(null)}>
+              <Button variant="outline" className="flex-1 border-border" onClick={() => setDeleteConfirm(null)}>
                 Cancel
               </Button>
               <Button variant="destructive" className="flex-1" onClick={confirmDelete} disabled={deletePost.isPending}>

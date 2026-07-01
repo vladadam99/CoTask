@@ -155,7 +155,7 @@ export default function ExploreOnboarding() {
   return (
     <div className="min-h-screen bg-background flex flex-col">
       {/* Progress bar */}
-      <div className="fixed top-0 left-0 right-0 z-50 h-1 bg-white/5">
+      <div className="fixed top-0 left-0 right-0 z-50 h-1 bg-secondary/60">
         <motion.div
           className="h-full bg-primary"
           animate={{ width: `${((step + 1) / TOTAL_STEPS) * 100}%` }}
@@ -237,7 +237,7 @@ function IntroSlide1() {
       </motion.div>
 
       {/* Video/Image hero */}
-      <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.25 }} className="relative rounded-2xl overflow-hidden aspect-video shadow-2xl border border-white/10">
+      <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.25 }} className="relative rounded-2xl overflow-hidden aspect-video shadow-2xl border border-border">
         <img
           src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=800&q=80"
           alt="Avatar streaming live"
@@ -248,7 +248,7 @@ function IntroSlide1() {
           <span className="flex items-center gap-1.5 bg-red-500 text-white text-xs font-semibold px-2.5 py-1 rounded-full">
             <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" /> LIVE
           </span>
-          <span className="text-white text-xs glass px-2.5 py-1 rounded-full border border-white/10">Avatar streaming in Tokyo</span>
+          <span className="text-white text-xs glass px-2.5 py-1 rounded-full border border-border">Avatar streaming in Tokyo</span>
         </div>
       </motion.div>
 
@@ -259,7 +259,7 @@ function IntroSlide1() {
           { value: '50+', label: 'Countries' },
           { value: '4.9★', label: 'Avg Rating' },
         ].map(s => (
-          <div key={s.label} className="glass rounded-xl p-3 text-center border border-white/5">
+          <div key={s.label} className="glass rounded-xl p-3 text-center border border-border">
             <p className="text-lg font-bold text-primary">{s.value}</p>
             <p className="text-xs text-muted-foreground">{s.label}</p>
           </div>
@@ -285,7 +285,7 @@ function IntroSlide2() {
       </motion.div>
 
       {/* Image */}
-      <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.2 }} className="relative rounded-2xl overflow-hidden h-44 border border-white/10 shadow-xl">
+      <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.2 }} className="relative rounded-2xl overflow-hidden h-44 border border-border shadow-xl">
         <img
           src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=800&q=80"
           alt="People using CoTask"
@@ -357,7 +357,7 @@ function QuestionStep({ question, answers, setAnswers }) {
                   className={`relative flex items-center gap-3 p-3 rounded-xl border text-left transition-all duration-200
                     ${selected
                       ? 'bg-primary/10 border-primary/40 text-foreground'
-                      : 'bg-card/40 border-white/5 text-muted-foreground hover:border-white/10 hover:bg-card/60'
+                      : 'bg-card/40 border-border text-muted-foreground hover:border-border hover:bg-card/60'
                     }`}
                 >
                   <span className="text-lg">{cat.emoji}</span>
@@ -376,7 +376,7 @@ function QuestionStep({ question, answers, setAnswers }) {
               className={`relative flex items-center gap-3 p-3 rounded-xl border text-left transition-all duration-200
                 ${showCustomInput || answers.customCategory
                   ? 'bg-yellow-500/10 border-yellow-500/30 text-foreground'
-                  : 'bg-card/40 border-white/5 text-muted-foreground hover:border-white/10 hover:bg-card/60'
+                  : 'bg-card/40 border-border text-muted-foreground hover:border-border hover:bg-card/60'
                 }`}
             >
               <span className="text-lg">✏️</span>
@@ -415,7 +415,7 @@ function QuestionStep({ question, answers, setAnswers }) {
               value={answers.location}
               onChange={e => setAnswers(a => ({ ...a, location: e.target.value }))}
               placeholder={question.placeholder}
-              className="w-full pl-11 pr-4 py-4 bg-card/60 border border-white/10 rounded-xl text-foreground placeholder:text-muted-foreground text-sm focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/30"
+              className="w-full pl-11 pr-4 py-4 bg-card/60 border border-border rounded-xl text-foreground placeholder:text-muted-foreground text-sm focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/30"
             />
           </div>
           <p className="text-xs text-muted-foreground mt-3">Leave blank to explore all locations</p>
@@ -431,7 +431,7 @@ function QuestionStep({ question, answers, setAnswers }) {
                   className={`px-3 py-1.5 text-xs rounded-full border transition-all ${
                     answers.location === city
                       ? 'bg-primary/10 border-primary/40 text-primary'
-                      : 'bg-card/40 border-white/5 text-muted-foreground hover:border-white/10'
+                      : 'bg-card/40 border-border text-muted-foreground hover:border-border'
                   }`}
                 >
                   {city}
@@ -456,7 +456,7 @@ function QuestionStep({ question, answers, setAnswers }) {
                 className={`flex flex-col items-center gap-2 p-5 rounded-xl border text-center transition-all duration-200
                   ${selected
                     ? 'bg-primary/10 border-primary/40 text-foreground'
-                    : 'bg-card/40 border-white/5 text-muted-foreground hover:border-white/10 hover:bg-card/60'
+                    : 'bg-card/40 border-border text-muted-foreground hover:border-border hover:bg-card/60'
                   }`}
               >
                 <span className="text-2xl">{opt.emoji}</span>

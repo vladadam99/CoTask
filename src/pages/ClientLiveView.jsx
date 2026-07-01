@@ -132,7 +132,7 @@ export default function ClientLiveView() {
               </div>
             )}
             {isEnded && (
-              <div className="text-xs bg-muted/50 text-muted-foreground px-3 py-1.5 rounded-full">Session ended</div>
+              <div className="text-xs bg-card text-muted-foreground px-3 py-1.5 rounded-full">Session ended</div>
             )}
           </div>
           <div className="flex items-center gap-2">
@@ -149,7 +149,7 @@ export default function ClientLiveView() {
             )}
             <button
               onClick={() => setChatOpen(v => !v)}
-              className={`flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg border transition-colors ${chatOpen ? 'bg-primary/20 border-primary/30 text-primary' : 'bg-muted/50 border-white/10 text-muted-foreground'}`}
+              className={`flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg border transition-colors ${chatOpen ? 'bg-primary/20 border-primary/30 text-primary' : 'bg-card border-border text-muted-foreground'}`}
             >
               <MessageCircle className="w-3.5 h-3.5" /> Chat
             </button>
@@ -215,7 +215,7 @@ export default function ClientLiveView() {
           {chatOpen && (
             <div className="flex flex-col" style={{ height: '540px' }}>
               <GlassCard className="flex flex-col flex-1 overflow-hidden p-0">
-                <div className="p-4 border-b border-white/5 flex items-center gap-2">
+                <div className="p-4 border-b border-border flex items-center gap-2">
                   <MessageCircle className="w-4 h-4 text-primary" />
                   <span className="text-sm font-semibold">Session Chat</span>
                 </div>
@@ -232,13 +232,13 @@ export default function ClientLiveView() {
                   ))}
                   <div ref={chatEndRef} />
                 </div>
-                <div className="p-3 border-t border-white/5 flex gap-2">
+                <div className="p-3 border-t border-border flex gap-2">
                   <input
                     value={input}
                     onChange={e => setInput(e.target.value)}
                     onKeyDown={e => e.key === 'Enter' && sendMessage()}
                     placeholder="Type a message…"
-                    className="flex-1 text-sm bg-muted/50 border border-white/5 rounded-xl px-3 py-2 focus:outline-none focus:border-primary/40 text-foreground placeholder:text-muted-foreground"
+                    className="flex-1 text-sm bg-card border border-border rounded-xl px-3 py-2 focus:outline-none focus:border-primary/40 text-foreground placeholder:text-muted-foreground"
                   />
                   <Button size="sm" className="bg-primary" onClick={sendMessage}>Send</Button>
                 </div>

@@ -45,13 +45,13 @@ export default function StreamHUD({
       <div className="flex items-center gap-2 pointer-events-auto">
         <button
           onClick={onToggleMic}
-          className={`p-2.5 rounded-xl border transition-all ${micOn ? 'bg-white/10 border-white/20 text-white' : 'bg-red-500/20 border-red-500/40 text-red-400'}`}
+          className={`p-2.5 rounded-xl border transition-all ${micOn ? 'bg-secondary border-border text-white' : 'bg-red-500/20 border-red-500/40 text-red-400'}`}
         >
           {micOn ? <Mic className="w-4 h-4" /> : <MicOff className="w-4 h-4" />}
         </button>
         <button
           onClick={onToggleCam}
-          className={`p-2.5 rounded-xl border transition-all ${camOn ? 'bg-white/10 border-white/20 text-white' : 'bg-red-500/20 border-red-500/40 text-red-400'}`}
+          className={`p-2.5 rounded-xl border transition-all ${camOn ? 'bg-secondary border-border text-white' : 'bg-red-500/20 border-red-500/40 text-red-400'}`}
         >
           {camOn ? <Video className="w-4 h-4" /> : <VideoOff className="w-4 h-4" />}
         </button>

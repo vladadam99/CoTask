@@ -116,7 +116,7 @@ function PostViewer({ posts, initialIndex, onClose, avatarName, avatarPhoto }) {
           {comments.length > 0 ? (
             comments.map(c => (
               <div key={c.id} className="flex gap-2">
-                <div className="w-6 h-6 rounded-full bg-white/10 flex items-center justify-center text-xs flex-shrink-0">{c.commenter_name?.[0]}</div>
+                <div className="w-6 h-6 rounded-full bg-secondary flex items-center justify-center text-xs flex-shrink-0">{c.commenter_name?.[0]}</div>
                 <p className="text-sm text-white/80">
                   <span className="font-semibold text-white mr-2">{c.commenter_name}</span>{c.content}
                 </p>
@@ -339,7 +339,7 @@ export default function AvatarView() {
             </Button>
           </div>
           
-          <div className="text-center bg-muted/50 rounded-xl p-3 border border-border mt-2">
+          <div className="text-center bg-card rounded-xl p-3 border border-border mt-2">
             <p className="text-xs text-muted-foreground mb-1.5">Direct Hire is best when you already know you want this Local Agent.</p>
             <Link to="/PostJob" className="text-sm text-primary hover:underline font-medium block">
               Post an Open Task instead
@@ -416,7 +416,7 @@ export default function AvatarView() {
               {(avatar.categories || []).length > 0 ? (
                 <div className="flex flex-wrap gap-2">
                   {avatar.categories.map(c => (
-                    <Badge key={c} variant="secondary" className="bg-muted/50 text-sm py-1.5 px-3">{c}</Badge>
+                    <Badge key={c} variant="secondary" className="bg-card text-sm py-1.5 px-3">{c}</Badge>
                   ))}
                 </div>
               ) : (

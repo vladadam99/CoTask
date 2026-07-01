@@ -66,7 +66,7 @@ export default function UserProfileEdit() {
       <div className="max-w-lg mx-auto">
         {/* Header */}
         <div className="flex items-center gap-3 mb-6">
-          <button onClick={() => navigate('/Profile')} className="p-1.5 rounded-lg hover:bg-white/10">
+          <button onClick={() => navigate('/Profile')} className="p-1.5 rounded-lg hover:bg-secondary">
             <ArrowLeft className="w-5 h-5" />
           </button>
           <h1 className="text-xl font-bold">Edit Profile</h1>

@@ -89,7 +89,7 @@ export default function JobMarketplace() {
               Open Tasks
             </button>
             <button onClick={() => setShowOpen(false)}
-              className={`text-xs px-3 py-1.5 rounded-full transition-all ${!showOpen ? 'bg-white/20 text-foreground border border-white/20' : 'bg-secondary text-muted-foreground border border-border'}`}>
+              className={`text-xs px-3 py-1.5 rounded-full transition-all ${!showOpen ? 'bg-secondary text-foreground border border-border' : 'bg-secondary text-muted-foreground border border-border'}`}>
               All Tasks
             </button>
           </div>

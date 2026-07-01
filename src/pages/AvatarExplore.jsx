@@ -28,7 +28,7 @@ export default function AvatarExplore() {
           {CATEGORIES.map(cat => (
             <button key={cat} onClick={() => setCategory(cat)}
               className={`flex-shrink-0 px-3 py-1.5 rounded-full text-xs font-medium transition-all ${
-                cat === category ? 'bg-primary text-white' : 'bg-white/5 border border-white/10 text-muted-foreground hover:border-primary/30'
+                cat === category ? 'bg-primary text-white' : 'bg-secondary/60 border border-border text-muted-foreground hover:border-primary/30'
               }`}>
               {cat}
             </button>
@@ -45,7 +45,7 @@ export default function AvatarExplore() {
 
         {isLoading ? (
           <div className="h-screen flex items-center justify-center">
-            <div className="w-8 h-8 border-4 border-white/20 border-t-primary rounded-full animate-spin" />
+            <div className="w-8 h-8 border-4 border-border border-t-primary rounded-full animate-spin" />
           </div>
         ) : posts.length === 0 ? (
           <div className="h-screen flex flex-col items-center justify-center text-center">

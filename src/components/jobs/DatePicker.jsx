@@ -80,12 +80,12 @@ export default function DatePicker({ mode, onModeChange, startDate, endDate, onS
         <div className="flex items-center justify-between mb-3">
           <button type="button" onClick={() => setViewMonth(m => subMonths(m, 1))}
             disabled={isBefore(endOfMonth(viewMonth), today)}
-            className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-white/10 disabled:opacity-30 transition-colors">
+            className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-secondary disabled:opacity-30 transition-colors">
             <ChevronLeft className="w-4 h-4" />
           </button>
           <span className="font-bold text-sm">{format(viewMonth, 'MMMM yyyy')}</span>
           <button type="button" onClick={() => setViewMonth(m => addMonths(m, 1))}
-            className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-white/10 transition-colors">
+            className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-secondary transition-colors">
             <ChevronRight className="w-4 h-4" />
           </button>
         </div>
@@ -127,7 +127,7 @@ export default function DatePicker({ mode, onModeChange, startDate, endDate, onS
                   w-9 h-9 flex items-center justify-center rounded-full font-medium z-10 transition-all
                   ${start || end ? 'bg-foreground text-background' : ''}
                   ${isToday && !start && !end ? 'border border-foreground/40' : ''}
-                  ${!start && !end && !past && inMonth ? 'hover:bg-white/10' : ''}
+                  ${!start && !end && !past && inMonth ? 'hover:bg-secondary' : ''}
                 `}>
                   {format(day, 'd')}
                 </span>
@@ -144,7 +144,7 @@ export default function DatePicker({ mode, onModeChange, startDate, endDate, onS
             className={`px-3 py-1.5 rounded-full text-xs font-medium border transition-all ${
               flexibility === opt.value
                 ? 'bg-foreground text-background border-foreground'
-                : 'bg-white/5 text-muted-foreground border-white/10 hover:border-white/20'
+                : 'bg-secondary/60 text-muted-foreground border-border hover:border-border'
             }`}>
             {opt.label}
           </button>

@@ -546,7 +546,7 @@ export default function LiveStreamStudio() {
                           </Button>
                         </div>
                       ))}
-                      <div className="border-t border-white/5 pt-2" />
+                      <div className="border-t border-border pt-2" />
                     </div>
                   )}
                   <div className="flex items-center justify-between gap-3">
@@ -636,16 +636,16 @@ export default function LiveStreamStudio() {
                   <div className="absolute top-0 inset-x-0 flex items-center justify-between p-4 bg-gradient-to-b from-black/70 to-transparent">
                     <div className="flex items-center gap-2">
                       {selectedSource && (
-                        <span className="glass text-xs text-white px-2.5 py-1 rounded-md font-medium border border-white/10">
+                        <span className="glass text-xs text-white px-2.5 py-1 rounded-md font-medium border border-border">
                           {selectedSource.label}
                         </span>
                       )}
-                      <span className="glass text-xs text-white px-2.5 py-1 rounded-md font-medium border border-white/10 uppercase">
+                      <span className="glass text-xs text-white px-2.5 py-1 rounded-md font-medium border border-border uppercase">
                         {viewMode}
                       </span>
                     </div>
                     {!isLive && (
-                      <span className="text-xs text-muted-foreground glass px-2.5 py-1 rounded-md border border-white/5">Preview</span>
+                      <span className="text-xs text-muted-foreground glass px-2.5 py-1 rounded-md border border-border">Preview</span>
                     )}
                   </div>
 
@@ -707,13 +707,13 @@ export default function LiveStreamStudio() {
                   )}
                   <button
                     onClick={() => setAnnotationsOn(v => !v)}
-                    className={`flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg transition-colors border ${annotationsOn ? 'bg-yellow-500/20 border-yellow-500/30 text-yellow-400' : 'bg-secondary border-white/10 text-muted-foreground hover:text-foreground'}`}
+                    className={`flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg transition-colors border ${annotationsOn ? 'bg-yellow-500/20 border-yellow-500/30 text-yellow-400' : 'bg-secondary border-border text-muted-foreground hover:text-foreground'}`}
                   >
                     <Pen className="w-3 h-3" /> Annotate
                   </button>
                   <button
                     onClick={() => setChatOpen(v => !v)}
-                    className={`flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg transition-colors border ${chatOpen ? 'bg-primary/20 border-primary/30 text-primary' : 'bg-secondary border-white/10 text-muted-foreground hover:text-foreground'}`}
+                    className={`flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg transition-colors border ${chatOpen ? 'bg-primary/20 border-primary/30 text-primary' : 'bg-secondary border-border text-muted-foreground hover:text-foreground'}`}
                   >
                     <MessageCircle className="w-3 h-3" /> Chat
                   </button>
@@ -748,7 +748,7 @@ export default function LiveStreamStudio() {
         </div>
 
         {/* Notes */}
-        <GlassCard className="p-5 mt-6 border-white/5">
+        <GlassCard className="p-5 mt-6 border-border">
           <h3 className="text-sm font-semibold mb-2">Device Connection Tips</h3>
           <ul className="text-xs text-muted-foreground space-y-1.5 leading-relaxed list-disc list-inside">
             <li><strong className="text-foreground">Phone cameras</strong> — detected automatically. Grant camera permission when prompted.</li>

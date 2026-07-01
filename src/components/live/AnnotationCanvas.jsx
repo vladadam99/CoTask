@@ -107,7 +107,7 @@ export default function AnnotationCanvas({ width = '100%', height = '100%' }) {
       />
 
       {/* Toolbar */}
-      <div className="absolute bottom-16 left-1/2 -translate-x-1/2 flex items-center gap-2 bg-black/70 backdrop-blur-md rounded-xl px-3 py-2 pointer-events-auto border border-white/10">
+      <div className="absolute bottom-16 left-1/2 -translate-x-1/2 flex items-center gap-2 bg-black/70 backdrop-blur-md rounded-xl px-3 py-2 pointer-events-auto border border-border">
         {/* Tool */}
         <button
           onClick={() => setTool('pen')}
@@ -124,7 +124,7 @@ export default function AnnotationCanvas({ width = '100%', height = '100%' }) {
           <Eraser className="w-4 h-4" />
         </button>
 
-        <div className="w-px h-5 bg-white/20" />
+        <div className="w-px h-5 bg-secondary" />
 
         {/* Colors */}
         {COLORS.map(c => (
@@ -136,7 +136,7 @@ export default function AnnotationCanvas({ width = '100%', height = '100%' }) {
           />
         ))}
 
-        <div className="w-px h-5 bg-white/20" />
+        <div className="w-px h-5 bg-secondary" />
 
         {/* Line width */}
         <button onClick={() => setLineWidth(v => Math.max(1, v - 1))} className="text-white/60 hover:text-white p-1">
@@ -147,7 +147,7 @@ export default function AnnotationCanvas({ width = '100%', height = '100%' }) {
           <Plus className="w-3 h-3" />
         </button>
 
-        <div className="w-px h-5 bg-white/20" />
+        <div className="w-px h-5 bg-secondary" />
 
         {/* Clear */}
         <button onClick={clearAll} className="text-red-400 hover:text-red-300 p-1.5 rounded-lg" title="Clear all">

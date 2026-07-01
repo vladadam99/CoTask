@@ -37,8 +37,8 @@ export default function ReelFeed() {
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
-      <div className="sticky top-0 z-40 glass-strong border-b border-white/5 px-4 py-3 flex items-center gap-3">
-        <button onClick={() => navigate(-1)} className="w-9 h-9 rounded-full bg-white/5 border border-white/10 flex items-center justify-center">
+      <div className="sticky top-0 z-40 glass-strong border-b border-border px-4 py-3 flex items-center gap-3">
+        <button onClick={() => navigate(-1)} className="w-9 h-9 rounded-full bg-secondary/60 border border-border flex items-center justify-center">
           <ArrowLeft className="w-4 h-4" />
         </button>
         <div className="flex-1 relative">
@@ -47,7 +47,7 @@ export default function ReelFeed() {
             value={search}
             onChange={e => setSearch(e.target.value)}
             placeholder="Search reels..."
-            className="w-full bg-white/5 border border-white/10 rounded-xl pl-9 pr-4 py-2 text-sm focus:outline-none focus:border-primary/50"
+            className="w-full bg-secondary/60 border border-border rounded-xl pl-9 pr-4 py-2 text-sm focus:outline-none focus:border-primary/50"
           />
         </div>
         <span className="text-xl font-bold">Co<span className="text-primary">Task</span></span>
@@ -83,7 +83,7 @@ export default function ReelFeed() {
         {isLoading ? (
           <div className="grid grid-cols-2 gap-3">
             {[1,2,3,4,5,6].map(i => (
-              <div key={i} className="aspect-[9/16] rounded-2xl bg-white/5 animate-pulse" />
+              <div key={i} className="aspect-[9/16] rounded-2xl bg-secondary/60 animate-pulse" />
             ))}
           </div>
         ) : filteredReels.length > 0 ? (
@@ -94,7 +94,7 @@ export default function ReelFeed() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: i * 0.05 }}
-                className="relative aspect-[9/16] rounded-2xl overflow-hidden bg-card border border-white/5 cursor-pointer group"
+                className="relative aspect-[9/16] rounded-2xl overflow-hidden bg-card border border-border cursor-pointer group"
               >
                 {/* Thumbnail */}
                 {reel.thumbnail_url ? (
@@ -119,7 +119,7 @@ export default function ReelFeed() {
 
                 {/* Play icon */}
                 <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                  <div className="w-12 h-12 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center">
+                  <div className="w-12 h-12 rounded-full bg-secondary backdrop-blur-sm flex items-center justify-center">
                     <Play className="w-5 h-5 text-white" />
                   </div>
                 </div>

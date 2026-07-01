@@ -50,17 +50,17 @@ export default function Contact() {
               <div className="grid grid-cols-2 gap-3">
                 <div>
                   <label className="text-sm font-medium mb-1.5 block">Name</label>
-                  <Input placeholder="Your name" className="bg-muted/50 border-white/5" />
+                  <Input placeholder="Your name" className="bg-card border-border" />
                 </div>
                 <div>
                   <label className="text-sm font-medium mb-1.5 block">Email</label>
-                  <Input type="email" placeholder="you@email.com" className="bg-muted/50 border-white/5" />
+                  <Input type="email" placeholder="you@email.com" className="bg-card border-border" />
                 </div>
               </div>
               <div>
                 <label className="text-sm font-medium mb-1.5 block">Subject</label>
                 <Select>
-                  <SelectTrigger className="bg-muted/50 border-white/5"><SelectValue placeholder="Choose a topic" /></SelectTrigger>
+                  <SelectTrigger className="bg-card border-border"><SelectValue placeholder="Choose a topic" /></SelectTrigger>
                   <SelectContent>
                     <SelectItem value="general">General Inquiry</SelectItem>
                     <SelectItem value="support">Technical Support</SelectItem>
@@ -72,7 +72,7 @@ export default function Contact() {
               </div>
               <div>
                 <label className="text-sm font-medium mb-1.5 block">Message</label>
-                <Textarea placeholder="Tell us how we can help..." className="bg-muted/50 border-white/5 h-32" />
+                <Textarea placeholder="Tell us how we can help..." className="bg-card border-border h-32" />
               </div>
               <Button type="submit" className="w-full bg-primary hover:bg-primary/90">Send Message</Button>
             </form>

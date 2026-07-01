@@ -130,7 +130,7 @@ export default function IdentityVerification({ profileId, profileType, onComplet
             <p className="text-sm text-muted-foreground">Complete the verification in the Stripe window</p>
           </div>
         </div>
-        <div className="rounded-xl bg-muted/30 border border-border p-6 flex flex-col items-center gap-4 text-center">
+        <div className="rounded-xl bg-card border border-border p-6 flex flex-col items-center gap-4 text-center">
           <Loader2 className="w-8 h-8 animate-spin text-primary" />
           <div>
             <p className="font-semibold">Verification in progress...</p>
@@ -182,7 +182,7 @@ export default function IdentityVerification({ profileId, profileType, onComplet
       </div>
 
       {/* Info */}
-      <div className="rounded-xl bg-muted/30 border border-border p-4 space-y-2">
+      <div className="rounded-xl bg-card border border-border p-4 space-y-2">
         <p className="text-sm font-medium">What you'll need:</p>
         <ul className="text-sm text-muted-foreground space-y-1">
           <li>• A government-issued photo ID (passport, driver's licence, or national ID)</li>

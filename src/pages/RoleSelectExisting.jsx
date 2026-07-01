@@ -145,7 +145,7 @@ export default function RoleSelectExisting() {
 
               <div className="flex flex-wrap gap-1.5 mb-5">
                 {role.tags.map(tag => (
-                  <span key={tag} className="text-xs bg-white/5 border border-white/10 rounded-full px-2.5 py-1 text-muted-foreground">
+                  <span key={tag} className="text-xs bg-secondary/60 border border-border rounded-full px-2.5 py-1 text-muted-foreground">
                     {tag}
                   </span>
                 ))}

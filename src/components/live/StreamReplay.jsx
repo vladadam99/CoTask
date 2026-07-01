@@ -103,7 +103,7 @@ export default function StreamReplay({ recordedChunks, isRecording }) {
 
           {/* Progress bar */}
           <div
-            className="h-1.5 bg-white/10 rounded-full cursor-pointer overflow-hidden"
+            className="h-1.5 bg-secondary rounded-full cursor-pointer overflow-hidden"
             onClick={seek}
           >
             <div
