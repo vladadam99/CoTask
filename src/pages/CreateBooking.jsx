@@ -6,11 +6,12 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { useCurrentUser } from '@/lib/useCurrentUser';
 import GlassCard from '@/components/ui/GlassCard';
+import { EmptyState, PageHero } from '@/components/ui/PagePrimitives';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { ArrowLeft, Wrench, Plus, X, Sparkles, Loader2, Video, VideoOff, Truck } from 'lucide-react';
+import { ArrowLeft, Wrench, Plus, X, Sparkles, Loader2, Video, VideoOff, Truck, Search } from 'lucide-react';
 import ReviewBookingPanel from '@/components/bookings/ReviewBookingPanel';
 
 const CATEGORIES = [
@@ -94,7 +95,7 @@ Based on this, return:
       if (result?.equipment?.length) update('equipment_needed', result.equipment);
       setAiUsed(true);
     } catch (e) {
-      // silently fail — user can fill manually
+      // silently fail ??? user can fill manually
     } finally {
       setAiLoading(false);
     }
@@ -175,28 +176,21 @@ Based on this, return:
 
   if (!avatarId) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center p-4">
-        <GlassCard className="p-8 max-w-md w-full text-center space-y-5">
-          <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-2">
-            <span className="text-primary text-2xl">🔍</span>
-          </div>
-          <h2 className="text-xl font-bold">Choose a Local Agent first</h2>
-          <p className="text-sm text-muted-foreground">
-            Direct Hire requests must be connected to a specific Local Agent. Go back to Discover and choose who you want to request.
-          </p>
-          <div className="flex flex-col gap-3 pt-2">
-            <Button className="w-full" onClick={() => navigate('/FindPeople')}>
-              Discover Local Agents
-            </Button>
-            <Button variant="outline" className="w-full border-border" onClick={() => navigate('/PostJob')}>
-              Post an Open Task
-            </Button>
-          </div>
-        </GlassCard>
-      </div>
+      <AppShell navItems={getNavItems(user?.selected_role || user?.role || 'user')} user={user}>
+        <EmptyState
+          icon={Search}
+          title="Choose a Local Agent first"
+          description="Direct Hire requests must be connected to a specific Local Agent. Choose who you want to request, or post an open task for proposals."
+          action={(
+            <div className="flex flex-col gap-3 sm:flex-row">
+              <Button onClick={() => navigate('/FindPeople')}>Discover Local Agents</Button>
+              <Button variant="outline" className="border-border" onClick={() => navigate('/PostJob')}>Post an Open Task</Button>
+            </div>
+          )}
+        />
+      </AppShell>
     );
   }
-
   if (step === 'review') {
     return (
       <AppShell navItems={getNavItems(user?.selected_role || user?.role || 'user')} user={user}>
@@ -214,16 +208,21 @@ Based on this, return:
 
   return (
     <AppShell navItems={getNavItems(user?.selected_role || user?.role || 'user')} user={user}>
-      <div className="max-w-xl mx-auto pt-8 pb-12">
-        <button onClick={() => navigate(-1)} className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground mb-6">
-          <ArrowLeft className="w-4 h-4" /> Back
-        </button>
+      <div className="mx-auto max-w-5xl space-y-6 pb-12">
+        <PageHero
+          eyebrow="Direct hire"
+          title="Request Direct Hire"
+          description="Send a focused task request to this Local Agent. They can accept, decline, or discuss details before the payment handoff."
+          icon={Sparkles}
+          actions={(
+            <Button variant="secondary" onClick={() => navigate(-1)}>
+              <ArrowLeft className="mr-2 h-4 w-4" /> Back
+            </Button>
+          )}
+        />
 
-        <h1 className="text-2xl font-bold mb-1">Request Direct Hire</h1>
-        <p className="text-sm text-muted-foreground mb-6">Send a task request to this Local Agent. They can accept, decline, or discuss details before starting.</p>
-        
-        <div className="bg-card border border-border rounded-xl p-3 mb-8">
-          <p className="text-xs text-muted-foreground">
+        <div className="surface-panel rounded-lg p-4">
+          <p className="text-sm text-muted-foreground">
             <strong className="text-foreground">Tip:</strong> Direct Hire is best when you already selected a Local Agent. If you want multiple proposals, <a href="/PostJob" className="text-primary hover:underline">post an Open Task</a> instead.
           </p>
         </div>
@@ -234,11 +233,11 @@ Based on this, return:
               ? <img src={avatar.photo_url} className="w-9 h-9 rounded-full object-cover border border-border" alt={avatar.display_name} />
               : <div className="w-9 h-9 rounded-full bg-primary/20 flex items-center justify-center text-primary font-bold">{avatar.display_name?.[0]}</div>
             }
-            <p className="text-muted-foreground text-sm">with <span className="text-foreground font-medium">{avatar.display_name}</span> · ${rate}/hr</p>
+            <p className="text-muted-foreground text-sm">with <span className="text-foreground font-medium">{avatar.display_name}</span> ?? ${rate}/hr</p>
           </div>
         )}
 
-        <div className="space-y-5">
+        <div className="mx-auto max-w-3xl space-y-5">
 
           {/* AI Autofill */}
           <GlassCard className="p-5 space-y-3">
@@ -249,7 +248,7 @@ Based on this, return:
             <Textarea
               value={aiDescription}
               onChange={e => setAiDescription(e.target.value)}
-              placeholder="e.g. I need someone to pick up my dry cleaning from the shop on Oxford Street and drop it at my flat…"
+              placeholder="e.g. I need someone to pick up my dry cleaning from the shop on Oxford Street and drop it at my flat???"
               className="bg-card border-border h-20 text-sm"
             />
             <Button
@@ -259,9 +258,9 @@ Based on this, return:
               onClick={handleAiAutofill}
               disabled={aiLoading || !aiDescription.trim()}
             >
-              {aiLoading ? <><Loader2 className="w-3.5 h-3.5 animate-spin" /> Filling in details…</> : <><Sparkles className="w-3.5 h-3.5" /> Autofill with AI</>}
+              {aiLoading ? <><Loader2 className="w-3.5 h-3.5 animate-spin" /> Filling in details...</> : <><Sparkles className="w-3.5 h-3.5" /> Autofill with AI</>}
             </Button>
-            {aiUsed && <p className="text-xs text-primary/70">✓ AI filled in the details below — review and adjust as needed.</p>}
+            {aiUsed && <p className="text-xs text-primary/70">AI filled in the details below - review and adjust as needed.</p>}
           </GlassCard>
 
           {/* Camera */}
@@ -297,10 +296,10 @@ Based on this, return:
             {form.notes ? (
               <div>
                 <label className="text-xs text-muted-foreground mb-1 block">Task description</label>
-                <Textarea value={form.notes} onChange={e => update('notes', e.target.value)} className="bg-card border-border h-20 text-sm" placeholder="Describe the task in detail…" />
+                <Textarea value={form.notes} onChange={e => update('notes', e.target.value)} className="bg-card border-border h-20 text-sm" placeholder="Describe the task in detail..." />
               </div>
             ) : (
-              <Textarea value={form.notes} onChange={e => update('notes', e.target.value)} className="bg-card border-border h-20 text-sm" placeholder="Any specific instructions for the agent…" />
+              <Textarea value={form.notes} onChange={e => update('notes', e.target.value)} className="bg-card border-border h-20 text-sm" placeholder="Any specific instructions for the agent..." />
             )}
           </GlassCard>
 
@@ -309,8 +308,8 @@ Based on this, return:
             <h2 className="font-semibold text-sm">When do you need this?</h2>
             <div className="grid grid-cols-2 gap-2">
               {[
-                { value: 'immediate', label: '⚡ Right Now', sub: 'On-demand, ASAP' },
-                { value: 'scheduled', label: '📅 Schedule', sub: 'Pick a date & time' },
+                { value: 'immediate', label: 'Right Now', sub: 'On-demand, ASAP' },
+                { value: 'scheduled', label: 'Schedule', sub: 'Pick a date & time' },
               ].map(opt => (
                 <button key={opt.value} type="button" onClick={() => update('booking_type', opt.value)}
                   className={`p-4 rounded-xl border text-left transition-all ${form.booking_type === opt.value ? 'bg-primary/10 border-primary/40' : 'bg-card border-border hover:border-border'}`}>
@@ -366,8 +365,8 @@ Based on this, return:
             <h2 className="font-semibold text-sm flex items-center gap-2"><Truck className="w-4 h-4 text-primary" /> Does the agent need to travel?</h2>
             <div className="grid grid-cols-2 gap-2">
               {[
-                { value: false, label: '🏠 No Travel', sub: 'Remote or already on location' },
-                { value: true, label: '🚗 Yes, Travel', sub: 'Agent needs to go somewhere' },
+                { value: false, label: 'No Travel', sub: 'Remote or already on location' },
+                { value: true, label: 'Travel Needed', sub: 'Agent needs to go somewhere' },
               ].map(opt => (
                 <button key={String(opt.value)} type="button" onClick={() => update('transport_required', opt.value)}
                   className={`p-4 rounded-xl border text-left transition-all ${form.transport_required === opt.value ? 'bg-primary/10 border-primary/40' : 'bg-card border-border hover:border-border'}`}>
@@ -378,7 +377,7 @@ Based on this, return:
             </div>
             {form.transport_required && (
               <Input value={form.transport_notes} onChange={e => update('transport_notes', e.target.value)}
-                placeholder="e.g. Uber provided, public transport from Zone 1…"
+                placeholder="e.g. Uber provided, public transport from Zone 1..."
                 className="bg-card border-border text-sm" />
             )}
             {form.transport_required && (
@@ -397,7 +396,7 @@ Based on this, return:
             <div className="flex gap-2">
               <Input value={newEquipment} onChange={e => setNewEquipment(e.target.value)}
                 onKeyDown={e => { if (e.key === 'Enter' && newEquipment.trim()) { e.preventDefault(); update('equipment_needed', [...form.equipment_needed, newEquipment.trim()]); setNewEquipment(''); } }}
-                placeholder="e.g. smartphone, ladder, drill…"
+                placeholder="e.g. smartphone, ladder, drill..."
                 className="bg-card border-border text-sm" />
               <Button type="button" variant="outline" className="border-border shrink-0"
                 onClick={() => { if (newEquipment.trim()) { update('equipment_needed', [...form.equipment_needed, newEquipment.trim()]); setNewEquipment(''); } }}>
@@ -422,7 +421,7 @@ Based on this, return:
           {/* Price */}
           <GlassCard className="p-5">
             <div className="space-y-2 text-sm">
-              <div className="flex justify-between text-muted-foreground"><span>Service ({form.duration_minutes} min × ${rate}/hr)</span><span className="text-foreground">${(amount - livePremium).toFixed(2)}</span></div>
+              <div className="flex justify-between text-muted-foreground"><span>Service ({form.duration_minutes} min ?? ${rate}/hr)</span><span className="text-foreground">${(amount - livePremium).toFixed(2)}</span></div>
               {livePremium > 0 && <div className="flex justify-between"><span className="text-muted-foreground">Live camera premium</span><span className="text-primary">+${livePremium.toFixed(2)}</span></div>}
               <div className="flex justify-between text-muted-foreground"><span>Platform fee (15%)</span><span className="text-foreground">${serviceFee.toFixed(2)}</span></div>
               <div className="border-t border-border pt-2 flex justify-between font-bold text-base"><span>Total</span><span className="text-primary">${total.toFixed(2)}</span></div>
@@ -432,7 +431,7 @@ Based on this, return:
           {error && <p className="text-sm text-red-400 bg-red-500/10 border border-red-500/20 rounded-xl px-4 py-3">{error}</p>}
 
           <Button className="w-full py-5 text-base gap-2 bg-primary hover:bg-primary/90 glow-primary-sm" onClick={handleReview} disabled={!form.category}>
-            Review Request →
+            Review Request
           </Button>
           <p className="text-xs text-center text-muted-foreground pb-4">You'll review all details before secure payment.</p>
         </div>
@@ -440,3 +439,4 @@ Based on this, return:
     </AppShell>
   );
 }
+
