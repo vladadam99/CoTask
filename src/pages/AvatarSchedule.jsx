@@ -12,6 +12,7 @@ import {
 } from 'lucide-react';
 import { format, startOfMonth, endOfMonth, eachDayOfInterval, getDay, isSameDay, isToday, addMonths, subMonths } from 'date-fns';
 import AvailabilityManager from '@/components/schedule/AvailabilityManager';
+import { PageHero, SectionTitle } from '@/components/ui/PagePrimitives';
 
 
 
@@ -51,10 +52,18 @@ export default function AvatarSchedule() {
 
   return (
     <AppShell navItems={getNavItems(user?.selected_role || user?.role || 'user')} user={user}>
-      <div className="mb-8">
-        <h1 className="text-2xl lg:text-3xl font-bold mb-1">My Schedule</h1>
-        <p className="text-muted-foreground text-sm">{scheduledBookings.length} upcoming session{scheduledBookings.length !== 1 ? 's' : ''}</p>
-      </div>
+      <div className="space-y-6">
+      <PageHero
+        eyebrow="Availability"
+        title="My Schedule"
+        description="See confirmed sessions, prepare for upcoming work, and keep your availability current."
+        icon={Calendar}
+        stats={[
+          { label: 'Upcoming', value: scheduledBookings.length },
+          { label: 'Selected', value: format(selectedDay, 'MMM d') },
+          { label: 'Month', value: format(currentMonth, 'MMM yyyy') },
+        ]}
+      />
 
       <div className="grid lg:grid-cols-3 gap-6">
         {/* Calendar */}
@@ -154,7 +163,7 @@ export default function AvatarSchedule() {
                       <span className="text-[10px] leading-none">{format(new Date(b.scheduled_date), 'MMM')}</span>
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="text-xs font-medium truncate">{b.category} · {b.client_name}</p>
+                      <p className="text-xs font-medium truncate">{b.category} ?? {b.client_name}</p>
                       {b.scheduled_time && <p className="text-xs text-muted-foreground">{b.scheduled_time}</p>}
                     </div>
                     <span className="text-xs font-semibold text-primary">${b.total_amount || b.amount || 0}</span>
@@ -166,10 +175,12 @@ export default function AvatarSchedule() {
       </div>
 
       {/* Availability Manager */}
-      <div className="mt-8">
-        <h2 className="text-lg font-semibold mb-4">Set Your Availability</h2>
+      <div>
+        <SectionTitle title="Set Your Availability" description="Keep this updated so clients can book realistic time windows." className="mb-4" />
         <AvailabilityManager avatarProfile={avatarProfile} />
+      </div>
       </div>
     </AppShell>
   );
 }
+
