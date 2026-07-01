@@ -287,7 +287,7 @@ export default function AvatarBookingDetail() {
           {booking.proof_url && (
             <GlassCard className="p-5">
               <h3 className="font-semibold text-sm mb-3 flex items-center gap-2"><Camera className="w-4 h-4 text-primary" /> Proof Submitted</h3>
-              <img src={booking.proof_url} alt="Job proof" className="w-full max-h-64 object-cover rounded-xl border border-border mb-2" />
+              <img src={booking.proof_url} alt="Task proof" className="w-full max-h-64 object-cover rounded-xl border border-border mb-2" />
               {booking.proof_note && <p className="text-xs text-muted-foreground">"{booking.proof_note}"</p>}
             </GlassCard>
           )}
