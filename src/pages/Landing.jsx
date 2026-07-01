@@ -50,7 +50,7 @@ export default function Landing() {
   return (
     <div className="min-h-screen bg-background text-foreground overflow-x-hidden font-inter selection:bg-primary/30">
       {/* Nav */}
-      <nav className="fixed top-0 left-0 right-0 z-50 bg-background/92 backdrop-blur-xl border-b border-border/80 shadow-sm transition-all duration-300">
+      <nav className="fixed top-0 left-0 right-0 z-50 bg-background/95 backdrop-blur-xl border-b border-border/80 shadow-sm transition-all duration-300">
         <div className="max-w-6xl mx-auto px-4 lg:px-6 h-16 flex items-center justify-between">
           <button onClick={() => scrollTo('hero')} className="text-xl font-bold tracking-tight">
             Co<span className="text-primary">Task</span>
@@ -98,7 +98,7 @@ export default function Landing() {
             <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black mb-6 tracking-tight text-white leading-[1.02]">
               Get trusted eyes on the ground, anywhere.
             </h1>
-            <p className="text-base md:text-xl text-white/82 max-w-2xl mb-10 leading-relaxed font-medium">
+            <p className="text-base md:text-xl text-white/85 max-w-2xl mb-10 leading-relaxed font-medium">
               Hire a trusted Local Agent to visit, inspect, record, or livestream from anywhere — so you can see and act remotely in real time.
             </p>
           </motion.div>
@@ -116,9 +116,9 @@ export default function Landing() {
 
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5, delay: 0.2 }} className="grid max-w-3xl gap-3 sm:grid-cols-3">
             <div className="contents text-sm font-semibold text-white">
-              <span className="flex items-center gap-2 rounded-lg border border-white/15 bg-white/10 px-3 py-3 backdrop-blur"><Shield className="w-4 h-4 text-emerald-300" /> Verified agents</span>
-              <span className="flex items-center gap-2 rounded-lg border border-white/15 bg-white/10 px-3 py-3 backdrop-blur"><CreditCard className="w-4 h-4 text-amber-300" /> Secure checkout</span>
-              <span className="flex items-center gap-2 rounded-lg border border-white/15 bg-white/10 px-3 py-3 backdrop-blur"><Video className="w-4 h-4 text-cyan-300" /> Live video proof</span>
+              <span className="flex items-center gap-2 rounded-lg border border-white/20 bg-white/10 px-3 py-3 backdrop-blur"><Shield className="w-4 h-4 text-emerald-300" /> Verified agents</span>
+              <span className="flex items-center gap-2 rounded-lg border border-white/20 bg-white/10 px-3 py-3 backdrop-blur"><CreditCard className="w-4 h-4 text-amber-300" /> Secure checkout</span>
+              <span className="flex items-center gap-2 rounded-lg border border-white/20 bg-white/10 px-3 py-3 backdrop-blur"><Video className="w-4 h-4 text-cyan-300" /> Live video proof</span>
             </div>
             <p className="hidden">
               For property viewings, inspections, errands, site visits, events, and anything you need checked remotely.
