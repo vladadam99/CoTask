@@ -84,9 +84,9 @@ export default function Messages() {
     if (!activeConvo) return;
     await base44.functions.invoke('sendMessage', {
       conversationId: activeConvo.id,
-      content: `📹 Camera upgrade request: I'd like to add Live Camera to this job (+$5/hr). Please reply to confirm.`,
+      content: `???? Camera upgrade request: I'd like to add Live Camera to this job (+$5/hr). Please reply to confirm.`,
       messageType: 'system',
-      notifyTitle: `📹 Camera upgrade request from ${user.full_name}`,
+      notifyTitle: `???? Camera upgrade request from ${user.full_name}`,
       notifyMessage: 'They want to add Live Camera to your job.',
       notifyLink: `/AvatarMessages?conversation=${activeConvo.id}`,
       notifyTargetRole: 'avatar'
@@ -103,7 +103,7 @@ export default function Messages() {
       conversationId: activeConvo.id,
       content: file_url,
       messageType: 'photo',
-      notifyTitle: `📷 Photo from ${user.full_name}`,
+      notifyTitle: `???? Photo from ${user.full_name}`,
       notifyMessage: 'Sent a photo in your job conversation.',
       notifyLink: `/AvatarMessages?conversation=${activeConvo.id}`,
       notifyTargetRole: 'avatar'
@@ -141,19 +141,20 @@ export default function Messages() {
     <AppShell navItems={getNavItems(activeRole)} user={user} fullBleed>
     <div className="flex h-[calc(100vh-56px)] lg:h-screen bg-background overflow-hidden">
       {/* Conversation List */}
-      <div className={`w-full md:w-80 lg:w-96 border-r border-border flex-shrink-0 ${activeConvo ? 'hidden md:flex' : 'flex'} flex-col`}>
-        <div className="p-4 border-b border-border">
+      <div className={`w-full md:w-80 lg:w-96 border-r border-border bg-card/70 flex-shrink-0 ${activeConvo ? 'hidden md:flex' : 'flex'} flex-col`}>
+        <div className="p-4 border-b border-border bg-card/90">
           <Link to={dashPath} className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground mb-3">
             <ArrowLeft className="w-4 h-4" /> Dashboard
           </Link>
-          <h1 className="text-xl font-bold">Messages</h1>
+          <p className="section-label">Inbox</p>
+          <h1 className="text-xl font-black">Messages</h1>
         </div>
         <div className="flex-1 overflow-y-auto">
           {conversations.length > 0 ? (
             conversations.map(c => (
               <button key={c.id} onClick={() => setActiveConvo(c)}
                 className={`w-full text-left p-4 border-b border-border transition-colors ${
-                  activeConvo?.id === c.id ? 'bg-primary/10' : 'hover:bg-secondary'
+                  activeConvo?.id === c.id ? 'bg-primary/10' : 'hover:bg-secondary/70'
                 }`}>
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-sm font-bold text-primary flex-shrink-0">
@@ -185,7 +186,7 @@ export default function Messages() {
       <div className={`flex-1 flex flex-col ${!activeConvo ? 'hidden md:flex' : 'flex'}`}>
         {activeConvo ? (
           <>
-            <div className="p-4 border-b border-border flex items-center gap-3">
+            <div className="p-4 border-b border-border bg-card/90 flex items-center gap-3">
               <button onClick={() => setActiveConvo(null)} className="p-2 -ml-2 rounded-full hover:bg-secondary transition-colors">
                 <ArrowLeft className="w-5 h-5" />
               </button>
@@ -242,7 +243,7 @@ export default function Messages() {
               ))}
               </div>
             </div>
-            <div className="p-4 border-t border-border">
+            <div className="p-4 border-t border-border bg-card/90">
               <form onSubmit={e => { e.preventDefault(); if (newMsg.trim()) sendMessage.mutate(); }} className="flex gap-2">
                 <label className={`inline-flex items-center justify-center w-9 h-9 rounded-xl bg-card border border-border text-muted-foreground hover:text-foreground transition-colors shrink-0 cursor-pointer ${uploadingPhoto ? 'opacity-50 pointer-events-none' : ''}`} title="Photo">
                   <input type="file" accept="image/*" style={{position:'absolute',width:0,height:0,opacity:0}} onChange={e => { const f = e.target.files?.[0]; if (f) sendPhoto(f); e.target.value = ''; }} />
@@ -268,3 +269,4 @@ export default function Messages() {
     </AppShell>
   );
 }
+
