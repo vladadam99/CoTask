@@ -1,13 +1,14 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { Send, MessageCircle, X } from 'lucide-react';
+import React, { useEffect, useRef, useState } from 'react';
+import { MessageCircle, Send, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 export default function StreamChatbox({ clientName, avatarName, isOpen, onClose }) {
   const [messages, setMessages] = useState([
-    { id: 1, from: 'system', text: `Session started with ${clientName}`, ts: new Date() },
+    { id: 1, from: 'system', text: `Session started with ${clientName || 'Client'}`, ts: new Date() },
   ]);
   const [input, setInput] = useState('');
   const bottomRef = useRef(null);
+  const localAgentName = avatarName || 'Local Agent';
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -15,68 +16,49 @@ export default function StreamChatbox({ clientName, avatarName, isOpen, onClose 
 
   const send = () => {
     if (!input.trim()) return;
-    setMessages(prev => [...prev, {
+    setMessages((prev) => [...prev, {
       id: Date.now(),
       from: 'avatar',
       text: input.trim(),
       ts: new Date(),
     }]);
     setInput('');
-    // Simulate client reply after 1.5s
-    const msg = input.trim();
-    setTimeout(() => {
-      const replies = [
-        'Got it, thanks!',
-        'Perfect 👍',
-        'Can you zoom in a bit?',
-        'Looks great!',
-        'Could you turn left?',
-      ];
-      setMessages(prev => [...prev, {
-        id: Date.now() + 1,
-        from: 'client',
-        text: replies[Math.floor(Math.random() * replies.length)],
-        ts: new Date(),
-      }]);
-    }, 1500);
   };
 
   if (!isOpen) return null;
 
   return (
-    <div className="flex flex-col h-full bg-card/80 backdrop-blur-xl border border-border rounded-xl overflow-hidden">
-      {/* Header */}
-      <div className="flex items-center justify-between px-4 py-3 border-b border-border">
+    <div className="flex h-full flex-col overflow-hidden rounded-lg border border-border bg-card/90">
+      <div className="flex items-center justify-between border-b border-border px-4 py-3">
         <div className="flex items-center gap-2">
-          <MessageCircle className="w-4 h-4 text-primary" />
-          <span className="text-sm font-semibold">Live Chat</span>
-          <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
+          <MessageCircle className="h-4 w-4 text-primary" />
+          <span className="text-sm font-semibold">Live Session Chat</span>
+          <span className="h-2 w-2 rounded-full bg-green-500" />
         </div>
         {onClose && (
           <button onClick={onClose} className="text-muted-foreground hover:text-foreground">
-            <X className="w-4 h-4" />
+            <X className="h-4 w-4" />
           </button>
         )}
       </div>
 
-      {/* Messages */}
-      <div className="flex-1 overflow-y-auto p-3 space-y-2 min-h-0">
-        {messages.map(m => (
+      <div className="min-h-0 flex-1 space-y-2 overflow-y-auto p-3">
+        {messages.map((message) => (
           <div
-            key={m.id}
-            className={`flex ${m.from === 'avatar' ? 'justify-end' : 'justify-start'}`}
+            key={message.id}
+            className={`flex ${message.from === 'avatar' ? 'justify-end' : 'justify-start'}`}
           >
-            {m.from === 'system' ? (
-              <p className="text-xs text-muted-foreground text-center w-full py-1">{m.text}</p>
+            {message.from === 'system' ? (
+              <p className="w-full py-1 text-center text-xs text-muted-foreground">{message.text}</p>
             ) : (
-              <div className={`max-w-[80%] px-3 py-2 rounded-xl text-sm ${
-                m.from === 'avatar'
+              <div className={`max-w-[80%] rounded-xl px-3 py-2 text-sm ${
+                message.from === 'avatar'
                   ? 'bg-primary text-primary-foreground rounded-br-sm'
                   : 'bg-secondary text-foreground rounded-bl-sm'
               }`}>
-                <p>{m.text}</p>
-                <p className={`text-[10px] mt-0.5 ${m.from === 'avatar' ? 'text-white/60' : 'text-muted-foreground'}`}>
-                  {m.from === 'avatar' ? 'You' : clientName} · {m.ts.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                <p>{message.text}</p>
+                <p className={`mt-0.5 text-[10px] ${message.from === 'avatar' ? 'text-primary-foreground/70' : 'text-muted-foreground'}`}>
+                  {message.from === 'avatar' ? localAgentName : clientName || 'Client'} - {message.ts.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                 </p>
               </div>
             )}
@@ -85,17 +67,16 @@ export default function StreamChatbox({ clientName, avatarName, isOpen, onClose 
         <div ref={bottomRef} />
       </div>
 
-      {/* Input */}
-      <div className="p-3 border-t border-border flex gap-2">
+      <div className="flex gap-2 border-t border-border p-3">
         <input
           value={input}
-          onChange={e => setInput(e.target.value)}
-          onKeyDown={e => e.key === 'Enter' && send()}
-          placeholder="Type a message…"
-          className="flex-1 bg-secondary/60 border border-border rounded-lg px-3 py-2 text-sm outline-none focus:border-primary/50"
+          onChange={(event) => setInput(event.target.value)}
+          onKeyDown={(event) => event.key === 'Enter' && send()}
+          placeholder="Type a message..."
+          className="flex-1 rounded-lg border border-border bg-secondary/50 px-3 py-2 text-sm outline-none focus:border-primary/50"
         />
         <Button size="icon" onClick={send} className="shrink-0">
-          <Send className="w-4 h-4" />
+          <Send className="h-4 w-4" />
         </Button>
       </div>
     </div>
