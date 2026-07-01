@@ -10,6 +10,7 @@ import {
   LayoutDashboard, Users, Radio, Building2, Calendar, DollarSign, Shield,
   Flag, Star, Settings, ArrowRight, AlertTriangle
 } from 'lucide-react';
+import { MetricCard, PageHero, SectionTitle } from '@/components/ui/PagePrimitives';
 
 const navItems = [
   { icon: LayoutDashboard, label: 'Overview', path: '/AdminDashboard' },
@@ -52,26 +53,32 @@ export default function AdminDashboard() {
 
   return (
     <AppShell navItems={navItems} user={user}>
-      <h1 className="text-2xl lg:text-3xl font-bold mb-2">Admin Dashboard</h1>
-      <p className="text-muted-foreground text-sm mb-8">Platform overview and management</p>
+      <div className="space-y-6">
+      <PageHero
+        eyebrow="Admin"
+        title="Platform Overview"
+        description="Monitor users, Local Agents, enterprises, bookings, payments, safety, disputes, and verification activity."
+        icon={LayoutDashboard}
+        stats={[
+          { label: 'Users', value: users.length },
+          { label: 'Agents', value: avatars.length },
+          { label: 'Revenue', value: `$${totalRevenue.toLocaleString()}` },
+        ]}
+      />
 
       {/* Stats */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-8">
+      <div className="dashboard-grid">
         {[
           { label: 'Total Users', value: users.length, icon: Users, color: 'text-blue-400' },
           { label: 'Local Agents', value: avatars.length, icon: Radio, color: 'text-primary' },
           { label: 'Enterprises', value: enterprises.length, icon: Building2, color: 'text-purple-400' },
           { label: 'Revenue', value: `$${totalRevenue.toLocaleString()}`, icon: DollarSign, color: 'text-green-400' },
         ].map(stat => (
-          <GlassCard key={stat.label} className="p-5">
-            <stat.icon className={`w-5 h-5 ${stat.color} mb-3`} />
-            <p className="text-2xl font-bold">{stat.value}</p>
-            <p className="text-xs text-muted-foreground mt-1">{stat.label}</p>
-          </GlassCard>
+          <MetricCard key={stat.label} icon={stat.icon} label={stat.label} value={stat.value} />
         ))}
       </div>
 
-      <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 mb-8">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
         {[
           { label: 'Total Tasks', value: bookings.length, icon: Calendar },
           { label: 'Pending Verification', value: pendingVerifications, icon: Shield },
@@ -89,19 +96,17 @@ export default function AdminDashboard() {
       </div>
 
       {/* Recent Bookings */}
-      <div className="mb-8">
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-lg font-semibold">Recent Bookings</h2>
-          <Link to="/AdminDashboard" className="text-sm text-primary hover:underline flex items-center gap-1">
-            View all <ArrowRight className="w-3 h-3" />
-          </Link>
-        </div>
+      <section className="space-y-4">
+        <SectionTitle
+          title="Recent Bookings"
+          action={<Link to="/AdminDashboard" className="text-sm text-primary hover:underline flex items-center gap-1">View all <ArrowRight className="w-3 h-3" /></Link>}
+        />
         <div className="space-y-2">
           {bookings.slice(0, 8).map(b => (
             <GlassCard key={b.id} className="p-3 flex items-center justify-between text-sm" hover>
               <div className="flex items-center gap-4">
                 <span className="font-medium">{b.category}</span>
-                <span className="text-muted-foreground">{b.client_name} → {b.avatar_name}</span>
+                <span className="text-muted-foreground">{b.client_name} ??? {b.avatar_name}</span>
               </div>
               <div className="flex items-center gap-3">
                 <span className="font-medium">${b.total_amount || 0}</span>
@@ -110,11 +115,11 @@ export default function AdminDashboard() {
             </GlassCard>
           ))}
         </div>
-      </div>
+      </section>
 
       {/* Recent Reviews */}
-      <div>
-        <h2 className="text-lg font-semibold mb-4">Recent Reviews</h2>
+      <section className="space-y-4">
+        <SectionTitle title="Recent Reviews" />
         <div className="space-y-2">
           {reviews.slice(0, 5).map(r => (
             <GlassCard key={r.id} className="p-3 flex items-center justify-between text-sm">
@@ -131,7 +136,9 @@ export default function AdminDashboard() {
             </GlassCard>
           ))}
         </div>
+      </section>
       </div>
     </AppShell>
   );
 }
+
