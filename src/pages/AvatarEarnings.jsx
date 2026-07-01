@@ -22,7 +22,7 @@ import {
 const CustomTooltip = ({ active, payload, label }) => {
   if (!active || !payload?.length) return null;
   return (
-    <div className="glass border border-border rounded-lg px-3 py-2 text-xs">
+    <div className="surface-panel rounded-lg px-3 py-2 text-xs">
       <p className="text-muted-foreground mb-1">{label}</p>
       <p className="text-primary font-semibold">${payload[0].value.toFixed(2)}</p>
     </div>
@@ -65,7 +65,7 @@ export default function AvatarEarnings() {
     const avgPerJob = bookings.length ? total / bookings.length : 0;
     const totalHours = bookings.reduce((s, b) => s + (b.duration_minutes || 60) / 60, 0);
 
-    // Monthly breakdown for chart ??? last 6 months
+    // Monthly breakdown for chart — last 6 months
     const monthlyData = Array.from({ length: 6 }, (_, i) => {
       const d = subMonths(now, 5 - i);
       const amount = bookings
@@ -95,11 +95,6 @@ export default function AvatarEarnings() {
 
   return (
     <AppShell navItems={getNavItems(user?.selected_role || user?.role || 'user')} user={user}>
-      <div className="mb-8">
-        <h1 className="text-2xl lg:text-3xl font-bold mb-1">Earnings Dashboard</h1>
-        <p className="text-muted-foreground text-sm">Your financial performance at a glance</p>
-      </div>
-
       <PageHero
         eyebrow="Agent finance"
         title="Earnings Dashboard"
@@ -144,16 +139,16 @@ export default function AvatarEarnings() {
             <AreaChart data={stats.monthlyData}>
               <defs>
                 <linearGradient id="earningsGrad" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="hsl(355 80% 48%)" stopOpacity={0.3} />
-                  <stop offset="95%" stopColor="hsl(355 80% 48%)" stopOpacity={0} />
+                  <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.28} />
+                  <stop offset="95%" stopColor="hsl(var(--primary))" stopOpacity={0} />
                 </linearGradient>
               </defs>
-              <CartesianGrid strokeDasharray="3 3" stroke="hsl(220 15% 20%)" />
+              <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
               <XAxis dataKey="month" tick={{ fontSize: 11, fill: 'hsl(220 10% 55%)' }} axisLine={false} tickLine={false} />
               <YAxis tick={{ fontSize: 11, fill: 'hsl(220 10% 55%)' }} axisLine={false} tickLine={false} tickFormatter={v => `$${v}`} />
               <Tooltip content={<CustomTooltip />} />
               <Area
-                type="monotone" dataKey="amount" stroke="hsl(355 80% 48%)"
+                type="monotone" dataKey="amount" stroke="hsl(var(--primary))"
                 strokeWidth={2} fill="url(#earningsGrad)"
               />
             </AreaChart>
@@ -171,7 +166,7 @@ export default function AvatarEarnings() {
                 <XAxis type="number" tick={{ fontSize: 10, fill: 'hsl(220 10% 55%)' }} axisLine={false} tickLine={false} tickFormatter={v => `$${v}`} />
                 <YAxis type="category" dataKey="cat" tick={{ fontSize: 10, fill: 'hsl(220 10% 55%)' }} axisLine={false} tickLine={false} width={70} />
                 <Tooltip content={<CustomTooltip />} />
-                <Bar dataKey="amount" fill="hsl(355 80% 48%)" radius={[0, 4, 4, 0]} />
+                <Bar dataKey="amount" fill="hsl(var(--primary))" radius={[0, 4, 4, 0]} />
               </BarChart>
             </ResponsiveContainer>
           )}
@@ -200,10 +195,10 @@ export default function AvatarEarnings() {
             <Link key={b.id} to={`/AvatarBookingDetail?id=${b.id}`}>
               <GlassCard className="p-4 flex items-center justify-between gap-4" hover>
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium truncate">{b.category} ??? {b.client_name}</p>
+                  <p className="text-sm font-medium truncate">{b.category} — {b.client_name}</p>
                   <p className="text-xs text-muted-foreground mt-0.5">
                     {b.created_date ? format(new Date(b.created_date), 'MMM d, yyyy') : ''}
-                    {b.duration_minutes ? ` ?? ${b.duration_minutes} min` : ''}
+                    {b.duration_minutes ? ` · ${b.duration_minutes} min` : ''}
                   </p>
                 </div>
                 <span className="text-green-400 font-semibold text-sm shrink-0">+${b.amount || 0}</span>
@@ -215,4 +210,3 @@ export default function AvatarEarnings() {
     </AppShell>
   );
 }
-
