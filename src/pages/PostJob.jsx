@@ -167,25 +167,28 @@ export default function PostJob() {
 
   return (
     <AppShell navItems={getNavItems(activeRole)} user={user}>
-      <div className="max-w-2xl mx-auto space-y-6">
-        <div className="flex items-center gap-3">
-          <button onClick={() => navigate(-1)} className="w-9 h-9 rounded-full bg-background border border-input flex items-center justify-center hover:border-primary/30 transition-colors">
-            <ArrowLeft className="w-4 h-4" />
-          </button>
-          <div>
-            <h1 className="text-2xl font-bold">{editJobId ? 'Edit Open Task' : 'Post an Open Task'}</h1>
-            <p className="text-muted-foreground text-sm">{editJobId ? 'Update your task details' : 'Describe what you need done and let qualified Local Agents submit proposals.'}</p>
+      <div className="max-w-5xl mx-auto space-y-6">
+        <div className="page-header">
+          <div className="flex items-start gap-3">
+            <button onClick={() => navigate(-1)} className="w-10 h-10 rounded-lg bg-card border border-input shadow-sm flex items-center justify-center hover:border-primary/30 hover:text-primary transition-colors">
+              <ArrowLeft className="w-4 h-4" />
+            </button>
+            <div>
+              <p className="page-kicker">Open task brief</p>
+              <h1 className="page-title">{editJobId ? 'Edit Open Task' : 'Post an Open Task'}</h1>
+              <p className="page-subtitle">{editJobId ? 'Update the brief, timing, budget, and requirements.' : 'Create a clear task brief so qualified Local Agents can send useful proposals.'}</p>
+            </div>
           </div>
         </div>
 
         {/* Basic Info */}
-        <div className="glass rounded-2xl p-6 border border-border space-y-4 relative z-10">
-          <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Basic Info</p>
+        <div className="surface-panel rounded-lg p-5 md:p-6 space-y-5 relative z-10">
+          <p className="section-label">Basic Info</p>
           <div>
             <label className="text-sm font-medium mb-1.5 block">Task Title *</label>
             <Input value={form.title} onChange={e => set('title', e.target.value)} placeholder="e.g. Check apartment in Paris" className="bg-background border-input" />
           </div>
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label className="text-sm font-medium mb-1.5 block">Category *</label>
               <select value={form.category} onChange={e => set('category', e.target.value)}
@@ -203,8 +206,8 @@ export default function PostJob() {
 
         {/* When does this need to be done */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="glass rounded-2xl p-6 border border-border space-y-4">
-            <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Date</p>
+          <div className="surface-panel rounded-lg p-5 md:p-6 space-y-4">
+            <p className="section-label">Date</p>
             <DatePicker
               mode={form.timing_mode}
               onModeChange={v => set('timing_mode', v)}
@@ -216,8 +219,8 @@ export default function PostJob() {
               onFlexibility={v => set('flexibility', v)}
             />
           </div>
-          <div className="glass rounded-2xl p-6 border border-border space-y-4">
-            <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Time</p>
+          <div className="surface-panel rounded-lg p-5 md:p-6 space-y-4">
+            <p className="section-label">Time</p>
             <TimePicker
               timeMode={form.time_mode}
               onTimeMode={v => set('time_mode', v)}
@@ -232,10 +235,10 @@ export default function PostJob() {
         </div>
 
         {/* Budget */}
-        <div className="glass rounded-2xl p-6 border border-border space-y-4">
-          <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Budget / Secure Payment</p>
+        <div className="surface-panel rounded-lg p-5 md:p-6 space-y-4">
+          <p className="section-label">Budget / Secure Payment</p>
           {/* Payment type */}
-          <div className="flex items-center gap-2 text-sm">
+          <div className="flex flex-wrap items-center gap-2 text-sm">
             <span className="text-muted-foreground">Charge</span>
             {[{ key: 'fixed', label: 'for the whole task' }, { key: 'hourly', label: 'per hour' }].map(({ key, label }) => (
               <button key={key} type="button" onClick={() => set('budget_type', key)}
@@ -264,8 +267,8 @@ export default function PostJob() {
         </div>
 
         {/* Equipment */}
-        <div className="glass rounded-2xl p-6 border border-border space-y-4">
-          <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Equipment Needed</p>
+        <div className="surface-panel rounded-lg p-5 md:p-6 space-y-4">
+          <p className="section-label">Equipment Needed</p>
           <div className="flex flex-wrap gap-2">
             {EQUIPMENT_OPTIONS.map(eq => (
               <button key={eq} onClick={() => toggleArr('equipment_needed', eq)}
@@ -277,15 +280,15 @@ export default function PostJob() {
         </div>
 
         {/* Description */}
-        <div className="glass rounded-2xl p-6 border border-border space-y-4">
-          <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Description</p>
+        <div className="surface-panel rounded-lg p-5 md:p-6 space-y-4">
+          <p className="section-label">Description</p>
           <textarea value={form.description} onChange={e => set('description', e.target.value)}
             placeholder="Describe the task in detail — what needs to be done, any specific requirements, expected outcome..."
             rows={4} className="w-full bg-background border border-input rounded-lg px-3 py-2 text-sm resize-none focus:outline-none focus:border-primary/50 text-foreground placeholder:text-muted-foreground" />
         </div>
 
         <Button 
-          className="w-full h-11" 
+          className="w-full h-12 text-base" 
           onClick={() => {
             if (!form.title?.trim()) return toast({ title: 'Missing Field', description: 'Please enter a task title.', variant: 'destructive' });
             if (!form.category) return toast({ title: 'Missing Field', description: 'Please select a category.', variant: 'destructive' });
@@ -294,7 +297,7 @@ export default function PostJob() {
           }} 
           disabled={submit.isPending}
         >
-          {submit.isPending ? (editJobId ? 'Saving...' : 'Posting...') : (editJobId ? 'Save Changes' : 'Post Open Task')}
+          {submit.isPending ? (editJobId ? 'Saving...' : 'Posting...') : (editJobId ? 'Save Changes' : 'Post Task for Proposals')}
         </Button>
         <p className="text-xs text-center text-muted-foreground pt-2 pb-6">
           Open Tasks are best when you want several Local Agents to respond. Local Agents submit proposals. You choose who to work with before funding Secure Payment.
