@@ -163,7 +163,7 @@ export default function AvatarRequests() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['avatar-all-bookings'] });
-      toast({ title: 'Success', description: 'Booking updated successfully.' });
+      toast({ title: 'Success', description: 'Task updated successfully.' });
     },
     onError: (err) => {
       console.error(err);
