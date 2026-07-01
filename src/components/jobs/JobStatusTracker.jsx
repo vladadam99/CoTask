@@ -3,10 +3,10 @@ import { base44 } from '@/api/base44Client';
 import { Camera, Loader2, Car, MapPin, Hammer, Flag } from 'lucide-react';
 
 const STATUSES = [
-  { key: 'on_the_way', label: 'On My Way', icon: Car, color: 'text-blue-400', bg: 'bg-blue-500/10 border-blue-500/30', emoji: '🚗' },
-  { key: 'arrived',    label: 'Arrived',   icon: MapPin, color: 'text-green-400', bg: 'bg-green-500/10 border-green-500/30', emoji: '📍' },
-  { key: 'working',    label: 'Working',   icon: Hammer, color: 'text-yellow-400', bg: 'bg-yellow-500/10 border-yellow-500/30', emoji: '🔨' },
-  { key: 'wrapping_up', label: 'Wrapping Up', icon: Flag, color: 'text-orange-400', bg: 'bg-orange-500/10 border-orange-500/30', emoji: '🏁' },
+  { key: 'on_the_way', label: 'On my way', icon: Car, color: 'text-blue-700', bg: 'bg-blue-50 border-blue-200' },
+  { key: 'arrived', label: 'Arrived', icon: MapPin, color: 'text-green-700', bg: 'bg-green-50 border-green-200' },
+  { key: 'working', label: 'Working', icon: Hammer, color: 'text-amber-700', bg: 'bg-amber-50 border-amber-200' },
+  { key: 'wrapping_up', label: 'Wrapping up', icon: Flag, color: 'text-orange-700', bg: 'bg-orange-50 border-orange-200' },
 ];
 
 export default function JobStatusTracker({ job, user, conversationId, onJobUpdated }) {
@@ -21,7 +21,6 @@ export default function JobStatusTracker({ job, user, conversationId, onJobUpdat
     if (updatingStatus) return;
     setUpdatingStatus(statusKey);
     const s = STATUSES.find(x => x.key === statusKey);
-    const now = new Date().toISOString();
     await Promise.all([
       base44.functions.invoke('updateJobProgress', {
         jobId: job.id,
@@ -30,10 +29,10 @@ export default function JobStatusTracker({ job, user, conversationId, onJobUpdat
       }),
       base44.functions.invoke('sendMessage', {
         conversationId,
-        content: `${s.emoji} ${user.full_name} status update: **${s.label}**`,
+        content: `${user.full_name} status update: ${s.label}`,
         messageType: 'system',
-        notifyTitle: `${s.emoji} Agent update: ${s.label}`,
-        notifyMessage: `${user.full_name} is now: ${s.label}`,
+        notifyTitle: `Local Agent update: ${s.label}`,
+        notifyMessage: `${user.full_name} is now ${s.label}.`,
         notifyType: 'session_live',
         notifyLink: `/Messages?conversation=${conversationId}`,
         notifyTargetRole: 'user'
@@ -47,8 +46,6 @@ export default function JobStatusTracker({ job, user, conversationId, onJobUpdat
     if (!file) return;
     setUploading(true);
     const { file_url } = await base44.integrations.Core.UploadFile({ file });
-    const existing = job.progress_photos || [];
-    const now = new Date().toISOString();
     await Promise.all([
       base44.functions.invoke('updateJobProgress', {
         jobId: job.id,
@@ -59,8 +56,8 @@ export default function JobStatusTracker({ job, user, conversationId, onJobUpdat
         conversationId,
         content: file_url,
         messageType: 'photo',
-        notifyTitle: `📸 Progress photo from ${user.full_name}`,
-        notifyMessage: 'Your agent shared a progress update photo.',
+        notifyTitle: `Progress photo from ${user.full_name}`,
+        notifyMessage: 'Your Local Agent shared a progress update photo.',
         notifyType: 'message',
         notifyLink: `/Messages?conversation=${conversationId}`,
         notifyTargetRole: 'user'
@@ -71,16 +68,16 @@ export default function JobStatusTracker({ job, user, conversationId, onJobUpdat
   };
 
   return (
-    <div className="mx-4 my-2 glass rounded-2xl border border-border overflow-hidden">
+    <div className="mx-4 my-2 surface-panel rounded-lg border border-border overflow-hidden">
       {/* Header */}
       <div className="px-4 py-3 border-b border-border flex items-center justify-between">
         <div className="flex items-center gap-2">
           <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
-          <span className="text-xs font-semibold text-green-400">Task Live — Update Your Status</span>
+          <span className="text-xs font-semibold text-green-700">Task live - update your status</span>
         </div>
         {current && (
           <span className={`text-xs px-2 py-0.5 rounded-full border ${current.bg} ${current.color} font-medium`}>
-            {current.emoji} {current.label}
+            {current.label}
           </span>
         )}
       </div>
@@ -117,7 +114,7 @@ export default function JobStatusTracker({ job, user, conversationId, onJobUpdat
           <input type="file" accept="image/*" className="hidden"
             onChange={e => { const f = e.target.files?.[0]; if (f) uploadProgressPhoto(f); e.target.value = ''; }} />
           {uploading ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Camera className="w-3.5 h-3.5" />}
-          {uploading ? 'Uploading…' : 'Share a progress photo with client'}
+          {uploading ? 'Uploading...' : 'Share a progress photo with the client'}
         </label>
       </div>
     </div>
