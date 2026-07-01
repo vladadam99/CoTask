@@ -1,13 +1,10 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 
 const ThemeContext = createContext(null);
-
 const THEMES = ['light', 'dark', 'loflo'];
 
 export function ThemeProvider({ children }) {
-  const [theme, setTheme] = useState(() => {
-    return localStorage.getItem('cotask-theme') || 'light';
-  });
+  const [theme, setTheme] = useState(() => localStorage.getItem('cotask-theme') || 'light');
 
   useEffect(() => {
     const root = document.documentElement;
@@ -18,9 +15,9 @@ export function ThemeProvider({ children }) {
   }, [theme]);
 
   const toggleTheme = () => {
-    setTheme(t => {
-      const idx = THEMES.indexOf(t);
-      return THEMES[(idx + 1) % THEMES.length];
+    setTheme((current) => {
+      const index = THEMES.indexOf(current);
+      return THEMES[(index + 1) % THEMES.length];
     });
   };
 
@@ -34,3 +31,4 @@ export function ThemeProvider({ children }) {
 export function useTheme() {
   return useContext(ThemeContext);
 }
+
