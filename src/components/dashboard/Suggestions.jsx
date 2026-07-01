@@ -17,14 +17,14 @@ export default function Suggestions({ user }) {
     queryFn: () => base44.entities.AvatarProfile.filter({ status: 'active', is_available: true }, '-rating', 30),
   });
 
-  // Derive top categories from past bookings
+  // Derive top categories from past tasks
   const topCategories = useMemo(() => {
     const counts = {};
     bookings.forEach(b => { if (b.category) counts[b.category] = (counts[b.category] || 0) + 1; });
     return Object.entries(counts).sort((a, b) => b[1] - a[1]).map(([cat]) => cat);
   }, [bookings]);
 
-  // Suggest avatars matching top categories, excluding already-booked ones
+  // Suggest Local Agents matching top categories, excluding previous direct hires
   const bookedAvatarEmails = new Set(bookings.map(b => b.avatar_email));
   const suggested = useMemo(() => {
     if (topCategories.length === 0) {
