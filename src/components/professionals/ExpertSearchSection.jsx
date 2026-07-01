@@ -7,21 +7,21 @@ import { Search, Star, Clock, Shield, MapPin, X } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 const TOPICS = [
-  { label: 'All', icon: '✨' },
-  { label: 'Technology', icon: '💻' },
-  { label: 'Business', icon: '📈' },
-  { label: 'Language Learning', icon: '🌍' },
-  { label: 'Health & Wellness', icon: '🏃' },
-  { label: 'Creative Arts', icon: '🎨' },
-  { label: 'Finance', icon: '💰' },
-  { label: 'Law & Legal', icon: '⚖️' },
-  { label: 'Education', icon: '🎓' },
-  { label: 'Marketing', icon: '📣' },
-  { label: 'Science', icon: '🔬' },
-  { label: 'Cooking', icon: '🍳' },
-  { label: 'Music', icon: '🎵' },
-  { label: 'Career Advice', icon: '🧭' },
-  { label: 'Other', icon: '💡' },
+  { label: 'All', icon: '???' },
+  { label: 'Technology', icon: '????' },
+  { label: 'Business', icon: '????' },
+  { label: 'Language Learning', icon: '????' },
+  { label: 'Health & Wellness', icon: '????' },
+  { label: 'Creative Arts', icon: '????' },
+  { label: 'Finance', icon: '????' },
+  { label: 'Law & Legal', icon: '??????' },
+  { label: 'Education', icon: '????' },
+  { label: 'Marketing', icon: '????' },
+  { label: 'Science', icon: '????' },
+  { label: 'Cooking', icon: '????' },
+  { label: 'Music', icon: '????' },
+  { label: 'Career Advice', icon: '????' },
+  { label: 'Other', icon: '????' },
 ];
 
 const SESSION_TYPE_LABELS = {
@@ -33,11 +33,11 @@ const SESSION_TYPE_LABELS = {
 };
 
 const SESSION_TYPE_ICONS = {
-  consultation: '💬',
-  class: '📚',
-  coaching: '🎯',
-  qa_session: '❓',
-  mentoring: '🧠',
+  consultation: '????',
+  class: '????',
+  coaching: '????',
+  qa_session: '???',
+  mentoring: '????',
 };
 
 export default function ExpertSearchSection({ user }) {
@@ -113,13 +113,13 @@ export default function ExpertSearchSection({ user }) {
           <button
             key={t.label}
             onClick={() => setSelectedTopic(t.label)}
-            className={`flex items-center gap-1.5 px-3 py-2 rounded-full text-xs font-semibold border whitespace-nowrap transition-all flex-shrink-0 ${
+          className={`flex items-center gap-1.5 px-3 py-2 rounded-full text-xs font-semibold border whitespace-nowrap transition-all flex-shrink-0 ${
               selectedTopic === t.label
-                ? 'bg-primary/20 text-primary border-primary/30'
-                : 'bg-secondary/60 text-muted-foreground border-border hover:border-border'
+                ? 'bg-primary text-primary-foreground border-primary'
+                : 'bg-card text-muted-foreground border-border hover:border-primary/30 hover:text-foreground'
             }`}
           >
-            <span>{t.icon}</span> {t.label}
+            {t.label}
           </button>
         ))}
       </div>
@@ -131,12 +131,11 @@ export default function ExpertSearchSection({ user }) {
       {isLoading ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {[1,2,3,4,5,6].map(i => (
-            <div key={i} className="rounded-2xl bg-card/40 border border-border h-48 animate-pulse" />
+            <div key={i} className="surface-panel rounded-lg h-48 animate-pulse" />
           ))}
         </div>
       ) : filtered.length === 0 ? (
-        <div className="text-center py-20 space-y-3">
-          <p className="text-4xl">🔍</p>
+        <div className="surface-panel rounded-lg text-center py-16 px-6 space-y-3">
           <h3 className="font-bold">No sessions found</h3>
           <p className="text-sm text-muted-foreground">Try a different topic or clear your filters</p>
           <Button variant="outline" className="border-border" onClick={() => { setSearch(''); setSelectedTopic('All'); setOnlineOnly(false); }}>
@@ -161,12 +160,12 @@ function OfferingCard({ offering, avatar, i }) {
   return (
     <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: Math.min(i * 0.04, 0.3) }}>
       <Link to={`/ConsultationBooking?avatar=${offering.avatar_profile_id}&offering=${offering.id}`}>
-        <div className="glass border border-border hover:border-primary/30 rounded-2xl p-5 transition-all hover:scale-[1.02] flex flex-col gap-4">
+        <div className="surface-panel glass-hover rounded-lg p-5 transition-all flex flex-col gap-4">
           <div>
             <h3 className="font-black text-lg leading-snug mb-2">{offering.title}</h3>
             <div className="flex items-center justify-between gap-2">
               <span className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-secondary/60 text-muted-foreground border border-border">
-                {SESSION_TYPE_ICONS[offering.session_type]} {SESSION_TYPE_LABELS[offering.session_type] || offering.session_type}
+                {SESSION_TYPE_LABELS[offering.session_type] || offering.session_type}
               </span>
               {avatar?.is_available && (
                 <span className="flex items-center gap-1 text-xs text-green-400 font-semibold">
@@ -218,3 +217,4 @@ function OfferingCard({ offering, avatar, i }) {
     </motion.div>
   );
 }
+
