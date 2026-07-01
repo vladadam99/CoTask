@@ -18,10 +18,11 @@ export default function Safety() {
     <div className="min-h-screen">
       <InfoPageHeader />
       <div className="pt-24 pb-20 px-6 max-w-5xl mx-auto">
-        <div className="text-center mb-16">
+        <div className="relative overflow-hidden rounded-lg border border-border bg-foreground p-6 md:p-8 text-center text-background shadow-sm mb-12">
           <Shield className="w-12 h-12 text-primary mx-auto mb-4" />
-          <h1 className="text-4xl font-bold mb-4">Trust & Safety</h1>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+          <p className="text-xs font-bold tracking-[0.18em] text-primary">Safety</p>
+          <h1 className="text-4xl font-black mt-3 mb-4 text-white">Trust & Safety</h1>
+          <p className="text-lg text-white/70 max-w-2xl mx-auto">
             Your safety is our top priority. Every interaction on CoTask is designed with trust, transparency, and protection in mind.
           </p>
         </div>
@@ -39,3 +40,4 @@ export default function Safety() {
     </div>
   );
 }
+
