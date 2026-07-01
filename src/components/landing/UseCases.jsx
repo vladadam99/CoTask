@@ -1,17 +1,17 @@
 import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { MapPin, Home, ShoppingBag, Building2, GraduationCap, Briefcase } from 'lucide-react';
+import { AnimatePresence, motion } from 'framer-motion';
+import { Briefcase, Building2, GraduationCap, Home, MapPin, ShoppingBag } from 'lucide-react';
 
 const cases = {
   personal: [
-    { icon: MapPin, title: 'City Guide', tag: 'Travel', desc: 'Explore any city with a local avatar walking you through streets, markets, and hidden gems — live.' },
-    { icon: Home, title: 'Property Tour', tag: 'Real Estate', desc: 'View apartments or offices in real time before you travel or commit.' },
-    { icon: ShoppingBag, title: 'Shopping Help', tag: 'Errands', desc: 'Send an avatar to shop, compare, and show you options live from any store.' },
+    { icon: MapPin, title: 'City guide', tag: 'Travel', desc: 'Ask a Local Agent to show a place live or capture details before you arrive.' },
+    { icon: Home, title: 'Property tour', tag: 'Real estate', desc: 'Review an apartment, room, office, or neighbourhood remotely before committing.' },
+    { icon: ShoppingBag, title: 'Shopping help', tag: 'Errands', desc: 'Compare local items, verify condition, or coordinate a pickup through messages.' },
   ],
   business: [
-    { icon: Building2, title: 'Site Inspection', tag: 'Operations', desc: 'Get live visual inspections of construction sites, offices, and facilities anywhere.' },
-    { icon: GraduationCap, title: 'Field Training', tag: 'HR & Training', desc: 'Guide remote teams with live walkthroughs and real-time on-site coaching.' },
-    { icon: Briefcase, title: 'Client Demos', tag: 'Sales', desc: 'Show products, venues, and locations to clients without flying anyone out.' },
+    { icon: Building2, title: 'Site inspection', tag: 'Operations', desc: 'Get remote visual checks of offices, stores, venues, and project locations.' },
+    { icon: GraduationCap, title: 'Field support', tag: 'Training', desc: 'Guide someone on-site while keeping task proof and messages in one place.' },
+    { icon: Briefcase, title: 'Client demos', tag: 'Sales', desc: 'Show a product, venue, or location to a client without sending your team.' },
   ],
 };
 
@@ -19,24 +19,23 @@ export default function UseCases() {
   const [tab, setTab] = useState('personal');
 
   return (
-    <section className="py-32 px-6 lg:px-12 border-t border-border">
-      <div className="max-w-7xl mx-auto">
-        <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-16">
+    <section className="border-t border-border bg-secondary/30 px-6 py-24 lg:px-12">
+      <div className="mx-auto max-w-7xl">
+        <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="mb-12 flex flex-col justify-between gap-6 md:flex-row md:items-end">
           <div>
-            <p className="text-primary text-xs font-bold uppercase tracking-[0.2em] mb-5">Use cases</p>
-            <h2 className="text-5xl md:text-6xl font-black tracking-tighter text-white leading-tight">
-              What will you<br />use it for?
+            <p className="mb-4 text-xs font-bold uppercase tracking-[0.2em] text-primary">Use cases</p>
+            <h2 className="text-4xl font-black tracking-tight text-foreground md:text-5xl">
+              Practical help when you cannot be there.
             </h2>
           </div>
 
-          {/* Toggle */}
-          <div className="flex bg-secondary/60 border border-border rounded-full p-1 self-start md:self-auto">
+          <div className="flex self-start rounded-full border border-border bg-card p-1 md:self-auto">
             <button onClick={() => setTab('personal')}
-              className={`px-6 py-2.5 rounded-full text-sm font-semibold transition-all ${tab === 'personal' ? 'bg-white text-black' : 'text-white/50 hover:text-white'}`}>
+              className={`rounded-full px-6 py-2.5 text-sm font-semibold transition-all ${tab === 'personal' ? 'bg-primary text-primary-foreground' : 'text-muted-foreground hover:text-foreground'}`}>
               Personal
             </button>
             <button onClick={() => setTab('business')}
-              className={`px-6 py-2.5 rounded-full text-sm font-semibold transition-all ${tab === 'business' ? 'bg-white text-black' : 'text-white/50 hover:text-white'}`}>
+              className={`rounded-full px-6 py-2.5 text-sm font-semibold transition-all ${tab === 'business' ? 'bg-primary text-primary-foreground' : 'text-muted-foreground hover:text-foreground'}`}>
               Business
             </button>
           </div>
@@ -44,17 +43,17 @@ export default function UseCases() {
 
         <AnimatePresence mode="wait">
           <motion.div key={tab} initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }} transition={{ duration: 0.25 }}
-            className="grid md:grid-cols-3 gap-5">
-            {cases[tab].map((item, i) => (
-              <div key={item.title} className="group rounded-lg border border-border bg-card hover:bg-secondary/60 hover:border-primary/30 transition-all duration-300 p-6 md:p-8">
-                <div className="flex items-start justify-between mb-8">
-                  <div className="w-12 h-12 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
-                    <item.icon className="w-5 h-5 text-primary" />
+            className="grid gap-5 md:grid-cols-3">
+            {cases[tab].map((item) => (
+              <div key={item.title} className="surface-panel rounded-lg p-6 transition-all hover:border-primary/30 md:p-8">
+                <div className="mb-8 flex items-start justify-between">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-lg border border-primary/20 bg-primary/10">
+                    <item.icon className="h-5 w-5 text-primary" />
                   </div>
-                  <span className="text-xs text-white/30 border border-border rounded-full px-3 py-1">{item.tag}</span>
+                  <span className="rounded-full border border-border bg-secondary/50 px-3 py-1 text-xs text-muted-foreground">{item.tag}</span>
                 </div>
-                <h3 className="text-xl font-black text-white mb-3">{item.title}</h3>
-                <p className="text-white/40 text-sm leading-relaxed">{item.desc}</p>
+                <h3 className="mb-3 text-xl font-bold text-foreground">{item.title}</h3>
+                <p className="text-sm leading-relaxed text-muted-foreground">{item.desc}</p>
               </div>
             ))}
           </motion.div>
