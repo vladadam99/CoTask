@@ -32,7 +32,7 @@ export default function Saved() {
         <PageHero
           eyebrow="Saved"
           title="Saved Local Agents"
-          description="Keep trusted agents close for repeat bookings and faster direct hire requests."
+          description="Keep trusted Local Agents close for repeat tasks and faster direct hire requests."
           icon={Heart}
           stats={[
             { label: 'Saved', value: favorites.length },
@@ -49,7 +49,7 @@ export default function Saved() {
                   <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center text-sm font-bold text-primary">
                     {(f.avatar_name || 'A')[0]}
                   </div>
-                  <span className="font-medium text-sm">{f.avatar_name || 'Avatar'}</span>
+                  <span className="font-medium text-sm">{f.avatar_name || 'Local Agent'}</span>
                 </Link>
                 <Button variant="ghost" size="icon" onClick={() => removeFav.mutate(f.id)}>
                   <Trash2 className="w-4 h-4 text-muted-foreground" />
@@ -69,4 +69,3 @@ export default function Saved() {
     </AppShell>
   );
 }
-
