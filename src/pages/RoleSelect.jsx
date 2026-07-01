@@ -15,7 +15,7 @@ const roles = [
     iconBg: 'bg-blue-500/10',
     title: 'I need help',
     subtitle: 'Client / Explorer',
-    desc: 'Hire someone on the ground anywhere in the world — and watch it happen live. Tours, inspections, errands, shopping, queues — anything you need done, done in real time.',
+    desc: 'Hire someone on the ground anywhere in the world ??? and watch it happen live. Tours, inspections, errands, shopping, queues ??? anything you need done, done in real time.',
     cta: 'Continue as Client',
     tags: ['Post Jobs', 'Live Streaming', 'Any Task'],
   },
@@ -28,7 +28,7 @@ const roles = [
     iconBg: 'bg-primary/10',
     title: 'I want to earn',
     subtitle: 'Local Agent / Helper',
-    desc: "Get hired for your skills at your own rate. Apply to jobs, run tasks, conduct live tours, or do anything for anyone — and make money being someone's boots on the ground.",
+    desc: "Get hired for your skills at your own rate. Apply to jobs, run tasks, conduct live tours, or do anything for anyone ??? and make money being someone's boots on the ground.",
     cta: 'Continue as Local Agent',
     tags: ['Apply to Jobs', 'Live Streams', 'Flexible Hours'],
     featured: true,
@@ -120,7 +120,7 @@ export default function RoleSelect() {
               transition={{ delay: i * 0.1, duration: 0.5 }}
               onClick={() => handleRoleSelect(role.key)}
               disabled={loading !== null}
-              className={`relative text-left p-7 rounded-2xl border transition-all duration-300 group bg-gradient-to-br ${role.gradient} ${role.border} hover:scale-[1.02] hover:shadow-2xl disabled:opacity-70`}
+              className={`relative text-left p-6 rounded-lg border transition-all duration-300 group bg-card ${role.border} hover:border-primary/40 hover:shadow-md disabled:opacity-70`}
             >
               {role.featured && (
                 <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-primary text-white text-xs font-bold px-4 py-1 rounded-full">
@@ -128,7 +128,7 @@ export default function RoleSelect() {
                 </div>
               )}
 
-              <div className={`w-14 h-14 rounded-2xl ${role.iconBg} flex items-center justify-center mb-5 group-hover:scale-110 transition-transform`}>
+              <div className={`w-14 h-14 rounded-lg ${role.iconBg} flex items-center justify-center mb-5 group-hover:scale-105 transition-transform`}>
                 {loading === role.key ? (
                   <Loader2 className={`w-6 h-6 ${role.iconColor} animate-spin`} />
                 ) : (
@@ -158,3 +158,4 @@ export default function RoleSelect() {
     </div>
   );
 }
+
