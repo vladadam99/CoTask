@@ -84,10 +84,10 @@ export default function Messages() {
     if (!activeConvo) return;
     await base44.functions.invoke('sendMessage', {
       conversationId: activeConvo.id,
-      content: `???? Camera upgrade request: I'd like to add Live Camera to this job (+$5/hr). Please reply to confirm.`,
+      content: "Camera upgrade request: I would like to add Live Camera to this task (+$5/hr). Please reply to confirm.",
       messageType: 'system',
-      notifyTitle: `???? Camera upgrade request from ${user.full_name}`,
-      notifyMessage: 'They want to add Live Camera to your job.',
+      notifyTitle: `Camera upgrade request from ${user.full_name}`,
+      notifyMessage: 'They want to add Live Camera to your task.',
       notifyLink: `/AvatarMessages?conversation=${activeConvo.id}`,
       notifyTargetRole: 'avatar'
     });
@@ -103,8 +103,8 @@ export default function Messages() {
       conversationId: activeConvo.id,
       content: file_url,
       messageType: 'photo',
-      notifyTitle: `???? Photo from ${user.full_name}`,
-      notifyMessage: 'Sent a photo in your job conversation.',
+      notifyTitle: `Photo from ${user.full_name}`,
+      notifyMessage: 'Sent a photo in your task conversation.',
       notifyLink: `/AvatarMessages?conversation=${activeConvo.id}`,
       notifyTargetRole: 'avatar'
     });
@@ -233,7 +233,7 @@ export default function Messages() {
                     </div>
                   ) : (
                     <div className={`max-w-xs lg:max-w-md rounded-2xl px-4 py-2.5 text-sm ${
-                      m.sender_email === user?.email ? 'bg-primary text-primary-foreground rounded-br-md' : 'glass rounded-bl-md'
+                      m.sender_email === user?.email ? 'bg-primary text-primary-foreground rounded-br-md' : 'bg-card border border-border rounded-bl-md'
                     }`}>
                       {m.message_type === 'photo' && <img src={m.content} alt="Photo" className="max-w-xs rounded-xl" />}
                       {m.message_type !== 'photo' && <p>{m.content}</p>}
@@ -269,4 +269,3 @@ export default function Messages() {
     </AppShell>
   );
 }
-
