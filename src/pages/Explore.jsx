@@ -8,7 +8,8 @@ import AvatarSearchSection from '@/components/professionals/AvatarSearchSection'
 import ExpertSearchSection from '@/components/professionals/ExpertSearchSection';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Link } from 'react-router-dom';
-import { Video, Play } from 'lucide-react';
+import { Video, Play, Compass, Plus } from 'lucide-react';
+import { PageHero, SectionTitle } from '@/components/ui/PagePrimitives';
 
 export default function Explore() {
   const { user } = useCurrentUser();
@@ -20,21 +21,22 @@ export default function Explore() {
 
   return (
     <AppShell navItems={getNavItems(user?.selected_role || user?.role || 'user')} user={user}>
-      <div className="max-w-6xl mx-auto py-6">
-        <div className="mb-8">
-          <h1 className="text-3xl font-black mb-2 tracking-tight">Explore Marketplace</h1>
-          <p className="text-muted-foreground max-w-2xl text-sm">
-            Discover verified Local Agents and Experts. View their live availability, reviews, and recent work proof before booking.
-          </p>
-        </div>
+      <div className="max-w-6xl mx-auto space-y-6">
+        <PageHero
+          eyebrow="Marketplace"
+          title="Explore agents, proof, and expert sessions"
+          description="View availability, reviews, work proof, and direct hire options before you choose who to work with."
+          icon={Compass}
+          actions={(
+            <Link to="/PostJob" className="inline-flex h-11 items-center justify-center gap-2 rounded-lg bg-primary px-4 text-sm font-bold text-primary-foreground shadow-sm hover:bg-primary/90">
+              <Plus className="w-4 h-4" /> Post Open Task
+            </Link>
+          )}
+        />
 
         {recentPosts.length > 0 && (
-          <div className="mb-12">
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-lg font-bold flex items-center gap-2">
-                <Video className="w-5 h-5 text-primary" /> Recent Work & Proofs
-              </h2>
-            </div>
+          <section className="space-y-4">
+            <SectionTitle icon={Video} title="Recent work proof" description="Short proof posts from Local Agents." />
             <div className="flex gap-4 overflow-x-auto pb-4 snap-x snap-mandatory hide-scrollbar">
               {recentPosts.map(post => (
                 <Link 
@@ -67,11 +69,11 @@ export default function Explore() {
                 </Link>
               ))}
             </div>
-          </div>
+          </section>
         )}
 
         <Tabs defaultValue="avatars" className="w-full">
-          <TabsList className="grid w-full grid-cols-2 mb-8 bg-card border border-border max-w-[400px]">
+          <TabsList className="grid w-full grid-cols-2 mb-8 bg-card border border-border rounded-lg max-w-[420px]">
             <TabsTrigger value="avatars" className="data-[state=active]:bg-primary/10 data-[state=active]:text-primary font-medium">Local Agents</TabsTrigger>
             <TabsTrigger value="experts" className="data-[state=active]:bg-primary/10 data-[state=active]:text-primary font-medium">Remote Experts</TabsTrigger>
           </TabsList>
@@ -88,3 +90,4 @@ export default function Explore() {
     </AppShell>
   );
 }
+
