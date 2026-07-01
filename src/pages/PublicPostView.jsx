@@ -157,7 +157,7 @@ export default function PublicPostView() {
             )}
           </div>
           <div className="flex-1 min-w-0">
-            <h2 className="font-semibold truncate">{post.avatar_name || 'Avatar'}</h2>
+            <h2 className="font-semibold truncate">{post.avatar_name || 'Local Agent'}</h2>
             {post.category && <p className="text-xs text-muted-foreground">{post.category}</p>}
           </div>
           <Button
