@@ -7,6 +7,7 @@ import GlassCard from '@/components/ui/GlassCard';
 import { getNavItems } from '@/lib/navItems';
 import { Wallet, DollarSign, Clock, CheckCircle, AlertCircle, Download } from 'lucide-react';
 import { jsPDF } from 'jspdf';
+import { EmptyState, PageHero, SectionTitle } from '@/components/ui/PagePrimitives';
 
 function downloadInvoice(tx, userEmail, userName) {
   const doc = new jsPDF();
@@ -38,7 +39,7 @@ function downloadInvoice(tx, userEmail, userName) {
   doc.text(`Status:`, 20, 141); doc.text(tx.status, 160, 141);
 
   doc.setFontSize(8); doc.setFont('helvetica', 'normal');
-  doc.text('CoTask Platform · cotask.app · support@cotask.app', 20, 280);
+  doc.text('CoTask Platform ?? cotask.app ?? support@cotask.app', 20, 280);
   doc.save(`cotask-invoice-${invoiceNo}.pdf`);
 }
 
@@ -99,13 +100,21 @@ export default function UserWallet() {
 
   return (
     <AppShell navItems={getNavItems(user?.selected_role || user?.role || 'user')} user={user}>
-      <div className="mb-8">
-        <h1 className="text-2xl lg:text-3xl font-bold mb-1 flex items-center gap-2"><Wallet className="w-7 h-7 text-primary" /> Billing / Payments</h1>
-        <p className="text-muted-foreground text-sm">Your spending overview and payment history</p>
-      </div>
+      <div className="space-y-6">
+      <PageHero
+        eyebrow="Billing"
+        title="Billing / Payments"
+        description="Review spending, Secure Payment holds, completed charges, and invoices."
+        icon={Wallet}
+        stats={[
+          { label: 'Total spent', value: `$${totalSpent.toFixed(2)}` },
+          { label: 'Held securely', value: `$${pendingSecurePayment.toFixed(2)}` },
+          { label: 'Transactions', value: transactions.length },
+        ]}
+      />
 
       {/* Summary Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <GlassCard className="p-5">
           <div className="flex items-center gap-3 mb-2">
             <div className="w-9 h-9 rounded-xl bg-primary/10 flex items-center justify-center"><DollarSign className="w-5 h-5 text-primary" /></div>
@@ -120,22 +129,16 @@ export default function UserWallet() {
             <span className="text-sm text-muted-foreground">Secure Payment Held</span>
           </div>
           <p className="text-2xl font-bold text-yellow-400">${pendingSecurePayment.toFixed(2)}</p>
-          <p className="text-xs text-muted-foreground mt-1">{pendingCount} task{pendingCount !== 1 ? 's' : ''} in progress · held securely</p>
+          <p className="text-xs text-muted-foreground mt-1">{pendingCount} task{pendingCount !== 1 ? 's' : ''} in progress ?? held securely</p>
         </GlassCard>
       </div>
 
       {/* Transaction History */}
-      <h2 className="text-lg font-semibold mb-4">Payment History</h2>
+      <SectionTitle title="Payment History" description="Completed charges, held funds, and downloadable invoices." />
       {isLoading ? (
         <div className="space-y-3">{[1,2,3].map(i => <GlassCard key={i} className="p-4 animate-pulse"><div className="h-4 bg-muted rounded w-1/3" /></GlassCard>)}</div>
       ) : transactions.length === 0 ? (
-        <GlassCard className="p-12 text-center flex flex-col items-center justify-center">
-          <div className="w-16 h-16 rounded-full bg-secondary flex items-center justify-center mb-4">
-            <Wallet className="w-8 h-8 text-muted-foreground" />
-          </div>
-          <h3 className="text-xl font-bold mb-2">No transactions yet</h3>
-          <p className="text-sm text-muted-foreground">Your payment history will appear here.</p>
-        </GlassCard>
+        <EmptyState icon={Wallet} title="No transactions yet" description="Your payment history will appear here." />
       ) : (
         <div className="space-y-3">
           {transactions.map(tx => (
@@ -149,7 +152,7 @@ export default function UserWallet() {
                   </div>
                   <div>
                     <p className="font-medium text-sm">{tx.title}</p>
-                    <p className="text-xs text-muted-foreground">To: {tx.to} · {new Date(tx.date).toLocaleDateString()}</p>
+                    <p className="text-xs text-muted-foreground">To: {tx.to} ?? {new Date(tx.date).toLocaleDateString()}</p>
                   </div>
                 </div>
                 <div className="text-right flex-shrink-0">
@@ -164,6 +167,8 @@ export default function UserWallet() {
           ))}
         </div>
       )}
+      </div>
     </AppShell>
   );
 }
+
