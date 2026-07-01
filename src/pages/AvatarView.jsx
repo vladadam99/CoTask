@@ -1,138 +1,72 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { useCurrentUser } from '@/lib/useCurrentUser';
+import AppShell from '@/components/layout/AppShell';
+import { getNavItems } from '@/lib/navItems';
 import GlassCard from '@/components/ui/GlassCard';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { EmptyState, SectionTitle } from '@/components/ui/PagePrimitives';
 import {
-  ArrowLeft, MapPin, Star, Shield, Globe, Radio, Smartphone,
-  Wifi, Headphones, Car, Calendar, MessageSquare, Heart, Loader2, FileText, Download
+  ArrowLeft,
+  MapPin,
+  Star,
+  Shield,
+  Globe,
+  Radio,
+  Smartphone,
+  Wifi,
+  Headphones,
+  Car,
+  Calendar,
+  MessageSquare,
+  Loader2,
+  FileText,
+  Download,
+  Camera,
+  Briefcase,
+  CheckCircle2,
 } from 'lucide-react';
 import ExpertiseOfferingsTab from '@/components/expertise/ExpertiseOfferingsTab';
 
-function PostCard({ post }) {
+function PortfolioCard({ post }) {
   return (
-    <div className="bg-card rounded-2xl overflow-hidden border border-border mb-3">
-      {post.type === 'video' ? (
-        <div className="relative w-full aspect-square bg-black rounded-t-2xl overflow-hidden">
-          <video src={post.media_url} className="w-full h-full object-cover" playsInline />
-          <div className="absolute inset-0 flex items-center justify-center">
-            <div className="w-12 h-12 rounded-full bg-black/60 flex items-center justify-center">
-              <span className="text-white text-lg">▶</span>
-            </div>
-          </div>
-        </div>
-      ) : (
-        <img src={post.media_url} alt={post.caption} className="w-full aspect-square object-cover" />
-      )}
-      <div className="px-4 pt-3 pb-4">
-        <div className="flex gap-4 text-lg mb-2">
-          <span className="text-foreground">♡ {post.likes_count || 0}</span>
-          <span className="text-foreground">💬 {post.comments_count || 0}</span>
-        </div>
-        {post.caption && <p className="text-sm text-foreground leading-snug">{post.caption}</p>}
+    <button type="button" className="group overflow-hidden rounded-lg border border-border bg-card text-left shadow-sm">
+      <div className="relative aspect-[4/3] bg-secondary">
+        {post.type === 'video' ? (
+          <>
+            <video src={post.media_url} className="h-full w-full object-cover" playsInline />
+            <span className="absolute inset-0 flex items-center justify-center bg-black/20">
+              <span className="flex h-11 w-11 items-center justify-center rounded-full bg-background/90 text-foreground shadow-sm">
+                <Camera className="h-5 w-5" />
+              </span>
+            </span>
+          </>
+        ) : (
+          <img src={post.media_url} alt={post.caption || 'Portfolio media'} className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.03]" />
+        )}
       </div>
-    </div>
+      <div className="p-3">
+        <p className="line-clamp-2 text-sm text-muted-foreground">{post.caption || 'Portfolio media'}</p>
+      </div>
+    </button>
   );
 }
 
-function PostViewer({ posts, initialIndex, onClose, avatarName, avatarPhoto }) {
-  const [index, setIndex] = useState(initialIndex);
-  const [liked, setLiked] = useState(false);
-  const touchStartY = useRef(null);
-  const post = posts[index];
-
-  const { data: comments = [] } = useQuery({
-    queryKey: ['post-comments', post?.id],
-    queryFn: () => base44.entities.PostComment.filter({ post_id: post.id }, 'created_date', 20),
-    enabled: !!post?.id,
-  });
-
-  const goNext = () => { if (index < posts.length - 1) setIndex(i => i + 1); };
-  const goPrev = () => { if (index > 0) setIndex(i => i - 1); };
-
-  const handleTouchStart = (e) => { touchStartY.current = e.touches[0].clientY; };
-  const handleTouchEnd = (e) => {
-    if (touchStartY.current === null) return;
-    const diff = touchStartY.current - e.changedTouches[0].clientY;
-    if (diff > 50) goNext();
-    else if (diff < -50) goPrev();
-    touchStartY.current = null;
-  };
-
-  useEffect(() => { setLiked(false); }, [index]);
-
-  if (!post) return null;
-
+function ReviewCard({ review }) {
   return (
-    <div
-      className="fixed inset-0 z-50 bg-black flex flex-col"
-      onTouchStart={handleTouchStart}
-      onTouchEnd={handleTouchEnd}
-    >
-      {/* Header */}
-      <div className="flex items-center gap-3 px-4 py-3 border-b border-border">
-        <button onClick={onClose} className="text-white mr-1">
-          <ArrowLeft className="w-5 h-5" />
-        </button>
-        {avatarPhoto ? (
-          <img src={avatarPhoto} className="w-8 h-8 rounded-full object-cover" />
-        ) : (
-          <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center text-sm font-bold text-primary">{avatarName?.[0]}</div>
-        )}
-        <span className="text-white font-semibold text-sm">{avatarName}</span>
-        <span className="ml-auto text-white/40 text-xs">{index + 1} / {posts.length}</span>
-      </div>
-
-      {/* Media */}
-      <div className="flex-1 overflow-hidden flex flex-col">
-        <div className="flex-shrink-0">
-          {post.type === 'video' ? (
-            <video key={post.id} src={post.media_url} className="w-full max-h-[55vh] object-contain bg-black" controls autoPlay playsInline />
-          ) : (
-            <img src={post.media_url} alt={post.caption} className="w-full max-h-[55vh] object-contain bg-black" />
-          )}
+    <div className="rounded-lg border border-border bg-card p-4">
+      <div className="mb-2 flex items-center justify-between gap-3">
+        <div className="flex items-center gap-1">
+          {[1, 2, 3, 4, 5].map((s) => (
+            <Star key={s} className={`h-3.5 w-3.5 ${s <= review.rating ? 'fill-yellow-400 text-yellow-400' : 'text-muted-foreground/40'}`} />
+          ))}
         </div>
-
-        {/* Actions + caption */}
-        <div className="px-4 py-3 border-t border-border">
-          <div className="flex gap-5 mb-2">
-            <button onClick={() => setLiked(l => !l)} className="text-2xl transition-transform active:scale-125">
-              {liked ? '♥' : '♡'}
-            </button>
-            <span className="text-white/70 text-sm self-center">{(post.likes_count || 0) + (liked ? 1 : 0)} likes</span>
-          </div>
-          {post.caption && (
-            <p className="text-white text-sm leading-snug">
-              <span className="font-semibold mr-2">{avatarName}</span>{post.caption}
-            </p>
-          )}
-        </div>
-
-        {/* Comments */}
-        <div className="flex-1 overflow-y-auto px-4 pb-4 space-y-3">
-          {comments.length > 0 ? (
-            comments.map(c => (
-              <div key={c.id} className="flex gap-2">
-                <div className="w-6 h-6 rounded-full bg-secondary flex items-center justify-center text-xs flex-shrink-0">{c.commenter_name?.[0]}</div>
-                <p className="text-sm text-white/80">
-                  <span className="font-semibold text-white mr-2">{c.commenter_name}</span>{c.content}
-                </p>
-              </div>
-            ))
-          ) : (
-            <p className="text-white/30 text-xs text-center pt-2">No comments yet</p>
-          )}
-        </div>
+        <span className="text-xs text-muted-foreground">{review.reviewer_name || 'Client'}</span>
       </div>
-
-      {/* Swipe hint */}
-      <div className="flex justify-center gap-6 py-3 border-t border-border">
-        <button onClick={goPrev} disabled={index === 0} className="text-white/50 disabled:opacity-20 text-sm">↑ Prev</button>
-        <button onClick={goNext} disabled={index === posts.length - 1} className="text-white/50 disabled:opacity-20 text-sm">↓ Next</button>
-      </div>
+      {review.comment && <p className="text-sm leading-relaxed text-muted-foreground">{review.comment}</p>}
     </div>
   );
 }
@@ -143,12 +77,9 @@ export default function AvatarView() {
   const queryClient = useQueryClient();
   const params = new URLSearchParams(window.location.search);
   const id = params.get('id');
-  const defaultTab = params.get('tab') || 'Posts';
+  const defaultTab = params.get('tab') || 'Portfolio';
   const [messaging, setMessaging] = useState(false);
   const [activeTab, setActiveTab] = useState(defaultTab);
-  const [viewerIndex, setViewerIndex] = useState(null);
-
-
 
   const { data: avatar, isLoading } = useQuery({
     queryKey: ['avatar', id],
@@ -156,30 +87,16 @@ export default function AvatarView() {
     enabled: !!id,
   });
 
-  const startMessage = async () => {
-    setMessaging(true);
-    try {
-      const res = await base44.functions.invoke('createDirectConversation', { avatar_profile_id: avatar.id });
-      if (res.data?.conversation) {
-        navigate(`/Messages?conversation=${res.data.conversation.id}`);
-      }
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setMessaging(false);
-    }
-  };
-
   const { data: posts = [] } = useQuery({
     queryKey: ['avatar-view-posts', avatar?.user_email],
     queryFn: () => base44.entities.Post.filter({ avatar_email: avatar.user_email, is_published: true }, '-created_date', 30),
-    enabled: !!avatar,
+    enabled: !!avatar?.user_email,
   });
 
   const { data: reviews = [] } = useQuery({
     queryKey: ['avatar-reviews', avatar?.user_email],
     queryFn: () => base44.entities.Review.filter({ avatar_email: avatar.user_email }, '-created_date', 10),
-    enabled: !!avatar,
+    enabled: !!avatar?.user_email,
   });
 
   const { data: isFavorited = false } = useQuery({
@@ -191,7 +108,7 @@ export default function AvatarView() {
       });
       return favs.length > 0;
     },
-    enabled: !!user && !!id,
+    enabled: !!user?.email && !!id,
   });
 
   const toggleFavorite = useMutation({
@@ -216,238 +133,285 @@ export default function AvatarView() {
     },
   });
 
-  if (isLoading) return (
-    <div className="min-h-screen flex items-center justify-center">
-      <div className="w-8 h-8 border-4 border-primary/20 border-t-primary rounded-full animate-spin" />
-    </div>
-  );
+  const startMessage = async () => {
+    if (!avatar?.id) return;
+    setMessaging(true);
+    try {
+      const res = await base44.functions.invoke('createDirectConversation', { avatar_profile_id: avatar.id });
+      if (res.data?.conversation) {
+        navigate(`/Messages?conversation=${res.data.conversation.id}`);
+      }
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setMessaging(false);
+    }
+  };
 
-  if (!avatar) return (
-    <div className="min-h-screen flex items-center justify-center p-6">
-      <GlassCard className="p-8 text-center max-w-md">
-        <p className="text-muted-foreground mb-4">Avatar not found</p>
-        <Link to="/Explore"><Button variant="outline">Back to Explore</Button></Link>
-      </GlassCard>
-    </div>
-  );
+  if (isLoading) {
+    return (
+      <div className="flex min-h-screen items-center justify-center">
+        <div className="h-8 w-8 rounded-full border-4 border-primary/20 border-t-primary animate-spin" />
+      </div>
+    );
+  }
+
+  if (!avatar) {
+    return (
+      <AppShell navItems={getNavItems(user?.selected_role || user?.role || 'user')} user={user}>
+        <EmptyState
+          title="Local Agent not found"
+          description="This profile may have been removed or is no longer active."
+          action={<Button variant="outline" onClick={() => navigate('/FindPeople')}>Back to Discover</Button>}
+        />
+      </AppShell>
+    );
+  }
 
   const equipment = [
     { key: 'has_smartphone', icon: Smartphone, label: 'Smartphone' },
-    { key: 'has_data_connection', icon: Wifi, label: 'Data Connection' },
-    { key: 'has_headset', icon: Headphones, label: 'Headset/Glasses' },
-    { key: 'has_360_camera', icon: Radio, label: '360° Camera' },
+    { key: 'has_data_connection', icon: Wifi, label: 'Reliable data' },
+    { key: 'has_headset', icon: Headphones, label: 'Headset' },
+    { key: 'has_360_camera', icon: Radio, label: '360 camera' },
     { key: 'has_vehicle', icon: Car, label: 'Vehicle' },
-  ].filter(e => avatar[e.key]);
+  ].filter((item) => avatar[item.key]);
+
+  const tabs = ['Portfolio', 'Services', 'Reviews', 'Expertise'].concat(avatar.cv_url ? ['CV'] : []);
+  const hourlyRate = avatar.hourly_rate || 30;
+  const reviewCount = reviews.length || avatar.review_count || 0;
+
+  const profileActions = (
+    <>
+      <Button asChild size="lg" className="w-full">
+        <Link to={`/CreateBooking?avatar=${id}`}>
+          <Calendar className="h-4 w-4" /> Request Direct Hire
+        </Link>
+      </Button>
+      <Button variant="outline" size="lg" className="w-full" onClick={startMessage} disabled={messaging}>
+        {messaging ? <Loader2 className="h-4 w-4 animate-spin" /> : <MessageSquare className="h-4 w-4" />}
+        Open Messages
+      </Button>
+      <Button variant="ghost" className="w-full" asChild>
+        <Link to="/PostJob">Post an Open Task instead</Link>
+      </Button>
+    </>
+  );
 
   return (
-    <div className="min-h-screen bg-background">
-      <div className="max-w-4xl mx-auto">
+    <AppShell navItems={getNavItems(user?.selected_role || user?.role || 'user')} user={user}>
+      <div className="mx-auto max-w-6xl space-y-6 pb-20">
+        <button onClick={() => navigate(-1)} className="inline-flex items-center gap-2 text-sm font-semibold text-muted-foreground hover:text-foreground">
+          <ArrowLeft className="h-4 w-4" /> Back
+        </button>
 
-        {/* Cover Photo */}
-        <div className="relative w-full h-48 md:h-64 rounded-b-2xl overflow-hidden">
-          {avatar.cover_url ? (
-            <img src={avatar.cover_url} alt="Cover" className="w-full h-full object-cover" />
-          ) : (
-            <div className="w-full h-full bg-gradient-to-br from-primary/20 via-primary/10 to-card" />
-          )}
-          <div className="absolute top-4 left-4">
-            <button onClick={() => navigate(-1)} className="inline-flex items-center gap-2 text-sm text-white/80 hover:text-white bg-black/30 backdrop-blur px-3 py-1.5 rounded-full">
-              <ArrowLeft className="w-4 h-4" /> Back
-            </button>
-          </div>
-        </div>
-
-        {/* Profile Header */}
-        <div className="relative -mt-16 px-4 mb-6">
-          <div className="flex flex-col md:flex-row items-start md:items-end gap-4">
-            {/* Profile Picture */}
-            <div className="w-32 h-32 md:w-36 md:h-36 rounded-full bg-card border-4 border-card shadow-2xl flex-shrink-0 overflow-hidden">
-              {avatar.photo_url ? (
-                <img src={avatar.photo_url} alt={avatar.display_name} className="w-full h-full object-cover" />
-              ) : (
-                <div className="w-full h-full rounded-full bg-primary/20 flex items-center justify-center text-4xl font-black text-primary">
-                  {avatar.display_name?.[0] || 'A'}
-                </div>
+        <section className="overflow-hidden rounded-lg border border-border bg-card shadow-sm">
+          <div className="relative h-56 bg-secondary md:h-72">
+            {avatar.cover_url ? (
+              <img src={avatar.cover_url} alt="" className="h-full w-full object-cover" />
+            ) : (
+              <div className="h-full w-full professional-grid bg-secondary" />
+            )}
+            <div className="absolute right-4 top-4 flex gap-2">
+              {avatar.is_verified && (
+                <Badge variant="outline" className="rounded-full border-blue-200 bg-blue-50 text-blue-700">
+                  <Shield className="mr-1 h-3 w-3" /> Verified
+                </Badge>
+              )}
+              {avatar.is_available && (
+                <Badge variant="outline" className="rounded-full border-green-200 bg-green-50 text-green-700">
+                  Available
+                </Badge>
               )}
             </div>
-
-            {/* Name & Badges */}
-            <div className="flex-1 pb-2">
-              <div className="flex flex-wrap items-center gap-2 mb-1">
-                <h1 className="text-2xl md:text-3xl font-bold">{avatar.display_name}</h1>
-                {avatar.is_verified && (
-                  <Badge className="bg-blue-500/10 text-blue-400 border-blue-500/20" title="Verification helps clients choose trusted people for real-world tasks.">
-                    <Shield className="w-3 h-3 mr-1" /> Verified
-                  </Badge>
-                )}
-                {avatar.is_available && (
-                  <Badge className="bg-green-500/10 text-green-400 border-green-500/20">Available</Badge>
-                )}
-              </div>
-              <div className="flex flex-wrap items-center gap-3 text-sm text-muted-foreground">
-                <span className="flex items-center gap-1"><MapPin className="w-3.5 h-3.5" /> {avatar.city || 'Remote'}{avatar.country ? `, ${avatar.country}` : ''}</span>
-                {avatar.rating > 0 && <span className="flex items-center gap-1"><Star className="w-3.5 h-3.5 text-yellow-400" /> {avatar.rating.toFixed(1)} ({avatar.review_count})</span>}
-                <span className="flex items-center gap-1"><Globe className="w-3.5 h-3.5" /> {(avatar.languages || ['English']).join(', ')}</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Bio under profile picture */}
-        {avatar.bio && (
-          <div className="px-4 mb-4">
-            <p className="text-sm text-muted-foreground leading-relaxed">{avatar.bio}</p>
-          </div>
-        )}
-
-        {/* Stats Row */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 px-4 mb-6">
-          <div className="bg-card/50 rounded-xl p-4 text-center border border-border">
-            <p className="text-2xl font-bold text-primary">${avatar.hourly_rate || 0}</p>
-            <p className="text-xs text-muted-foreground mt-1">Per Hour</p>
-          </div>
-          <div className="bg-card/50 rounded-xl p-4 text-center border border-border">
-            <p className="text-2xl font-bold text-primary">${avatar.per_session_rate || 0}</p>
-            <p className="text-xs text-muted-foreground mt-1">Per Session</p>
           </div>
 
-          <div className="bg-card/50 rounded-xl p-4 text-center border border-border">
-            <p className="text-2xl font-bold text-primary">{avatar.rating > 0 ? avatar.rating.toFixed(1) : '—'}</p>
-            <p className="text-xs text-muted-foreground mt-1">Rating</p>
-          </div>
-        </div>
-
-        {/* Action Buttons */}
-        <div className="flex flex-col gap-3 mb-6 px-4">
-          <div className="flex gap-3">
-            <Link to={`/CreateBooking?avatar=${id}`} className="flex-1">
-              <Button className="w-full bg-primary hover:bg-primary/90 glow-primary-sm py-5">
-                <Calendar className="w-4 h-4 mr-2" /> Request Direct Hire — ${avatar.hourly_rate || 30}/hr
-              </Button>
-            </Link>
-            <Button variant="outline" className="border-border py-5 gap-2 flex-1 md:flex-none md:px-8" onClick={startMessage} disabled={messaging}>
-              {messaging ? <Loader2 className="w-4 h-4 animate-spin" /> : <MessageSquare className="w-4 h-4" />}
-              Message
-            </Button>
-            <Button
-              variant="outline"
-              className="border-border py-5 px-3"
-              onClick={() => toggleFavorite.mutate()}
-              disabled={toggleFavorite.isPending || !user}
-            >
-              <Heart className={`w-4 h-4 ${isFavorited ? 'fill-primary text-primary' : ''}`} />
-            </Button>
-          </div>
-          
-          <div className="text-center bg-card rounded-xl p-3 border border-border mt-2">
-            <p className="text-xs text-muted-foreground mb-1.5">Direct Hire is best when you already know you want this Local Agent.</p>
-            <Link to="/PostJob" className="text-sm text-primary hover:underline font-medium block">
-              Post an Open Task instead
-            </Link>
-            <p className="text-[10px] text-muted-foreground mt-1">Use an Open Task to let multiple Local Agents submit proposals.</p>
-          </div>
-        </div>
-
-
-
-        {/* Tab Navigation */}
-        <div className="flex flex-wrap gap-2 px-4 mb-4">
-          {['Posts', 'Expertise', 'Reviews', 'Services'].concat(avatar.cv_url ? ['CV'] : []).map(tab => (
-            <button
-              key={tab}
-              onClick={() => setActiveTab(tab)}
-              className={`px-5 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all border ${
-                activeTab === tab
-                  ? 'bg-primary text-primary-foreground border-primary'
-                  : 'bg-card/50 text-muted-foreground border-border hover:border-border hover:text-foreground'
-              }`}
-            >
-              {tab}{tab === 'Posts' ? ` (${posts.length})` : tab === 'Reviews' ? ` (${reviews.length})` : tab === 'Expertise' ? ' 🎓' : ''}
-            </button>
-          ))}
-        </div>
-
-        {/* Tab Content */}
-        <div className="px-4 pb-8">
-          {activeTab === 'Posts' && (
-            <div>
-              {posts.length > 0 ? (
-                <div className="space-y-0">
-                  {posts.map(post => <PostCard key={post.id} post={post} />)}
-                </div>
-              ) : (
-                <div className="text-center py-16">
-                  <p className="text-muted-foreground text-sm">No posts yet</p>
-                </div>
-              )}
-            </div>
-          )}
-
-          {activeTab === 'Expertise' && (
-            <ExpertiseOfferingsTab avatarEmail={avatar.user_email} avatarProfileId={avatar.id} />
-          )}
-
-          {activeTab === 'Reviews' && (
-            <GlassCard className="p-6">
-              {reviews.length > 0 ? (
-                <div className="space-y-4">
-                  {reviews.map(r => (
-                    <div key={r.id} className="border-b border-border pb-4 last:border-0">
-                      <div className="flex items-center gap-2 mb-2">
-                        <div className="flex">
-                          {[1,2,3,4,5].map(s => (
-                            <Star key={s} className={`w-3.5 h-3.5 ${s <= r.rating ? 'text-yellow-400 fill-yellow-400' : 'text-muted'}`} />
-                          ))}
-                        </div>
-                        <span className="text-xs text-muted-foreground">{r.reviewer_name}</span>
-                      </div>
-                      <p className="text-sm text-muted-foreground">{r.comment}</p>
+          <div className="grid gap-6 p-5 md:p-7 lg:grid-cols-[minmax(0,1fr)_340px]">
+            <div className="min-w-0">
+              <div className="-mt-20 mb-5 flex flex-col gap-4 sm:flex-row sm:items-end">
+                <div className="h-32 w-32 overflow-hidden rounded-lg border-4 border-card bg-card shadow-md">
+                  {avatar.photo_url ? (
+                    <img src={avatar.photo_url} alt={avatar.display_name} className="h-full w-full object-cover" />
+                  ) : (
+                    <div className="flex h-full w-full items-center justify-center bg-primary/10 text-4xl font-black text-primary">
+                      {avatar.display_name?.[0] || 'A'}
                     </div>
-                  ))}
+                  )}
                 </div>
-              ) : (
-                <p className="text-sm text-muted-foreground text-center py-8">No reviews yet</p>
-              )}
-            </GlassCard>
-          )}
-
-          {activeTab === 'Services' && (
-            <GlassCard className="p-6">
-              {(avatar.categories || []).length > 0 ? (
-                <div className="flex flex-wrap gap-2">
-                  {avatar.categories.map(c => (
-                    <Badge key={c} variant="secondary" className="bg-card text-sm py-1.5 px-3">{c}</Badge>
-                  ))}
-                </div>
-              ) : (
-                <p className="text-sm text-muted-foreground text-center py-8">No services listed</p>
-              )}
-            </GlassCard>
-          )}
-
-          {activeTab === 'CV' && avatar.cv_url && (
-            <GlassCard className="p-6 space-y-4">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
-                  <FileText className="w-5 h-5 text-primary" />
-                </div>
-                <div>
-                  <p className="font-semibold">CV / Resume</p>
-                  <p className="text-sm text-muted-foreground">{avatar.cv_filename || 'Curriculum Vitae'}</p>
+                <div className="min-w-0 pb-1">
+                  <p className="section-label">Local Agent Profile</p>
+                  <h1 className="mt-1 text-3xl font-black tracking-tight text-foreground md:text-4xl">{avatar.display_name}</h1>
+                  <div className="mt-2 flex flex-wrap items-center gap-3 text-sm text-muted-foreground">
+                    <span className="inline-flex items-center gap-1.5"><MapPin className="h-4 w-4" /> {avatar.city || 'Remote'}{avatar.country ? `, ${avatar.country}` : ''}</span>
+                    {avatar.rating > 0 && <span className="inline-flex items-center gap-1.5"><Star className="h-4 w-4 fill-yellow-400 text-yellow-400" /> {avatar.rating.toFixed(1)} ({reviewCount} reviews)</span>}
+                    <span className="inline-flex items-center gap-1.5"><Globe className="h-4 w-4" /> {(avatar.languages || ['English']).join(', ')}</span>
+                  </div>
                 </div>
               </div>
-              <a
-                href={avatar.cv_url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center justify-center gap-2 w-full py-3 rounded-xl bg-primary/10 border border-primary/20 text-primary hover:bg-primary/20 transition-colors text-sm font-medium"
-              >
-                <Download className="w-4 h-4" /> Download CV
-              </a>
+
+              {avatar.bio && <p className="max-w-3xl text-base leading-relaxed text-muted-foreground">{avatar.bio}</p>}
+
+              <div className="mt-6 grid gap-3 sm:grid-cols-3">
+                <div className="rounded-lg border border-border bg-secondary/45 p-4">
+                  <p className="text-xs font-semibold text-muted-foreground">Starting rate</p>
+                  <p className="mt-1 text-2xl font-black text-foreground">${hourlyRate}/hr</p>
+                </div>
+                <div className="rounded-lg border border-border bg-secondary/45 p-4">
+                  <p className="text-xs font-semibold text-muted-foreground">Review score</p>
+                  <p className="mt-1 text-2xl font-black text-foreground">{avatar.rating > 0 ? avatar.rating.toFixed(1) : 'New'}</p>
+                </div>
+                <div className="rounded-lg border border-border bg-secondary/45 p-4">
+                  <p className="text-xs font-semibold text-muted-foreground">Completed tasks</p>
+                  <p className="mt-1 text-2xl font-black text-foreground">{avatar.completed_jobs || avatar.completed_tasks || 0}</p>
+                </div>
+              </div>
+            </div>
+
+            <aside className="hidden lg:block">
+              <div className="sticky top-7 rounded-lg border border-border bg-card p-5 shadow-[0_18px_45px_hsl(222_47%_11%/0.08)]">
+                <div className="mb-4">
+                  <p className="text-sm font-bold text-foreground">Hire {avatar.display_name}</p>
+                  <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
+                    Use Direct Hire when you already know this is the Local Agent you want.
+                  </p>
+                </div>
+                <div className="space-y-2">{profileActions}</div>
+              </div>
+            </aside>
+          </div>
+        </section>
+
+        <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_340px] lg:items-start">
+          <main className="space-y-6">
+            <GlassCard className="p-5">
+              <SectionTitle
+                eyebrow="Trust summary"
+                title="What this Local Agent offers"
+                description="A quick view of services, capabilities, and availability signals."
+                className="mb-4"
+              />
+              <div className="grid gap-3 sm:grid-cols-2">
+                {(avatar.categories || []).slice(0, 6).map((category) => (
+                  <div key={category} className="flex items-center gap-3 rounded-lg border border-border bg-card p-3">
+                    <Briefcase className="h-4 w-4 text-primary" />
+                    <span className="text-sm font-semibold">{category}</span>
+                  </div>
+                ))}
+                {equipment.map(({ icon: Icon, label }) => (
+                  <div key={label} className="flex items-center gap-3 rounded-lg border border-border bg-card p-3">
+                    <Icon className="h-4 w-4 text-primary" />
+                    <span className="text-sm font-semibold">{label}</span>
+                  </div>
+                ))}
+                {avatar.is_verified && (
+                  <div className="flex items-center gap-3 rounded-lg border border-border bg-card p-3">
+                    <CheckCircle2 className="h-4 w-4 text-green-600" />
+                    <span className="text-sm font-semibold">Identity verification completed</span>
+                  </div>
+                )}
+              </div>
             </GlassCard>
-          )}
+
+            <div className="flex gap-2 overflow-x-auto pb-1">
+              {tabs.map((tab) => (
+                <button
+                  key={tab}
+                  onClick={() => setActiveTab(tab)}
+                  className={`shrink-0 rounded-full border px-4 py-2 text-sm font-semibold transition-colors ${
+                    activeTab === tab
+                      ? 'border-primary bg-primary text-primary-foreground'
+                      : 'border-border bg-card text-muted-foreground hover:text-foreground'
+                  }`}
+                >
+                  {tab}{tab === 'Portfolio' ? ` (${posts.length})` : tab === 'Reviews' ? ` (${reviews.length})` : ''}
+                </button>
+              ))}
+            </div>
+
+            {activeTab === 'Portfolio' && (
+              <GlassCard className="p-5">
+                <SectionTitle title="Portfolio Media" description="Photos and short media this Local Agent has shared from previous work." className="mb-4" />
+                {posts.length > 0 ? (
+                  <div className="grid gap-3 sm:grid-cols-2">
+                    {posts.map((post) => <PortfolioCard key={post.id} post={post} />)}
+                  </div>
+                ) : (
+                  <EmptyState icon={Camera} title="No portfolio media yet" description="Portfolio media will appear here once this Local Agent publishes examples." className="p-8" />
+                )}
+              </GlassCard>
+            )}
+
+            {activeTab === 'Services' && (
+              <GlassCard className="p-5">
+                <SectionTitle title="Services and Categories" description="Task types this Local Agent has listed on their profile." className="mb-4" />
+                {(avatar.categories || []).length > 0 ? (
+                  <div className="flex flex-wrap gap-2">
+                    {avatar.categories.map((category) => (
+                      <Badge key={category} variant="outline" className="rounded-full border-border bg-card px-3 py-1.5 text-sm">{category}</Badge>
+                    ))}
+                  </div>
+                ) : (
+                  <EmptyState icon={Briefcase} title="No services listed" description="This Local Agent has not added service categories yet." className="p-8" />
+                )}
+              </GlassCard>
+            )}
+
+            {activeTab === 'Reviews' && (
+              <GlassCard className="p-5">
+                <SectionTitle title="Client Reviews" description="Feedback from completed CoTask work." className="mb-4" />
+                {reviews.length > 0 ? (
+                  <div className="grid gap-3">
+                    {reviews.map((review) => <ReviewCard key={review.id} review={review} />)}
+                  </div>
+                ) : (
+                  <EmptyState icon={Star} title="No reviews yet" description="Reviews will appear after completed tasks." className="p-8" />
+                )}
+              </GlassCard>
+            )}
+
+            {activeTab === 'Expertise' && (
+              <GlassCard className="p-5">
+                <SectionTitle title="Expert Sessions" description="Consultation or coaching sessions this Local Agent offers." className="mb-4" />
+                <ExpertiseOfferingsTab avatarEmail={avatar.user_email} avatarProfileId={avatar.id} />
+              </GlassCard>
+            )}
+
+            {activeTab === 'CV' && avatar.cv_url && (
+              <GlassCard className="p-5">
+                <div className="flex items-center gap-3">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                    <FileText className="h-5 w-5" />
+                  </div>
+                  <div className="min-w-0">
+                    <p className="font-semibold">CV / Resume</p>
+                    <p className="truncate text-sm text-muted-foreground">{avatar.cv_filename || 'Curriculum Vitae'}</p>
+                  </div>
+                </div>
+                <a
+                  href={avatar.cv_url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-lg border border-primary/20 bg-primary/10 px-4 py-3 text-sm font-semibold text-primary hover:bg-primary/15"
+                >
+                  <Download className="h-4 w-4" /> Download CV
+                </a>
+              </GlassCard>
+            )}
+          </main>
+
+          <aside className="lg:hidden">
+            <div className="fixed inset-x-0 bottom-0 z-40 border-t border-border bg-card/95 p-3 shadow-[0_-14px_35px_hsl(222_47%_11%/0.12)]">
+              <div className="mx-auto grid max-w-lg grid-cols-2 gap-2">
+                <Button asChild className="h-11">
+                  <Link to={`/CreateBooking?avatar=${id}`}>Request Direct Hire</Link>
+                </Button>
+                <Button variant="outline" className="h-11" onClick={startMessage} disabled={messaging}>
+                  Open Messages
+                </Button>
+              </div>
+            </div>
+          </aside>
         </div>
       </div>
-    </div>
+    </AppShell>
   );
 }
