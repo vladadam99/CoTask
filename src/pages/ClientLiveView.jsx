@@ -128,7 +128,7 @@ export default function ClientLiveView() {
             )}
             {isWaiting && (
               <div className="flex items-center gap-2 bg-yellow-500/10 border border-yellow-500/20 text-yellow-400 text-xs px-3 py-1.5 rounded-full">
-                <Clock className="w-3 h-3" /> Waiting for agent…
+                <Clock className="w-3 h-3" /> Waiting for Local Agent...
               </div>
             )}
             {isEnded && (
@@ -166,7 +166,7 @@ export default function ClientLiveView() {
                     <Clock className="w-8 h-8 text-yellow-400 animate-pulse" />
                   </div>
                   <h3 className="font-semibold">Waiting for {session.avatar_name}</h3>
-                  <p className="text-sm text-muted-foreground">Your agent is about to start the stream. Please hold on…</p>
+                  <p className="text-sm text-muted-foreground">Your Local Agent is about to start the stream. Please hold on...</p>
                   <div className="flex items-center gap-2 text-xs text-muted-foreground">
                     <span className="w-2 h-2 rounded-full bg-yellow-400 animate-pulse" />
                     Auto-refreshing every 5 seconds
@@ -185,7 +185,7 @@ export default function ClientLiveView() {
                 /* Live but room URL not yet available — waiting */
                 <div className="w-full h-full flex flex-col items-center justify-center gap-3 bg-black/60">
                   <div className="w-8 h-8 border-4 border-primary/20 border-t-primary rounded-full animate-spin" />
-                  <p className="text-sm text-muted-foreground">Connecting to video stream…</p>
+                  <p className="text-sm text-muted-foreground">Connecting to video stream...</p>
                 </div>
               ) : null}
 
