@@ -2,7 +2,7 @@ import React from 'react';
 import GlassCard from '@/components/ui/GlassCard';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
-import { ArrowLeft, Calendar, Clock, MapPin, Wifi, Truck, Wrench, CreditCard, Loader2, CheckCircle } from 'lucide-react';
+import { ArrowLeft, Calendar, Clock, MapPin, Wifi, Truck, Wrench, CreditCard, Loader2, CheckCircle, Search } from 'lucide-react';
 
 const Row = ({ label, value, icon: IconComp }) => (
   <div className="flex items-start gap-3 py-3 border-b border-border last:border-0">
@@ -22,7 +22,7 @@ export default function ReviewBookingPanel({ form, avatar, amount, livePremium, 
     return (
       <GlassCard className="p-8 max-w-md mx-auto text-center space-y-5">
         <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-2">
-          <span className="text-primary text-2xl">🔍</span>
+          <Search className="h-7 w-7 text-primary" />
         </div>
         <h2 className="text-xl font-bold">Choose a Local Agent first</h2>
         <p className="text-sm text-muted-foreground">
@@ -52,7 +52,7 @@ export default function ReviewBookingPanel({ form, avatar, amount, livePremium, 
         </div>
       </div>
 
-      {/* Avatar */}
+      {/* Local Agent */}
       <GlassCard className="p-5">
         <div className="flex items-center gap-3">
           {avatar?.photo_url ? (
@@ -64,7 +64,7 @@ export default function ReviewBookingPanel({ form, avatar, amount, livePremium, 
           )}
           <div>
             <p className="font-semibold">{avatar?.display_name || 'Agent'}</p>
-            <p className="text-xs text-muted-foreground">${rate}/hr · {avatar?.city || ''}</p>
+            <p className="text-xs text-muted-foreground">${rate}/hr {avatar?.city ? `- ${avatar.city}` : ''}</p>
           </div>
         </div>
       </GlassCard>
@@ -76,13 +76,13 @@ export default function ReviewBookingPanel({ form, avatar, amount, livePremium, 
         <Row label="Task Type" value={form.booking_type === 'immediate' ? 'Immediate / On-demand' : 'Scheduled'} />
         <Row label="Service Mode" value={
           form.stream_mode === 'live_camera'
-            ? '🎥 Live Camera Stream (+$' + livePremium.toFixed(2) + ')'
-            : '📵 No Camera (Updates via messages)'
+            ? 'Live Camera Stream (+$' + livePremium.toFixed(2) + ')'
+            : 'No Camera (updates via messages)'
         } />
         {form.booking_type === 'scheduled' && (
           <>
-            <Row icon={Calendar} label="Date" value={form.scheduled_date || '—'} />
-            <Row icon={Clock} label="Time" value={form.scheduled_time || '—'} />
+            <Row icon={Calendar} label="Date" value={form.scheduled_date || 'TBD'} />
+            <Row icon={Clock} label="Time" value={form.scheduled_time || 'TBD'} />
             <Row icon={Clock} label="Duration" value={durationLabel} />
           </>
         )}
@@ -99,7 +99,7 @@ export default function ReviewBookingPanel({ form, avatar, amount, livePremium, 
         ) : (
           <>
             <Row icon={MapPin} label="Service Type" value="On-site" />
-            <Row label="Address" value={form.location || '—'} />
+            <Row label="Address" value={form.location || 'TBD'} />
           </>
         )}
       </GlassCard>
@@ -153,12 +153,12 @@ export default function ReviewBookingPanel({ form, avatar, amount, livePremium, 
       </div>
 
       <Button
-        className="w-full py-5 text-base gap-2 bg-primary hover:bg-primary/90 glow-primary-sm"
+        className="w-full py-5 text-base gap-2 bg-primary hover:bg-primary/90"
         onClick={onConfirm}
         disabled={loading}
       >
         {loading ? (
-          <><Loader2 className="w-4 h-4 animate-spin" /> Sending Request…</>
+          <><Loader2 className="w-4 h-4 animate-spin" /> Sending Request...</>
         ) : (
           <><CreditCard className="w-4 h-4" /> Send Direct Hire Request</>
         )}
