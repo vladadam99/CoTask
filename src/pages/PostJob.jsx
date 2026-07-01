@@ -629,4 +629,3 @@ export default function PostJob() {
     </AppShell>
   );
 }
-
