@@ -157,7 +157,7 @@
 
   .choice-card {
     @apply border border-border bg-card text-left transition-all duration-200;
-    border-radius: 0.75rem;
+    border-radius: 0.625rem;
     box-shadow: 0 8px 24px hsl(222 47% 11% / 0.04);
   }
 
@@ -176,8 +176,8 @@
 }
 
 @layer utilities {
-  .rounded-2xl { border-radius: 0.75rem !important; }
-  .rounded-3xl { border-radius: 0.875rem !important; }
+  .rounded-2xl { border-radius: 0.625rem !important; }
+  .rounded-3xl { border-radius: 0.75rem !important; }
 
   .text-gradient {
     color: hsl(var(--primary));
