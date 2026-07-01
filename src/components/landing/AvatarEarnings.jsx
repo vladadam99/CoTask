@@ -1,64 +1,51 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { DollarSign, Clock, Shield, TrendingUp, ArrowRight } from 'lucide-react';
+import { ArrowRight, Clock, DollarSign, Shield, TrendingUp } from 'lucide-react';
 
 const perks = [
-  { icon: DollarSign, title: 'Set your own rates', desc: 'Hourly or per-session. Your time, your price.' },
-  { icon: Clock, title: 'Flexible schedule', desc: 'Accept bookings that fit your life. No minimum hours.' },
-  { icon: Shield, title: 'Verified & safe', desc: 'Get a verified badge and grow your reputation with real reviews.' },
-  { icon: TrendingUp, title: 'Grow your income', desc: 'Get featured and earn top-rated status to attract premium clients.' },
+  { icon: DollarSign, title: 'Set your own rates', desc: 'Choose hourly or fixed task pricing where supported.' },
+  { icon: Clock, title: 'Flexible schedule', desc: 'Accept tasks that fit your availability.' },
+  { icon: Shield, title: 'Build profile trust', desc: 'Use services, reviews, proof, and verification status where available.' },
+  { icon: TrendingUp, title: 'Grow your work history', desc: 'Completed tasks and clear proof help clients evaluate your profile.' },
 ];
 
 export default function AvatarEarnings() {
   return (
-    <section className="py-24 px-6 lg:px-12 border-t border-border bg-foreground text-background">
-      <div className="max-w-7xl mx-auto">
-        <div className="grid lg:grid-cols-2 gap-24 items-center">
-
-          {/* Left */}
+    <section className="border-t border-border bg-card px-6 py-24 lg:px-12">
+      <div className="mx-auto max-w-7xl">
+        <div className="grid items-center gap-12 lg:grid-cols-2">
           <motion.div initial={{ opacity: 0, x: -24 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }}>
-            <p className="text-primary text-xs font-bold uppercase tracking-[0.2em] mb-5">Earn with CoTask</p>
-            <h2 className="text-5xl md:text-6xl font-black tracking-tighter text-white leading-tight mb-8">
-              Turn your city<br />into income.
+            <p className="mb-5 text-xs font-bold uppercase tracking-[0.2em] text-primary">Earn with CoTask</p>
+            <h2 className="mb-6 text-4xl font-black tracking-tight text-foreground md:text-5xl">
+              Turn local availability into task work.
             </h2>
-            <p className="text-white/40 text-lg leading-relaxed mb-10 max-w-sm">
-              All you need is a smartphone. Help people remotely by being their eyes, hands, and guide.
+            <p className="mb-8 max-w-sm text-muted-foreground">
+              Help clients remotely by being their eyes, hands, and guide on the ground.
             </p>
-
-            {/* Earnings stat block */}
-            <div className="border border-white/20 rounded-lg p-6 md:p-8 mb-10 bg-white/10 backdrop-blur">
-              <p className="text-white/40 text-sm mb-2">Top avatars earn</p>
-              <div className="flex items-end gap-2 mb-1">
-                <span className="text-6xl font-black text-white">$1,200</span>
-                <span className="text-white/30 text-xl mb-2">/mo</span>
-              </div>
-              <div className="flex items-center gap-2 mt-3">
-                <div className="flex-1 h-1.5 bg-secondary/60 rounded-full overflow-hidden">
-                  <div className="h-full bg-primary rounded-full" style={{ width: '78%' }} />
-                </div>
-                <span className="text-green-400 text-xs font-semibold">↑ 24% this quarter</span>
-              </div>
+            <div className="mb-8 rounded-lg border border-border bg-secondary/40 p-5">
+              <p className="text-sm font-semibold text-foreground">Earnings are task based</p>
+              <p className="mt-2 text-sm text-muted-foreground">
+                Set your rate, complete tasks, review release status, and save payout preferences for Production V1 manual review.
+              </p>
             </div>
-
             <Link to="/Onboarding?role=avatar">
-              <button className="group flex items-center gap-3 bg-primary text-primary-foreground font-bold px-8 py-4 rounded-lg hover:bg-primary/90 transition-all">
-                Start earning today
-                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+              <button className="group flex items-center gap-3 rounded-lg bg-primary px-8 py-4 font-bold text-primary-foreground transition-all hover:bg-primary/90">
+                Become a Local Agent
+                <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
               </button>
             </Link>
           </motion.div>
 
-          {/* Right: perks */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             {perks.map((perk, i) => (
               <motion.div key={perk.title} initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }}
-                className="rounded-lg border border-white/20 bg-white/10 p-6 hover:bg-white/20 transition-colors">
-                <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center mb-5">
-                  <perk.icon className="w-5 h-5 text-primary" />
+                className="surface-panel rounded-lg p-6 transition-colors hover:border-primary/30">
+                <div className="mb-5 flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10">
+                  <perk.icon className="h-5 w-5 text-primary" />
                 </div>
-                <h4 className="font-bold text-white text-sm mb-2">{perk.title}</h4>
-                <p className="text-white/40 text-xs leading-relaxed">{perk.desc}</p>
+                <h4 className="mb-2 text-sm font-bold text-foreground">{perk.title}</h4>
+                <p className="text-xs leading-relaxed text-muted-foreground">{perk.desc}</p>
               </motion.div>
             ))}
           </div>
