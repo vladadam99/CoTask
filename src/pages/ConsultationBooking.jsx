@@ -159,7 +159,7 @@ export default function ConsultationBooking() {
             <CheckCircle2 className="w-10 h-10 text-green-400" />
           </div>
           <div>
-            <h1 className="text-2xl font-black mb-2">Request Sent! ????</h1>
+            <h1 className="text-2xl font-black mb-2">Request Sent! 🎉</h1>
             <p className="text-muted-foreground text-sm">
               Your consultation request for <strong>{selectedDate}</strong> at <strong>{selectedTime}</strong> has been sent.
               The expert will confirm or decline shortly.
@@ -283,7 +283,7 @@ export default function ConsultationBooking() {
                 <div className="space-y-2">
                   <p className="text-xs text-muted-foreground">
                     {officeHours.length === 0
-                      ? 'No office hours set ??? pick any time and the expert will confirm.'
+                      ? 'No office hours set — pick any time and the expert will confirm.'
                       : `No expert hours on ${todayDay}. Pick another day or enter a time below.`}
                   </p>
                   <Input
@@ -315,7 +315,7 @@ export default function ConsultationBooking() {
             {[
               { icon: Video, text: 'Private video call link auto-generated at booking time' },
               { icon: Clock, text: `${offering?.duration_minutes || 60} minute live session` },
-              { icon: Shield, text: 'Payment held securely ??? released after session' },
+              { icon: Shield, text: 'Payment held securely — released after session' },
             ].map(({ icon: Icon, text }) => (
               <div key={text} className="flex items-center gap-2.5 text-sm text-muted-foreground">
                 <Icon className="w-4 h-4 text-primary flex-shrink-0" />
@@ -346,7 +346,7 @@ export default function ConsultationBooking() {
           {error && <p className="text-sm text-red-400 bg-red-500/10 border border-red-500/20 rounded-xl px-4 py-3">{error}</p>}
 
           <Button
-            className="w-full py-5 text-base gap-2 glow-primary-sm"
+            className="w-full py-5 text-base gap-2"
             onClick={handleConfirm}
             disabled={loading || !selectedDate || !selectedTime}
           >
@@ -364,4 +364,3 @@ export default function ConsultationBooking() {
     </AppShell>
   );
 }
-
