@@ -17,11 +17,11 @@ const USE_CASES = [
 ];
 
 const faqs = [
-  { q: 'What is a Local Agent?', a: 'A Local Agent is a verified individual you hire to be physically present at a location when you cannot be there. They act as your eyes and hands on the ground.' },
+  { q: 'What is a Local Agent?', a: 'A Local Agent is a person you hire to be physically present at a location when you cannot be there. They act as your eyes and hands on the ground.' },
   { q: 'What tasks can I request?', a: 'You can request anything that requires physical presence: property viewings, vehicle inspections, local errands, checking construction progress, verifying a business, or attending an event.' },
   { q: 'How does live video work?', a: 'Local Agents can stream live video directly from their smartphone to you during a session, allowing you to direct them in real time and see exactly what they see.' },
   { q: 'How are payments handled?', a: 'Payments are held securely in our system when you book a task. The funds are only released to the Local Agent after the task is completed and you have reviewed the proof.' },
-  { q: 'Are Local Agents verified?', a: 'Yes. Local Agents undergo identity verification before they can accept tasks, ensuring a trustworthy marketplace.' },
+  { q: 'Are Local Agents verified?', a: 'CoTask includes profile verification workflows and visible trust signals where available, so clients can review profile context before hiring.' },
   { q: 'Can I book someone directly?', a: 'Yes. You can browse Local Agents by location or skill and request to hire them directly for your task.' },
   { q: 'Can I post a task and receive proposals?', a: 'Yes. You can post an open task with your requirements, and available Local Agents can submit proposals to complete it.' },
   { q: 'What happens if something goes wrong?', a: 'We offer support tools for disputes. If a task is not completed as agreed, you can raise a dispute, and our admin team will review the evidence to resolve the issue fairly.' },
@@ -66,7 +66,7 @@ export default function Landing() {
               Become a Local Agent
             </Button>
             <Button onClick={handlePostTask} className="font-semibold">
-              Post a Task
+              Post Open Task
             </Button>
           </div>
           <button className="md:hidden p-2 text-muted-foreground" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
@@ -84,7 +84,7 @@ export default function Landing() {
                 Become a Local Agent
               </Button>
               <Button onClick={() => { handlePostTask(); setMobileMenuOpen(false); }} className="w-full justify-center">
-                Post a Task
+                Post Open Task
               </Button>
             </div>
           </div>
@@ -106,7 +106,7 @@ export default function Landing() {
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.1 }}>
             <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 mb-10 max-w-xl">
               <Button size="lg" onClick={handlePostTask} className="w-full sm:w-auto text-base px-8 h-14 shadow-lg shadow-primary/20">
-                Post a Task
+                Post Open Task
               </Button>
               <Button size="lg" variant="outline" onClick={handleBecomeAgent} className="w-full sm:w-auto text-base px-8 h-14 border-white/30 bg-white/10 text-white hover:bg-white hover:text-foreground">
                 Become a Local Agent
@@ -116,7 +116,7 @@ export default function Landing() {
 
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5, delay: 0.2 }} className="grid max-w-3xl gap-3 sm:grid-cols-3">
             <div className="contents text-sm font-semibold text-white">
-              <span className="flex items-center gap-2 rounded-lg border border-white/20 bg-white/10 px-3 py-3 backdrop-blur"><Shield className="w-4 h-4 text-emerald-300" /> Verified agents</span>
+              <span className="flex items-center gap-2 rounded-lg border border-white/20 bg-white/10 px-3 py-3 backdrop-blur"><Shield className="w-4 h-4 text-emerald-300" /> Profile trust</span>
               <span className="flex items-center gap-2 rounded-lg border border-white/20 bg-white/10 px-3 py-3 backdrop-blur"><CreditCard className="w-4 h-4 text-amber-300" /> Secure checkout</span>
               <span className="flex items-center gap-2 rounded-lg border border-white/20 bg-white/10 px-3 py-3 backdrop-blur"><Video className="w-4 h-4 text-cyan-300" /> Live video proof</span>
             </div>
@@ -137,7 +137,7 @@ export default function Landing() {
 
           <div className="grid md:grid-cols-3 gap-8">
             {[
-              { icon: Search, title: '1. Post or choose', desc: 'Post a task outlining what you need done, or browse and choose a verified Local Agent directly.' },
+              { icon: Search, title: '1. Post or choose', desc: 'Post a task outlining what you need done, or browse and choose a Local Agent directly.' },
               { icon: Lock, title: '2. Agree & Fund securely', desc: 'The Local Agent accepts your request or you choose from proposals. Then fund the task. Secure Payment is held until approval.' },
               { icon: CheckCircle, title: '3. Join & approve', desc: 'Join via live video or review uploaded proof. Once satisfied, approve completion to release payment.' },
             ].map((step, i) => (
@@ -189,7 +189,7 @@ export default function Landing() {
             </p>
             <ul className="space-y-4 mb-10">
               {[
-                'Find verified Local Agents globally',
+                'Find Local Agents by location and skill',
                 'Request a direct hire or post an open task',
                 'Chat before the session starts',
                 'Join live video for real-time direction',
@@ -203,7 +203,7 @@ export default function Landing() {
               ))}
             </ul>
             <div className="flex flex-wrap gap-4">
-              <Button onClick={handlePostTask} className="bg-blue-600 hover:bg-blue-700 text-white">Post a Task</Button>
+              <Button onClick={handlePostTask} className="bg-blue-600 hover:bg-blue-700 text-white">Post Open Task</Button>
               <Button variant="outline" onClick={handleDiscoverAgents}>Discover Local Agents</Button>
             </div>
           </div>
@@ -250,9 +250,9 @@ export default function Landing() {
 
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
             {[
-              { icon: Shield, title: 'Built for verified profiles', desc: 'Identity verification processes ensure you know who you are working with.' },
-              { icon: Lock, title: 'Secure payment flow', desc: 'Funds are securely held and only released upon successful task completion.' },
-              { icon: Camera, title: 'Live video proof', desc: 'Real-time video streaming provides irrefutable proof of physical presence.' },
+              { icon: Shield, title: 'Built for profile trust', desc: 'Profile context, verification status where available, and task history help you decide who to work with.' },
+              { icon: Lock, title: 'Secure payment flow', desc: 'Funds are held for the task and released after approval or a reviewed resolution.' },
+              { icon: Camera, title: 'Live video and proof', desc: 'Live video and uploaded proof help clients review what happened during the task.' },
               { icon: Star, title: 'Reviews after completed tasks', desc: 'A transparent rating system builds accountability for both clients and agents.' },
               { icon: ClipboardCheck, title: 'Task history tracking', desc: 'A clear record of all communications, milestones, and proofs for every task.' },
               { icon: AlertTriangle, title: 'Support tools for disputes', desc: 'Admin oversight and reporting tools are available to handle any issues fairly.' },
@@ -273,7 +273,7 @@ export default function Landing() {
           <Building2 className="w-12 h-12 mx-auto text-primary mb-6" />
           <h2 className="text-3xl md:text-4xl font-bold mb-6">For Teams and Businesses</h2>
           <p className="text-xl text-background/80 mb-10 max-w-2xl mx-auto">
-            Coordinate remote inspections, site checks, event visits, and multi-location tasks with verified Local Agents worldwide.
+            Coordinate remote inspections, site checks, event visits, and multi-location tasks with Local Agents.
           </p>
           <Link to="/Contact">
             <Button size="lg" className="bg-primary hover:bg-primary/90 text-primary-foreground font-bold px-8">
@@ -311,7 +311,7 @@ export default function Landing() {
           <p className="text-xl text-muted-foreground mb-10">Join the remote physical presence marketplace today.</p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <Button size="lg" onClick={handlePostTask} className="w-full sm:w-auto px-8 h-14">
-              Post a Task
+              Post Open Task
             </Button>
             <Button size="lg" variant="outline" onClick={handleBecomeAgent} className="w-full sm:w-auto px-8 h-14 bg-background">
               Become a Local Agent
