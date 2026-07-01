@@ -15,9 +15,10 @@ export default function Contact() {
     <div className="min-h-screen">
       <InfoPageHeader />
       <div className="pt-24 pb-20 px-6 max-w-4xl mx-auto">
-        <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold mb-4">Get in touch</h1>
-          <p className="text-muted-foreground max-w-lg mx-auto">
+        <div className="relative overflow-hidden rounded-lg border border-border bg-foreground p-6 md:p-8 text-center text-background shadow-sm mb-12">
+          <p className="text-xs font-bold tracking-[0.18em] text-primary">Support</p>
+          <h1 className="text-4xl font-black mt-3 mb-4 text-white">Get in touch</h1>
+          <p className="text-white/70 max-w-lg mx-auto">
             Have a question, partnership inquiry, or need support? We'd love to hear from you.
           </p>
         </div>
@@ -36,7 +37,7 @@ export default function Contact() {
           ))}
         </div>
 
-        <GlassCard className="p-8 max-w-xl mx-auto">
+        <GlassCard className="p-6 md:p-8 max-w-xl mx-auto">
           {sent ? (
             <div className="text-center py-8">
               <div className="w-14 h-14 rounded-full bg-green-500/10 flex items-center justify-center mx-auto mb-4">
@@ -83,3 +84,4 @@ export default function Contact() {
     </div>
   );
 }
+
