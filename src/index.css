@@ -103,6 +103,8 @@
 
   button, a, input, textarea, select { -webkit-tap-highlight-color: transparent; }
 
+  body > :not(:defined) { pointer-events: none !important; }
+
   ::selection { background: hsl(var(--primary) / 0.18); color: hsl(var(--foreground)); }
 
   ::-webkit-scrollbar { width: 8px; height: 8px; }
