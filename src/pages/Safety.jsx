@@ -2,42 +2,43 @@ import React from 'react';
 import InfoPageHeader from '@/components/layout/InfoPageHeader';
 import Footer from '@/components/landing/Footer';
 import GlassCard from '@/components/ui/GlassCard';
-import { Shield, UserCheck, Eye, Lock, AlertTriangle, Star } from 'lucide-react';
+import { AlertTriangle, Eye, Lock, Shield, Star, UserCheck } from 'lucide-react';
 
 const features = [
-  { icon: UserCheck, title: 'Identity Verification', desc: 'Every avatar undergoes identity verification before they can accept bookings. We verify government-issued IDs and conduct background checks.' },
-  { icon: Shield, title: 'Secure Payments', desc: 'All transactions are processed through our secure payment system. Funds are held securely until sessions are completed to your satisfaction.' },
-  { icon: Star, title: 'Reviews & Ratings', desc: 'Both clients and avatars can rate each other after every session. This creates accountability and helps maintain high service quality.' },
-  { icon: Eye, title: 'Session Monitoring', desc: 'All sessions are logged with timestamps, duration, and participant information. Suspicious activity is flagged for review.' },
-  { icon: Lock, title: 'Data Privacy', desc: 'Your personal data is encrypted and never shared without consent. We comply with GDPR and other data protection regulations.' },
-  { icon: AlertTriangle, title: 'Dispute Resolution', desc: 'If something goes wrong, our dedicated support team mediates disputes fairly. Refunds are processed promptly when warranted.' },
+  { icon: UserCheck, title: 'Profile verification', desc: 'Verification workflows and profile status are shown where available so clients can review trust context before hiring.' },
+  { icon: Shield, title: 'Secure Payment', desc: 'Funds are held for supported tasks and released after client approval or a reviewed resolution.' },
+  { icon: Star, title: 'Reviews and ratings', desc: 'Clients and Local Agents can leave reviews after completed work, helping future users compare profiles.' },
+  { icon: Eye, title: 'Task records', desc: 'Messages, task status, proof uploads, timestamps, and live-session context help both sides understand what happened.' },
+  { icon: Lock, title: 'Privacy controls', desc: 'Account and task data should stay inside the app unless a workflow explicitly asks you to share it.' },
+  { icon: AlertTriangle, title: 'Issue reporting', desc: 'If a task needs review, users can raise an issue and keep the evidence tied to the task record.' },
 ];
 
 export default function Safety() {
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen bg-background">
       <InfoPageHeader />
-      <div className="pt-24 pb-20 px-6 max-w-5xl mx-auto">
-        <div className="relative overflow-hidden rounded-lg border border-border bg-foreground p-6 md:p-8 text-center text-background shadow-sm mb-12">
-          <Shield className="w-12 h-12 text-primary mx-auto mb-4" />
-          <p className="text-xs font-bold tracking-[0.18em] text-primary">Safety</p>
-          <h1 className="text-4xl font-black mt-3 mb-4 text-white">Trust & Safety</h1>
-          <p className="text-lg text-white/70 max-w-2xl mx-auto">
-            Your safety is our top priority. Every interaction on CoTask is designed with trust, transparency, and protection in mind.
-          </p>
+      <main className="px-6 pb-20 pt-24">
+        <div className="mx-auto max-w-5xl">
+          <div className="mb-12 rounded-lg border border-border bg-card p-6 text-center shadow-sm md:p-8">
+            <Shield className="mx-auto mb-4 h-12 w-12 text-primary" />
+            <p className="text-xs font-bold tracking-[0.18em] text-primary">Safety</p>
+            <h1 className="mt-3 text-4xl font-black text-foreground">Trust & Safety</h1>
+            <p className="mx-auto mt-4 max-w-2xl text-lg text-muted-foreground">
+              CoTask is designed around clear profiles, task records, proof, payments, and issue review.
+            </p>
+          </div>
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {features.map((feature) => (
+              <GlassCard key={feature.title} className="p-6">
+                <feature.icon className="mb-4 h-6 w-6 text-primary" />
+                <h3 className="mb-2 font-semibold">{feature.title}</h3>
+                <p className="text-sm leading-relaxed text-muted-foreground">{feature.desc}</p>
+              </GlassCard>
+            ))}
+          </div>
         </div>
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {features.map(f => (
-            <GlassCard key={f.title} className="p-6">
-              <f.icon className="w-6 h-6 text-primary mb-4" />
-              <h3 className="font-semibold mb-2">{f.title}</h3>
-              <p className="text-sm text-muted-foreground leading-relaxed">{f.desc}</p>
-            </GlassCard>
-          ))}
-        </div>
-      </div>
+      </main>
       <Footer />
     </div>
   );
 }
-
