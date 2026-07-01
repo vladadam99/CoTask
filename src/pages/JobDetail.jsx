@@ -169,7 +169,7 @@ export default function JobDetail() {
 
   return (
     <AppShell navItems={getNavItems(user?.selected_role || user?.role || 'user')} user={user}>
-      <div className="max-w-3xl mx-auto space-y-6">
+      <div className="max-w-5xl mx-auto space-y-6">
         {/* Back + Delete */}
         <div className="flex items-center justify-between">
           <button onClick={() => navigate(-1)} className="w-9 h-9 rounded-full bg-secondary border border-border flex items-center justify-center hover:border-primary/30 transition-colors">
@@ -199,16 +199,16 @@ export default function JobDetail() {
         </div>
 
         {/* Job Header */}
-        <div className="glass rounded-2xl p-6 border border-border space-y-4">
+        <div className="surface-panel rounded-lg p-5 md:p-6 space-y-5">
           <div className="flex items-start justify-between gap-3">
             <div>
               <div className="flex items-center gap-2 flex-wrap mb-1">
-                <h1 className="text-xl font-bold">{job.title}</h1>
+                <h1 className="text-2xl font-black tracking-tight">{job.title}</h1>
                 <Badge variant="outline" className="text-xs font-medium px-2.5 py-1 rounded-md bg-secondary text-secondary-foreground border-border">Open Task</Badge>
                 <StatusBadge status={job.status} />
-                {job.camera_required && <Badge variant="outline" className="text-xs bg-primary/10 text-primary border-primary/20">📷 Camera Required</Badge>}
+                {job.camera_required && <Badge variant="outline" className="text-xs bg-primary/10 text-primary border-primary/20">???? Camera Required</Badge>}
               </div>
-              <p className="text-sm text-muted-foreground">Posted by {job.posted_by_name} · {job.posted_by_type}</p>
+              <p className="text-sm text-muted-foreground">Posted by {job.posted_by_name} ?? {job.posted_by_type}</p>
             </div>
             {showOwnerControls && job.status === 'open' && (
               <Badge variant="outline" className="text-xs bg-yellow-500/10 text-yellow-400 border-yellow-500/20">
@@ -217,14 +217,14 @@ export default function JobDetail() {
             )}
           </div>
 
-          <p className="text-sm leading-relaxed">{job.description}</p>
+          <p className="text-sm leading-relaxed text-muted-foreground">{job.description}</p>
 
           <div className="flex flex-wrap gap-4 text-sm text-muted-foreground">
             {job.location && <span className="flex items-center gap-1.5"><MapPin className="w-4 h-4" />{job.location}</span>}
             {job.duration_value && <span className="flex items-center gap-1.5"><Clock className="w-4 h-4" />{job.duration_value} {job.duration_value === 1 ? 'hour' : 'hours'}</span>}
             {job.budget_min && (
               <span className="text-primary font-semibold">
-                ${job.budget_min}{DURATION_LABELS[job.duration_type]}{job.negotiable ? ' · negotiable' : ''}
+                ${job.budget_min}{DURATION_LABELS[job.duration_type]}{job.negotiable ? ' ?? negotiable' : ''}
               </span>
             )}
           </div>
@@ -290,7 +290,7 @@ export default function JobDetail() {
                   className="w-full bg-primary hover:bg-primary/90 gap-2"
                   onClick={() => setShowPaymentModal(true)}
                 >
-                  <DollarSign className="w-4 h-4" /> Fund Secure Payment — ${job.budget_max || job.budget_min || 50}
+                  <DollarSign className="w-4 h-4" /> Fund Secure Payment ??? ${job.budget_max || job.budget_min || 50}
                 </Button>
                 <p className="text-center text-xs text-muted-foreground mt-1">
                   You are not charged until you fund Secure Payment. Funds are held and only released upon approval.
@@ -329,7 +329,7 @@ export default function JobDetail() {
             </div>
             <div>
               <p className="text-sm font-semibold text-yellow-400">
-                {job.stripe_payment_intent_id?.startsWith('sim_') ? '🧪 ' : '💰 '}
+                {job.stripe_payment_intent_id?.startsWith('sim_') ? '???? ' : '???? '}
                 ${job.escrow_amount} Secure Payment Held{job.stripe_payment_intent_id?.startsWith('sim_') ? ' (Test Secure Payment Flow)' : ''}
               </p>
               <p className="text-xs text-muted-foreground">Funds will be paid to the Local Agent once you approve their work, or automatically after 24 hours.</p>
@@ -563,3 +563,4 @@ export default function JobDetail() {
     </AppShell>
   );
 }
+
