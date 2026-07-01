@@ -72,7 +72,7 @@ export default function LocationAutocomplete({ value, onChange }) {
           onChange={handleChange}
           onFocus={() => suggestions.length > 0 && setOpen(true)}
           placeholder="City, Country"
-          className="w-full bg-secondary/60 border border-border rounded-lg pl-9 pr-8 py-2 text-sm focus:outline-none focus:border-primary/50 text-foreground placeholder:text-muted-foreground"
+          className="h-12 w-full rounded-lg border border-input bg-card pl-9 pr-8 text-sm text-foreground shadow-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/45"
         />
         {loading && (
           <Loader2 className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground animate-spin" />
@@ -80,13 +80,13 @@ export default function LocationAutocomplete({ value, onChange }) {
       </div>
 
       {open && suggestions.length > 0 && (
-        <div className="absolute z-[200] mt-1 w-full rounded-xl bg-card border border-border shadow-xl overflow-hidden">
+        <div className="absolute z-[200] mt-2 w-full overflow-hidden rounded-lg border border-border bg-card shadow-xl">
           {suggestions.map((s, i) => (
             <button
               key={i}
               type="button"
               onMouseDown={() => handleSelect(s.label)}
-              className="w-full flex items-start gap-2 px-3 py-2.5 text-left hover:bg-secondary/60 transition-colors border-b border-border last:border-0"
+              className="w-full flex items-start gap-2 px-3 py-3 text-left hover:bg-secondary/60 transition-colors border-b border-border last:border-0"
             >
               <MapPin className="w-3.5 h-3.5 text-muted-foreground mt-0.5 flex-shrink-0" />
               <div>
