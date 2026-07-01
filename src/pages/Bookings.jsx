@@ -6,7 +6,7 @@ import { useCurrentUser } from '@/lib/useCurrentUser';
 import GlassCard from '@/components/ui/GlassCard';
 import StatusBadge from '@/components/ui/StatusBadge';
 import { Badge } from '@/components/ui/badge';
-import { Calendar, Search, ArrowLeft, Briefcase, Users, Clock, ChevronRight, MapPin } from 'lucide-react';
+import { Calendar, Search, Briefcase, Users, Clock, ChevronRight, MapPin } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import AppShell from '@/components/layout/AppShell';
 import { getNavItems } from '@/lib/navItems';
@@ -114,7 +114,7 @@ export default function Bookings() {
         location: job.location,
         counterpart: acceptedApp?.applicant_name || null,
         proposalCount: pendingApps.length,
-        amount: job.budget_min ? `$${job.budget_min}${job.budget_max ? `???$${job.budget_max}` : '+'}` : '',
+        amount: job.budget_min ? `$${job.budget_min}${job.budget_max ? `–$${job.budget_max}` : '+'}` : '',
         route: `/JobDetail?id=${job.id}`,
         nextAction,
         rawDate: job.created_date,
@@ -180,7 +180,7 @@ export default function Bookings() {
 
         {isLoading ? (
           <div className="space-y-3">
-            {[1,2,3].map(i => <div key={i} className="glass rounded-xl p-5 animate-pulse"><div className="h-4 bg-muted rounded w-1/2 mb-2" /><div className="h-3 bg-muted rounded w-1/3" /></div>)}
+            {[1,2,3].map(i => <div key={i} className="surface-panel rounded-lg p-5 animate-pulse"><div className="h-4 bg-muted rounded w-1/2 mb-2" /><div className="h-3 bg-muted rounded w-1/3" /></div>)}
           </div>
         ) : filteredTasks.length > 0 ? (
           <div className="space-y-4">
@@ -261,4 +261,3 @@ export default function Bookings() {
     </AppShell>
   );
 }
-
