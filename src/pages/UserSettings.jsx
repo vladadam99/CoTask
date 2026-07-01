@@ -7,6 +7,7 @@ import { getNavItems } from '@/lib/navItems';
 import { ArrowLeft, Sun, Moon, Palette, ArrowRightLeft, LogOut, Shield, CheckCircle2 } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { useTheme } from '@/lib/ThemeContext';
+import { PageHero } from '@/components/ui/PagePrimitives';
 
 export default function UserSettings() {
   const { user } = useCurrentUser();
@@ -33,13 +34,14 @@ export default function UserSettings() {
 
   return (
     <AppShell navItems={getNavItems(user?.selected_role || user?.role || 'user')} user={user}>
-      <div className="max-w-lg mx-auto">
-        <div className="flex items-center gap-3 mb-6">
-          <button onClick={() => navigate('/Profile')} className="p-1.5 rounded-lg hover:bg-secondary">
-            <ArrowLeft className="w-5 h-5" />
-          </button>
-          <h1 className="text-xl font-bold">Settings</h1>
-        </div>
+      <div className="max-w-3xl mx-auto space-y-6">
+        <PageHero
+          eyebrow="Account"
+          title="Settings"
+          description="Manage identity, appearance, role switching, and account access."
+          icon={Shield}
+          actions={<button onClick={() => navigate('/Profile')} className="inline-flex h-11 items-center gap-2 rounded-lg border border-white/15 bg-white/10 px-4 text-sm font-bold text-white hover:bg-white/15"><ArrowLeft className="w-4 h-4" /> Profile</button>}
+        />
 
         <div className="space-y-4">
           {/* Account info */}
@@ -66,7 +68,7 @@ export default function UserSettings() {
                 </div>
               </div>
               <button onClick={toggleTheme} className="px-3 py-1.5 rounded-full bg-muted hover:bg-muted/80 transition-colors text-xs font-medium">
-                Next →
+                Next ???
               </button>
             </div>
             <div className="flex gap-2">
@@ -109,7 +111,7 @@ export default function UserSettings() {
               <div className="flex items-center gap-2 py-2 px-3 rounded-xl bg-green-500/10 border border-green-500/20">
                 <CheckCircle2 className="w-4 h-4 text-green-400 flex-shrink-0" />
                 <div>
-                  <p className="text-sm font-semibold text-green-400">Identity Verified ✓</p>
+                  <p className="text-sm font-semibold text-green-400">Identity Verified ???</p>
                   <p className="text-xs text-muted-foreground">Your identity has been successfully confirmed.</p>
                 </div>
               </div>
@@ -117,7 +119,7 @@ export default function UserSettings() {
               <>
                 <p className="text-xs text-muted-foreground mb-3">Verify your identity to build trust and unlock posting & applying for jobs.</p>
                 <button onClick={() => navigate('/IdentityVerification')}
-                  className="text-xs text-primary hover:underline">Start verification →</button>
+                  className="text-xs text-primary hover:underline">Start verification ???</button>
               </>
             )}
           </GlassCard>
@@ -134,3 +136,4 @@ export default function UserSettings() {
     </AppShell>
   );
 }
+
