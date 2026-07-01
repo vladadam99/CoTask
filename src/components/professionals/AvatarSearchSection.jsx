@@ -4,38 +4,38 @@ import { Link } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { Button } from '@/components/ui/button';
-import { MapPin, Star, Shield, Filter, X, Heart } from 'lucide-react';
+import { MapPin, Star, Shield, Filter, X, Heart, ArrowRight } from 'lucide-react';
 import { motion } from 'framer-motion';
 import SuggestedForYou from '@/components/dashboard/SuggestedForYou';
 
 const CATEGORIES = [
-  { label: 'City Guide', icon: '????' },
-  { label: 'Property Walkthrough', icon: '????' },
-  { label: 'Shopping Help', icon: '???????' },
-  { label: 'Event Attendance', icon: '????' },
-  { label: 'Queue & Errands', icon: '????' },
-  { label: 'Family Support', icon: '??????????????????' },
-  { label: 'Business Inspection', icon: '????' },
-  { label: 'Training & Coaching', icon: '????' },
-  { label: 'Travel Assistance', icon: '??????' },
-  { label: 'Pets & Animals', icon: '????' },
-  { label: 'Cars & Vehicles', icon: '????' },
-  { label: 'Mechanics', icon: '????' },
-  { label: 'Plumbing', icon: '????' },
-  { label: 'Electrical Work', icon: '???' },
-  { label: 'Medical & Health', icon: '????' },
-  { label: 'Outdoors & Nature', icon: '????' },
-  { label: 'Cleaning', icon: '????' },
-  { label: 'Gardening', icon: '????' },
-  { label: 'Pick Ups', icon: '????' },
-  { label: 'Deliveries', icon: '????' },
-  { label: 'Cooking & Food', icon: '????' },
-  { label: 'Dating & Social', icon: '????' },
-  { label: 'Driving', icon: '????' },
-  { label: 'Show Me Around', icon: '???????' },
-  { label: 'Carers & Companionship', icon: '????' },
-  { label: 'DIY & Repairs', icon: '???????' },
-  { label: 'Campus Help', icon: '????' },
+  { label: 'City Guide', icon: '🌆' },
+  { label: 'Property Walkthrough', icon: '🏠' },
+  { label: 'Shopping Help', icon: '🛍️' },
+  { label: 'Event Attendance', icon: '🎫' },
+  { label: 'Queue & Errands', icon: '📦' },
+  { label: 'Family Support', icon: '👨‍👩‍👧' },
+  { label: 'Business Inspection', icon: '🏢' },
+  { label: 'Training & Coaching', icon: '🎓' },
+  { label: 'Travel Assistance', icon: '✈️' },
+  { label: 'Pets & Animals', icon: '🐾' },
+  { label: 'Cars & Vehicles', icon: '🚗' },
+  { label: 'Mechanics', icon: '🔧' },
+  { label: 'Plumbing', icon: '🚿' },
+  { label: 'Electrical Work', icon: '⚡' },
+  { label: 'Medical & Health', icon: '🏥' },
+  { label: 'Outdoors & Nature', icon: '🌿' },
+  { label: 'Cleaning', icon: '🧹' },
+  { label: 'Gardening', icon: '🌱' },
+  { label: 'Pick Ups', icon: '📍' },
+  { label: 'Deliveries', icon: '📦' },
+  { label: 'Cooking & Food', icon: '🍳' },
+  { label: 'Dating & Social', icon: '💬' },
+  { label: 'Driving', icon: '🚕' },
+  { label: 'Show Me Around', icon: '🗺️' },
+  { label: 'Carers & Companionship', icon: '🤝' },
+  { label: 'DIY & Repairs', icon: '🛠️' },
+  { label: 'Campus Help', icon: '🎓' },
 ];
 
 export default function AvatarSearchSection({ user }) {
@@ -79,7 +79,7 @@ export default function AvatarSearchSection({ user }) {
           items={avatars}
           itemSummaryFn={avatarSummaryFn}
           onResults={setAiMatchedIds}
-          placeholder="Search agents, skills, tasks... (AI-powered)"
+          placeholder="Search Local Agents, skills, or task types..."
           suggestions={suggestionList}
         />
       </div>
@@ -142,7 +142,7 @@ export default function AvatarSearchSection({ user }) {
 
       <SuggestedForYou user={user} />
 
-      <p className="text-xs text-muted-foreground mb-5">{isLoading ? 'Loading...' : `${sortedFiltered.length} local agents found`}</p>
+      <p className="text-xs text-muted-foreground mb-5">{isLoading ? 'Loading...' : `${sortedFiltered.length} Local Agent${sortedFiltered.length !== 1 ? 's' : ''} found`}</p>
 
       {isLoading ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
@@ -190,71 +190,77 @@ function AvatarCard({ avatar, i, user, queryClient }) {
 
   return (
     <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: Math.min(i * 0.04, 0.3) }}>
-      <div className="surface-panel glass-hover rounded-lg p-4 transition-all relative group">
+      <div className="group relative overflow-hidden rounded-lg border border-border bg-card shadow-sm transition-all hover:-translate-y-0.5 hover:border-primary/30 hover:shadow-md">
         <Link to={`/AvatarView?id=${avatar.id}`} className="absolute inset-0 z-0"></Link>
         <div className="relative z-10 pointer-events-none">
-          {user && (
-            <button onClick={e => { e.preventDefault(); e.stopPropagation(); toggleFav.mutate(); }} disabled={toggleFav.isPending}
-              className="absolute top-0 right-0 w-6 h-6 rounded-full bg-black/30 backdrop-blur flex items-center justify-center pointer-events-auto z-20">
-              <Heart className={`w-3 h-3 ${isFavorited ? 'fill-primary text-primary' : 'text-white/60'}`} />
-            </button>
-          )}
-          <div className="flex items-center gap-3 mb-3">
-            <div className="relative flex-shrink-0">
-              <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center text-lg font-bold text-primary overflow-hidden">
-                {avatar.photo_url
-                  ? <img src={avatar.photo_url} alt={avatar.display_name} className="w-full h-full object-cover" />
-                  : avatar.display_name?.[0] || 'A'}
+          <div className="relative aspect-[4/3] bg-secondary">
+            {avatar.photo_url ? (
+              <img src={avatar.photo_url} alt={avatar.display_name} className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.03]" />
+            ) : (
+              <div className="flex h-full w-full items-center justify-center bg-primary/10 text-4xl font-black text-primary">
+                {avatar.display_name?.[0] || 'A'}
               </div>
-              {avatar.is_available && (
-                <span className="absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full bg-green-400 border-2 border-background" />
-              )}
+            )}
+            <div className="absolute bottom-3 left-3 flex flex-wrap gap-2">
               {avatar.is_verified && (
-                <span className="absolute -top-0.5 -right-0.5 w-4 h-4 rounded-full bg-blue-500 flex items-center justify-center">
-                  <Shield className="w-2.5 h-2.5 text-white" />
+                <span className="inline-flex items-center gap-1 rounded-full border border-white/40 bg-white/90 px-2.5 py-1 text-[11px] font-bold text-slate-800 shadow-sm">
+                  <Shield className="h-3 w-3 text-blue-600" /> Verified
+                </span>
+              )}
+              {avatar.is_available && (
+                <span className="inline-flex items-center gap-1 rounded-full border border-green-200 bg-green-50 px-2.5 py-1 text-[11px] font-bold text-green-700 shadow-sm">
+                  <span className="h-1.5 w-1.5 rounded-full bg-green-500" /> Available
                 </span>
               )}
             </div>
+          </div>
+          {user && (
+            <button onClick={e => { e.preventDefault(); e.stopPropagation(); toggleFav.mutate(); }} disabled={toggleFav.isPending}
+              className="absolute right-3 top-3 flex h-9 w-9 items-center justify-center rounded-full border border-white/50 bg-white/90 shadow-sm pointer-events-auto z-20">
+              <Heart className={`h-4 w-4 ${isFavorited ? 'fill-primary text-primary' : 'text-slate-600'}`} />
+            </button>
+          )}
+          <div className="space-y-3 p-4">
             <div className="min-w-0">
-              <p className="text-sm font-bold truncate">{avatar.display_name}</p>
-              <div className="flex items-center gap-1 text-xs text-muted-foreground">
-                <MapPin className="w-3 h-3" /> {avatar.city || 'Remote'}
+              <div className="flex items-start justify-between gap-2">
+                <p className="truncate text-base font-bold">{avatar.display_name}</p>
+                {avatar.rating > 0 && (
+                  <div className="flex shrink-0 items-center gap-1">
+                    <Star className="h-3.5 w-3.5 fill-yellow-400 text-yellow-400" />
+                    <span className="text-xs font-semibold">{avatar.rating.toFixed(1)}</span>
+                  </div>
+                )}
+              </div>
+              <div className="mt-1 flex items-center gap-1 text-xs text-muted-foreground">
+                <MapPin className="h-3.5 w-3.5" /> {avatar.city || 'Remote'}{avatar.country ? `, ${avatar.country}` : ''}
               </div>
             </div>
-          </div>
-          {(avatar.bio || (avatar.categories?.length > 0)) && (
-            <p className="text-xs text-muted-foreground mb-2 line-clamp-2">
-              {avatar.bio || (avatar.categories || []).join(', ')}
-            </p>
-          )}
-          {avatar.categories?.length > 0 && avatar.bio && (
-            <div className="flex flex-wrap gap-1 mb-2">
-              {(avatar.categories || []).slice(0, 2).map(c => (
-                <span key={c} className="text-[10px] bg-secondary/60 border border-border rounded px-1.5 py-0.5">{c}</span>
-              ))}
-            </div>
-          )}
-          <div className="flex items-center justify-between mb-4">
-            <span className="text-sm font-bold text-primary">${avatar.hourly_rate || 30}/hr</span>
-            {avatar.rating > 0 && (
-              <div className="flex items-center gap-1">
-                <Star className="w-3 h-3 text-yellow-400 fill-yellow-400" />
-                <span className="text-xs">{avatar.rating.toFixed(1)}</span>
+
+            {(avatar.bio || (avatar.categories?.length > 0)) && (
+              <p className="line-clamp-2 text-sm leading-relaxed text-muted-foreground">
+                {avatar.bio || (avatar.categories || []).join(', ')}
+              </p>
+            )}
+            {avatar.categories?.length > 0 && (
+              <div className="flex flex-wrap gap-1.5">
+                {(avatar.categories || []).slice(0, 3).map(c => (
+                  <span key={c} className="rounded-full border border-border bg-secondary/60 px-2 py-1 text-[11px] font-semibold text-muted-foreground">{c}</span>
+                ))}
               </div>
             )}
-          </div>
-          
-          <div className="flex flex-col gap-2 relative z-20 pointer-events-auto">
-            <Button variant="outline" className="w-full h-8 text-xs" asChild>
-              <Link to={`/AvatarView?id=${avatar.id}`}>View Profile & Portfolio</Link>
-            </Button>
-            <Button className="w-full h-8 text-xs" asChild>
-              <Link to={`/CreateBooking?avatar=${avatar.id}`} title="Send a Direct Hire request to this specific Local Agent.">Request Direct Hire</Link>
-            </Button>
+
+            <div className="flex items-end justify-between gap-3 border-t border-border pt-3">
+              <div>
+                <p className="text-xs text-muted-foreground">Starts at</p>
+                <p className="text-base font-black text-foreground">${avatar.hourly_rate || 30}/hr</p>
+              </div>
+              <Button variant="outline" className="relative z-20 h-9 shrink-0 gap-1 text-xs pointer-events-auto" asChild>
+                <Link to={`/AvatarView?id=${avatar.id}`}>View Profile <ArrowRight className="h-3 w-3" /></Link>
+              </Button>
+            </div>
           </div>
         </div>
       </div>
     </motion.div>
   );
 }
-
