@@ -79,7 +79,7 @@ export default function EnterpriseOnboarding({ user, onComplete, submitting }) {
         </div>
       </div>
 
-      <div className="glass rounded-2xl p-8">
+      <div className="surface-panel rounded-lg p-6 md:p-8">
         <AnimatePresence mode="wait">
           <motion.div key={step} initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} transition={{ duration: 0.25 }}>
 
@@ -157,7 +157,7 @@ export default function EnterpriseOnboarding({ user, onComplete, submitting }) {
                   )}
                 </div>
                 <div>
-                  <label className="text-sm font-medium mb-2 block">Typical number of avatars needed per deployment</label>
+                  <label className="text-sm font-medium mb-2 block">Typical number of Local Agents needed per deployment</label>
                   <div className="flex gap-2 flex-wrap">
                     {['1', '2–5', '5–10', '10–20', '20+'].map(n => (
                       <button key={n} type="button" onClick={() => update('typical_team_size', n)}
@@ -176,7 +176,7 @@ export default function EnterpriseOnboarding({ user, onComplete, submitting }) {
                 <div>
                   <label className="text-sm font-medium mb-1.5 block">What will you be using CoTask for?</label>
                   <textarea value={data.booking_needs} onChange={e => update('booking_needs', e.target.value)}
-                    placeholder="e.g. We need avatars to conduct property inspections across multiple cities, attend trade shows on our behalf, manage on-site deliveries, and provide live updates to our operations team..."
+                    placeholder="e.g. We need Local Agents to conduct property inspections across multiple cities, attend trade shows on our behalf, manage on-site deliveries, and provide live updates to our operations team..."
                     className="w-full h-24 px-3 py-2 bg-card border border-border rounded-md text-sm resize-none text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary/50" />
                 </div>
                 <div>
@@ -192,7 +192,7 @@ export default function EnterpriseOnboarding({ user, onComplete, submitting }) {
                 <div>
                   <label className="text-sm font-medium mb-2 block">Invoice preference</label>
                   <div className="grid grid-cols-3 gap-2">
-                    {[{v:'per_booking',l:'Per Booking',d:'Invoiced each job'},{v:'monthly',l:'Monthly',d:'One invoice/month'},{v:'quarterly',l:'Quarterly',d:'Every 3 months'}].map(({v,l,d}) => (
+                    {[{v:'per_booking',l:'Per Task',d:'Invoiced each task'},{v:'monthly',l:'Monthly',d:'One invoice/month'},{v:'quarterly',l:'Quarterly',d:'Every 3 months'}].map(({v,l,d}) => (
                       <button key={v} type="button" onClick={() => update('invoice_preference', v)}
                         className={`p-3 rounded-xl border text-left transition-all ${data.invoice_preference === v ? 'bg-primary/10 border-primary/40 text-primary' : 'bg-card border-border text-muted-foreground hover:bg-card'}`}>
                         <p className="text-sm font-semibold">{l}</p>
