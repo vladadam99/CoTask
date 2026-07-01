@@ -14,8 +14,8 @@ const roles = [
     iconColor: 'text-blue-400',
     iconBg: 'bg-blue-500/10',
     title: 'Client / Explorer',
-    desc: 'Find and book avatars for live tours, errands, and real-time remote assistance.',
-    tags: ['Live Tours', 'Errands', 'Inspections'],
+    desc: 'Find Local Agents for inspections, errands, live video help, and real-world checks.',
+    tags: ['Live Help', 'Errands', 'Inspections'],
   },
   {
     key: 'avatar',
@@ -24,9 +24,9 @@ const roles = [
     border: 'border-primary/20',
     iconColor: 'text-primary',
     iconBg: 'bg-primary/10',
-    title: 'Avatar / Helper',
+    title: 'Local Agent',
     desc: 'Offer your local presence. Be the eyes and hands for clients worldwide.',
-    tags: ['Set your rate', 'Flexible hours', 'Earn daily'],
+    tags: ['Set your rate', 'Flexible tasks', 'Proof-based work'],
     featured: true,
   },
   {
@@ -37,7 +37,7 @@ const roles = [
     iconColor: 'text-purple-400',
     iconBg: 'bg-purple-500/10',
     title: 'Enterprise',
-    desc: 'Book avatars at scale for site inspections, field support, and large operations.',
+    desc: 'Coordinate Local Agents for site inspections, field support, and multi-location operations.',
     tags: ['Team access', 'Invoicing', 'Priority support'],
   },
 ];
@@ -109,9 +109,9 @@ export default function RoleSelectExisting() {
             Co<span className="text-primary">Task</span>
           </Link>
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
-            <p className="text-sm text-muted-foreground mb-2">Welcome back, {user.full_name?.split(' ')[0] || 'there'} ????</p>
+            <p className="text-sm text-muted-foreground mb-2">Welcome back, {user.full_name?.split(' ')[0] || 'there'}</p>
             <h1 className="text-3xl md:text-5xl font-black mb-3 tracking-tight">How do you want to use CoTask?</h1>
-            <p className="text-muted-foreground text-base">Select a role ??? if you haven't set it up yet, we'll get you started.</p>
+            <p className="text-muted-foreground text-base">Select a role. If you have not set it up yet, we will get you started.</p>
           </motion.div>
         </div>
 
@@ -161,4 +161,3 @@ export default function RoleSelectExisting() {
     </div>
   );
 }
-
