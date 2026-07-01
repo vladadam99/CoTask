@@ -29,8 +29,8 @@ export default function JobCountdown({ scheduledDate }) {
 
   if (timeLeft.started) {
     return (
-      <div className="glass rounded-2xl p-4 border border-green-500/30 text-center">
-        <div className="text-green-400 font-bold text-lg">🚀 Job is starting now!</div>
+      <div className="surface-panel rounded-lg p-4 border border-green-200 bg-green-50 text-center">
+        <div className="text-green-700 font-bold text-lg">Task is starting now</div>
         <p className="text-sm text-muted-foreground mt-1">Check your chat to coordinate with your client.</p>
       </div>
     );
@@ -44,10 +44,10 @@ export default function JobCountdown({ scheduledDate }) {
   ];
 
   return (
-    <div className="glass rounded-2xl p-5 border border-primary/20 space-y-3">
+    <div className="surface-panel rounded-lg p-5 border border-primary/20 space-y-3">
       <div className="flex items-center gap-2">
         <Clock className="w-4 h-4 text-primary" />
-        <span className="text-sm font-semibold">Job starts in</span>
+        <span className="text-sm font-semibold">Task starts in</span>
       </div>
       <div className="grid grid-cols-4 gap-2">
         {units.map(u => (
