@@ -9,6 +9,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Plus, MapPin, Clock, Users, Briefcase, Calendar, AlertCircle } from 'lucide-react';
 import SmartSearchBar from '@/components/search/SmartSearchBar';
+import { PageHero } from '@/components/ui/PagePrimitives';
 
 const CATEGORIES = ['All', 'Shopping', 'Delivery', 'Real Estate', 'Tourism', 'Events', 'Inspection', 'Translation', 'Other'];
 const DURATION_LABELS = { hourly: '/hr', daily: '/day', weekly: '/wk', monthly: '/mo', custom: '' };
@@ -47,23 +48,24 @@ export default function JobMarketplace() {
   return (
     <AppShell navItems={getNavItems(user?.selected_role || user?.role || 'user')} user={user}>
       <div className="space-y-6">
-        {/* Header */}
-        <div className="page-header">
-          <div>
-            <p className="page-kicker">Marketplace</p>
-            <h1 className="page-title">Task Board</h1>
-            <p className="page-subtitle">
-              {canApply ? 'Browse open work, filter by category, and open the details before sending a proposal.' : 'Create open tasks, compare proposals, and find the right Local Agent.'}
-            </p>
-          </div>
-          {canPost && (
+        <PageHero
+          eyebrow="Marketplace"
+          title="Task Board"
+          description={canApply ? 'Browse open work, filter by category, and open the details before sending a proposal.' : 'Create open tasks, compare proposals, and find the right Local Agent.'}
+          icon={Briefcase}
+          actions={canPost && (
             <Link to="/PostJob">
               <Button size="lg" className="gap-2 w-full sm:w-auto">
                 <Plus className="w-4 h-4" /> Post a Task
               </Button>
             </Link>
           )}
-        </div>
+          stats={[
+            { label: 'Showing', value: isLoading ? '...' : sortedFiltered.length },
+            { label: 'Status', value: showOpen ? 'Open' : 'All' },
+            { label: 'Category', value: category },
+          ]}
+        />
 
         {/* Search + Filter bar */}
         <div className="surface-panel rounded-lg p-4 md:p-5 space-y-4">
@@ -131,7 +133,7 @@ export default function JobMarketplace() {
                           {job.status}
                         </Badge>
                         {job.camera_required && (
-                          <Badge variant="outline" className="text-xs bg-primary/10 text-primary border-primary/20">📷 Camera Required</Badge>
+                          <Badge variant="outline" className="text-xs bg-primary/10 text-primary border-primary/20">Camera proof</Badge>
                         )}
                       </div>
                       <p className="text-xs text-muted-foreground">Posted by {job.posted_by_name}</p>
@@ -150,7 +152,7 @@ export default function JobMarketplace() {
                     {job.duration_value && <span className="flex items-center gap-1.5"><Clock className="w-4 h-4" />{job.duration_value} {job.duration_value === 1 ? 'hour' : 'hours'}</span>}
                     {job.budget_min && (
                       <span className="text-primary font-semibold">
-                        ${job.budget_min}{DURATION_LABELS[job.duration_type]}{job.negotiable ? ' · negotiable' : ''}
+                        ${job.budget_min}{DURATION_LABELS[job.duration_type]}{job.negotiable ? ' - negotiable' : ''}
                       </span>
                     )}
                   </div>
@@ -191,3 +193,4 @@ export default function JobMarketplace() {
     </AppShell>
   );
 }
+
