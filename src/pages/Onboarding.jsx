@@ -131,7 +131,7 @@ export default function Onboarding() {
 
   if (!user) return (
     <div className="min-h-screen flex items-center justify-center px-4">
-      <div className="text-center glass rounded-2xl p-10">
+      <div className="text-center surface-panel rounded-lg p-10">
         <p className="text-muted-foreground mb-4">You need to be signed in to complete setup.</p>
         <button onClick={() => base44.auth.redirectToLogin('/Onboarding')}
           className="px-6 py-3 bg-primary text-white rounded-xl font-semibold text-sm">
