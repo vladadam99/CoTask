@@ -11,4 +11,3 @@ export default function GlassCard({ children, className = '', hover = false, onC
     </div>
   );
 }
-
