@@ -163,7 +163,7 @@ export default function AvatarSchedule() {
                       <span className="text-[10px] leading-none">{format(new Date(b.scheduled_date), 'MMM')}</span>
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="text-xs font-medium truncate">{b.category} ?? {b.client_name}</p>
+                      <p className="text-xs font-medium truncate">{b.category} · {b.client_name}</p>
                       {b.scheduled_time && <p className="text-xs text-muted-foreground">{b.scheduled_time}</p>}
                     </div>
                     <span className="text-xs font-semibold text-primary">${b.total_amount || b.amount || 0}</span>
@@ -183,4 +183,3 @@ export default function AvatarSchedule() {
     </AppShell>
   );
 }
-
