@@ -4,10 +4,11 @@ import { base44 } from '@/api/base44Client';
 import { useCurrentUser } from '@/lib/useCurrentUser';
 import AppShell from '@/components/layout/AppShell';
 import GlassCard from '@/components/ui/GlassCard';
+import { EmptyState, MetricCard, PageHero, SectionTitle } from '@/components/ui/PagePrimitives';
 import { Link } from 'react-router-dom';
 import { getNavItems } from '@/lib/navItems';
 import {
-  DollarSign, TrendingUp, ArrowUpRight, Wallet, Clock
+  DollarSign, TrendingUp, Wallet, Clock, Receipt
 } from 'lucide-react';
 import { format, subMonths, startOfMonth, endOfMonth, isWithinInterval } from 'date-fns';
 import PayoutSetup from '@/components/earnings/PayoutSetup';
@@ -64,7 +65,7 @@ export default function AvatarEarnings() {
     const avgPerJob = bookings.length ? total / bookings.length : 0;
     const totalHours = bookings.reduce((s, b) => s + (b.duration_minutes || 60) / 60, 0);
 
-    // Monthly breakdown for chart — last 6 months
+    // Monthly breakdown for chart ??? last 6 months
     const monthlyData = Array.from({ length: 6 }, (_, i) => {
       const d = subMonths(now, 5 - i);
       const amount = bookings
@@ -99,47 +100,46 @@ export default function AvatarEarnings() {
         <p className="text-muted-foreground text-sm">Your financial performance at a glance</p>
       </div>
 
-      {/* KPI Cards */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+      <PageHero
+        eyebrow="Agent finance"
+        title="Earnings Dashboard"
+        description="Track completed work, payout readiness, and monthly earnings without digging through old task records."
+        icon={Wallet}
+        stats={[
+          { label: 'Total earned', value: `$${stats.total.toFixed(2)}` },
+          { label: 'This month', value: `$${stats.thisMonthTotal.toFixed(2)}` },
+          { label: 'Completed tasks', value: bookings.length },
+        ]}
+        className="mb-6"
+      />
+
+      <div className="dashboard-grid mb-8">
         {[
           {
             label: 'Total Earned', value: `$${stats.total.toFixed(2)}`,
-            icon: DollarSign, color: 'text-primary', bg: 'bg-primary/10',
+            icon: DollarSign, tone: 'primary',
           },
           {
             label: 'This Month', value: `$${stats.thisMonthTotal.toFixed(2)}`,
-            icon: TrendingUp, color: 'text-green-400', bg: 'bg-green-500/10',
-            sub: stats.growth !== 0 ? `${stats.growth > 0 ? '+' : ''}${stats.growth.toFixed(0)}% vs last month` : null,
+            icon: TrendingUp, tone: 'green',
+            hint: stats.growth !== 0 ? `${stats.growth > 0 ? '+' : ''}${stats.growth.toFixed(0)}% vs last month` : 'No previous month comparison yet',
           },
           {
             label: 'Avg Per Task', value: `$${stats.avgPerJob.toFixed(0)}`,
-            icon: Wallet, color: 'text-blue-400', bg: 'bg-blue-500/10',
+            icon: Wallet, tone: 'blue',
           },
           {
             label: 'Hours Worked', value: `${stats.totalHours.toFixed(1)}h`,
-            icon: Clock, color: 'text-yellow-400', bg: 'bg-yellow-500/10',
+            icon: Clock, tone: 'amber',
           },
-        ].map(stat => (
-          <GlassCard key={stat.label} className="p-5">
-            <div className={`w-9 h-9 rounded-lg ${stat.bg} flex items-center justify-center mb-3`}>
-              <stat.icon className={`w-4.5 h-4.5 ${stat.color}`} />
-            </div>
-            <p className="text-2xl font-bold">{stat.value}</p>
-            <p className="text-xs text-muted-foreground mt-0.5">{stat.label}</p>
-            {stat.sub && (
-              <p className={`text-xs mt-1 flex items-center gap-0.5 ${stats.growth >= 0 ? 'text-green-400' : 'text-red-400'}`}>
-                <ArrowUpRight className="w-3 h-3" /> {stat.sub}
-              </p>
-            )}
-          </GlassCard>
-        ))}
+        ].map(stat => <MetricCard key={stat.label} {...stat} />)}
       </div>
 
       {/* Charts row */}
       <div className="grid lg:grid-cols-3 gap-6 mb-8">
         {/* Monthly earnings area chart */}
         <GlassCard className="p-5 lg:col-span-2">
-          <h2 className="text-sm font-semibold mb-5">Monthly Earnings (Last 6 Months)</h2>
+          <SectionTitle title="Monthly Earnings" description="Last 6 months, based on completed tasks." className="mb-5" />
           <ResponsiveContainer width="100%" height={200}>
             <AreaChart data={stats.monthlyData}>
               <defs>
@@ -162,7 +162,7 @@ export default function AvatarEarnings() {
 
         {/* Earnings by category bar chart */}
         <GlassCard className="p-5">
-          <h2 className="text-sm font-semibold mb-5">By Category</h2>
+          <SectionTitle title="By Category" description="Where your paid work is coming from." className="mb-5" />
           {stats.categoryData.length === 0 ? (
             <p className="text-xs text-muted-foreground mt-8 text-center">No data yet</p>
           ) : (
@@ -182,22 +182,28 @@ export default function AvatarEarnings() {
       {user && <PayoutSetup avatarEmail={user.email} />}
 
       {/* Transaction history */}
-      <h2 className="text-lg font-semibold mb-4">Transaction History</h2>
+      <SectionTitle
+        eyebrow="Payout record"
+        title="Transaction History"
+        description="Completed tasks appear here once they are ready for payout tracking."
+        className="mb-4"
+      />
       {bookings.length === 0 ? (
-        <GlassCard className="p-10 text-center">
-          <DollarSign className="w-10 h-10 text-muted-foreground mx-auto mb-3" />
-          <p className="text-sm text-muted-foreground">No completed tasks yet</p>
-        </GlassCard>
+        <EmptyState
+          icon={Receipt}
+          title="No completed tasks yet"
+          description="Your completed task payments and payout notes will collect here."
+        />
       ) : (
         <div className="space-y-2">
           {bookings.map(b => (
             <Link key={b.id} to={`/AvatarBookingDetail?id=${b.id}`}>
               <GlassCard className="p-4 flex items-center justify-between gap-4" hover>
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium truncate">{b.category} — {b.client_name}</p>
+                  <p className="text-sm font-medium truncate">{b.category} ??? {b.client_name}</p>
                   <p className="text-xs text-muted-foreground mt-0.5">
                     {b.created_date ? format(new Date(b.created_date), 'MMM d, yyyy') : ''}
-                    {b.duration_minutes ? ` · ${b.duration_minutes} min` : ''}
+                    {b.duration_minutes ? ` ?? ${b.duration_minutes} min` : ''}
                   </p>
                 </div>
                 <span className="text-green-400 font-semibold text-sm shrink-0">+${b.amount || 0}</span>
@@ -209,3 +215,4 @@ export default function AvatarEarnings() {
     </AppShell>
   );
 }
+
