@@ -1,9 +1,10 @@
 import React from 'react';
+import { cn } from '@/lib/utils';
 
 export default function GlassCard({ children, className = '', hover = false, onClick }) {
   return (
     <div
-      className={`glass rounded-xl ${hover ? 'glass-hover cursor-pointer' : ''} ${className}`}
+      className={cn('glass rounded-lg', hover && 'glass-hover cursor-pointer', className)}
       onClick={onClick}
     >
       {children}
