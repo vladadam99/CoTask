@@ -4,6 +4,7 @@ import { base44 } from '@/api/base44Client';
 import { useCurrentUser } from '@/lib/useCurrentUser';
 import AppShell from '@/components/layout/AppShell';
 import GlassCard from '@/components/ui/GlassCard';
+import { MetricCard, PageHero } from '@/components/ui/PagePrimitives';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -221,9 +222,21 @@ export default function AvatarProfileEdit() {
 
   return (
     <AppShell navItems={getNavItems(user?.selected_role || user?.role || 'user')} user={user}>
-      <div className="max-w-4xl mx-auto">
+      <div className="mx-auto max-w-6xl space-y-6">
+        <PageHero
+          eyebrow="Agent profile"
+          title="Edit your public profile"
+          description="Keep your services, rates, proof media, and travel rules clear so clients know exactly when to choose you."
+          icon={Pencil}
+          actions={(
+            <Button variant="secondary" onClick={() => navigate(`/AvatarView?id=${profile.id}`)}>
+              Preview Profile
+            </Button>
+          )}
+        />
+
         {/* Cover Photo */}
-        <div className="relative w-full h-48 md:h-64 rounded-2xl overflow-hidden mb-20 group cursor-pointer" onClick={() => coverInputRef.current?.click()}>
+        <div className="relative h-48 w-full cursor-pointer overflow-hidden rounded-lg md:h-64" onClick={() => coverInputRef.current?.click()}>
           {form.cover_url ? (
             <img src={form.cover_url} alt="Cover" className="w-full h-full object-cover" />
           ) : (
@@ -270,14 +283,11 @@ export default function AvatarProfileEdit() {
                     {form.city || 'City'}, {form.country || 'Country'}
                   </p>
                 </div>
-                <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                  <button
-                    onClick={() => navigate(`/AvatarView?id=${profile.id}`)}
-                    className="px-3 py-1 rounded-full bg-secondary border border-border text-xs hover:bg-secondary transition-colors"
-                  >
-                    Preview Profile →
-                  </button>
-                </div>
+                {lastSaved && (
+                  <p className="text-xs text-muted-foreground">
+                    Saved {lastSaved.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                  </p>
+                )}
               </div>
             </div>
           </div>
@@ -295,23 +305,11 @@ export default function AvatarProfileEdit() {
         </div>
 
         {/* Stats & Info Grid */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 px-4 mb-6">
-          <div className="bg-card/50 rounded-xl p-4 text-center border border-border">
-            <p className="text-2xl font-bold text-primary">${form.hourly_rate || 0}</p>
-            <p className="text-xs text-muted-foreground mt-1">Per Hour</p>
-          </div>
-          <div className="bg-card/50 rounded-xl p-4 text-center border border-border">
-            <p className="text-2xl font-bold text-primary">${form.per_session_rate || 0}</p>
-            <p className="text-xs text-muted-foreground mt-1">Per Session</p>
-          </div>
-          <div className="bg-card/50 rounded-xl p-4 text-center border border-border">
-            <p className="text-2xl font-bold text-primary">{(form.categories || []).length}</p>
-            <p className="text-xs text-muted-foreground mt-1">Categories</p>
-          </div>
-          <div className="bg-card/50 rounded-xl p-4 text-center border border-border">
-            <p className="text-2xl font-bold text-primary">{(form.skills || []).length}</p>
-            <p className="text-xs text-muted-foreground mt-1">Skills</p>
-          </div>
+        <div className="dashboard-grid px-4">
+          <MetricCard icon={DollarSign} label="Per Hour" value={`$${form.hourly_rate || 0}`} />
+          <MetricCard icon={DollarSign} label="Per Session" value={`$${form.per_session_rate || 0}`} tone="green" />
+          <MetricCard icon={Grid} label="Categories" value={(form.categories || []).length} tone="blue" />
+          <MetricCard icon={Star} label="Skills" value={(form.skills || []).length} tone="amber" />
         </div>
 
         {/* Editable Sections */}
@@ -458,7 +456,7 @@ export default function AvatarProfileEdit() {
                 </div>
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-medium text-green-400 truncate">{form.cv_filename || 'CV uploaded'}</p>
-                  <a href={form.cv_url} target="_blank" rel="noopener noreferrer" className="text-xs text-muted-foreground hover:text-primary">View CV →</a>
+                  <a href={form.cv_url} target="_blank" rel="noopener noreferrer" className="text-xs text-muted-foreground hover:text-primary">View CV ???</a>
                 </div>
                 <div className="flex gap-2 shrink-0">
                   <button onClick={() => cvInputRef.current?.click()} disabled={uploadingCv} className="text-xs text-primary hover:underline">
@@ -494,7 +492,7 @@ export default function AvatarProfileEdit() {
             {isSaving ? (
               <><Loader2 className="w-4 h-4 animate-spin mr-2" /> Saving...</>
             ) : lastSaved ? (
-              '✓ Save Changes'
+              '??? Save Changes'
             ) : (
               'Save Changes'
             )}
@@ -535,7 +533,7 @@ export default function AvatarProfileEdit() {
                       ? <video src={post.media_url} className="w-full h-full object-cover" muted />
                       : <img src={post.media_url} alt={post.caption} className="w-full h-full object-cover" />}
                     {post.type === 'video' && (
-                      <div className="absolute top-2 right-2 bg-black/60 text-white text-[9px] px-1.5 py-0.5 rounded-full">▶</div>
+                      <div className="absolute top-2 right-2 bg-black/60 text-white text-[9px] px-1.5 py-0.5 rounded-full">???</div>
                     )}
                     {/* Edit & Delete Buttons */}
                     <div className="absolute top-2 left-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
@@ -598,3 +596,4 @@ export default function AvatarProfileEdit() {
     </AppShell>
   );
 }
+
