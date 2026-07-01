@@ -90,7 +90,7 @@ export default function EnterpriseDashboard() {
             </p>
           </div>
           <Link to="/FindPeople">
-            <Button size="lg" className="bg-primary hover:bg-primary/90 glow-primary-sm shrink-0">
+            <Button size="lg" className="bg-primary hover:bg-primary/90 shrink-0">
               <Plus className="w-5 h-5 mr-2" /> Deploy Agent
             </Button>
           </Link>
@@ -106,12 +106,12 @@ export default function EnterpriseDashboard() {
               <p className="text-2xl font-bold">{avgRating}</p>
               <p className="text-xs text-muted-foreground mb-1">/ 5</p>
             </div>
-            <p className="text-xs text-muted-foreground mt-1">Avg Client Rating ?? {myReviews.length} review{myReviews.length !== 1 ? 's' : ''}</p>
+            <p className="text-xs text-muted-foreground mt-1">Avg Client Rating · {myReviews.length} review{myReviews.length !== 1 ? 's' : ''}</p>
           </GlassCard>
         )}
         {[
           { label: 'Active Sessions', value: activeBookings.length, icon: Calendar, color: 'text-blue-400' },
-          { label: 'Total Bookings', value: bookings.length, icon: FileText, color: 'text-purple-400' },
+          { label: 'Total Tasks', value: bookings.length, icon: FileText, color: 'text-purple-400' },
           { label: 'Total Spend', value: `$${totalSpend.toLocaleString()}`, icon: DollarSign, color: 'text-green-400' },
           { label: 'Pending', value: pendingCount, icon: Clock, color: 'text-yellow-400' },
         ].map(stat => (
@@ -129,12 +129,12 @@ export default function EnterpriseDashboard() {
           <p className="text-sm font-medium mb-1">Complete your company profile</p>
           <p className="text-xs text-muted-foreground mb-3">Add your company details to unlock enterprise features.</p>
           <Link to="/EnterpriseSettings">
-            <Button size="sm" variant="outline">Set up profile ???</Button>
+            <Button size="sm" variant="outline">Set up profile →</Button>
           </Link>
         </GlassCard>
       )}
 
-      {/* Recent Bookings */}
+      {/* Recent Tasks */}
       <section className="space-y-4">
         <SectionTitle
           title="Recent Sessions"
@@ -148,7 +148,7 @@ export default function EnterpriseDashboard() {
                   <div>
                     <p className="font-medium text-sm">{b.category}</p>
                     <p className="text-xs text-muted-foreground mt-1">
-                      {b.avatar_name} ?? {b.scheduled_date ? `${b.scheduled_date}${b.scheduled_time ? ` at ${b.scheduled_time}` : ''}` : 'Pending'} ?? {b.location || 'TBD'}
+                      {b.avatar_name} · {b.scheduled_date ? `${b.scheduled_date}${b.scheduled_time ? ` at ${b.scheduled_time}` : ''}` : 'Pending'} · {b.location || 'TBD'}
                     </p>
                   </div>
                   <div className="flex items-center gap-3">
@@ -167,4 +167,3 @@ export default function EnterpriseDashboard() {
     </AppShell>
   );
 }
-
