@@ -123,7 +123,7 @@ export default function JobMarketplace() {
           <div className="space-y-3">
             {sortedFiltered.map(job => (
               <Link key={job.id} to={`/JobDetail?id=${job.id}`}>
-                <div className="glass glass-hover rounded-lg p-5 md:p-6 space-y-4">
+                <div className="surface-panel rounded-lg p-5 md:p-6 space-y-4 transition-all hover:border-primary/30">
                   {/* Title row */}
                   <div className="flex items-start justify-between gap-3">
                     <div>
@@ -193,4 +193,3 @@ export default function JobMarketplace() {
     </AppShell>
   );
 }
-
