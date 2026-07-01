@@ -48,7 +48,7 @@ export default function RoleSwitcher({ user }) {
           className="w-full justify-start"
           onClick={() => switchRole('avatar')}
         >
-          <Users className="w-4 h-4 mr-2" /> Avatar
+          <Users className="w-4 h-4 mr-2" /> Local Agent
         </Button>
         <Button
           size="sm"
