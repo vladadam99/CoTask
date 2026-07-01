@@ -11,10 +11,16 @@ const statusStyles = {
   completed: 'bg-green-100 text-green-800 border-green-200 dark:bg-green-500/10 dark:text-green-400 dark:border-green-500/20',
   cancelled: 'bg-secondary text-muted-foreground border-border',
   disputed: 'bg-orange-100 text-orange-800 border-orange-200 dark:bg-orange-500/10 dark:text-orange-400 dark:border-orange-500/20',
+  awaiting_approval: 'bg-yellow-100 text-yellow-800 border-yellow-200 dark:bg-yellow-500/10 dark:text-yellow-400 dark:border-yellow-500/20',
   active: 'bg-green-100 text-green-800 border-green-200 dark:bg-green-500/10 dark:text-green-400 dark:border-green-500/20',
   inactive: 'bg-secondary text-muted-foreground border-border',
   verified: 'bg-blue-100 text-blue-800 border-blue-200 dark:bg-blue-500/10 dark:text-blue-400 dark:border-blue-500/20',
   paid: 'bg-green-100 text-green-800 border-green-200 dark:bg-green-500/10 dark:text-green-400 dark:border-green-500/20',
+  released: 'bg-green-100 text-green-800 border-green-200 dark:bg-green-500/10 dark:text-green-400 dark:border-green-500/20',
+  refunded: 'bg-blue-100 text-blue-800 border-blue-200 dark:bg-blue-500/10 dark:text-blue-400 dark:border-blue-500/20',
+  failed: 'bg-red-100 text-red-800 border-red-200 dark:bg-red-500/10 dark:text-red-400 dark:border-red-500/20',
+  payment_required: 'bg-yellow-100 text-yellow-800 border-yellow-200 dark:bg-yellow-500/10 dark:text-yellow-400 dark:border-yellow-500/20',
+  held: 'bg-slate-100 text-slate-800 border-slate-200 dark:bg-slate-500/10 dark:text-slate-300 dark:border-slate-500/20',
   waiting: 'bg-yellow-100 text-yellow-800 border-yellow-200 dark:bg-yellow-500/10 dark:text-yellow-400 dark:border-yellow-500/20',
   ended: 'bg-secondary text-muted-foreground border-border',
 };
@@ -26,8 +32,12 @@ export default function StatusBadge({ status }) {
   if (status === 'pending') label = 'Waiting for Local Agent';
   if (status === 'accepted') label = 'Local Agent Accepted';
   if (status === 'payment_required') label = 'Secure Payment Required';
+  if (status === 'pending_payment') label = 'Secure Payment Pending';
   if (status === 'held') label = 'Secure Payment Held';
   if (status === 'awaiting_approval') label = 'Waiting for Client Approval';
+  if (status === 'released') label = 'Paid / Released';
+  if (status === 'paid') label = 'Paid / Released';
+  if (status === 'failed') label = 'Payment Failed';
 
   return (
     <Badge variant="outline" className={`${style} border rounded-full px-2.5 py-1 text-[11px] font-bold leading-none`}>
@@ -35,4 +45,3 @@ export default function StatusBadge({ status }) {
     </Badge>
   );
 }
-
