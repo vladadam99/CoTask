@@ -207,7 +207,13 @@ export default function AvatarProfileEdit() {
     return (
       <AppShell navItems={getNavItems(user?.selected_role || user?.role || 'user')} user={user}>
         <GlassCard className="p-10 text-center max-w-md mx-auto mt-20">
-          <p className="text-muted-foreground text-sm">No agent profile found. Complete onboarding first.</p>
+          <div className="space-y-4">
+            <div>
+              <p className="font-semibold">Complete agent setup</p>
+              <p className="text-muted-foreground text-sm mt-1">Create your Local Agent profile before editing services, portfolio, and rates.</p>
+            </div>
+            <Button onClick={() => navigate('/Onboarding?role=avatar')}>Complete Agent Setup</Button>
+          </div>
         </GlassCard>
       </AppShell>
     );
