@@ -22,8 +22,8 @@ export default function SplashScreen({ onDone }) {
   useEffect(() => {
     const timer = setTimeout(() => {
       setVisible(false);
-      setTimeout(onDone, 700);
-    }, 2600);
+      setTimeout(onDone, 250);
+    }, 900);
     return () => clearTimeout(timer);
   }, []);
 
@@ -35,11 +35,11 @@ export default function SplashScreen({ onDone }) {
           initial={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.7, ease: 'easeInOut' }}
-          className="fixed inset-0 z-[9999] flex items-center justify-center overflow-hidden"
-          style={{ background: 'hsl(220 20% 7%)' }}
+          className="fixed inset-0 z-[9999] flex items-center justify-center overflow-hidden pointer-events-none"
+          style={{ background: 'hsl(var(--background))' }}
         >
           {/* Radial glow behind logo */}
-          <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+          <div className="hidden">
             <motion.div
               className="w-96 h-96 rounded-full"
               style={{ background: 'radial-gradient(circle, hsl(355 80% 48% / 0.4) 0%, transparent 70%)' }}
@@ -49,7 +49,7 @@ export default function SplashScreen({ onDone }) {
           </div>
 
           {/* Shapes */}
-          {shapes.map((s, i) => (
+          {[].map((s, i) => (
             <motion.div
               key={i}
               className="absolute"
@@ -86,7 +86,7 @@ export default function SplashScreen({ onDone }) {
           ))}
 
           {/* Particle dots */}
-          {Array.from({ length: 18 }).map((_, i) => (
+          {Array.from({ length: 0 }).map((_, i) => (
             <motion.div
               key={`dot-${i}`}
               className="absolute rounded-full"
@@ -112,20 +112,20 @@ export default function SplashScreen({ onDone }) {
           >
             <motion.div
               className="w-20 h-20 rounded-2xl flex items-center justify-center"
-              style={{ background: 'hsl(355 80% 48%)', boxShadow: '0 0 40px hsl(355 80% 48% / 0.8), 0 0 80px hsl(355 80% 48% / 0.4)' }}
+              style={{ background: 'hsl(var(--primary))', boxShadow: '0 18px 50px hsl(var(--primary) / 0.24)' }}
               animate={{ rotate: [0, 6, -6, 0], scale: [1, 1.05, 1] }}
               transition={{ duration: 2.5, repeat: Infinity, ease: 'easeInOut' }}
             >
               <span className="text-3xl font-black text-white">C</span>
             </motion.div>
             <motion.p
-              className="text-3xl font-black tracking-tight text-white"
-              style={{ textShadow: '0 0 30px hsl(355 80% 48% / 0.8)' }}
+              className="text-3xl font-black tracking-tight text-foreground"
+              style={{ textShadow: 'none' }}
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.5, duration: 0.4 }}
             >
-              Co<span style={{ color: 'hsl(355 80% 58%)' }}>Task</span>
+              Co<span className="text-primary">Task</span>
             </motion.p>
           </motion.div>
         </motion.div>
