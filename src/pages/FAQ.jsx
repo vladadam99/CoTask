@@ -4,43 +4,74 @@ import Footer from '@/components/landing/Footer';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 
 const faqs = [
-  { q: 'What is CoTask?', a: 'CoTask is a live human presence marketplace. It connects people and businesses with local avatars who can physically go to a location and act as your remote eyes, hands, and guide in real time.' },
-  { q: 'How is this different from a video call?', a: "Unlike video calls, your CoTask avatar is physically at the location. They walk, interact, pick things up, ask questions, and stream everything live. It's real-world presence, not screen-to-screen communication." },
-  { q: 'What can I use CoTask for?', a: 'Live city tours, property walkthroughs, shopping assistance, event attendance, queue standing, campus tours, business site inspections, product demos, family support, and much more.' },
-  { q: 'How do I become an agent?', a: 'Sign up, choose "Local Agent" as your role, complete your profile, pass verification, and start accepting tasks. All you need is a smartphone and reliable internet connection.' },
-  { q: 'How much do avatars earn?', a: 'Avatars set their own rates and keep 85% of every booking. Rates vary by service type, location, and experience. Most avatars earn between $25???$100 per hour.' },
-  { q: 'Is CoTask safe?', a: 'Yes. All avatars go through identity verification. Every session is tracked. Both parties can rate and review. We have a dedicated trust and safety team.' },
-  { q: 'What equipment do avatars need?', a: 'At minimum, a smartphone with good data connection. For premium experiences, a headset, 360?? camera, or specialized equipment may be beneficial.' },
-  { q: 'Does CoTask support businesses?', a: 'Absolutely. Our Enterprise plan offers bulk booking, custom invoicing, team management, and dedicated support for business use cases like site inspections and field operations.' },
-  { q: 'How do payments work?', a: 'Users pay securely through the platform when booking. Avatars receive payouts after sessions are completed. Enterprise clients can opt for monthly invoicing.' },
-  { q: 'What about live video streaming?', a: 'We are actively developing real-time video, audio, and 360?? streaming capabilities. The current beta focuses on booking, coordination, and session management. Full live streaming is coming soon.' },
+  {
+    q: 'What is CoTask?',
+    a: 'CoTask is a marketplace for remote physical tasks. It connects people and businesses with Local Agents who can visit a location, inspect something, record proof, or livestream when available.',
+  },
+  {
+    q: 'How is this different from a video call?',
+    a: 'A Local Agent is physically at the location. They can follow your instructions, show details on camera, ask local questions, and upload proof for review.',
+  },
+  {
+    q: 'What can I use CoTask for?',
+    a: 'Common uses include property walkthroughs, vehicle checks, local errands, event attendance, queue checks, campus visits, business site inspections, product demos, and local verification tasks.',
+  },
+  {
+    q: 'How do I become a Local Agent?',
+    a: 'Sign up, choose Local Agent as your role, complete your profile, add services and availability, and complete any required verification steps shown in the app.',
+  },
+  {
+    q: 'How do Local Agents set prices?',
+    a: 'Local Agents set their own rates or task prices. The final amount is shown before a request is sent or a Secure Payment checkout is started.',
+  },
+  {
+    q: 'Is CoTask safe?',
+    a: 'CoTask includes profile reviews, task records, proof uploads, messaging, verification workflows where available, and issue reporting so both sides have context if a task needs review.',
+  },
+  {
+    q: 'What equipment do Local Agents need?',
+    a: 'At minimum, a smartphone with a reliable data connection. Some tasks may request extra equipment such as a headset, vehicle, laptop, drone, or 360-degree camera.',
+  },
+  {
+    q: 'How do payments work?',
+    a: 'Clients fund Secure Payment when required. Funds are held for the task and released after approval or a reviewed resolution.',
+  },
+  {
+    q: 'Does CoTask support businesses?',
+    a: 'Yes. Enterprise workflows are designed for teams coordinating remote inspections, site checks, field support, and repeat multi-location tasks.',
+  },
+  {
+    q: 'What about live video streaming?',
+    a: 'Live video is available for supported sessions and devices. If live video is not part of a task, messaging and proof uploads can still be used for coordination and review.',
+  },
 ];
 
 export default function FAQ() {
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen bg-background">
       <InfoPageHeader />
-      <div className="pt-24 pb-20 px-6 max-w-3xl mx-auto">
-        <div className="relative overflow-hidden rounded-lg border border-border bg-foreground p-6 md:p-8 text-center text-background shadow-sm mb-12">
-          <p className="text-xs font-bold tracking-[0.18em] text-primary">Help center</p>
-          <h1 className="text-4xl font-black mt-3 mb-4 text-white">Frequently Asked Questions</h1>
-          <p className="text-white/70">Everything you need to know about CoTask</p>
+      <main className="px-6 pb-20 pt-24">
+        <div className="mx-auto max-w-3xl">
+          <div className="mb-10 rounded-lg border border-border bg-card p-6 text-center shadow-sm md:p-8">
+            <p className="text-xs font-bold tracking-[0.18em] text-primary">Help center</p>
+            <h1 className="mt-3 text-4xl font-black text-foreground">Frequently Asked Questions</h1>
+            <p className="mt-3 text-muted-foreground">Clear answers about tasks, Local Agents, live sessions, and Secure Payment.</p>
+          </div>
+          <Accordion type="single" collapsible className="space-y-3">
+            {faqs.map((faq, i) => (
+              <AccordionItem key={faq.q} value={`faq-${i}`} className="surface-panel rounded-lg border-border px-6">
+                <AccordionTrigger className="text-left text-sm font-medium hover:no-underline">
+                  {faq.q}
+                </AccordionTrigger>
+                <AccordionContent className="text-sm leading-relaxed text-muted-foreground">
+                  {faq.a}
+                </AccordionContent>
+              </AccordionItem>
+            ))}
+          </Accordion>
         </div>
-        <Accordion type="single" collapsible className="space-y-3">
-          {faqs.map((faq, i) => (
-            <AccordionItem key={i} value={`faq-${i}`} className="surface-panel rounded-lg border-border px-6">
-              <AccordionTrigger className="text-left text-sm font-medium hover:no-underline">
-                {faq.q}
-              </AccordionTrigger>
-              <AccordionContent className="text-sm text-muted-foreground leading-relaxed">
-                {faq.a}
-              </AccordionContent>
-            </AccordionItem>
-          ))}
-        </Accordion>
-      </div>
+      </main>
       <Footer />
     </div>
   );
 }
-
