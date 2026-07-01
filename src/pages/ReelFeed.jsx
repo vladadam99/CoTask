@@ -46,7 +46,7 @@ export default function ReelFeed() {
           <input
             value={search}
             onChange={e => setSearch(e.target.value)}
-            placeholder="Search reels..."
+            placeholder="Search portfolio media..."
             className="w-full bg-secondary/60 border border-border rounded-xl pl-9 pr-4 py-2 text-sm focus:outline-none focus:border-primary/50"
           />
         </div>
@@ -79,7 +79,7 @@ export default function ReelFeed() {
           </div>
         )}
 
-        {/* Reels Grid */}
+        {/* Portfolio media grid */}
         {isLoading ? (
           <div className="grid grid-cols-2 gap-3">
             {[1,2,3,4,5,6].map(i => (
@@ -152,11 +152,11 @@ export default function ReelFeed() {
         ) : (
           <div className="glass rounded-2xl p-12 text-center">
             <Play className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-            <h3 className="font-semibold mb-2">No reels yet</h3>
+            <h3 className="font-semibold mb-2">No portfolio media yet</h3>
             <p className="text-sm text-muted-foreground mb-4">
-              {search ? 'No reels match your search.' : 'Avatars will publish reels from their recordings.'}
+              {search ? 'No portfolio media matches your search.' : 'Local Agents can publish portfolio media from their recordings.'}
             </p>
-            <Link to="/Explore" className="text-primary text-sm hover:underline">Explore Avatars →</Link>
+            <Link to="/Explore" className="text-primary text-sm hover:underline">Explore Local Agents</Link>
           </div>
         )}
       </div>
