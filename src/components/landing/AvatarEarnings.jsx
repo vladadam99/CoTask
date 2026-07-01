@@ -27,7 +27,7 @@ export default function AvatarEarnings() {
             </p>
 
             {/* Earnings stat block */}
-            <div className="border border-border rounded-3xl p-8 mb-10 bg-white/3">
+            <div className="border border-border rounded-lg p-6 md:p-8 mb-10 bg-card shadow-sm">
               <p className="text-white/40 text-sm mb-2">Top avatars earn</p>
               <div className="flex items-end gap-2 mb-1">
                 <span className="text-6xl font-black text-white">$1,200</span>
@@ -53,7 +53,7 @@ export default function AvatarEarnings() {
           <div className="grid grid-cols-2 gap-4">
             {perks.map((perk, i) => (
               <motion.div key={perk.title} initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }}
-                className="rounded-3xl border border-white/8 bg-white/3 p-6 hover:bg-white/6 transition-colors">
+                className="rounded-lg border border-border bg-card p-6 hover:bg-secondary/60 hover:border-primary/30 transition-colors">
                 <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center mb-5">
                   <perk.icon className="w-5 h-5 text-primary" />
                 </div>
