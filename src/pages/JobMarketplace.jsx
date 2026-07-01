@@ -48,16 +48,17 @@ export default function JobMarketplace() {
     <AppShell navItems={getNavItems(user?.selected_role || user?.role || 'user')} user={user}>
       <div className="space-y-6">
         {/* Header */}
-        <div className="flex items-center justify-between">
+        <div className="page-header">
           <div>
-            <h1 className="text-2xl font-bold">Task Board</h1>
-            <p className="text-muted-foreground text-sm mt-1">
-              {canApply ? 'Find Open Tasks from clients looking for Local Agents.' : 'Post tasks and find the perfect Local Agent.'}
+            <p className="page-kicker">Marketplace</p>
+            <h1 className="page-title">Task Board</h1>
+            <p className="page-subtitle">
+              {canApply ? 'Browse open work, filter by category, and open the details before sending a proposal.' : 'Create open tasks, compare proposals, and find the right Local Agent.'}
             </p>
           </div>
           {canPost && (
             <Link to="/PostJob">
-              <Button className="gap-2">
+              <Button size="lg" className="gap-2 w-full sm:w-auto">
                 <Plus className="w-4 h-4" /> Post a Task
               </Button>
             </Link>
@@ -65,7 +66,7 @@ export default function JobMarketplace() {
         </div>
 
         {/* Search + Filter bar */}
-        <div className="glass rounded-2xl p-4 space-y-3">
+        <div className="surface-panel rounded-lg p-4 md:p-5 space-y-4">
           <SmartSearchBar
             items={jobs}
             itemSummaryFn={jobSummaryFn}
@@ -104,7 +105,7 @@ export default function JobMarketplace() {
             {[1,2,3].map(i => <div key={i} className="glass rounded-2xl p-5 animate-pulse h-28 border border-border" />)}
           </div>
         ) : filtered.length === 0 ? (
-          <div className="glass rounded-2xl p-12 text-center flex flex-col items-center justify-center">
+          <div className="surface-panel rounded-lg p-10 md:p-12 text-center flex flex-col items-center justify-center">
             <div className="w-16 h-16 rounded-full bg-secondary flex items-center justify-center mb-4">
               <Briefcase className="w-8 h-8 text-muted-foreground" />
             </div>
@@ -120,7 +121,7 @@ export default function JobMarketplace() {
           <div className="space-y-3">
             {sortedFiltered.map(job => (
               <Link key={job.id} to={`/JobDetail?id=${job.id}`}>
-                <div className="glass border border-border hover:border-primary/30 rounded-2xl p-6 transition-all hover:scale-[1.005] space-y-4">
+                <div className="glass glass-hover rounded-lg p-5 md:p-6 space-y-4">
                   {/* Title row */}
                   <div className="flex items-start justify-between gap-3">
                     <div>
