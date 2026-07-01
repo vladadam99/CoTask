@@ -95,7 +95,7 @@ export default function EnterpriseSettings() {
           <p className="text-muted-foreground text-sm">Update company profile, operations, service cities, and billing preferences.</p>
         </div>
         <Button onClick={handleSave} disabled={updateProfile.isPending || !profile} className="gap-2">
-          <Save className="w-4 h-4" /> {updateProfile.isPending ? 'Saving???' : 'Save Changes'}
+          <Save className="w-4 h-4" /> {updateProfile.isPending ? 'Saving…' : 'Save Changes'}
         </Button>
       </div>
 
@@ -176,13 +176,13 @@ export default function EnterpriseSettings() {
             <div>
               <label className="text-xs text-muted-foreground mb-1 block">Invoice Preference</label>
               <select value={form.invoice_preference} onChange={set('invoice_preference')} className="w-full px-3 py-2 bg-card border border-border rounded-md text-sm">
-                <option value="per_booking">Per Booking</option>
+                <option value="per_booking">Per Task</option>
                 <option value="monthly">Monthly</option>
                 <option value="quarterly">Quarterly</option>
               </select>
             </div>
             <div>
-              <label className="text-xs text-muted-foreground mb-1 block">Booking Needs</label>
+              <label className="text-xs text-muted-foreground mb-1 block">Task Needs</label>
               <Textarea value={form.booking_needs} onChange={set('booking_needs')} rows={3} className="bg-card border-border resize-none" placeholder="Describe your typical booking needs..." />
             </div>
           </GlassCard>
@@ -191,4 +191,3 @@ export default function EnterpriseSettings() {
     </AppShell>
   );
 }
-
