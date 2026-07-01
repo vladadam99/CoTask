@@ -7,21 +7,21 @@ import { Search, Star, Clock, Shield, MapPin, X } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 const TOPICS = [
-  { label: 'All', icon: '???' },
-  { label: 'Technology', icon: '????' },
-  { label: 'Business', icon: '????' },
-  { label: 'Language Learning', icon: '????' },
-  { label: 'Health & Wellness', icon: '????' },
-  { label: 'Creative Arts', icon: '????' },
-  { label: 'Finance', icon: '????' },
-  { label: 'Law & Legal', icon: '??????' },
-  { label: 'Education', icon: '????' },
-  { label: 'Marketing', icon: '????' },
-  { label: 'Science', icon: '????' },
-  { label: 'Cooking', icon: '????' },
-  { label: 'Music', icon: '????' },
-  { label: 'Career Advice', icon: '????' },
-  { label: 'Other', icon: '????' },
+  { label: 'All', icon: '✨' },
+  { label: 'Technology', icon: '💻' },
+  { label: 'Business', icon: '📈' },
+  { label: 'Language Learning', icon: '🌍' },
+  { label: 'Health & Wellness', icon: '🏃' },
+  { label: 'Creative Arts', icon: '🎨' },
+  { label: 'Finance', icon: '💰' },
+  { label: 'Law & Legal', icon: '⚖️' },
+  { label: 'Education', icon: '🎓' },
+  { label: 'Marketing', icon: '📣' },
+  { label: 'Science', icon: '🔬' },
+  { label: 'Cooking', icon: '🍳' },
+  { label: 'Music', icon: '🎵' },
+  { label: 'Career Advice', icon: '🧭' },
+  { label: 'Other', icon: '💡' },
 ];
 
 const SESSION_TYPE_LABELS = {
@@ -33,11 +33,11 @@ const SESSION_TYPE_LABELS = {
 };
 
 const SESSION_TYPE_ICONS = {
-  consultation: '????',
-  class: '????',
-  coaching: '????',
-  qa_session: '???',
-  mentoring: '????',
+  consultation: '💬',
+  class: '📚',
+  coaching: '🎯',
+  qa_session: '❓',
+  mentoring: '🧠',
 };
 
 export default function ExpertSearchSection({ user }) {
@@ -160,7 +160,7 @@ function OfferingCard({ offering, avatar, i }) {
   return (
     <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: Math.min(i * 0.04, 0.3) }}>
       <Link to={`/ConsultationBooking?avatar=${offering.avatar_profile_id}&offering=${offering.id}`}>
-        <div className="surface-panel glass-hover rounded-lg p-5 transition-all flex flex-col gap-4">
+        <div className="surface-panel rounded-lg p-5 transition-all hover:border-primary/30 flex flex-col gap-4">
           <div>
             <h3 className="font-black text-lg leading-snug mb-2">{offering.title}</h3>
             <div className="flex items-center justify-between gap-2">
@@ -217,4 +217,3 @@ function OfferingCard({ offering, avatar, i }) {
     </motion.div>
   );
 }
-
