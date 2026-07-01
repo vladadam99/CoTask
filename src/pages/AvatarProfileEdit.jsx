@@ -456,7 +456,7 @@ export default function AvatarProfileEdit() {
                 </div>
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-medium text-green-400 truncate">{form.cv_filename || 'CV uploaded'}</p>
-                  <a href={form.cv_url} target="_blank" rel="noopener noreferrer" className="text-xs text-muted-foreground hover:text-primary">View CV ???</a>
+                  <a href={form.cv_url} target="_blank" rel="noopener noreferrer" className="text-xs text-muted-foreground hover:text-primary">View CV →</a>
                 </div>
                 <div className="flex gap-2 shrink-0">
                   <button onClick={() => cvInputRef.current?.click()} disabled={uploadingCv} className="text-xs text-primary hover:underline">
@@ -492,7 +492,7 @@ export default function AvatarProfileEdit() {
             {isSaving ? (
               <><Loader2 className="w-4 h-4 animate-spin mr-2" /> Saving...</>
             ) : lastSaved ? (
-              '??? Save Changes'
+              '✓ Save Changes'
             ) : (
               'Save Changes'
             )}
@@ -533,7 +533,7 @@ export default function AvatarProfileEdit() {
                       ? <video src={post.media_url} className="w-full h-full object-cover" muted />
                       : <img src={post.media_url} alt={post.caption} className="w-full h-full object-cover" />}
                     {post.type === 'video' && (
-                      <div className="absolute top-2 right-2 bg-black/60 text-white text-[9px] px-1.5 py-0.5 rounded-full">???</div>
+                      <div className="absolute top-2 right-2 bg-black/60 text-white text-[9px] px-1.5 py-0.5 rounded-full">▶</div>
                     )}
                     {/* Edit & Delete Buttons */}
                     <div className="absolute top-2 left-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
@@ -596,4 +596,3 @@ export default function AvatarProfileEdit() {
     </AppShell>
   );
 }
-
