@@ -1,14 +1,14 @@
 import React, { useState } from 'react';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { CalendarDays, ChevronLeft, ChevronRight, Sparkles } from 'lucide-react';
 import { format, startOfMonth, endOfMonth, startOfWeek, endOfWeek, addMonths, subMonths, isBefore, isAfter, isSameDay, isSameMonth, addDays } from 'date-fns';
 
 const DAYS = ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su'];
 const FLEX_OPTIONS = [
-  { label: 'Exact dates', value: 0 },
-  { label: '± 1 day', value: 1 },
-  { label: '± 2 days', value: 2 },
-  { label: '± 3 days', value: 3 },
-  { label: '± 7 days', value: 7 },
+  { label: 'Exact', value: 0 },
+  { label: '+/- 1 day', value: 1 },
+  { label: '+/- 2 days', value: 2 },
+  { label: '+/- 3 days', value: 3 },
+  { label: '+/- 7 days', value: 7 },
 ];
 
 function getCalendarDays(month) {
@@ -23,14 +23,19 @@ function getCalendarDays(month) {
   return days;
 }
 
+function getNextWeekend(today) {
+  const day = today.getDay();
+  const daysUntilSaturday = (6 - day + 7) % 7 || 7;
+  return addDays(today, daysUntilSaturday);
+}
+
 export default function DatePicker({ mode, onModeChange, startDate, endDate, onStartDate, onEndDate, flexibility, onFlexibility }) {
   const today = new Date();
-  const [viewMonth, setViewMonth] = useState(startOfMonth(today));
+  const [viewMonth, setViewMonth] = useState(startOfMonth(startDate || today));
   const [selectingEnd, setSelectingEnd] = useState(false);
-
   const calDays = getCalendarDays(viewMonth);
 
-  const handleDayClick = (day) => {
+  const selectDay = (day) => {
     if (isBefore(day, today) && !isSameDay(day, today)) return;
 
     if (mode === 'dates') {
@@ -55,10 +60,18 @@ export default function DatePicker({ mode, onModeChange, startDate, endDate, onS
         setSelectingEnd(true);
       }
     } else {
-      // flexible: just pick one day
       onStartDate(day);
       onEndDate(null);
+      setSelectingEnd(false);
     }
+  };
+
+  const pickQuickDate = (day) => {
+    onModeChange('flexible');
+    onStartDate(day);
+    onEndDate(null);
+    setSelectingEnd(false);
+    setViewMonth(startOfMonth(day));
   };
 
   const isInRange = (day) => {
@@ -66,44 +79,89 @@ export default function DatePicker({ mode, onModeChange, startDate, endDate, onS
     return isAfter(day, startDate) && isBefore(day, endDate);
   };
 
-  const isStart = (day) => startDate && isSameDay(day, startDate);
-  const isEnd = (day) => endDate && isSameDay(day, endDate);
-  const isPast = (day) => isBefore(day, today) && !isSameDay(day, today);
+  const summary = startDate
+    ? endDate
+      ? `${format(startDate, 'MMM d')} - ${format(endDate, 'MMM d, yyyy')}`
+      : format(startDate, 'EEEE, MMM d')
+    : 'Choose a date';
 
   return (
     <div className="space-y-4">
+      <div className="grid grid-cols-2 gap-2">
+        {[
+          { key: 'dates', title: 'Set date', hint: 'Single day or range' },
+          { key: 'flexible', title: 'Flexible', hint: 'Best available day' },
+        ].map((option) => (
+          <button
+            key={option.key}
+            type="button"
+            onClick={() => onModeChange(option.key)}
+            className={`rounded-lg border p-3 text-left transition-all ${
+              mode === option.key
+                ? 'border-primary bg-primary/10 text-primary shadow-sm'
+                : 'border-border bg-card text-muted-foreground hover:border-primary/30 hover:text-foreground'
+            }`}
+          >
+            <span className="block text-sm font-semibold">{option.title}</span>
+            <span className="block text-xs mt-0.5">{option.hint}</span>
+          </button>
+        ))}
+      </div>
 
+      <div className="grid grid-cols-3 gap-2">
+        {[
+          { label: 'Today', value: today },
+          { label: 'Tomorrow', value: addDays(today, 1) },
+          { label: 'Weekend', value: getNextWeekend(today) },
+        ].map((option) => (
+          <button
+            key={option.label}
+            type="button"
+            onClick={() => pickQuickDate(option.value)}
+            className="rounded-lg border border-border bg-card px-3 py-2 text-xs font-semibold text-muted-foreground transition-colors hover:border-primary/30 hover:text-primary"
+          >
+            {option.label}
+          </button>
+        ))}
+      </div>
 
-      {/* Calendar */}
-      <div>
-        {/* Month nav */}
-        <div className="flex items-center justify-between mb-3">
-          <button type="button" onClick={() => setViewMonth(m => subMonths(m, 1))}
+      <div className="rounded-lg border border-border bg-card p-3 shadow-sm">
+        <div className="flex items-center justify-between pb-3">
+          <button
+            type="button"
+            onClick={() => setViewMonth((m) => subMonths(m, 1))}
             disabled={isBefore(endOfMonth(viewMonth), today)}
-            className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-secondary disabled:opacity-30 transition-colors">
+            className="h-9 w-9 rounded-lg border border-border bg-background flex items-center justify-center text-muted-foreground transition-colors hover:text-foreground disabled:opacity-30"
+          >
             <ChevronLeft className="w-4 h-4" />
           </button>
-          <span className="font-bold text-sm">{format(viewMonth, 'MMMM yyyy')}</span>
-          <button type="button" onClick={() => setViewMonth(m => addMonths(m, 1))}
-            className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-secondary transition-colors">
+          <div className="flex items-center gap-2 text-sm font-bold">
+            <CalendarDays className="w-4 h-4 text-primary" />
+            {format(viewMonth, 'MMMM yyyy')}
+          </div>
+          <button
+            type="button"
+            onClick={() => setViewMonth((m) => addMonths(m, 1))}
+            className="h-9 w-9 rounded-lg border border-border bg-background flex items-center justify-center text-muted-foreground transition-colors hover:text-foreground"
+          >
             <ChevronRight className="w-4 h-4" />
           </button>
         </div>
 
-        {/* Day headers */}
-        <div className="grid grid-cols-7 mb-1">
-          {DAYS.map(d => (
-            <div key={d} className="text-center text-xs text-muted-foreground font-medium py-1">{d}</div>
+        <div className="grid grid-cols-7 gap-1 pb-1">
+          {DAYS.map((day) => (
+            <div key={day} className="py-1 text-center text-[11px] font-bold text-muted-foreground">
+              {day}
+            </div>
           ))}
         </div>
 
-        {/* Days grid */}
-        <div className="grid grid-cols-7">
+        <div className="grid grid-cols-7 gap-1">
           {calDays.map((day, i) => {
             const inMonth = isSameMonth(day, viewMonth);
-            const past = isPast(day);
-            const start = isStart(day);
-            const end = isEnd(day);
+            const past = isBefore(day, today) && !isSameDay(day, today);
+            const start = startDate && isSameDay(day, startDate);
+            const end = endDate && isSameDay(day, endDate);
             const inRange = isInRange(day);
             const isToday = isSameDay(day, today);
 
@@ -111,55 +169,45 @@ export default function DatePicker({ mode, onModeChange, startDate, endDate, onS
               <button
                 key={i}
                 type="button"
-                onClick={() => handleDayClick(day)}
+                onClick={() => selectDay(day)}
                 disabled={past || !inMonth}
-                className={`
-                  relative h-10 w-full flex items-center justify-center text-sm transition-all
-                  ${!inMonth ? 'opacity-0 pointer-events-none' : ''}
-                  ${past ? 'opacity-25 cursor-not-allowed line-through' : 'cursor-pointer'}
-                  ${inRange ? 'bg-primary/15' : ''}
-                  ${start ? 'rounded-l-full' : ''}
-                  ${end ? 'rounded-r-full' : ''}
-                  ${!start && !end && inRange ? 'rounded-none' : ''}
-                `}
+                className={`relative h-10 rounded-lg text-sm font-semibold transition-all ${
+                  !inMonth ? 'pointer-events-none opacity-0' : ''
+                } ${past ? 'cursor-not-allowed text-muted-foreground/35' : 'text-foreground hover:bg-secondary'} ${
+                  inRange ? 'bg-primary/10 text-primary' : ''
+                } ${start || end ? 'bg-primary text-primary-foreground hover:bg-primary' : ''} ${
+                  isToday && !start && !end ? 'ring-1 ring-primary/40' : ''
+                }`}
               >
-                <span className={`
-                  w-9 h-9 flex items-center justify-center rounded-full font-medium z-10 transition-all
-                  ${start || end ? 'bg-foreground text-background' : ''}
-                  ${isToday && !start && !end ? 'border border-foreground/40' : ''}
-                  ${!start && !end && !past && inMonth ? 'hover:bg-secondary' : ''}
-                `}>
-                  {format(day, 'd')}
-                </span>
+                {format(day, 'd')}
               </button>
             );
           })}
         </div>
       </div>
 
-      {/* Flexibility pills — shown for both modes */}
-      <div className="flex flex-wrap gap-2 pt-1">
-        {FLEX_OPTIONS.map(opt => (
-          <button key={opt.value} type="button" onClick={() => onFlexibility(opt.value)}
-            className={`px-3 py-1.5 rounded-full text-xs font-medium border transition-all ${
-              flexibility === opt.value
-                ? 'bg-foreground text-background border-foreground'
-                : 'bg-secondary/60 text-muted-foreground border-border hover:border-border'
-            }`}>
-            {opt.label}
-          </button>
-        ))}
+      <div className="rounded-lg border border-border bg-secondary/40 p-3">
+        <div className="flex items-center gap-2 text-sm font-semibold text-foreground">
+          <Sparkles className="w-4 h-4 text-primary" />
+          {summary}
+        </div>
+        <div className="mt-3 flex flex-wrap gap-2">
+          {FLEX_OPTIONS.map((option) => (
+            <button
+              key={option.value}
+              type="button"
+              onClick={() => onFlexibility(option.value)}
+              className={`rounded-full border px-3 py-1.5 text-xs font-semibold transition-all ${
+                flexibility === option.value
+                  ? 'border-primary bg-primary text-primary-foreground'
+                  : 'border-border bg-card text-muted-foreground hover:border-primary/30 hover:text-foreground'
+              }`}
+            >
+              {option.label}
+            </button>
+          ))}
+        </div>
       </div>
-
-      {/* Selected summary */}
-      {startDate && (
-        <p className="text-xs text-muted-foreground text-center">
-          {endDate
-            ? `${format(startDate, 'MMM d')} – ${format(endDate, 'MMM d, yyyy')}`
-            : format(startDate, 'MMMM d, yyyy')}
-          {flexibility > 0 ? ` (±${flexibility} day${flexibility > 1 ? 's' : ''})` : ''}
-        </p>
-      )}
     </div>
   );
 }
