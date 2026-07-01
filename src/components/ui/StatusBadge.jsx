@@ -30,8 +30,9 @@ export default function StatusBadge({ status }) {
   if (status === 'awaiting_approval') label = 'Waiting for Client Approval';
 
   return (
-    <Badge variant="outline" className={`${style} border text-xs font-medium`}>
+    <Badge variant="outline" className={`${style} border rounded-full px-2.5 py-1 text-[11px] font-bold leading-none`}>
       {label}
     </Badge>
   );
 }
+
