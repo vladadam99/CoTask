@@ -4,7 +4,7 @@ import { Video, VideoOff, Eye, Camera } from 'lucide-react';
 export default function CameraOptionPicker({ value, onChange, premiumRate = 5 }) {
   return (
     <div className="space-y-3">
-      <label className="text-sm font-medium block">Job Mode</label>
+      <label className="text-sm font-medium block">Task Mode</label>
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
         {/* No Camera */}
         <button
@@ -22,7 +22,7 @@ export default function CameraOptionPicker({ value, onChange, premiumRate = 5 })
             </div>
             <span className="font-semibold text-sm">No Camera</span>
           </div>
-          <p className="text-xs leading-relaxed">Avatar completes the job without live stream. You can request progress photos anytime via chat. Job finishes with a proof photo.</p>
+          <p className="text-xs leading-relaxed">The Local Agent completes the task without a live stream. You can request progress photos in messages. The task finishes with proof for review.</p>
           <p className="text-xs font-medium text-green-400">Standard price</p>
         </button>
 
@@ -43,9 +43,9 @@ export default function CameraOptionPicker({ value, onChange, premiumRate = 5 })
             <span className="font-semibold text-sm">Live Camera</span>
             <span className="ml-auto text-xs bg-primary/20 text-primary px-2 py-0.5 rounded-full">+${premiumRate}/hr</span>
           </div>
-          <p className="text-xs leading-relaxed">Watch every step live via avatar's camera. More secure — you see exactly what's happening in real time.</p>
+          <p className="text-xs leading-relaxed">Watch the work live through the Local Agent's camera so you can guide the task in real time.</p>
           <div className="flex items-center gap-1.5 text-xs text-primary">
-            <Eye className="w-3 h-3" /> Live visibility · <Camera className="w-3 h-3" /> Progress photos
+            <Eye className="w-3 h-3" /> Live visibility <Camera className="w-3 h-3" /> Progress photos
           </div>
         </button>
       </div>
