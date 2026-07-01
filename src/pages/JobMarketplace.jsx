@@ -77,8 +77,8 @@ export default function JobMarketplace() {
           <div className="flex gap-2 overflow-x-auto pb-1">
             {CATEGORIES.map(cat => (
               <button key={cat} onClick={() => setCategory(cat)}
-                className={`flex-shrink-0 px-3 py-1.5 rounded-full text-xs font-medium transition-all ${
-                  cat === category ? 'bg-primary text-white' : 'bg-secondary border border-border text-muted-foreground hover:border-primary/30'
+                className={`flex-shrink-0 px-3 py-1.5 rounded-full text-xs font-medium border transition-all ${
+                  cat === category ? 'bg-primary text-primary-foreground border-primary shadow-sm' : 'bg-card border-border text-muted-foreground hover:border-primary/30 hover:text-foreground'
                 }`}>
                 {cat}
               </button>
@@ -86,11 +86,11 @@ export default function JobMarketplace() {
           </div>
           <div className="flex gap-2">
             <button onClick={() => setShowOpen(true)}
-              className={`text-xs px-3 py-1.5 rounded-full transition-all ${showOpen ? 'bg-green-500/20 text-green-400 border border-green-500/20' : 'bg-secondary text-muted-foreground border border-border'}`}>
+              className={`text-xs px-3 py-1.5 rounded-full border transition-all ${showOpen ? 'bg-green-500/10 text-green-700 border-green-500/20' : 'bg-card text-muted-foreground border-border hover:text-foreground'}`}>
               Open Tasks
             </button>
             <button onClick={() => setShowOpen(false)}
-              className={`text-xs px-3 py-1.5 rounded-full transition-all ${!showOpen ? 'bg-secondary text-foreground border border-border' : 'bg-secondary text-muted-foreground border border-border'}`}>
+              className={`text-xs px-3 py-1.5 rounded-full border transition-all ${!showOpen ? 'bg-card text-foreground border-primary/30' : 'bg-card text-muted-foreground border-border hover:text-foreground'}`}>
               All Tasks
             </button>
           </div>
@@ -102,7 +102,7 @@ export default function JobMarketplace() {
         {/* Job Cards */}
         {isLoading ? (
           <div className="space-y-3">
-            {[1,2,3].map(i => <div key={i} className="glass rounded-2xl p-5 animate-pulse h-28 border border-border" />)}
+            {[1,2,3].map(i => <div key={i} className="surface-panel rounded-lg p-5 animate-pulse h-28" />)}
           </div>
         ) : filtered.length === 0 ? (
           <div className="surface-panel rounded-lg p-10 md:p-12 text-center flex flex-col items-center justify-center">
