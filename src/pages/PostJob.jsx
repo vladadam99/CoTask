@@ -265,12 +265,12 @@ export default function PostJob() {
             </button>
             <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_320px] lg:items-end">
               <div>
-                <p className="text-xs font-bold uppercase tracking-[0.18em] text-primary">Open task brief</p>
+                <p className="text-xs font-bold tracking-[0.18em] text-primary">Open task brief</p>
                 <h1 className="mt-3 text-3xl md:text-4xl font-black tracking-tight text-white">
-                  {editJobId ? 'Refine your task brief' : 'Create a task agents can act on'}
+                  {editJobId ? 'Refine your open task' : 'Post an Open Task'}
                 </h1>
                 <p className="mt-3 max-w-2xl text-sm md:text-base leading-relaxed text-white/70">
-                  Shape the brief around outcome, place, timing, proof, and budget so proposals are easier to compare.
+                  Create a clear task brief so qualified Local Agents can send useful proposals.
                 </p>
               </div>
               <div className="grid grid-cols-3 gap-2 rounded-lg border border-white/15 bg-white/10 p-3 backdrop-blur">
@@ -388,8 +388,8 @@ export default function PostJob() {
               <SectionHeader
                 icon={DollarSign}
                 eyebrow="Step 3"
-                title="Budget and payment"
-                description="Set the amount agents should use when deciding whether to propose."
+                title="Budget / Secure Payment"
+                description="Set the amount agents should use when deciding whether to propose. You only fund Secure Payment after choosing who to work with."
               />
               <div className="grid grid-cols-1 md:grid-cols-[1fr_220px] gap-4 items-start">
                 <div className="grid grid-cols-2 gap-2">
@@ -568,7 +568,7 @@ export default function PostJob() {
                     {form.title?.trim() || 'Untitled task'}
                   </h3>
                   <p className="mt-1 text-sm text-muted-foreground">
-                    {form.category || 'Choose category'}{form.location ? ` ? ${form.location}` : ''}
+                    {form.category || 'Choose category'}{form.location ? ` - ${form.location}` : ''}
                   </p>
                 </div>
 
@@ -616,8 +616,11 @@ export default function PostJob() {
                 </div>
 
                 <Button className="w-full h-12 text-base" onClick={handleSubmit} disabled={submit.isPending}>
-                  {submit.isPending ? (editJobId ? 'Saving...' : 'Posting...') : (editJobId ? 'Save Changes' : 'Post Task')}
+                  {submit.isPending ? (editJobId ? 'Saving...' : 'Posting...') : (editJobId ? 'Save Changes' : 'Post Task for Proposals')}
                 </Button>
+                <p className="text-xs leading-relaxed text-muted-foreground">
+                  Open Tasks work best when you want several Local Agents to respond. Compare proposals, choose who to work with, then fund Secure Payment.
+                </p>
               </div>
             </div>
           </aside>
@@ -626,3 +629,4 @@ export default function PostJob() {
     </AppShell>
   );
 }
+
