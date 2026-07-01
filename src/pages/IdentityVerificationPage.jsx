@@ -37,7 +37,7 @@ export default function IdentityVerificationPage() {
   if (done) {
     return (
       <div className="min-h-screen flex items-center justify-center p-6">
-        <div className="glass rounded-2xl p-10 max-w-md w-full text-center space-y-4">
+        <div className="surface-panel rounded-lg p-10 max-w-md w-full text-center space-y-4">
           <div className="w-16 h-16 rounded-full bg-green-500/10 flex items-center justify-center mx-auto">
             <ShieldCheck className="w-8 h-8 text-green-400" />
           </div>
@@ -55,7 +55,7 @@ export default function IdentityVerificationPage() {
 
   return (
     <div className="min-h-screen flex items-center justify-center p-6">
-      <div className="glass rounded-2xl p-8 max-w-xl w-full space-y-6">
+      <div className="surface-panel rounded-lg p-8 max-w-xl w-full space-y-6">
         <button onClick={handleBack} className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors">
           <ArrowLeft className="w-4 h-4" /> Back
         </button>
