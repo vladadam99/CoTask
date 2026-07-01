@@ -9,7 +9,7 @@ import { Wallet, DollarSign, Clock, CheckCircle, AlertCircle, Download } from 'l
 import { jsPDF } from 'jspdf';
 import { EmptyState, PageHero, SectionTitle } from '@/components/ui/PagePrimitives';
 
-function downloadInvoice(tx, userEmail, userName) {
+function downloadInvoice(tx, userName) {
   const doc = new jsPDF();
   const invoiceNo = `INV-${tx.id.slice(-6).toUpperCase()}`;
   const date = new Date(tx.date).toLocaleDateString();
@@ -21,7 +21,7 @@ function downloadInvoice(tx, userEmail, userName) {
   doc.text(`Date: ${date}`, 20, 45);
   doc.text(`Role: Client`, 20, 52);
   doc.text(`Name: ${userName}`, 20, 59);
-  doc.text(`Email: ${userEmail}`, 20, 66);
+  doc.text(`Account: Client billing record`, 20, 66);
 
   doc.line(20, 72, 190, 72);
   doc.setFont('helvetica', 'bold');
@@ -39,7 +39,7 @@ function downloadInvoice(tx, userEmail, userName) {
   doc.text(`Status:`, 20, 141); doc.text(tx.status, 160, 141);
 
   doc.setFontSize(8); doc.setFont('helvetica', 'normal');
-  doc.text('CoTask Platform ?? cotask.app ?? support@cotask.app', 20, 280);
+  doc.text('CoTask Platform · cotask.app · support@cotask.app', 20, 280);
   doc.save(`cotask-invoice-${invoiceNo}.pdf`);
 }
 
@@ -81,7 +81,7 @@ export default function UserWallet() {
     ...[...releasedJobs, ...heldJobs].map(j => ({
       id: j.id,
       title: j.title,
-      to: j.assigned_to_email || j.winner_email || j.avatar_name || j.avatar_email,
+      to: j.avatar_name || j.assigned_to_name || 'Local Agent',
       amount: j.escrow_amount || j.budget_max || 0,
       date: j.released_at || j.ended_at || j.updated_date,
       status: j.payment_status || j.status,
@@ -89,8 +89,8 @@ export default function UserWallet() {
     })),
     ...[...releasedBookings, ...heldBookings].map(b => ({
       id: b.id,
-      title: `${b.category} Booking`,
-      to: b.avatar_name || b.avatar_email,
+      title: `${b.category} Task`,
+      to: b.avatar_name || 'Local Agent',
       amount: b.total_amount || b.amount || 0,
       date: b.released_at || b.updated_date,
       status: b.payment_status || b.status,
@@ -129,7 +129,7 @@ export default function UserWallet() {
             <span className="text-sm text-muted-foreground">Secure Payment Held</span>
           </div>
           <p className="text-2xl font-bold text-yellow-400">${pendingSecurePayment.toFixed(2)}</p>
-          <p className="text-xs text-muted-foreground mt-1">{pendingCount} task{pendingCount !== 1 ? 's' : ''} in progress ?? held securely</p>
+          <p className="text-xs text-muted-foreground mt-1">{pendingCount} task{pendingCount !== 1 ? 's' : ''} in progress · held securely</p>
         </GlassCard>
       </div>
 
@@ -152,13 +152,13 @@ export default function UserWallet() {
                   </div>
                   <div>
                     <p className="font-medium text-sm">{tx.title}</p>
-                    <p className="text-xs text-muted-foreground">To: {tx.to} ?? {new Date(tx.date).toLocaleDateString()}</p>
+                    <p className="text-xs text-muted-foreground">To: {tx.to} · {new Date(tx.date).toLocaleDateString()}</p>
                   </div>
                 </div>
                 <div className="text-right flex-shrink-0">
                   <p className="font-bold text-primary">-${tx.amount.toFixed(2)}</p>
                   <p className="text-xs text-muted-foreground capitalize mb-1">{tx.status}</p>
-                  <button onClick={() => downloadInvoice(tx, user.email, user.full_name)} className="flex items-center gap-1 text-xs text-primary hover:underline ml-auto">
+                  <button onClick={() => downloadInvoice(tx, user.full_name)} className="flex items-center gap-1 text-xs text-primary hover:underline ml-auto">
                     <Download className="w-3 h-3" /> Invoice PDF
                   </button>
                 </div>
@@ -171,4 +171,3 @@ export default function UserWallet() {
     </AppShell>
   );
 }
-
