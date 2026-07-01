@@ -8,7 +8,6 @@ import { CreditCard, RefreshCw, CheckCircle2, ChevronDown } from 'lucide-react';
 const METHODS = [
   { id: 'bank_transfer', label: 'Bank Transfer' },
   { id: 'paypal', label: 'PayPal' },
-  { id: 'stripe', label: 'Stripe Connect' },
   { id: 'wise', label: 'Wise' },
 ];
 
@@ -57,8 +56,8 @@ export default function PayoutSetup({ avatarEmail }) {
           <CreditCard className="w-4 h-4 text-green-400" />
         </div>
         <div>
-          <h2 className="font-semibold text-sm">Automated Payouts</h2>
-          <p className="text-xs text-muted-foreground">Configure how and when you receive your earnings</p>
+          <h2 className="font-semibold text-sm">Payout Settings</h2>
+          <p className="text-xs text-muted-foreground">Save payout preferences for manual Production V1 review</p>
         </div>
         {existing?.is_active && (
           <div className="ml-auto flex items-center gap-1.5 text-xs text-green-400">
@@ -146,6 +145,10 @@ export default function PayoutSetup({ avatarEmail }) {
         </div>
       )}
 
+      <div className="mb-5 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-xs leading-relaxed text-amber-800">
+        Payouts are reviewed and processed manually during Production V1.
+      </div>
+
       {/* Minimum payout */}
       <div className="flex items-center gap-4 mb-5">
         <div>
@@ -171,7 +174,7 @@ export default function PayoutSetup({ avatarEmail }) {
         className="gap-2"
       >
         {save.isPending ? <RefreshCw className="w-4 h-4 animate-spin" /> : <CheckCircle2 className="w-4 h-4" />}
-        {existing?.is_active ? 'Update Payout Settings' : 'Activate Automated Payouts'}
+        {existing?.is_active ? 'Update Payout Settings' : 'Save Payout Settings'}
       </Button>
     </GlassCard>
   );
