@@ -83,7 +83,7 @@ export default function AvatarDashboard() {
       <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="surface-panel rounded-lg p-5 md:p-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-6">
         <div>
           <p className="section-label">Agent workspace</p>
-          <h1 className="text-2xl lg:text-3xl font-black mb-1">Hey, {firstName} ????</h1>
+          <h1 className="text-2xl lg:text-3xl font-black mb-1">Welcome, {firstName}</h1>
           <p className="text-sm text-muted-foreground mb-2">Manage your tasks, live sessions, proposals, verification, and earnings.</p>
           <div className="flex items-center gap-2 text-sm">
             <span className={`w-2 h-2 rounded-full ${profile?.is_available ? 'bg-green-400 animate-pulse' : 'bg-muted-foreground'}`} />
@@ -120,7 +120,7 @@ export default function AvatarDashboard() {
             </p>
           </div>
           <Link to="/AvatarLive">
-            <Button size="lg" className="bg-primary hover:bg-primary/90 glow-primary font-bold shrink-0">
+            <Button size="lg" className="bg-primary hover:bg-primary/90 font-bold shrink-0">
               <Zap className="w-5 h-5 mr-2" /> Go Live
             </Button>
           </Link>
@@ -158,7 +158,7 @@ export default function AvatarDashboard() {
           <p className="text-sm font-bold mb-1">Complete agent setup to start accepting tasks</p>
           <p className="text-xs text-muted-foreground mb-3">Finish onboarding to create your Local Agent profile, services, rates, and availability.</p>
           <Link to="/Onboarding?role=avatar">
-            <Button size="sm" variant="outline" className="border-yellow-500/30 text-yellow-400">Complete Agent Setup ???</Button>
+            <Button size="sm" variant="outline" className="border-yellow-500/30 text-yellow-700">Complete Agent Setup</Button>
           </Link>
         </div>
       )}
@@ -224,7 +224,7 @@ export default function AvatarDashboard() {
                   <div>
                     <p className="font-semibold text-sm">{b.category}</p>
                     <p className="text-xs text-muted-foreground mt-1">
-                      {b.client_name} ?? {b.scheduled_date ? `${b.scheduled_date}${b.scheduled_time ? ` at ${b.scheduled_time}` : ''}` : 'TBD'}
+                      {b.client_name} - {b.scheduled_date ? `${b.scheduled_date}${b.scheduled_time ? ` at ${b.scheduled_time}` : ''}` : 'TBD'}
                     </p>
                   </div>
                   <StatusBadge status={b.status} />
@@ -246,4 +246,3 @@ export default function AvatarDashboard() {
     </AppShell>
   );
 }
-
