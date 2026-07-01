@@ -10,6 +10,7 @@ import { Calendar, Search, ArrowLeft, Briefcase, Users, Clock, ChevronRight, Map
 import { Input } from '@/components/ui/input';
 import AppShell from '@/components/layout/AppShell';
 import { getNavItems } from '@/lib/navItems';
+import { EmptyState, PageHero, ToolbarPanel } from '@/components/ui/PagePrimitives';
 
 const TABS = ['All', 'Active', 'Waiting', 'Completed', 'Issues'];
 
@@ -113,7 +114,7 @@ export default function Bookings() {
         location: job.location,
         counterpart: acceptedApp?.applicant_name || null,
         proposalCount: pendingApps.length,
-        amount: job.budget_min ? `$${job.budget_min}${job.budget_max ? `–$${job.budget_max}` : '+'}` : '',
+        amount: job.budget_min ? `$${job.budget_min}${job.budget_max ? `???$${job.budget_max}` : '+'}` : '',
         route: `/JobDetail?id=${job.id}`,
         nextAction,
         rawDate: job.created_date,
@@ -142,29 +143,40 @@ export default function Bookings() {
 
   return (
     <AppShell navItems={getNavItems(user?.selected_role || user?.role || 'user')} user={user}>
-      <div className="max-w-3xl mx-auto">
-        <Link to={dashPath} className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground mb-6">
-          <ArrowLeft className="w-4 h-4" /> Dashboard
-        </Link>
+      <div className="max-w-5xl mx-auto space-y-6">
+        <PageHero
+          eyebrow="Client workspace"
+          title="My Tasks"
+          description="Track Direct Hire requests, Open Tasks, proposals, Secure Payment, live sessions, and completed work in one place."
+          icon={Briefcase}
+          actions={(
+            <div className="flex gap-2">
+              <Link to="/PostJob" className="inline-flex h-11 items-center justify-center rounded-lg bg-primary px-4 text-sm font-bold text-primary-foreground shadow-sm hover:bg-primary/90">Post Task</Link>
+              <Link to="/FindPeople" className="inline-flex h-11 items-center justify-center rounded-lg border border-white/15 bg-white/10 px-4 text-sm font-bold text-white hover:bg-white/15">Find Agent</Link>
+            </div>
+          )}
+          stats={[
+            { label: 'Total', value: allTasks.length },
+            { label: 'Visible', value: filteredTasks.length },
+            { label: 'Filter', value: tab },
+          ]}
+        />
 
-        <div className="relative mb-6">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-          <Input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search tasks..." className="pl-10 bg-card border-border" />
-        </div>
+        <ToolbarPanel className="space-y-4">
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+            <Input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search tasks, agents, locations..." className="h-12 pl-10 bg-card border-input rounded-lg" />
+          </div>
 
-        <div className="flex gap-2 mb-6 overflow-x-auto">
-          {TABS.map(t => (
-            <button key={t} onClick={() => setTab(t)}
-              className={`px-4 py-1.5 rounded-full text-sm whitespace-nowrap transition-all ${
-                t === tab ? 'bg-primary text-primary-foreground' : 'bg-card text-muted-foreground hover:bg-muted'
-              }`}>{t}</button>
-          ))}
-        </div>
-
-        <div className="mb-8">
-          <h1 className="text-2xl font-bold mb-1">My Tasks</h1>
-          <p className="text-sm text-muted-foreground mb-6">Track your Direct Hire requests and Open Tasks in one place.</p>
-        </div>
+          <div className="flex gap-2 overflow-x-auto pb-1">
+            {TABS.map(t => (
+              <button key={t} onClick={() => setTab(t)}
+                className={`px-4 py-2 rounded-full text-sm font-semibold whitespace-nowrap transition-all ${
+                  t === tab ? 'bg-primary text-primary-foreground' : 'bg-card border border-border text-muted-foreground hover:border-primary/30 hover:text-foreground'
+                }`}>{t}</button>
+            ))}
+          </div>
+        </ToolbarPanel>
 
         {isLoading ? (
           <div className="space-y-3">
@@ -231,23 +243,22 @@ export default function Bookings() {
             ))}
           </div>
         ) : (
-          <GlassCard className="p-12 text-center flex flex-col items-center justify-center border border-dashed border-border/60 bg-transparent shadow-none">
-            <div className="w-16 h-16 rounded-full bg-secondary flex items-center justify-center mb-4">
-              <Briefcase className="w-8 h-8 text-muted-foreground" />
-            </div>
-            <h3 className="text-xl font-bold mb-2">No tasks yet</h3>
-            <p className="text-muted-foreground mb-6 max-w-sm">Request a Local Agent or post an Open Task to get started.</p>
-            <div className="flex flex-col sm:flex-row gap-3 justify-center w-full max-w-md">
+          <EmptyState
+            icon={Briefcase}
+            title="No tasks yet"
+            description="Request a Local Agent or post an Open Task to get started."
+            action={<div className="flex flex-col sm:flex-row gap-3 justify-center w-full max-w-md">
               <Link to="/PostJob" className="flex-1 px-6 py-2.5 bg-primary text-primary-foreground rounded-lg font-medium hover:bg-primary/90 transition-colors text-center">
                 Post Open Task
               </Link>
               <Link to="/FindPeople" className="flex-1 px-6 py-2.5 bg-card border border-border text-foreground rounded-lg font-medium hover:bg-secondary transition-colors text-center">
                 Discover Local Agents
               </Link>
-            </div>
-          </GlassCard>
+            </div>}
+          />
         )}
       </div>
     </AppShell>
   );
 }
+
