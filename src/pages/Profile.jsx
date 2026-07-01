@@ -36,7 +36,7 @@ function downloadInvoice(job, userEmail, userName) {
   doc.text(`Name: ${userName}`, 20, 52);
   doc.text(`Email: ${userEmail}`, 20, 59);
   doc.line(20, 65, 190, 65);
-  doc.setFont('helvetica', 'bold'); doc.text('Job Details', 20, 75);
+  doc.setFont('helvetica', 'bold'); doc.text('Task Details', 20, 75);
   doc.setFont('helvetica', 'normal');
   doc.text(`Title: ${job.title}`, 20, 85);
   doc.text(`Category: ${job.category || '-'}`, 20, 92);
@@ -49,29 +49,29 @@ function downloadInvoice(job, userEmail, userName) {
   doc.setFont('helvetica', 'bold');
   doc.text('Net Earned:', 20, 145); doc.text(`$${net.toFixed(2)}`, 160, 145);
   doc.setFontSize(8); doc.setFont('helvetica', 'normal');
-  doc.text('CoTask Platform ?? cotask.app ?? support@cotask.app', 20, 280);
+  doc.text('CoTask Platform · cotask.app · support@cotask.app', 20, 280);
   doc.save(`cotask-invoice-${invoiceNo}.pdf`);
 }
 
 const EarningsTooltip = ({ active, payload, label }) => {
   if (!active || !payload?.length) return null;
   return (
-    <div className="glass border border-border rounded-lg px-3 py-2 text-xs">
+    <div className="surface-panel rounded-lg px-3 py-2 text-xs">
       <p className="text-muted-foreground mb-1">{label}</p>
       <p className="text-primary font-semibold">${payload[0].value.toFixed(2)}</p>
     </div>
   );
 };
 
-const BASE_TABS = ['Jobs Posted', 'Reviews', 'About'];
-const AVATAR_TABS = ['Jobs Posted', 'Reviews', 'Earnings', 'About'];
+const BASE_TABS = ['Tasks Posted', 'Reviews', 'About'];
+const AVATAR_TABS = ['Tasks Posted', 'Reviews', 'Earnings', 'About'];
 
 export default function Profile() {
   const { user, updateUser } = useCurrentUser();
   const navigate = useNavigate();
   const isAvatar = user?.selected_role === 'avatar';
   const TABS = isAvatar ? AVATAR_TABS : BASE_TABS;
-  const [activeTab, setActiveTab] = useState('Jobs Posted');
+  const [activeTab, setActiveTab] = useState('Tasks Posted');
   const [menuOpen, setMenuOpen] = useState(false);
   const [showWithdraw, setShowWithdraw] = useState(false);
   const [withdrawAmount, setWithdrawAmount] = useState('');
@@ -281,20 +281,20 @@ export default function Profile() {
         {/* Tab Content */}
         <div className="px-4 py-4">
 
-          {/* Jobs Posted Tab */}
-          {activeTab === 'Jobs Posted' && (
+          {/* Tasks Posted Tab */}
+          {activeTab === 'Tasks Posted' && (
             <div className="space-y-3">
               {jobPosts.length === 0 ? (
                 <div className="text-center py-16 space-y-3">
                   <Briefcase className="w-10 h-10 text-muted-foreground mx-auto" />
-                  <p className="font-semibold">No jobs posted yet</p>
+                  <p className="font-semibold">No tasks posted yet</p>
                   <Link to="/PostJob">
-                    <Button size="sm" className="mt-2">Post a Job</Button>
+                    <Button size="sm" className="mt-2">Post Open Task</Button>
                   </Link>
                 </div>
               ) : (
                 <>
-                  <p className="text-sm text-muted-foreground font-medium mb-2">{jobPosts.length} Jobs</p>
+                  <p className="text-sm text-muted-foreground font-medium mb-2">{jobPosts.length} Tasks</p>
                   {jobPosts.map(job => (
                     <Link key={job.id} to={`/JobDetail?id=${job.id}`}>
                       <div className="record-card mb-3">
@@ -311,7 +311,7 @@ export default function Profile() {
                           <span>{job.category}</span>
                           {(job.budget_min || job.budget_max) && (
                             <span className="font-semibold text-primary">
-                              ${job.budget_min || 0}{job.budget_max ? ` ??? $${job.budget_max}` : '+'}
+                              ${job.budget_min || 0}{job.budget_max ? ` – $${job.budget_max}` : '+'}
                             </span>
                           )}
                         </div>
@@ -384,7 +384,7 @@ export default function Profile() {
               {/* Withdraw Modal */}
               {showWithdraw && (
                 <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-                  <div className="glass-strong border border-border rounded-2xl p-6 w-full max-w-sm">
+                  <div className="surface-panel rounded-lg p-6 w-full max-w-sm">
                     <div className="flex items-center justify-between mb-4">
                       <h2 className="text-lg font-bold">Withdraw Funds</h2>
                       <button onClick={() => { setShowWithdraw(false); setWithdrawDone(false); }} className="text-muted-foreground hover:text-foreground"><X className="w-5 h-5" /></button>
@@ -421,7 +421,7 @@ export default function Profile() {
 
               {/* Balance Cards */}
               <div className="flex items-center justify-between mb-4">
-                <h2 className="text-base font-bold flex items-center gap-2"><Wallet className="w-4 h-4 text-primary" /> My Wallet</h2>
+                <h2 className="text-base font-bold flex items-center gap-2"><Wallet className="w-4 h-4 text-primary" /> Earnings</h2>
                 <button onClick={() => setShowWithdraw(true)} className="flex items-center gap-1.5 bg-primary text-primary-foreground px-3 py-1.5 rounded-xl text-xs font-medium hover:bg-primary/90 transition-colors">
                   <ArrowUpRight className="w-3.5 h-3.5" /> Withdraw
                 </button>
@@ -479,7 +479,7 @@ export default function Profile() {
               {walletStats.done.length === 0 ? (
                 <GlassCard className="p-8 text-center">
                   <Wallet className="w-8 h-8 text-muted-foreground mx-auto mb-2" />
-                  <p className="text-sm text-muted-foreground">No completed jobs yet</p>
+                  <p className="text-sm text-muted-foreground">No completed tasks yet</p>
                 </GlassCard>
               ) : (
                 <div className="space-y-2">
@@ -496,7 +496,7 @@ export default function Profile() {
                             </div>
                             <div>
                               <p className="font-medium text-sm">{job.title}</p>
-                              <p className="text-xs text-muted-foreground">{job.posted_by_name} ?? {job.ended_at ? new Date(job.ended_at).toLocaleDateString() : new Date(job.updated_date).toLocaleDateString()}</p>
+                              <p className="text-xs text-muted-foreground">{job.posted_by_name} · {job.ended_at ? new Date(job.ended_at).toLocaleDateString() : new Date(job.updated_date).toLocaleDateString()}</p>
                             </div>
                           </div>
                           <div className="text-right flex-shrink-0">
@@ -602,4 +602,3 @@ export default function Profile() {
     </AppShell>
   );
 }
-
