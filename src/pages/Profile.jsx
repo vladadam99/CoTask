@@ -450,7 +450,7 @@ export default function Profile() {
                     <span className="text-xs text-muted-foreground">Total Gross</span>
                   </div>
                   <p className="text-xl font-bold text-primary">${walletStats.totalGross.toFixed(2)}</p>
-                  <p className="text-xs text-muted-foreground mt-0.5">{walletStats.done.length} completed job{walletStats.done.length !== 1 ? 's' : ''}</p>
+                  <p className="text-xs text-muted-foreground mt-0.5">{walletStats.done.length} completed task{walletStats.done.length !== 1 ? 's' : ''}</p>
                 </GlassCard>
               </div>
 
