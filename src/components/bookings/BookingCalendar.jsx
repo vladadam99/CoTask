@@ -84,7 +84,7 @@ export default function BookingCalendar({ bookings, detailPath = '/UserBookingDe
             </Link>
           ))}
         {bookings.filter(b => b.scheduled_date && isSameMonth(new Date(b.scheduled_date), month)).length === 0 && (
-          <p className="text-sm text-muted-foreground text-center py-4">No scheduled bookings this month</p>
+          <p className="text-sm text-muted-foreground text-center py-4">No scheduled tasks this month</p>
         )}
       </div>
     </div>
