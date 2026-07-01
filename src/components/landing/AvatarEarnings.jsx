@@ -12,7 +12,7 @@ const perks = [
 
 export default function AvatarEarnings() {
   return (
-    <section className="py-32 px-6 lg:px-12 border-t border-border bg-white/[0.02]">
+    <section className="py-24 px-6 lg:px-12 border-t border-border bg-foreground text-background">
       <div className="max-w-7xl mx-auto">
         <div className="grid lg:grid-cols-2 gap-24 items-center">
 
@@ -27,7 +27,7 @@ export default function AvatarEarnings() {
             </p>
 
             {/* Earnings stat block */}
-            <div className="border border-border rounded-lg p-6 md:p-8 mb-10 bg-card shadow-sm">
+            <div className="border border-white/20 rounded-lg p-6 md:p-8 mb-10 bg-white/10 backdrop-blur">
               <p className="text-white/40 text-sm mb-2">Top avatars earn</p>
               <div className="flex items-end gap-2 mb-1">
                 <span className="text-6xl font-black text-white">$1,200</span>
@@ -42,7 +42,7 @@ export default function AvatarEarnings() {
             </div>
 
             <Link to="/Onboarding?role=avatar">
-              <button className="group flex items-center gap-3 bg-primary text-white font-bold px-8 py-4 rounded-full hover:bg-primary/90 transition-all">
+              <button className="group flex items-center gap-3 bg-primary text-primary-foreground font-bold px-8 py-4 rounded-lg hover:bg-primary/90 transition-all">
                 Start earning today
                 <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
               </button>
@@ -50,10 +50,10 @@ export default function AvatarEarnings() {
           </motion.div>
 
           {/* Right: perks */}
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {perks.map((perk, i) => (
               <motion.div key={perk.title} initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }}
-                className="rounded-lg border border-border bg-card p-6 hover:bg-secondary/60 hover:border-primary/30 transition-colors">
+                className="rounded-lg border border-white/20 bg-white/10 p-6 hover:bg-white/20 transition-colors">
                 <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center mb-5">
                   <perk.icon className="w-5 h-5 text-primary" />
                 </div>
