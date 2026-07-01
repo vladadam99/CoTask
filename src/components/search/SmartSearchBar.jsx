@@ -4,13 +4,13 @@ import { Search, Sparkles, Loader2, X } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 
 /**
- * SmartSearchBar ??? AI-powered semantic search.
+ * SmartSearchBar – AI-powered semantic search.
  * Props:
  *   items: array of objects to search through
- *   itemSummaryFn: (item) => string ??? how to describe each item to the AI
- *   onResults: (ids: string[] | null) => void ??? null means "clear / show all"
+ *   itemSummaryFn: (item) => string — how to describe each item to the AI
+ *   onResults: (ids: string[] | null) => void — null means "clear / show all"
  *   placeholder: string
- *   suggestions: string[] ??? shown when input focused but empty
+ *   suggestions: string[] — shown when input focused but empty
  */
 export default function SmartSearchBar({ items = [], itemSummaryFn, onResults, placeholder = 'Search...', suggestions = [] }) {
   const [query, setQuery] = useState('');
@@ -40,7 +40,7 @@ A user searched for: "${q}"
 Here are the available items:
 ${summaries}
 
-Return the IDs of items that are relevant to the search query, even if the wording doesn't match exactly. Use semantic understanding ??? e.g. "dog walking" should match avatars who mention pets, animals, or outdoor activities in their bio/skills. "grocery run" should match shopping/errands etc.
+Return the IDs of items that are relevant to the search query, even if the wording doesn't match exactly. Use semantic understanding — e.g. "dog walking" should match avatars who mention pets, animals, or outdoor activities in their bio/skills. "grocery run" should match shopping/errands etc.
 
 Only include genuinely relevant matches. Return them ranked by relevance (best first).`,
         response_json_schema: {
@@ -133,4 +133,3 @@ Only include genuinely relevant matches. Return them ranked by relevance (best f
     </div>
   );
 }
-
