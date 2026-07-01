@@ -1,113 +1,94 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
+import { Check, CreditCard, Receipt, Shield } from 'lucide-react';
 import InfoPageHeader from '@/components/layout/InfoPageHeader';
 import Footer from '@/components/landing/Footer';
 import GlassCard from '@/components/ui/GlassCard';
 import { Button } from '@/components/ui/button';
-import { Link } from 'react-router-dom';
-import { Check } from 'lucide-react';
 
-const plans = [
+const sections = [
   {
-    name: 'Pay as you go',
-    subtitle: 'For individual users',
-    price: 'From $25/hr',
-    features: [
-      'Browse all available avatars',
-      'Book on-demand or scheduled',
-      'In-app messaging',
-      'Live session access',
-      'Secure payments',
-      'Rating & reviews',
+    icon: CreditCard,
+    title: 'Client payments',
+    items: [
+      'Task price is shown before you send or fund a request',
+      'Secure Payment is used when the workflow requires funding before work begins',
+      'Payment status is visible on the task detail page',
+      'Receipts and payment history appear in Billing / Payments',
     ],
-    cta: 'Get Started',
-    featured: false,
   },
   {
-    name: 'Pro',
-    subtitle: 'For frequent users',
-    price: '$99/mo',
-    features: [
-      'Everything in Pay as you go',
-      'Priority avatar matching',
-      'Reduced platform fees (10%)',
-      'Saved preferences',
-      'Dedicated support',
-      'Session recordings (coming soon)',
+    icon: Receipt,
+    title: 'Local Agent earnings',
+    items: [
+      'Local Agents set their own hourly or fixed task rates',
+      'Pending and released amounts appear in Earnings',
+      'Payout preferences are saved for manual Production V1 review',
+      'Task completion and client approval drive release status',
     ],
-    cta: 'Start Free Trial',
-    featured: true,
   },
   {
-    name: 'Enterprise',
-    subtitle: 'For businesses',
-    price: 'Custom',
-    features: [
-      'Everything in Pro',
-      'Bulk booking discounts',
-      'Custom invoicing',
-      'Team management',
-      'API access (coming soon)',
-      'Dedicated account manager',
-      'SLA guarantees',
+    icon: Shield,
+    title: 'Enterprise workflows',
+    items: [
+      'Use team profiles for repeated site checks and field operations',
+      'Coordinate direct requests and open tasks from one account',
+      'Supported invoicing and billing options are shown in account settings',
+      'Enterprise terms can be handled through the sales/support flow',
     ],
-    cta: 'Contact Sales',
-    featured: false,
   },
 ];
 
 export default function Pricing() {
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen bg-background">
       <InfoPageHeader />
-      <div className="pt-24 pb-20 px-6 max-w-5xl mx-auto">
-        <div className="relative overflow-hidden rounded-lg border border-border bg-foreground p-6 md:p-8 text-center text-background shadow-sm mb-12">
-          <p className="text-xs font-bold tracking-[0.18em] text-primary">Pricing</p>
-          <h1 className="text-4xl md:text-5xl font-black mt-3 mb-4 text-white">Simple, transparent pricing</h1>
-          <p className="text-lg text-white/70 max-w-xl mx-auto">
-            Pay only for what you use. Avatars set their own rates. CoTask charges a small platform fee.
-          </p>
-        </div>
+      <main className="px-6 pb-20 pt-24">
+        <div className="mx-auto max-w-5xl">
+          <div className="mb-12 rounded-lg border border-border bg-card p-6 text-center shadow-sm md:p-8">
+            <p className="text-xs font-bold tracking-[0.18em] text-primary">Pricing</p>
+            <h1 className="mt-3 text-4xl font-black text-foreground md:text-5xl">Clear pricing at the task level</h1>
+            <p className="mx-auto mt-4 max-w-2xl text-lg text-muted-foreground">
+              CoTask shows task prices, Secure Payment status, and billing records in context. No hidden marketplace claims or invented earning promises.
+            </p>
+          </div>
 
-        <div className="grid md:grid-cols-3 gap-6">
-          {plans.map(plan => (
-            <GlassCard key={plan.name} className={`p-6 md:p-8 flex flex-col ${plan.featured ? 'border-primary/30 relative' : ''}`}>
-              {plan.featured && (
-                <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-primary text-primary-foreground text-xs font-medium px-3 py-1 rounded-full">
-                  Most Popular
+          <div className="grid gap-6 md:grid-cols-3">
+            {sections.map((section) => (
+              <GlassCard key={section.title} className="flex flex-col p-6 md:p-8">
+                <div className="mb-5 flex h-11 w-11 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                  <section.icon className="h-5 w-5" />
                 </div>
-              )}
-              <div className="mb-6">
-                <h3 className="text-xl font-bold">{plan.name}</h3>
-                <p className="text-sm text-muted-foreground">{plan.subtitle}</p>
-                <p className="text-3xl font-bold mt-4">{plan.price}</p>
-              </div>
-              <ul className="space-y-3 flex-1 mb-8">
-                {plan.features.map(f => (
-                  <li key={f} className="flex items-start gap-2 text-sm">
-                    <Check className="w-4 h-4 text-primary flex-shrink-0 mt-0.5" />
-                    <span className="text-muted-foreground">{f}</span>
-                  </li>
-                ))}
-              </ul>
-              <Link to="/RoleSelect">
-                <Button className={`w-full ${plan.featured ? 'bg-primary hover:bg-primary/90' : 'bg-muted hover:bg-muted/80 text-foreground'}`}>
-                  {plan.cta}
-                </Button>
-              </Link>
-            </GlassCard>
-          ))}
-        </div>
+                <h3 className="text-xl font-bold">{section.title}</h3>
+                <ul className="mt-5 flex-1 space-y-3">
+                  {section.items.map((item) => (
+                    <li key={item} className="flex items-start gap-2 text-sm">
+                      <Check className="mt-0.5 h-4 w-4 flex-shrink-0 text-primary" />
+                      <span className="text-muted-foreground">{item}</span>
+                    </li>
+                  ))}
+                </ul>
+              </GlassCard>
+            ))}
+          </div>
 
-        <div className="text-center mt-12">
-          <h3 className="font-semibold mb-2">Avatar earnings</h3>
-          <p className="text-sm text-muted-foreground max-w-lg mx-auto">
-            Avatars keep 85% of every booking. Set your own hourly or per-session rate. 
-            Get paid directly to your account after each completed session.
-          </p>
+          <div className="mt-10 rounded-lg border border-border bg-secondary/40 p-5 text-center">
+            <h2 className="text-base font-semibold">Ready to price a real task?</h2>
+            <p className="mx-auto mt-2 max-w-2xl text-sm text-muted-foreground">
+              Create an Open Task, request Direct Hire from a Local Agent, or set your Local Agent rates in onboarding.
+            </p>
+            <div className="mt-5 flex flex-col justify-center gap-3 sm:flex-row">
+              <Button asChild>
+                <Link to="/PostJob">Post Open Task</Link>
+              </Button>
+              <Button variant="outline" asChild>
+                <Link to="/FindPeople">Discover Local Agents</Link>
+              </Button>
+            </div>
+          </div>
         </div>
-      </div>
+      </main>
       <Footer />
     </div>
   );
 }
-
