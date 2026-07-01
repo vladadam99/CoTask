@@ -11,12 +11,12 @@ import { base44 } from '@/api/base44Client';
 import AppShell from '@/components/layout/AppShell';
 import { getNavItems } from '@/lib/navItems';
 
-const TABS = ['Jobs Posted', 'Reviews', 'About'];
+const TABS = ['Tasks Posted', 'Reviews', 'About'];
 
 export default function UserProfile() {
   const { user } = useCurrentUser();
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState('Jobs Posted');
+  const [activeTab, setActiveTab] = useState('Tasks Posted');
   const [menuOpen, setMenuOpen] = useState(false);
 
   const profilePicUrl = user?.profile_picture_url || '';
@@ -136,20 +136,20 @@ export default function UserProfile() {
         {/* Tab Content */}
         <div className="px-4 py-4">
 
-          {/* Jobs Posted Tab */}
-          {activeTab === 'Jobs Posted' && (
+          {/* Tasks Posted Tab */}
+          {activeTab === 'Tasks Posted' && (
             <div className="space-y-3">
               {jobPosts.length === 0 ? (
                 <div className="text-center py-16 space-y-3">
                   <Briefcase className="w-10 h-10 text-muted-foreground mx-auto" />
-                  <p className="font-semibold">No jobs posted yet</p>
+                  <p className="font-semibold">No tasks posted yet</p>
                   <Link to="/PostJob">
-                    <Button size="sm" className="mt-2">Post a Job</Button>
+                    <Button size="sm" className="mt-2">Post Open Task</Button>
                   </Link>
                 </div>
               ) : (
                 <>
-                  <p className="text-sm text-muted-foreground font-medium mb-2">{jobPosts.length} Jobs</p>
+                  <p className="text-sm text-muted-foreground font-medium mb-2">{jobPosts.length} Tasks</p>
                   {jobPosts.map(job => (
                     <Link key={job.id} to={`/JobDetail?id=${job.id}`}>
                       <div className="record-card mb-3">
@@ -283,4 +283,3 @@ export default function UserProfile() {
     </AppShell>
   );
 }
-
