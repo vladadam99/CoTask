@@ -6,30 +6,34 @@ import { getNavItems } from '@/lib/navItems';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import AvatarSearchSection from '@/components/professionals/AvatarSearchSection';
 import ExpertSearchSection from '@/components/professionals/ExpertSearchSection';
+import { PageHero } from '@/components/ui/PagePrimitives';
+import { Compass, Plus } from 'lucide-react';
 
 export default function FindPeople() {
   const { user } = useCurrentUser();
 
   return (
     <AppShell navItems={getNavItems(user?.selected_role || user?.role || 'user')} user={user}>
-      <div className="max-w-5xl mx-auto">
-        <div className="mb-6 flex flex-col md:flex-row md:items-start md:justify-between gap-4">
-          <div>
-            <h1 className="text-2xl font-black mb-1">Discover Local Agents</h1>
-            <p className="text-sm text-muted-foreground max-w-xl">
-              Find verified Local Agents who can visit, inspect, record, or livestream from where you need them.
-              Need someone available nearby? Use filters or post an open task.
-            </p>
-          </div>
-          <div className="flex-shrink-0">
-            <Link to="/PostJob" className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground shadow hover:bg-primary/90 h-9 px-4 py-2">
-              Post an Open Task
+      <div className="max-w-6xl mx-auto space-y-6">
+        <PageHero
+          eyebrow="Discover"
+          title="Find the right Local Agent"
+          description="Search verified people who can inspect, record, livestream, guide, or handle work where you need them."
+          icon={Compass}
+          actions={(
+            <Link to="/PostJob" className="inline-flex h-11 items-center justify-center gap-2 rounded-lg bg-primary px-4 text-sm font-bold text-primary-foreground shadow-sm hover:bg-primary/90">
+              <Plus className="w-4 h-4" /> Post an Open Task
             </Link>
-          </div>
-        </div>
+          )}
+          stats={[
+            { label: 'Flow', value: 'Search' },
+            { label: 'Compare', value: 'Profiles' },
+            { label: 'Book', value: 'Securely' },
+          ]}
+        />
 
         <Tabs defaultValue="avatars" className="w-full">
-          <TabsList className="grid w-full grid-cols-2 mb-6 bg-card border border-border">
+          <TabsList className="grid w-full grid-cols-2 mb-6 bg-card border border-border rounded-lg">
             <TabsTrigger value="avatars" className="data-[state=active]:bg-primary/20 data-[state=active]:text-primary">Hire Local Agents</TabsTrigger>
             <TabsTrigger value="experts" className="data-[state=active]:bg-primary/20 data-[state=active]:text-primary">Consult Experts</TabsTrigger>
           </TabsList>
@@ -46,3 +50,4 @@ export default function FindPeople() {
     </AppShell>);
 
 }
+
