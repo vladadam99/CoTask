@@ -77,4 +77,3 @@ export default function AvatarExplore() {
     </AppShell>
   );
 }
-
