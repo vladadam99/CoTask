@@ -11,6 +11,7 @@ import { Shield, Radio, Smartphone, Camera, Headphones, Car, Sun, Moon, Palette,
 } from 'lucide-react';
 import { useTheme } from '@/lib/ThemeContext';
 import { useNavigate } from 'react-router-dom';
+import { PageHero } from '@/components/ui/PagePrimitives';
 
 
 
@@ -91,8 +92,8 @@ export default function AvatarSettings() {
   if (loading) return <div className="min-h-screen flex items-center justify-center"><div className="w-8 h-8 border-4 border-primary/20 border-t-primary rounded-full animate-spin" /></div>;
 
   const equipmentItems = [
-    { key: 'has_smartphone', icon: Smartphone, label: '360° Smartphone', desc: 'Can stream via smartphone' },
-    { key: 'has_360_camera', icon: Camera, label: '360° Camera', desc: 'Have a dedicated 360° camera', comingSoon: true },
+    { key: 'has_smartphone', icon: Smartphone, label: '360?? Smartphone', desc: 'Can stream via smartphone' },
+    { key: 'has_360_camera', icon: Camera, label: '360?? Camera', desc: 'Have a dedicated 360?? camera', comingSoon: true },
     { key: 'has_data_connection', icon: Radio, label: 'Data Connection', desc: 'Reliable mobile data connection' },
     { key: 'has_headset', icon: Headphones, label: 'Headset / Earpiece', desc: 'Can use voice/AR headset' },
     { key: 'has_vehicle', icon: Car, label: 'Vehicle', desc: 'Can travel by vehicle for sessions' },
@@ -100,17 +101,25 @@ export default function AvatarSettings() {
 
   return (
     <AppShell navItems={getNavItems(user?.selected_role || user?.role || 'user')} user={user}>
-      <div className="mb-8">
-        <h1 className="text-2xl lg:text-3xl font-bold mb-1">Settings</h1>
-        <p className="text-muted-foreground text-sm">Manage your equipment and account preferences</p>
-      </div>
+      <div className="max-w-3xl space-y-6">
+      <PageHero
+        eyebrow="Agent account"
+        title="Settings"
+        description="Manage equipment, verification status, appearance, role switching, and account access."
+        icon={Shield}
+        stats={[
+          { label: 'Smartphone', value: equipment.has_smartphone ? 'Ready' : 'Off' },
+          { label: 'Data', value: equipment.has_data_connection ? 'Ready' : 'Off' },
+          { label: 'Vehicle', value: equipment.has_vehicle ? 'Yes' : 'No' },
+        ]}
+      />
 
       {!profile ? (
         <GlassCard className="p-10 text-center">
           <p className="text-sm text-muted-foreground">No avatar profile found. Complete onboarding first.</p>
         </GlassCard>
       ) : (
-        <div className="space-y-6 max-w-lg">
+        <div className="space-y-6">
           {/* Equipment */}
           <GlassCard className="p-5">
             <h2 className="font-semibold text-sm mb-4">Equipment & Capabilities</h2>
@@ -161,7 +170,7 @@ export default function AvatarSettings() {
                 </div>
               </div>
               <button onClick={toggleTheme} className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-muted hover:bg-muted/80 transition-colors text-xs font-medium">
-                Next →
+                Next ???
               </button>
             </div>
             <div className="flex gap-2 mt-4">
@@ -230,6 +239,8 @@ export default function AvatarSettings() {
           </button>
         </div>
       )}
+      </div>
     </AppShell>
   );
 }
+
