@@ -32,7 +32,7 @@ export default function SecurePaymentModal({ job, onSuccess, onCancel }) {
   };
 
   return (
-    <div className="glass rounded-xl p-6 border border-primary/20 space-y-4">
+    <div className="surface-panel rounded-lg p-6 border border-primary/20 space-y-4">
       <div className="flex items-center gap-2">
         <Coins className="w-5 h-5 text-yellow-400" />
         <h3 className="font-bold text-base">Secure Payment Checkout</h3>
