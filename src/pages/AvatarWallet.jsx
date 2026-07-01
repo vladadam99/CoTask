@@ -7,6 +7,7 @@ import GlassCard from '@/components/ui/GlassCard';
 import { getNavItems } from '@/lib/navItems';
 import { Wallet, TrendingUp, DollarSign, CheckCircle, Clock, Download, ArrowUpRight, X } from 'lucide-react';
 import { jsPDF } from 'jspdf';
+import { EmptyState, PageHero, SectionTitle } from '@/components/ui/PagePrimitives';
 
 const PLATFORM_FEE_RATE = 0.1;
 
@@ -45,7 +46,7 @@ function downloadInvoice(job, userEmail, userName, role) {
   doc.text(`Net Earned:`, 20, 152); doc.text(`$${net.toFixed(2)}`, 160, 152);
 
   doc.setFontSize(8); doc.setFont('helvetica', 'normal');
-  doc.text('CoTask Platform · cotask.app · support@cotask.app', 20, 280);
+  doc.text('CoTask Platform ?? cotask.app ?? support@cotask.app', 20, 280);
   doc.save(`cotask-invoice-${invoiceNo}.pdf`);
 }
 
@@ -101,7 +102,7 @@ export default function AvatarWallet() {
       {/* Withdraw Modal */}
       {showWithdraw && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="glass-strong border border-border rounded-2xl p-6 w-full max-w-sm">
+          <div className="surface-panel rounded-lg p-6 w-full max-w-sm">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-lg font-bold">Withdraw Funds</h2>
               <button onClick={() => { setShowWithdraw(false); setWithdrawDone(false); }} className="text-muted-foreground hover:text-foreground"><X className="w-5 h-5" /></button>
@@ -136,20 +137,22 @@ export default function AvatarWallet() {
         </div>
       )}
 
-      <div className="mb-8">
-        <div className="flex items-center justify-between flex-wrap gap-3">
-          <div>
-            <h1 className="text-2xl lg:text-3xl font-bold mb-1 flex items-center gap-2"><Wallet className="w-7 h-7 text-primary" /> Earnings & Payouts</h1>
-            <p className="text-muted-foreground text-sm">Track completed tasks, pending secure payments, and payout settings.</p>
-          </div>
-          <button onClick={() => setShowWithdraw(true)} className="flex items-center gap-2 bg-primary text-primary-foreground px-4 py-2 rounded-xl text-sm font-medium hover:bg-primary/90 transition-colors">
-            <ArrowUpRight className="w-4 h-4" /> Withdraw
-          </button>
-        </div>
-      </div>
+      <div className="space-y-6">
+      <PageHero
+        eyebrow="Payments"
+        title="Earnings & Payouts"
+        description="Track completed tasks, pending Secure Payments, payout settings, and downloadable invoices."
+        icon={Wallet}
+        actions={<button onClick={() => setShowWithdraw(true)} className="inline-flex h-11 items-center gap-2 rounded-lg bg-primary px-4 text-sm font-bold text-primary-foreground shadow-sm hover:bg-primary/90"><ArrowUpRight className="w-4 h-4" /> Withdraw</button>}
+        stats={[
+          { label: 'Available', value: `$${totalNet.toFixed(2)}` },
+          { label: 'Pending', value: `$${pendingAmount.toFixed(2)}` },
+          { label: 'Completed', value: completedCount },
+        ]}
+      />
 
       {/* Summary Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <GlassCard className="p-5">
           <div className="flex items-center gap-3 mb-2">
             <div className="w-9 h-9 rounded-xl bg-green-500/10 flex items-center justify-center"><DollarSign className="w-5 h-5 text-green-400" /></div>
@@ -177,15 +180,9 @@ export default function AvatarWallet() {
       </div>
 
       {/* Transaction History */}
-      <h2 className="text-lg font-semibold mb-4">Payment History</h2>
+      <SectionTitle title="Payment History" description="Completed payouts and invoice records." />
       {allReleasedTasks.length === 0 ? (
-        <GlassCard className="p-12 text-center flex flex-col items-center justify-center">
-          <div className="w-16 h-16 rounded-full bg-secondary flex items-center justify-center mb-4">
-            <Wallet className="w-8 h-8 text-muted-foreground" />
-          </div>
-          <h3 className="text-xl font-bold mb-2">No completed tasks yet</h3>
-          <p className="text-sm text-muted-foreground">Your earnings history will appear here.</p>
-        </GlassCard>
+        <EmptyState icon={Wallet} title="No completed tasks yet" description="Your earnings history will appear here." />
       ) : (
         <div className="space-y-3">
           {allReleasedTasks.map(job => {
@@ -201,12 +198,12 @@ export default function AvatarWallet() {
                     </div>
                     <div>
                       <p className="font-medium text-sm">{job.is_booking ? `${job.category} Booking` : job.title}</p>
-                      <p className="text-xs text-muted-foreground">Client: {job.client_name || job.posted_by_name} · {job.released_at ? new Date(job.released_at).toLocaleDateString() : (job.ended_at ? new Date(job.ended_at).toLocaleDateString() : new Date(job.updated_date).toLocaleDateString())}</p>
+                      <p className="text-xs text-muted-foreground">Client: {job.client_name || job.posted_by_name} ?? {job.released_at ? new Date(job.released_at).toLocaleDateString() : (job.ended_at ? new Date(job.ended_at).toLocaleDateString() : new Date(job.updated_date).toLocaleDateString())}</p>
                     </div>
                   </div>
                   <div className="text-right flex-shrink-0">
                     <p className="font-bold text-green-400">+${net.toFixed(2)}</p>
-                    <p className="text-xs text-muted-foreground mb-1">Gross: ${gross.toFixed(2)} · Fee: -${fee.toFixed(2)}</p>
+                    <p className="text-xs text-muted-foreground mb-1">Gross: ${gross.toFixed(2)} ?? Fee: -${fee.toFixed(2)}</p>
                     <button onClick={() => downloadInvoice(job, user.email, user.full_name, 'avatar')} className="flex items-center gap-1 text-xs text-primary hover:underline ml-auto">
                       <Download className="w-3 h-3" /> Invoice PDF
                     </button>
@@ -217,6 +214,8 @@ export default function AvatarWallet() {
           })}
         </div>
       )}
+      </div>
     </AppShell>
   );
 }
+
