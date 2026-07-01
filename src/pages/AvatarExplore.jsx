@@ -5,6 +5,8 @@ import { useCurrentUser } from '@/lib/useCurrentUser';
 import FeedCard from '@/components/explore/FeedCard';
 import AppShell from '@/components/layout/AppShell';
 import { getNavItems } from '@/lib/navItems';
+import { EmptyState } from '@/components/ui/PagePrimitives';
+import { Camera, Sparkles } from 'lucide-react';
 
 const CATEGORIES = ['All', 'City Guide', 'Property Walkthrough', 'Shopping Help', 'Event Attendance', 'Travel Assistance'];
 
@@ -21,24 +23,32 @@ export default function AvatarExplore() {
   });
 
   return (
-    <AppShell navItems={getNavItems(user?.selected_role || user?.role || 'user')} user={user}>
-      {/* Category filter bar */}
-      <div className="fixed top-14 lg:top-0 left-0 right-0 lg:left-64 z-30 px-4 pt-3 pb-2 bg-gradient-to-b from-background to-transparent">
-        <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide">
-          {CATEGORIES.map(cat => (
-            <button key={cat} onClick={() => setCategory(cat)}
-              className={`flex-shrink-0 px-3 py-1.5 rounded-full text-xs font-medium transition-all ${
-                cat === category ? 'bg-primary text-white' : 'bg-secondary/60 border border-border text-muted-foreground hover:border-primary/30'
-              }`}>
-              {cat}
-            </button>
-          ))}
+    <AppShell navItems={getNavItems(user?.selected_role || user?.role || 'user')} user={user} fullBleed title="Explore">
+      <div className="fixed left-0 right-0 top-14 z-30 px-3 pt-3 lg:left-72 lg:top-0 lg:px-6 lg:pt-5">
+        <div className="surface-panel rounded-lg p-3 shadow-lg md:p-4">
+          <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+            <div className="min-w-0">
+              <p className="section-label">Agent proof feed</p>
+              <h1 className="text-lg font-black tracking-tight text-foreground md:text-xl">Watch what Local Agents can do</h1>
+            </div>
+            <div className="flex gap-2 overflow-x-auto pb-1 hide-scrollbar md:max-w-[58%]">
+              {CATEGORIES.map(cat => (
+                <button
+                  key={cat}
+                  onClick={() => setCategory(cat)}
+                  className={`app-chip flex-shrink-0 ${cat === category ? 'app-chip-active' : ''}`}
+                >
+                  {cat === 'All' && <Sparkles className="h-3.5 w-3.5" />}
+                  {cat}
+                </button>
+              ))}
+            </div>
+          </div>
         </div>
       </div>
 
-      {/* Full-screen snap scroll feed */}
       <div
-        className="fixed inset-0 lg:left-64 overflow-y-scroll snap-y snap-mandatory"
+        className="fixed inset-0 overflow-y-scroll snap-y snap-mandatory bg-background lg:left-72"
         style={{ scrollbarWidth: 'none' }}
       >
         <style>{`div::-webkit-scrollbar { display: none; }`}</style>
@@ -48,10 +58,13 @@ export default function AvatarExplore() {
             <div className="w-8 h-8 border-4 border-border border-t-primary rounded-full animate-spin" />
           </div>
         ) : posts.length === 0 ? (
-          <div className="h-screen flex flex-col items-center justify-center text-center">
-            <p className="text-4xl mb-3">📸</p>
-            <h3 className="font-bold">No posts yet</h3>
-            <p className="text-sm text-muted-foreground mt-1">Be the first to post in this category!</p>
+          <div className="flex h-screen items-center justify-center px-4 pt-28">
+            <EmptyState
+              icon={Camera}
+              title="No proof posts yet"
+              description="When Local Agents publish work samples for this category, they will appear here."
+              className="max-w-md"
+            />
           </div>
         ) : (
           posts.map(post => (
@@ -64,3 +77,4 @@ export default function AvatarExplore() {
     </AppShell>
   );
 }
+
