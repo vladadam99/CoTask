@@ -10,7 +10,7 @@ const sections = [
   },
   {
     title: '2. How Does CoTask Work?',
-    content: `Clients can post a job or booking on the CoTask platform. Agents can respond to these opportunities, and both parties agree on the terms under which the Agent will provide services. If an agreement is reached, they enter into a contract with each other. CoTask is not a party to that agreement ??? we only facilitate the connection.`,
+    content: `Clients can post a job or booking on the CoTask platform. Agents can respond to these opportunities, and both parties agree on the terms under which the Agent will provide services. If an agreement is reached, they enter into a contract with each other. CoTask is not a party to that agreement — we only facilitate the connection.`,
   },
   {
     title: "3. CoTask's Role",
@@ -25,7 +25,7 @@ const sections = [
     content: `Your profile is your calling card on CoTask. You are solely responsible for the accuracy, completeness, and legality of all information on your profile. Profile content must not be misleading, insulting, discriminatory, or otherwise unlawful. CoTask is not liable for the content of your profile.`,
   },
   {
-    title: '6. Bookings and Assignments',
+    title: '6. Tasks and Assignments',
     content: `When you arrange a booking or assignment through CoTask, both parties agree to the terms of that specific engagement. CoTask provides tools to facilitate these arrangements but is not a party to any agreement between users. Payments are processed securely through the platform, with Agents receiving their earnings after sessions are completed.`,
   },
   {
@@ -34,11 +34,11 @@ const sections = [
   },
   {
     title: '8. Guarantees and Liability',
-    content: `CoTask operates the platform and ensures its proper functioning. All information regarding clients, jobs, Agents, and assignments originates from users and third parties ??? CoTask is not responsible for accuracy or completeness. To the extent permitted by law, CoTask accepts no liability for any damage suffered by users, regardless of type. This does not limit liability that cannot legally be excluded, including liability for death or personal injury caused by negligence.`,
+    content: `CoTask operates the platform and ensures its proper functioning. All information regarding clients, tasks, Local Agents, and assignments originates from users and third parties - CoTask is not responsible for accuracy or completeness. To the extent permitted by law, CoTask accepts no liability for any damage suffered by users, regardless of type. This does not limit liability that cannot legally be excluded, including liability for death or personal injury caused by negligence.`,
   },
   {
     title: '9. Use of the Platform',
-    content: `The platform may only be used for its intended purpose ??? connecting clients with Agents for legitimate assignments. You may not use automated systems or bots to access the platform. Your login credentials are personal and must be kept confidential. CoTask may suspend or remove access if there is evidence of misuse, fraud, or violation of these terms.`,
+    content: `The platform may only be used for its intended purpose — connecting clients with Agents for legitimate assignments. You may not use automated systems or bots to access the platform. Your login credentials are personal and must be kept confidential. CoTask may suspend or remove access if there is evidence of misuse, fraud, or violation of these terms.`,
   },
   {
     title: '10. Identity Verification',
@@ -72,7 +72,7 @@ export default function TermsAndConditions() {
   return (
     <div className="min-h-screen bg-background text-foreground">
       {/* Header */}
-      <div className="sticky top-0 z-10 glass-strong border-b border-border">
+      <div className="sticky top-0 z-10 bg-card/95 border-b border-border">
         <div className="mx-auto flex h-14 max-w-5xl items-center gap-3 px-4">
           <button onClick={() => navigate(-1)} className="p-2 hover:bg-secondary/60 rounded-lg transition-colors">
             <ArrowLeft className="w-4 h-4" />
@@ -115,4 +115,3 @@ export default function TermsAndConditions() {
     </div>
   );
 }
-
