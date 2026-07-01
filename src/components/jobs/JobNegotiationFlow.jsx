@@ -106,7 +106,7 @@ export default function JobNegotiationFlow({ application, job, user, onRateAgree
               }`}>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2">
-                    <span className="font-medium text-xs capitalize">{offer.offered_by_role === 'client' ? 'Client' : 'Avatar'}</span>
+                    <span className="font-medium text-xs capitalize">{offer.offered_by_role === 'client' ? 'Client' : 'Local Agent'}</span>
                     <ArrowRight className="w-3 h-3 text-muted-foreground" />
                     <span className="font-bold text-primary">${offer.amount.toFixed(2)}</span>
                     <span className={`ml-auto text-xs px-2 py-0.5 rounded-full ${
@@ -133,7 +133,7 @@ export default function JobNegotiationFlow({ application, job, user, onRateAgree
           )}
 
           {latestOffer?.status === 'pending' && !myTurn && latestOffer.offered_by_email === user?.email && (
-            <p className="text-xs text-muted-foreground text-center pt-1">Waiting for the other party to respond…</p>
+            <p className="text-xs text-muted-foreground text-center pt-1">Waiting for the other party to respond...</p>
           )}
         </GlassCard>
       )}
@@ -176,7 +176,7 @@ export default function JobNegotiationFlow({ application, job, user, onRateAgree
           <textarea
             value={note}
             onChange={e => setNote(e.target.value)}
-            placeholder="Optional note..."
+            placeholder="Optional note"
             rows={2}
             className="w-full bg-secondary/60 border border-border rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-yellow-500/40 text-foreground placeholder:text-muted-foreground resize-none"
           />
@@ -188,7 +188,7 @@ export default function JobNegotiationFlow({ application, job, user, onRateAgree
           >
             {sending
               ? <><Loader2 className="w-4 h-4 animate-spin mr-2" /> Sending...</>
-              : `Send Offer — $${parseFloat(amount || 0).toFixed(2)}`}
+              : `Send Offer - $${parseFloat(amount || 0).toFixed(2)}`}
           </Button>
         </GlassCard>
       )}
