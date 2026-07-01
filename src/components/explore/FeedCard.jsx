@@ -248,7 +248,7 @@ export default function FeedCard({ post, user, isActive = true, isNear = true })
               : post.avatar_name?.[0] || 'A'}
           </div>
           <div className="text-left">
-            <p className="text-sm font-semibold text-white leading-tight">{post.avatar_name || 'Avatar'}</p>
+            <p className="text-sm font-semibold text-white leading-tight">{post.avatar_name || 'Local Agent'}</p>
             {post.category && <p className="text-xs text-white/60">{post.category}</p>}
           </div>
         </button>
