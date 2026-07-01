@@ -97,7 +97,7 @@ function MediaModal({ post, user, onClose }) {
                 ? <SmartImage src={post.avatar_photo_url} alt={post.avatar_name} className="w-full h-full" width={64} />
                 : post.avatar_name?.[0] || 'A'}
             </div>
-            <span className="text-sm font-semibold text-white">{post.avatar_name || 'Avatar'}</span>
+            <span className="text-sm font-semibold text-white">{post.avatar_name || 'Local Agent'}</span>
           </button>
           <button onClick={onClose} className="p-1.5 rounded-full bg-black/40">
             <X className="w-5 h-5 text-white" />
@@ -316,7 +316,7 @@ export default function PostCard({ post, user }) {
               : post.avatar_name?.[0] || 'A'}
           </div>
           <div className="flex-1 min-w-0">
-            <p className="text-sm font-semibold hover:text-primary transition-colors truncate">{post.avatar_name || 'Avatar'}</p>
+            <p className="text-sm font-semibold hover:text-primary transition-colors truncate">{post.avatar_name || 'Local Agent'}</p>
             {post.category && <p className="text-xs text-muted-foreground">{post.category}</p>}
           </div>
         </div>
