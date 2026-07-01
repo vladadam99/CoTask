@@ -5,38 +5,32 @@ import { motion } from 'framer-motion';
 
 export default function CTASection() {
   return (
-    <section className="py-32 px-6 lg:px-12 border-t border-border">
-      <div className="max-w-7xl mx-auto">
-        <motion.div initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
-          className="relative rounded-[2.5rem] overflow-hidden bg-primary p-16 md:p-24">
-          {/* Background elements */}
-          <div className="absolute inset-0 bg-gradient-to-br from-primary via-primary to-red-700" />
-          <div className="absolute -top-32 -right-32 w-96 h-96 bg-secondary rounded-full" />
-          <div className="absolute -bottom-20 -left-20 w-72 h-72 bg-black/20 rounded-full" />
-          <div className="absolute inset-0 opacity-5"
-            style={{backgroundImage: 'linear-gradient(white 1px, transparent 1px), linear-gradient(90deg, white 1px, transparent 1px)', backgroundSize: '40px 40px'}}
-          />
-
-          <div className="relative z-10 text-center">
-            <p className="text-white/60 text-xs font-bold uppercase tracking-[0.25em] mb-6">Get started</p>
-            <h2 className="text-5xl md:text-7xl font-black text-white tracking-tighter leading-[0.9] mb-8">
-              Your avatar<br />is waiting.
-            </h2>
-            <p className="text-white/60 text-xl mb-12 max-w-sm mx-auto leading-relaxed">
-              Real presence. Anywhere. Right now.
-            </p>
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-              <Link to="/Explore">
-                <button className="group flex items-center gap-3 bg-white text-black font-bold text-base px-10 py-4 rounded-full hover:bg-white/90 transition-all w-full sm:w-auto justify-center">
-                  Find an Avatar <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-                </button>
-              </Link>
-              <Link to="/Onboarding?role=avatar">
-                <button className="flex items-center justify-center gap-3 border-2 border-white/30 hover:border-white text-white font-bold text-base px-10 py-4 rounded-full hover:bg-secondary transition-all w-full sm:w-auto">
-                  Become an Avatar
-                </button>
-              </Link>
-            </div>
+    <section className="border-t border-border bg-background px-6 py-24 lg:px-12">
+      <div className="mx-auto max-w-5xl">
+        <motion.div
+          initial={{ opacity: 0, y: 24 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="rounded-lg border border-border bg-card p-8 text-center shadow-sm md:p-12"
+        >
+          <p className="mb-4 text-xs font-bold uppercase tracking-[0.2em] text-primary">Get started</p>
+          <h2 className="text-4xl font-black tracking-tight text-foreground md:text-5xl">
+            Need trusted eyes on the ground?
+          </h2>
+          <p className="mx-auto mt-4 max-w-xl text-muted-foreground">
+            Post an Open Task or discover a Local Agent who can help with a specific location, proof, or live session.
+          </p>
+          <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
+            <Link to="/PostJob">
+              <button className="group flex w-full items-center justify-center gap-3 rounded-lg bg-primary px-8 py-3.5 text-sm font-bold text-primary-foreground transition-colors hover:bg-primary/90 sm:w-auto">
+                Post Open Task <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+              </button>
+            </Link>
+            <Link to="/FindPeople">
+              <button className="flex w-full items-center justify-center gap-3 rounded-lg border border-border bg-card px-8 py-3.5 text-sm font-bold text-foreground transition-colors hover:bg-secondary/60 sm:w-auto">
+                Discover Local Agents
+              </button>
+            </Link>
           </div>
         </motion.div>
       </div>
