@@ -12,6 +12,7 @@ import { getNavItems } from '@/lib/navItems';
 import {
   Inbox, Calendar, Clock, CheckCircle, XCircle, MapPin, Briefcase, ChevronRight, AlertCircle
 } from 'lucide-react';
+import { EmptyState, PageHero, ToolbarPanel } from '@/components/ui/PagePrimitives';
 import {
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter
 } from '@/components/ui/dialog';
@@ -200,24 +201,29 @@ export default function AvatarRequests() {
 
   return (
     <AppShell navItems={getNavItems(user?.selected_role || user?.role || 'user')} user={user}>
-      <div className="mb-8">
-        <h1 className="text-2xl lg:text-3xl font-bold mb-1">My Schedule</h1>
-        <p className="text-muted-foreground text-sm">
-          Manage Direct Hire requests, Open Task proposals, and confirmed tasks.
-          {pendingCount > 0 ? ` You have ${pendingCount} pending request${pendingCount > 1 ? 's' : ''}.` : ''}
-        </p>
-      </div>
+      <div className="space-y-6">
+      <PageHero
+        eyebrow="Agent work queue"
+        title="Requests and proposals"
+        description={`Manage Direct Hire requests, Open Task proposals, and confirmed tasks.${pendingCount > 0 ? ` You have ${pendingCount} pending request${pendingCount > 1 ? 's' : ''}.` : ''}`}
+        icon={Inbox}
+        stats={[
+          { label: 'Pending', value: pendingCount },
+          { label: 'Visible', value: filtered.length },
+          { label: 'View', value: activeTab },
+        ]}
+      />
 
       {/* Tabs */}
-      <div className="flex gap-2 mb-6">
+      <ToolbarPanel className="flex gap-2 overflow-x-auto">
         {TABS.map(tab => (
           <button
             key={tab.key}
             onClick={() => setActiveTab(tab.key)}
-            className={`flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+            className={`flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-semibold whitespace-nowrap transition-colors ${
               activeTab === tab.key
                 ? 'bg-primary text-primary-foreground'
-                : 'bg-card text-muted-foreground hover:bg-muted'
+                : 'bg-card border border-border text-muted-foreground hover:border-primary/30 hover:text-foreground'
             }`}
           >
             <tab.icon className="w-4 h-4" />
@@ -227,7 +233,7 @@ export default function AvatarRequests() {
             )}
           </button>
         ))}
-      </div>
+      </ToolbarPanel>
 
       {/* List */}
       {isLoading ? (
@@ -240,16 +246,12 @@ export default function AvatarRequests() {
           ))}
         </div>
       ) : filtered.length === 0 ? (
-        <GlassCard className="p-12 text-center flex flex-col items-center justify-center">
-          <div className="w-16 h-16 rounded-full bg-secondary flex items-center justify-center mb-4">
-            <Inbox className="w-8 h-8 text-muted-foreground" />
-          </div>
-          <h3 className="text-xl font-bold mb-2">No requests yet</h3>
-          <p className="text-sm text-muted-foreground mb-4">Direct Hire requests and accepted tasks will appear here.</p>
-          <Link to="/JobMarketplace">
-            <Button size="sm" variant="outline">View Task Board</Button>
-          </Link>
-        </GlassCard>
+        <EmptyState
+          icon={Inbox}
+          title="No requests yet"
+          description="Direct Hire requests and accepted tasks will appear here."
+          action={<Link to="/JobMarketplace"><Button size="sm" variant="outline">View Task Board</Button></Link>}
+        />
       ) : (
         <div className="space-y-3">
           {filtered.map(task => (
@@ -322,7 +324,7 @@ export default function AvatarRequests() {
           <DialogHeader>
             <DialogTitle>Reason for Declining</DialogTitle>
           </DialogHeader>
-          <p className="text-sm text-muted-foreground">Please provide a reason — this will be sent to the client.</p>
+          <p className="text-sm text-muted-foreground">Please provide a reason ??? this will be sent to the client.</p>
           <Textarea
             placeholder="e.g. I'm unavailable on that date, schedule conflict..."
             value={declineReason}
@@ -341,6 +343,8 @@ export default function AvatarRequests() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+      </div>
     </AppShell>
   );
 }
+
