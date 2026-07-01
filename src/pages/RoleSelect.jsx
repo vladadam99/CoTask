@@ -15,9 +15,9 @@ const roles = [
     iconBg: 'bg-blue-500/10',
     title: 'I need help',
     subtitle: 'Client / Explorer',
-    desc: 'Hire someone on the ground anywhere in the world ??? and watch it happen live. Tours, inspections, errands, shopping, queues ??? anything you need done, done in real time.',
+    desc: 'Hire someone on the ground for inspections, errands, shopping, queue checks, and live video help where available.',
     cta: 'Continue as Client',
-    tags: ['Post Jobs', 'Live Streaming', 'Any Task'],
+    tags: ['Post Open Tasks', 'Live Sessions', 'Direct Hire'],
   },
   {
     key: 'avatar',
@@ -28,9 +28,9 @@ const roles = [
     iconBg: 'bg-primary/10',
     title: 'I want to earn',
     subtitle: 'Local Agent / Helper',
-    desc: "Get hired for your skills at your own rate. Apply to jobs, run tasks, conduct live tours, or do anything for anyone ??? and make money being someone's boots on the ground.",
+    desc: 'Get hired for local tasks at your own rate. Submit proposals, accept direct requests, share proof, and run live sessions when requested.',
     cta: 'Continue as Local Agent',
-    tags: ['Apply to Jobs', 'Live Streams', 'Flexible Hours'],
+    tags: ['Open Tasks', 'Live Sessions', 'Flexible Hours'],
     featured: true,
   },
   // {
@@ -158,4 +158,3 @@ export default function RoleSelect() {
     </div>
   );
 }
-
