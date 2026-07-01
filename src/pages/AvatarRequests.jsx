@@ -324,7 +324,7 @@ export default function AvatarRequests() {
           <DialogHeader>
             <DialogTitle>Reason for Declining</DialogTitle>
           </DialogHeader>
-          <p className="text-sm text-muted-foreground">Please provide a reason ??? this will be sent to the client.</p>
+          <p className="text-sm text-muted-foreground">Please provide a reason — this will be sent to the client.</p>
           <Textarea
             placeholder="e.g. I'm unavailable on that date, schedule conflict..."
             value={declineReason}
@@ -347,4 +347,3 @@ export default function AvatarRequests() {
     </AppShell>
   );
 }
-
