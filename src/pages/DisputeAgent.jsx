@@ -41,7 +41,7 @@ export default function DisputeAgent() {
     if (jobId) {
       const autoMsg = await base44.agents.addMessage(convo, {
         role: 'user',
-        content: `I have a dispute for Job ID: ${jobId}. Please look it up and help me resolve it.`,
+        content: `I have a dispute for Task ID: ${jobId}. Please look it up and help me resolve it.`,
       });
       setConversation(autoMsg);
       setMessages(autoMsg.messages || []);
@@ -103,7 +103,7 @@ export default function DisputeAgent() {
                   <p className="text-sm text-muted-foreground mt-1">Describe your dispute and I'll help find a fair resolution for both parties.</p>
                 </div>
                 <div className="flex flex-col gap-2 w-full max-w-sm">
-                  {['I have a dispute about a completed job', 'The avatar didn\'t finish the work', 'Client is not releasing payment'].map(s => (
+                  {['I have a dispute about a completed task', 'The Local Agent didn\'t finish the work', 'Client is not releasing Secure Payment'].map(s => (
                     <button key={s} onClick={() => setInput(s)}
                       className="text-left text-sm px-4 py-3 rounded-xl border border-border hover:bg-secondary/60 transition-colors text-muted-foreground">
                       {s}
