@@ -103,7 +103,7 @@ export default function UserOnboarding({ user, onComplete, submitting }) {
     <div>
       <div className="text-center mb-6">
         <h1 className="text-2xl font-bold mb-1">Set up your account</h1>
-        <p className="text-sm text-muted-foreground">Step {step + 1} of {STEPS.length} — {STEPS[step]}</p>
+        <p className="text-sm text-muted-foreground">Step {step + 1} of {STEPS.length} - {STEPS[step]}</p>
         <div className="flex gap-1.5 mt-3 justify-center">
           {STEPS.map((_, i) => (
             <div key={i} className={`h-1 w-12 rounded-full transition-colors ${i <= step ? 'bg-primary' : 'bg-muted'}`} />
@@ -111,7 +111,7 @@ export default function UserOnboarding({ user, onComplete, submitting }) {
         </div>
       </div>
 
-      <div className="glass rounded-2xl p-8">
+      <div className="surface-panel rounded-lg p-6 md:p-8">
         <AnimatePresence mode="wait">
           <motion.div key={step} initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} transition={{ duration: 0.25 }}>
 
@@ -137,7 +137,7 @@ export default function UserOnboarding({ user, onComplete, submitting }) {
                 )}
                 <div>
                   <p className="text-sm text-muted-foreground mb-3">
-                    What services are you looking for? We'll personalise your experience and suggest the best avatars for you.
+                    What services are you looking for? We will personalise your experience and suggest relevant Local Agents.
                   </p>
                   <div className="flex flex-wrap gap-2 max-h-52 overflow-y-auto">
                     {CATEGORIES.map(cat => (
@@ -162,7 +162,7 @@ export default function UserOnboarding({ user, onComplete, submitting }) {
             {/* Step 1: Your Details */}
             {step === 1 && (
               <div className="space-y-4">
-                <p className="text-sm text-muted-foreground">Almost done! Tell us your location so we can find the best avatars near you.</p>
+                <p className="text-sm text-muted-foreground">Almost done. Tell us your location so we can find relevant Local Agents near you.</p>
 
                 {/* Postcode lookup */}
                 <div>
@@ -210,7 +210,7 @@ export default function UserOnboarding({ user, onComplete, submitting }) {
                       </div>
                     ) : (
                       <div>
-                        <p className="text-xs text-muted-foreground mb-2">No addresses found — enter yours manually.</p>
+                        <p className="text-xs text-muted-foreground mb-2">No addresses found - enter yours manually.</p>
                         <Input
                           value={data.full_address}
                           onChange={e => update('full_address', e.target.value)}
@@ -247,7 +247,7 @@ export default function UserOnboarding({ user, onComplete, submitting }) {
                     Anything else you're looking for? <span className="text-muted-foreground font-normal">(optional)</span>
                   </label>
                   <textarea value={data.what_looking_for} onChange={e => update('what_looking_for', e.target.value)}
-                    placeholder="e.g. I prefer avatars who speak French, have experience with property inspections, and are based in Paris..."
+                    placeholder="e.g. I prefer Local Agents who speak French, have experience with property inspections, and are based in Paris..."
                     className="w-full h-24 px-3 py-2 bg-card border border-border rounded-md text-sm resize-none text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary/50" />
                 </div>
               </div>
