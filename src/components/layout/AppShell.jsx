@@ -111,7 +111,7 @@ function ProfilePanel({ user, onClose, navItems = [] }) {
         <div className="mx-4 mb-8">
           <button
             onClick={() => base44.auth.logout('/Landing')}
-            className="w-full flex items-center gap-3 px-4 py-3.5 rounded-lg bg-card border border-border shadow-sm hover:bg-destructive/8 transition-colors text-sm text-destructive"
+            className="w-full flex items-center gap-3 px-4 py-3.5 rounded-lg bg-card border border-border shadow-sm hover:bg-destructive/10 transition-colors text-sm text-destructive"
           >
             <LogOut className="w-5 h-5 flex-shrink-0" />
             <span className="font-medium">Sign out</span>
