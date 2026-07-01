@@ -103,8 +103,6 @@
 
   button, a, input, textarea, select { -webkit-tap-highlight-color: transparent; }
 
-  body > :not(:defined),
-  body > *:not(#root):not(div):not(script):not(style):not(link) { pointer-events: none !important; }
 
   ::selection { background: hsl(var(--primary) / 0.18); color: hsl(var(--foreground)); }
 
