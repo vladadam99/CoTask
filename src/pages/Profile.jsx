@@ -49,7 +49,7 @@ function downloadInvoice(job, userEmail, userName) {
   doc.setFont('helvetica', 'bold');
   doc.text('Net Earned:', 20, 145); doc.text(`$${net.toFixed(2)}`, 160, 145);
   doc.setFontSize(8); doc.setFont('helvetica', 'normal');
-  doc.text('CoTask Platform · cotask.app · support@cotask.app', 20, 280);
+  doc.text('CoTask Platform ?? cotask.app ?? support@cotask.app', 20, 280);
   doc.save(`cotask-invoice-${invoiceNo}.pdf`);
 }
 
@@ -171,7 +171,7 @@ export default function Profile() {
 
   const dashPath = user?.selected_role === 'avatar' ? '/AvatarDashboard'
     : user?.selected_role === 'enterprise' ? '/EnterpriseDashboard'
-    : '/FindAvatars';
+    : '/FindPeople';
 
   const editPath = user?.selected_role === 'avatar' ? '/AvatarProfileEdit'
     : user?.selected_role === 'enterprise' ? '/EnterpriseSettings'
@@ -179,10 +179,10 @@ export default function Profile() {
 
   return (
     <AppShell navItems={getNavItems(user?.selected_role || user?.role || 'user')} user={user}>
-      <div className="max-w-2xl mx-auto -mt-4 -mx-4 lg:mx-auto lg:mt-0">
+      <div className="mx-auto max-w-5xl space-y-4">
 
         {/* Top bar */}
-        <div className="flex items-center justify-between px-4 py-3 sticky top-14 z-20 bg-background/80 backdrop-blur-sm border-b border-border">
+        <div className="surface-panel sticky top-16 z-20 flex items-center justify-between rounded-lg px-4 py-3 backdrop-blur">
           <div className="flex items-center gap-3">
             <button onClick={() => navigate(dashPath)} className="p-1.5 rounded-lg hover:bg-secondary">
               <ArrowLeft className="w-5 h-5" />
@@ -196,7 +196,7 @@ export default function Profile() {
             {menuOpen && (
               <>
                 <div className="fixed inset-0 z-10" onClick={() => setMenuOpen(false)} />
-                <div className="absolute right-0 top-10 z-20 w-48 bg-card border border-border rounded-xl shadow-xl overflow-hidden">
+                <div className="absolute right-0 top-10 z-20 w-48 overflow-hidden rounded-lg border border-border bg-card shadow-xl">
                   <Link to={editPath} onClick={() => setMenuOpen(false)}
                     className="flex items-center gap-3 px-4 py-3 text-sm hover:bg-secondary/60 transition-colors">
                     <Pencil className="w-4 h-4 text-muted-foreground" /> Edit Profile
@@ -215,6 +215,7 @@ export default function Profile() {
           </div>
         </div>
 
+        <div className="surface-panel overflow-hidden rounded-lg">
         {/* Cover + Avatar */}
         <div className="relative">
           <div className="w-full h-40 bg-gradient-to-br from-primary/30 to-primary/5 overflow-hidden">
@@ -259,9 +260,11 @@ export default function Profile() {
             )}
           </div>
         </div>
+        </div>
 
+        <div className="surface-panel overflow-hidden rounded-lg">
         {/* Tabs */}
-        <div className="flex border-b border-border sticky top-[calc(3.5rem+56px)] z-10 bg-background/90 backdrop-blur-sm">
+        <div className="flex border-b border-border bg-card/70">
           {TABS.map(tab => (
             <button key={tab} onClick={() => setActiveTab(tab)}
               className={`flex-1 py-3 text-sm font-medium transition-colors relative ${
@@ -294,7 +297,7 @@ export default function Profile() {
                   <p className="text-sm text-muted-foreground font-medium mb-2">{jobPosts.length} Jobs</p>
                   {jobPosts.map(job => (
                     <Link key={job.id} to={`/JobDetail?id=${job.id}`}>
-                      <div className="bg-card border border-border rounded-2xl p-4 hover:border-primary/20 transition-colors mb-3">
+                      <div className="record-card mb-3">
                         <div className="flex items-start justify-between gap-2 mb-2">
                           <h3 className="font-semibold text-sm leading-tight flex-1">{job.title}</h3>
                           <span className={`text-xs px-2 py-0.5 rounded-full flex-shrink-0 ${
@@ -308,7 +311,7 @@ export default function Profile() {
                           <span>{job.category}</span>
                           {(job.budget_min || job.budget_max) && (
                             <span className="font-semibold text-primary">
-                              ${job.budget_min || 0}{job.budget_max ? ` – $${job.budget_max}` : '+'}
+                              ${job.budget_min || 0}{job.budget_max ? ` ??? $${job.budget_max}` : '+'}
                             </span>
                           )}
                         </div>
@@ -493,7 +496,7 @@ export default function Profile() {
                             </div>
                             <div>
                               <p className="font-medium text-sm">{job.title}</p>
-                              <p className="text-xs text-muted-foreground">{job.posted_by_name} · {job.ended_at ? new Date(job.ended_at).toLocaleDateString() : new Date(job.updated_date).toLocaleDateString()}</p>
+                              <p className="text-xs text-muted-foreground">{job.posted_by_name} ?? {job.ended_at ? new Date(job.ended_at).toLocaleDateString() : new Date(job.updated_date).toLocaleDateString()}</p>
                             </div>
                           </div>
                           <div className="text-right flex-shrink-0">
@@ -594,7 +597,9 @@ export default function Profile() {
           )}
 
         </div>
+        </div>
       </div>
     </AppShell>
   );
 }
+
