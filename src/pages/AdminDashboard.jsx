@@ -57,7 +57,7 @@ export default function AdminDashboard() {
       <PageHero
         eyebrow="Admin"
         title="Platform Overview"
-        description="Monitor users, Local Agents, enterprises, bookings, payments, safety, disputes, and verification activity."
+        description="Monitor users, Local Agents, enterprises, tasks, payments, safety, disputes, and verification activity."
         icon={LayoutDashboard}
         stats={[
           { label: 'Users', value: users.length },
@@ -95,10 +95,10 @@ export default function AdminDashboard() {
         ))}
       </div>
 
-      {/* Recent Bookings */}
+      {/* Recent Tasks */}
       <section className="space-y-4">
         <SectionTitle
-          title="Recent Bookings"
+          title="Recent Tasks"
           action={<Link to="/AdminDashboard" className="text-sm text-primary hover:underline flex items-center gap-1">View all <ArrowRight className="w-3 h-3" /></Link>}
         />
         <div className="space-y-2">
@@ -106,7 +106,7 @@ export default function AdminDashboard() {
             <GlassCard key={b.id} className="p-3 flex items-center justify-between text-sm" hover>
               <div className="flex items-center gap-4">
                 <span className="font-medium">{b.category}</span>
-                <span className="text-muted-foreground">{b.client_name} ??? {b.avatar_name}</span>
+                <span className="text-muted-foreground">{b.client_name} → {b.avatar_name}</span>
               </div>
               <div className="flex items-center gap-3">
                 <span className="font-medium">${b.total_amount || 0}</span>
@@ -141,4 +141,3 @@ export default function AdminDashboard() {
     </AppShell>
   );
 }
-
