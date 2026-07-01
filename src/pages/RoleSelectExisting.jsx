@@ -109,9 +109,9 @@ export default function RoleSelectExisting() {
             Co<span className="text-primary">Task</span>
           </Link>
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
-            <p className="text-sm text-muted-foreground mb-2">Welcome back, {user.full_name?.split(' ')[0] || 'there'} 👋</p>
+            <p className="text-sm text-muted-foreground mb-2">Welcome back, {user.full_name?.split(' ')[0] || 'there'} ????</p>
             <h1 className="text-3xl md:text-5xl font-black mb-3 tracking-tight">How do you want to use CoTask?</h1>
-            <p className="text-muted-foreground text-base">Select a role — if you haven't set it up yet, we'll get you started.</p>
+            <p className="text-muted-foreground text-base">Select a role ??? if you haven't set it up yet, we'll get you started.</p>
           </motion.div>
         </div>
 
@@ -124,7 +124,7 @@ export default function RoleSelectExisting() {
               transition={{ delay: i * 0.1, duration: 0.5 }}
               onClick={() => handleSelect(role.key)}
               disabled={selecting !== null}
-              className={`relative text-left p-7 rounded-2xl border transition-all duration-300 group bg-gradient-to-br ${role.gradient} ${role.border} hover:scale-[1.02] hover:shadow-2xl disabled:opacity-70`}
+              className={`relative text-left p-6 rounded-lg border transition-all duration-300 group bg-card ${role.border} hover:border-primary/40 hover:shadow-md disabled:opacity-70`}
             >
               {role.featured && (
                 <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-primary text-white text-xs font-bold px-4 py-1 rounded-full">
@@ -132,7 +132,7 @@ export default function RoleSelectExisting() {
                 </div>
               )}
 
-              <div className={`w-14 h-14 rounded-2xl ${role.iconBg} flex items-center justify-center mb-5 group-hover:scale-110 transition-transform`}>
+              <div className={`w-14 h-14 rounded-lg ${role.iconBg} flex items-center justify-center mb-5 group-hover:scale-105 transition-transform`}>
                 {selecting === role.key ? (
                   <div className="w-6 h-6 border-2 border-current border-t-transparent rounded-full animate-spin" />
                 ) : (
@@ -161,3 +161,4 @@ export default function RoleSelectExisting() {
     </div>
   );
 }
+
