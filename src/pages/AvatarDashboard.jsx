@@ -80,9 +80,10 @@ export default function AvatarDashboard() {
   return (
     <AppShell navItems={getNavItems(user?.selected_role || user?.role || 'user')} user={user} title="Agent Dashboard">
       {/* Header */}
-      <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="flex items-center justify-between mb-8">
+      <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="surface-panel rounded-lg p-5 md:p-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-6">
         <div>
-          <h1 className="text-2xl lg:text-3xl font-black mb-1">Hey, {firstName} 👋</h1>
+          <p className="section-label">Agent workspace</p>
+          <h1 className="text-2xl lg:text-3xl font-black mb-1">Hey, {firstName} ????</h1>
           <p className="text-sm text-muted-foreground mb-2">Manage your tasks, live sessions, proposals, verification, and earnings.</p>
           <div className="flex items-center gap-2 text-sm">
             <span className={`w-2 h-2 rounded-full ${profile?.is_available ? 'bg-green-400 animate-pulse' : 'bg-muted-foreground'}`} />
@@ -105,9 +106,8 @@ export default function AvatarDashboard() {
       </motion.div>
 
       {/* Go Live Hero Card */}
-      <div className="relative overflow-hidden rounded-2xl border border-primary/20 p-6 mb-8"
+      <div className="relative overflow-hidden surface-panel rounded-lg p-5 md:p-6 mb-6"
         style={{ background: 'linear-gradient(135deg, rgba(220,38,38,0.15) 0%, rgba(153,27,27,0.08) 100%)' }}>
-        <div className="absolute top-0 right-0 w-40 h-40 bg-primary/10 rounded-full -translate-y-1/2 translate-x-1/2 blur-2xl" />
         <div className="relative z-10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div>
             <div className="flex items-center gap-2 mb-2">
@@ -128,7 +128,7 @@ export default function AvatarDashboard() {
       </div>
 
       {/* Stats Grid */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-8">
+      <div className="dashboard-grid mb-6">
         {[
           { label: 'Requests & Proposals', value: pendingBookings.length, icon: Clock, color: 'text-yellow-400', bg: 'bg-yellow-500/10', path: '/AvatarRequests' },
           { label: 'Upcoming Tasks', value: upcomingBookings.length, icon: Calendar, color: 'text-blue-400', bg: 'bg-blue-500/10', path: '/AvatarRequests' },
@@ -140,7 +140,7 @@ export default function AvatarDashboard() {
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.05 }}
-              className="glass border border-border hover:border-primary/20 rounded-2xl p-5 transition-all hover:scale-[1.02]"
+              className="surface-panel rounded-lg p-5 transition-all hover:border-primary/30"
             >
               <div className={`w-9 h-9 rounded-xl ${stat.bg} flex items-center justify-center mb-3`}>
                 <stat.icon className={`w-4.5 h-4.5 ${stat.color}`} />
@@ -154,26 +154,26 @@ export default function AvatarDashboard() {
 
       {/* No profile prompt */}
       {!profile && (
-        <div className="glass border border-yellow-500/20 bg-yellow-500/5 rounded-2xl p-6 mb-8">
+        <div className="surface-panel border-yellow-500/20 bg-yellow-500/5 rounded-lg p-5 md:p-6 mb-6">
           <p className="text-sm font-bold mb-1">Complete agent setup to start accepting tasks</p>
           <p className="text-xs text-muted-foreground mb-3">Finish onboarding to create your Local Agent profile, services, rates, and availability.</p>
           <Link to="/Onboarding?role=avatar">
-            <Button size="sm" variant="outline" className="border-yellow-500/30 text-yellow-400">Complete Agent Setup →</Button>
+            <Button size="sm" variant="outline" className="border-yellow-500/30 text-yellow-400">Complete Agent Setup ???</Button>
           </Link>
         </div>
       )}
 
       {/* Post & Recording row */}
-      <div className="mb-8 grid grid-cols-2 gap-3">
+      <div className="mb-6 grid grid-cols-1 sm:grid-cols-2 gap-3">
         <button
           onClick={() => setShowPostUpload(true)}
-          className="flex items-center gap-3 glass border border-primary/20 hover:border-primary/40 rounded-2xl px-4 py-4 transition-all text-left"
+          className="flex items-center gap-3 surface-panel hover:border-primary/40 rounded-lg px-4 py-4 transition-all text-left"
         >
           <PlusCircle className="w-4 h-4 text-primary flex-shrink-0" />
           <span className="text-sm font-semibold text-primary">New Portfolio Video</span>
         </button>
         <Link to="/RecordingLibrary"
-          className="flex items-center gap-3 glass border border-border hover:border-border rounded-2xl px-4 py-4 transition-all"
+          className="flex items-center gap-3 surface-panel hover:border-primary/30 rounded-lg px-4 py-4 transition-all"
         >
           <Play className="w-4 h-4 text-muted-foreground flex-shrink-0" />
           <span className="text-sm text-muted-foreground">Recordings</span>
@@ -192,7 +192,7 @@ export default function AvatarDashboard() {
           <div className="space-y-3">
             {pendingBookings.slice(0, 3).map(b => (
               <Link key={b.id} to={`/AvatarBookingDetail?id=${b.id}`}>
-                <div className="glass border border-border hover:border-primary/30 rounded-2xl p-4 flex items-center justify-between transition-all">
+                <div className="record-card flex items-center justify-between">
                   <div>
                     <p className="font-semibold text-sm">{b.category}</p>
                     <p className="text-xs text-muted-foreground mt-1">{b.client_name}</p>
@@ -220,11 +220,11 @@ export default function AvatarDashboard() {
           <div className="space-y-3">
             {upcomingBookings.slice(0, 3).map(b => (
               <Link key={b.id} to={`/AvatarBookingDetail?id=${b.id}`}>
-                <div className="glass border border-border hover:border-primary/30 rounded-2xl p-4 flex items-center justify-between transition-all">
+                <div className="record-card flex items-center justify-between">
                   <div>
                     <p className="font-semibold text-sm">{b.category}</p>
                     <p className="text-xs text-muted-foreground mt-1">
-                      {b.client_name} · {b.scheduled_date ? `${b.scheduled_date}${b.scheduled_time ? ` at ${b.scheduled_time}` : ''}` : 'TBD'}
+                      {b.client_name} ?? {b.scheduled_date ? `${b.scheduled_date}${b.scheduled_time ? ` at ${b.scheduled_time}` : ''}` : 'TBD'}
                     </p>
                   </div>
                   <StatusBadge status={b.status} />
@@ -246,3 +246,4 @@ export default function AvatarDashboard() {
     </AppShell>
   );
 }
+
