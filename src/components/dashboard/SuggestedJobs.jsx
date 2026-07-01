@@ -22,14 +22,14 @@ export default function SuggestedJobs({ user, profile }) {
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2">
           <Sparkles className="w-4 h-4 text-primary" />
-          <h2 className="text-base font-bold">Jobs Matched for You</h2>
+          <h2 className="text-base font-bold">Open Tasks Matched for You</h2>
         </div>
-        <Link to="/JobMarketplace" className="text-xs text-primary hover:underline">See all →</Link>
+        <Link to="/JobMarketplace" className="text-xs text-primary hover:underline">See all</Link>
       </div>
       <div className="space-y-3">
         {data.slice(0, 3).map(job => (
           <Link key={job.id} to={`/JobDetail?id=${job.id}`}>
-            <div className="glass border border-border hover:border-primary/30 rounded-2xl p-4 transition-all">
+            <div className="surface-panel hover:border-primary/30 rounded-lg p-4 transition-all">
               <div className="flex items-start justify-between gap-3">
                 <div className="flex-1 min-w-0">
                   <p className="font-bold text-sm truncate">{job.title}</p>
