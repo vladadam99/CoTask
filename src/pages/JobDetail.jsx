@@ -152,6 +152,45 @@ export default function JobDetail() {
 
   const showOwnerControls = isOwner;
   const canApply = isProspectAgent && job?.status === 'open' && !hasSubmittedProposal;
+  const nextAction = job?.status === 'open'
+    ? isOwner
+      ? {
+          title: 'Review Proposals',
+          description: applications.length > 0 ? 'Compare Local Agent proposals and choose who you want to work with.' : 'Your Open Task is live. Proposals from Local Agents will appear here.',
+        }
+      : canApply
+        ? {
+            title: 'Submit Proposal',
+            description: 'Send a useful proposal that explains availability, rate, and how you will complete the task.',
+          }
+        : {
+            title: 'Open Task',
+            description: 'Review the brief and use messages after the client selects a Local Agent.',
+          }
+    : paymentStatus === 'pending' && isOwner
+      ? {
+          title: 'Fund Secure Payment',
+          description: 'A Local Agent has been selected. Fund Secure Payment to confirm the task before work begins.',
+        }
+      : paymentStatus === 'pending' && isHiredAgent
+        ? {
+            title: 'Waiting for Secure Payment',
+            description: 'The client selected you and now needs to fund Secure Payment before the task starts.',
+          }
+        : job?.status === 'in_progress'
+          ? {
+              title: 'Task In Progress',
+              description: isHiredAgent ? 'Update your status, share progress photos, and submit proof when ready.' : 'Follow live progress and review proof when the Local Agent submits it.',
+            }
+          : job?.status === 'awaiting_approval'
+            ? {
+                title: 'Review Proof',
+                description: 'Completion proof is ready for client review.',
+              }
+            : {
+                title: 'Task Details',
+                description: 'Follow the status, payment state, messages, and proof from one place.',
+              };
 
   if (isLoading) return (
     <AppShell navItems={getNavItems(user?.selected_role || user?.role || 'user')} user={user}>
@@ -206,9 +245,9 @@ export default function JobDetail() {
                 <h1 className="text-2xl font-black tracking-tight">{job.title}</h1>
                 <Badge variant="outline" className="text-xs font-medium px-2.5 py-1 rounded-md bg-secondary text-secondary-foreground border-border">Open Task</Badge>
                 <StatusBadge status={job.status} />
-                {job.camera_required && <Badge variant="outline" className="text-xs bg-primary/10 text-primary border-primary/20">???? Camera Required</Badge>}
+                {job.camera_required && <Badge variant="outline" className="text-xs bg-primary/10 text-primary border-primary/20">Camera Required</Badge>}
               </div>
-              <p className="text-sm text-muted-foreground">Posted by {job.posted_by_name} ?? {job.posted_by_type}</p>
+              <p className="text-sm text-muted-foreground">Posted by {job.posted_by_name || 'Client'} · {job.posted_by_type === 'enterprise' ? 'Enterprise' : 'Client'}</p>
             </div>
             {showOwnerControls && job.status === 'open' && (
               <Badge variant="outline" className="text-xs bg-yellow-500/10 text-yellow-400 border-yellow-500/20">
@@ -224,7 +263,7 @@ export default function JobDetail() {
             {job.duration_value && <span className="flex items-center gap-1.5"><Clock className="w-4 h-4" />{job.duration_value} {job.duration_value === 1 ? 'hour' : 'hours'}</span>}
             {job.budget_min && (
               <span className="text-primary font-semibold">
-                ${job.budget_min}{DURATION_LABELS[job.duration_type]}{job.negotiable ? ' ?? negotiable' : ''}
+                ${job.budget_min}{DURATION_LABELS[job.duration_type]}{job.negotiable ? ' · negotiable' : ''}
               </span>
             )}
           </div>
@@ -273,8 +312,26 @@ export default function JobDetail() {
           )}
         </div>
 
+        <div className="surface-panel rounded-lg border-primary/20 p-5">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <p className="section-label">Next action</p>
+              <h2 className="text-lg font-bold text-foreground">{nextAction.title}</h2>
+              <p className="mt-1 max-w-2xl text-sm leading-relaxed text-muted-foreground">{nextAction.description}</p>
+            </div>
+            {canApply && !showApplyForm && user?.identity_verified && (
+              <Button className="shrink-0" onClick={() => setShowApplyForm(true)}>Submit Proposal</Button>
+            )}
+            {paymentStatus === 'pending' && job.winner_email && isOwner && !showPaymentModal && (
+              <Button variant="payment" className="shrink-0 gap-2" onClick={() => setShowPaymentModal(true)}>
+                <DollarSign className="w-4 h-4" /> Fund Secure Payment
+              </Button>
+            )}
+          </div>
+        </div>
+
         {job.winner_email && paymentStatus === 'pending' && isOwner && (
-          <div className="glass rounded-2xl p-4 border border-yellow-500/20 flex flex-col gap-3">
+          <div className="surface-panel rounded-lg p-4 border border-yellow-500/20 flex flex-col gap-3">
             <div className="flex items-center gap-3">
               <div className="w-8 h-8 rounded-full bg-yellow-500/10 flex items-center justify-center flex-shrink-0">
                 <AlertCircle className="w-4 h-4 text-yellow-400" />
@@ -287,10 +344,11 @@ export default function JobDetail() {
             {!showPaymentModal ? (
               <div className="flex flex-col gap-1 w-full">
                 <Button
-                  className="w-full bg-primary hover:bg-primary/90 gap-2"
+                  variant="payment"
+                  className="w-full gap-2"
                   onClick={() => setShowPaymentModal(true)}
                 >
-                  <DollarSign className="w-4 h-4" /> Fund Secure Payment ??? ${job.budget_max || job.budget_min || 50}
+                  <DollarSign className="w-4 h-4" /> Fund Secure Payment — ${job.budget_max || job.budget_min || 50}
                 </Button>
                 <p className="text-center text-xs text-muted-foreground mt-1">
                   You are not charged until you fund Secure Payment. Funds are held and only released upon approval.
@@ -308,7 +366,7 @@ export default function JobDetail() {
         )}
 
         {job.winner_email && paymentStatus === 'pending' && isHiredAgent && (
-          <div className="glass rounded-2xl p-4 border border-blue-500/20 flex flex-col gap-3">
+          <div className="surface-panel rounded-lg p-4 border border-blue-500/20 flex flex-col gap-3">
             <div className="flex items-center gap-3">
               <div className="w-8 h-8 rounded-full bg-blue-500/10 flex items-center justify-center flex-shrink-0">
                 <span className="w-2 h-2 rounded-full bg-blue-400 animate-pulse" />
@@ -323,21 +381,20 @@ export default function JobDetail() {
 
         {/* Secure Payment Status Banner */}
         {job.stripe_payment_intent_id && paymentStatus === 'held' && isOwner && (
-          <div className="glass rounded-2xl p-4 border border-yellow-500/20 flex items-center gap-3">
+          <div className="surface-panel rounded-lg p-4 border border-yellow-500/20 flex items-center gap-3">
             <div className="w-8 h-8 rounded-full bg-yellow-500/10 flex items-center justify-center flex-shrink-0">
               <DollarSign className="w-4 h-4 text-yellow-400" />
             </div>
             <div>
               <p className="text-sm font-semibold text-yellow-400">
-                {job.stripe_payment_intent_id?.startsWith('sim_') ? '???? ' : '???? '}
                 ${job.escrow_amount} Secure Payment Held{job.stripe_payment_intent_id?.startsWith('sim_') ? ' (Test Secure Payment Flow)' : ''}
               </p>
-              <p className="text-xs text-muted-foreground">Funds will be paid to the Local Agent once you approve their work, or automatically after 24 hours.</p>
+              <p className="text-xs text-muted-foreground">Funds are held for this task and paid to the Local Agent after client approval or a reviewed resolution.</p>
             </div>
           </div>
         )}
         {paymentStatus === 'released' && (showOwnerControls || isHiredAgent) && (
-          <div className="glass rounded-2xl p-3 border border-green-500/20 flex items-center gap-2">
+          <div className="surface-panel rounded-lg p-3 border border-green-500/20 flex items-center gap-2">
             <CheckCircle className="w-4 h-4 text-green-400" />
             <p className="text-xs text-green-400">Secure Payment of ${job.escrow_amount || job.budget_max || job.budget_min} paid to the Local Agent.</p>
           </div>
@@ -345,7 +402,7 @@ export default function JobDetail() {
 
         {/* Edit Form */}
         {showEditForm && (
-          <div className="glass rounded-2xl p-6 border border-primary/20 space-y-4">
+          <div className="surface-panel rounded-lg p-6 border border-primary/20 space-y-4">
             <h3 className="font-bold">Edit Open Task</h3>
             <div>
               <label className="text-sm font-medium mb-1.5 block">Title</label>
@@ -395,7 +452,7 @@ export default function JobDetail() {
 
         {/* My Application Status (Prospect With Proposal) */}
         {hasSubmittedProposal && !isHiredAgent && (
-          <div className={`glass rounded-2xl p-4 border ${myApplication.status === 'rejected' ? 'border-red-500/20' : 'border-yellow-500/20'}`}>
+          <div className={`surface-panel rounded-lg p-4 border ${myApplication.status === 'rejected' ? 'border-red-500/20' : 'border-yellow-500/20'}`}>
             <div className="flex items-center gap-2">
               {myApplication.status === 'rejected' ? (
                 <XCircle className="w-5 h-5 text-red-400" />
@@ -424,25 +481,19 @@ export default function JobDetail() {
 
 
         {/* Apply Button / Form */}
-        {canApply && !showApplyForm && (
-          user?.identity_verified ? (
-            <Button className="w-full h-11" onClick={() => setShowApplyForm(true)}>
-              Submit Proposal
-            </Button>
-          ) : (
-            <div className="glass rounded-2xl p-5 border border-yellow-500/20 flex items-center gap-4">
-              <ShieldAlert className="w-6 h-6 text-yellow-400 flex-shrink-0" />
-              <div className="flex-1 min-w-0" title="Identity verification ensures a safe and trusted marketplace for all users.">
-                <p className="font-semibold text-sm">Identity Verification Required</p>
-                <p className="text-xs text-muted-foreground">You must verify your identity before submitting proposals.</p>
-              </div>
-              <Button size="sm" onClick={() => navigate('/IdentityVerification')}>Verify</Button>
+        {canApply && !showApplyForm && !user?.identity_verified && (
+          <div className="surface-panel rounded-lg p-5 border border-yellow-500/20 flex items-center gap-4">
+            <ShieldAlert className="w-6 h-6 text-yellow-400 flex-shrink-0" />
+            <div className="flex-1 min-w-0" title="Identity verification ensures a safe and trusted marketplace for all users.">
+              <p className="font-semibold text-sm">Identity Verification Required</p>
+              <p className="text-xs text-muted-foreground">You must verify your identity before submitting proposals.</p>
             </div>
-          )
+            <Button size="sm" onClick={() => navigate('/IdentityVerification')}>Verify</Button>
+          </div>
         )}
 
         {showApplyForm && (
-          <div className="glass rounded-2xl p-6 border border-primary/20 space-y-4">
+          <div className="surface-panel rounded-lg p-6 border border-primary/20 space-y-4">
             <h3 className="font-bold">Your Proposal</h3>
             <div>
               <label className="text-sm font-medium mb-1.5 block" title="Tell the client why you are a good fit and what rate you propose.">Cover Message *</label>
@@ -482,7 +533,7 @@ export default function JobDetail() {
             {applications.map(app => {
               const profile = applicantProfiles.find(p => p?.user_email === app.applicant_email);
               return (
-                <div key={app.id} className={`glass rounded-2xl p-5 border transition-all ${app.status === 'accepted' ? 'border-green-500/30' : 'border-border'}`}>
+                <div key={app.id} className={`surface-panel rounded-lg p-5 border transition-all ${app.status === 'accepted' ? 'border-green-500/30' : 'border-border'}`}>
                   <div className="flex items-start justify-between gap-3">
                     <div className="flex-1">
                       <div className="flex items-center gap-2 mb-1">
@@ -549,7 +600,7 @@ export default function JobDetail() {
 
         {/* Winner Info (public) */}
         {job.winner_email && job.status !== 'open' && (
-          <div className="glass rounded-2xl p-4 border border-green-500/20">
+          <div className="surface-panel rounded-lg p-4 border border-green-500/20">
             <div className="flex items-center gap-2">
               <Award className="w-5 h-5 text-yellow-400" />
               <div>
@@ -563,4 +614,3 @@ export default function JobDetail() {
     </AppShell>
   );
 }
-
