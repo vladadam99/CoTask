@@ -4,13 +4,13 @@ import { Search, Sparkles, Loader2, X } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 
 /**
- * SmartSearchBar – AI-powered semantic search.
+ * SmartSearchBar ??? AI-powered semantic search.
  * Props:
  *   items: array of objects to search through
- *   itemSummaryFn: (item) => string — how to describe each item to the AI
- *   onResults: (ids: string[] | null) => void — null means "clear / show all"
+ *   itemSummaryFn: (item) => string ??? how to describe each item to the AI
+ *   onResults: (ids: string[] | null) => void ??? null means "clear / show all"
  *   placeholder: string
- *   suggestions: string[] — shown when input focused but empty
+ *   suggestions: string[] ??? shown when input focused but empty
  */
 export default function SmartSearchBar({ items = [], itemSummaryFn, onResults, placeholder = 'Search...', suggestions = [] }) {
   const [query, setQuery] = useState('');
@@ -40,7 +40,7 @@ A user searched for: "${q}"
 Here are the available items:
 ${summaries}
 
-Return the IDs of items that are relevant to the search query, even if the wording doesn't match exactly. Use semantic understanding — e.g. "dog walking" should match avatars who mention pets, animals, or outdoor activities in their bio/skills. "grocery run" should match shopping/errands etc.
+Return the IDs of items that are relevant to the search query, even if the wording doesn't match exactly. Use semantic understanding ??? e.g. "dog walking" should match avatars who mention pets, animals, or outdoor activities in their bio/skills. "grocery run" should match shopping/errands etc.
 
 Only include genuinely relevant matches. Return them ranked by relevance (best first).`,
         response_json_schema: {
@@ -106,7 +106,7 @@ Only include genuinely relevant matches. Return them ranked by relevance (best f
           value={query}
           onChange={e => setQuery(e.target.value)}
           placeholder={placeholder}
-          className="pl-10 pr-8 bg-secondary/60 border-border rounded-xl text-sm"
+          className="h-12 pl-10 pr-8 bg-card border-input rounded-lg text-sm shadow-sm focus:ring-2 focus:ring-primary/20"
           onFocus={() => setFocused(true)}
           onBlur={() => setTimeout(() => setFocused(false), 150)}
         />
@@ -120,11 +120,11 @@ Only include genuinely relevant matches. Return them ranked by relevance (best f
 
 
       {showDropdown && (
-        <div className="absolute top-full left-0 right-0 mt-1 bg-card border border-border rounded-xl shadow-xl z-50 overflow-hidden">
-          <p className="text-[10px] text-muted-foreground px-3 pt-2 pb-1">Popular searches</p>
+        <div className="absolute top-full left-0 right-0 mt-2 bg-card border border-border rounded-lg shadow-xl z-50 overflow-hidden">
+          <p className="text-[10px] font-semibold text-muted-foreground px-3 pt-3 pb-1">Popular searches</p>
           {suggestions.map((s, i) => (
             <button key={i} onMouseDown={() => applySuggestion(s)}
-              className="w-full text-left px-3 py-2 text-sm hover:bg-secondary/60 flex items-center gap-2 transition-colors">
+              className="w-full text-left px-3 py-2.5 text-sm hover:bg-secondary/60 flex items-center gap-2 transition-colors">
               <Search className="w-3 h-3 text-muted-foreground flex-shrink-0" />{s}
             </button>
           ))}
@@ -133,3 +133,4 @@ Only include genuinely relevant matches. Return them ranked by relevance (best f
     </div>
   );
 }
+
