@@ -99,7 +99,7 @@ export default function Landing() {
               Get trusted eyes on the ground, anywhere.
             </h1>
             <p className="text-base md:text-xl text-white/85 max-w-2xl mb-10 leading-relaxed font-medium">
-              Hire a trusted Local Agent to visit, inspect, record, or livestream from anywhere — so you can see and act remotely in real time.
+              Hire a trusted Local Agent to visit, inspect, record, or livestream from anywhere, so you can see and act remotely in real time.
             </p>
           </motion.div>
 
@@ -141,7 +141,7 @@ export default function Landing() {
               { icon: Lock, title: '2. Agree & Fund securely', desc: 'The Local Agent accepts your request or you choose from proposals. Then fund the task. Secure Payment is held until approval.' },
               { icon: CheckCircle, title: '3. Join & approve', desc: 'Join via live video or review uploaded proof. Once satisfied, approve completion to release payment.' },
             ].map((step, i) => (
-              <div key={i} className="bg-card border border-border rounded-2xl p-8 text-center shadow-sm hover:shadow-md transition-shadow">
+              <div key={i} className="surface-panel rounded-lg p-8 text-center shadow-sm hover:shadow-md transition-shadow">
                 <div className="w-14 h-14 mx-auto bg-primary/10 text-primary rounded-xl flex items-center justify-center mb-6">
                   <step.icon className="w-7 h-7" />
                 </div>
@@ -163,7 +163,7 @@ export default function Landing() {
 
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {USE_CASES.map((uc, i) => (
-              <div key={i} className="bg-background border border-border rounded-xl p-5 flex items-start gap-4 hover:border-primary/50 transition-colors">
+              <div key={i} className="surface-panel rounded-lg p-5 flex items-start gap-4 hover:border-primary/50 transition-colors">
                 <div className="w-10 h-10 rounded-lg bg-secondary flex items-center justify-center shrink-0">
                   <uc.icon className="w-5 h-5 text-foreground/70" />
                 </div>
@@ -179,7 +179,7 @@ export default function Landing() {
         <div className="max-w-6xl mx-auto grid lg:grid-cols-2 gap-12 lg:gap-8">
           
           {/* For Clients */}
-          <div className="bg-card border border-border rounded-3xl p-8 md:p-12 shadow-sm">
+          <div className="surface-panel rounded-lg p-8 md:p-12 shadow-sm">
             <div className="w-12 h-12 bg-blue-500/10 text-blue-600 rounded-xl flex items-center justify-center mb-6">
               <Eye className="w-6 h-6" />
             </div>
@@ -209,7 +209,7 @@ export default function Landing() {
           </div>
 
           {/* For Local Agents */}
-          <div className="bg-card border border-border rounded-3xl p-8 md:p-12 shadow-sm">
+          <div className="surface-panel rounded-lg p-8 md:p-12 shadow-sm">
             <div className="w-12 h-12 bg-green-500/10 text-green-600 rounded-xl flex items-center justify-center mb-6">
               <Zap className="w-6 h-6" />
             </div>
@@ -257,7 +257,7 @@ export default function Landing() {
               { icon: ClipboardCheck, title: 'Task history tracking', desc: 'A clear record of all communications, milestones, and proofs for every task.' },
               { icon: AlertTriangle, title: 'Support tools for disputes', desc: 'Admin oversight and reporting tools are available to handle any issues fairly.' },
             ].map((item, i) => (
-              <div key={i} className="bg-background border border-border rounded-2xl p-6">
+              <div key={i} className="surface-panel rounded-lg p-6">
                 <item.icon className="w-8 h-8 text-primary mb-4" />
                 <h3 className="text-lg font-bold mb-2">{item.title}</h3>
                 <p className="text-muted-foreground text-sm leading-relaxed">{item.desc}</p>
@@ -291,7 +291,7 @@ export default function Landing() {
           </div>
           <Accordion type="single" collapsible className="space-y-4">
             {faqs.map((faq, i) => (
-              <AccordionItem key={i} value={`faq-${i}`} className="border border-border rounded-xl px-6 bg-card">
+              <AccordionItem key={i} value={`faq-${i}`} className="surface-panel rounded-lg px-6">
                 <AccordionTrigger className="text-left font-semibold hover:no-underline py-4">
                   {faq.q}
                 </AccordionTrigger>
@@ -331,7 +331,7 @@ export default function Landing() {
             <Link to="/Contact" className="hover:text-foreground">Contact</Link>
             <Link to="/Terms" className="hover:text-foreground">Terms</Link>
           </div>
-          <p className="text-sm text-muted-foreground">© 2026 CoTask. All rights reserved.</p>
+          <p className="text-sm text-muted-foreground">(c) 2026 CoTask. All rights reserved.</p>
         </div>
       </footer>
     </div>
