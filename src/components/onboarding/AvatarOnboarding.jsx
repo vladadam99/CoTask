@@ -185,8 +185,8 @@ export default function AvatarOnboarding({ user, onComplete, submitting }) {
   return (
     <div>
       <div className="text-center mb-6">
-        <h1 className="text-2xl font-bold mb-1">Set up your Avatar profile</h1>
-        <p className="text-sm text-muted-foreground">Step {step + 1} of {STEPS.length} — {STEPS[step]}</p>
+        <h1 className="text-2xl font-bold mb-1">Set up your Local Agent profile</h1>
+        <p className="text-sm text-muted-foreground">Step {step + 1} of {STEPS.length} - {STEPS[step]}</p>
         <div className="flex gap-1.5 mt-3 justify-center">
           {STEPS.map((_, i) => (
             <div key={i} className={`h-1 w-8 rounded-full transition-colors ${i <= step ? 'bg-primary' : 'bg-muted'}`} />
@@ -194,7 +194,7 @@ export default function AvatarOnboarding({ user, onComplete, submitting }) {
         </div>
       </div>
 
-      <div className="glass rounded-2xl p-8">
+      <div className="surface-panel rounded-lg p-6 md:p-8">
         <AnimatePresence mode="wait">
           <motion.div key={step} initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} transition={{ duration: 0.25 }}>
 
@@ -229,7 +229,7 @@ export default function AvatarOnboarding({ user, onComplete, submitting }) {
                 <div>
                   <label className="text-sm font-medium mb-1.5 block">Bio</label>
                   <Textarea value={data.bio} onChange={e => update('bio', e.target.value)}
-                    placeholder="Tell clients about yourself — your personality, experience, what makes you a great avatar, and what kind of jobs you enjoy..."
+                    placeholder="Tell clients about yourself, your experience, the tasks you can handle, and what makes you reliable as a Local Agent..."
                     className="bg-card border-border h-28 resize-none" />
                   <p className="text-xs text-muted-foreground mt-1">{data.bio.length}/500 characters</p>
                 </div>
@@ -363,7 +363,7 @@ export default function AvatarOnboarding({ user, onComplete, submitting }) {
                 </div>
                 <Toggle
                   label="Willing to travel"
-                  description="Accept jobs requiring travel to a different location"
+                  description="Accept tasks requiring travel to a different location"
                   value={data.willing_to_travel}
                   onChange={v => update('willing_to_travel', v)}
                 />
@@ -475,9 +475,9 @@ export default function AvatarOnboarding({ user, onComplete, submitting }) {
             {step === 3 && (
               <div className="space-y-5">
                 <div>
-                  <label className="text-sm font-medium mb-2 block">Job type preference</label>
+                  <label className="text-sm font-medium mb-2 block">Task type preference</label>
                   <div className="grid grid-cols-3 gap-2">
-                    {[{v:'scheduled',l:'Scheduled Only',d:'Plan ahead jobs'},{v:'instant',l:'Instant Only',d:'On-demand jobs'},{v:'both',l:'Both',d:'Open to all'}].map(({v,l,d}) => (
+                    {[{v:'scheduled',l:'Scheduled Only',d:'Plan ahead tasks'},{v:'instant',l:'Instant Only',d:'On-demand tasks'},{v:'both',l:'Both',d:'Open to all'}].map(({v,l,d}) => (
                       <button key={v} type="button" onClick={() => update('booking_type', v)}
                         className={`p-3 rounded-xl border text-left transition-all ${data.booking_type === v ? 'bg-primary/10 border-primary/40 text-primary' : 'bg-card border-border text-muted-foreground hover:bg-card'}`}>
                         <p className="text-sm font-semibold">{l}</p>
@@ -526,8 +526,8 @@ export default function AvatarOnboarding({ user, onComplete, submitting }) {
                       </div>
                       <span className="text-[10px] font-semibold bg-yellow-500/20 text-yellow-400 border border-yellow-500/30 px-2 py-0.5 rounded-full">Coming Soon</span>
                     </div>
-                    <Toggle label="Headset / Earpiece" description="Hands-free comms during jobs" value={data.has_headset} onChange={v => update('has_headset', v)} />
-                    <Toggle label="Available for Live Jobs" description="Willing to stream live via camera" value={data.does_live_jobs} onChange={v => update('does_live_jobs', v)} />
+                    <Toggle label="Headset / Earpiece" description="Hands-free communication during tasks" value={data.has_headset} onChange={v => update('has_headset', v)} />
+                    <Toggle label="Available for Live Tasks" description="Willing to stream live via camera when requested" value={data.does_live_jobs} onChange={v => update('does_live_jobs', v)} />
                     <Toggle label="Enterprise Ready" description="Can handle large-scale business deployments" value={data.is_enterprise_ready} onChange={v => update('is_enterprise_ready', v)} />
                   </div>
                 </div>
@@ -568,7 +568,7 @@ export default function AvatarOnboarding({ user, onComplete, submitting }) {
                 {data.does_live_jobs && (
                   <div>
                     <label className="text-sm font-medium mb-1.5 block">
-                      Live Camera Premium <span className="text-muted-foreground font-normal">(extra charge per hour for live jobs)</span>
+                      Live Camera Premium <span className="text-muted-foreground font-normal">(extra charge per hour for live tasks)</span>
                     </label>
                     <div className="relative">
                       <span className="absolute left-3 top-1/2 -translate-y-1/2 text-xs text-muted-foreground font-medium">{data.currency}</span>
@@ -579,14 +579,14 @@ export default function AvatarOnboarding({ user, onComplete, submitting }) {
                 )}
                 <Toggle
                   label="Open to negotiation"
-                  description="Allow clients to negotiate your rate on specific jobs"
+                  description="Allow clients to negotiate your rate on specific tasks"
                   value={data.negotiable}
                   onChange={v => update('negotiable', v)}
                 />
                 <div className="p-4 bg-primary/5 border border-primary/15 rounded-xl text-sm">
-                  <p className="font-medium text-primary mb-1">💡 Pricing tip</p>
+                  <p className="font-medium text-primary mb-1">Pricing tip</p>
                   <p className="text-muted-foreground text-xs leading-relaxed">
-                    Avatars on CoTask typically charge £15–£60/hr depending on the service type. Starting competitively helps you build your first reviews faster.
+                    Set a rate that reflects your location, equipment, travel time, and task complexity. Clients see your rate before sending a request.
                   </p>
                 </div>
               </div>
