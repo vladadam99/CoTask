@@ -9,7 +9,6 @@ export default function TermsBanner() {
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
-    // Slight delay so it doesn't flash on first paint
     const timer = setTimeout(() => {
       if (!localStorage.getItem(STORAGE_KEY)) {
         setVisible(true);
@@ -31,31 +30,31 @@ export default function TermsBanner() {
           animate={{ y: 0, opacity: 1 }}
           exit={{ y: 100, opacity: 0 }}
           transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-          className="fixed bottom-20 lg:bottom-4 left-4 right-4 z-[100] max-w-xl lg:left-auto lg:right-6 mx-auto lg:mx-0"
+          className="fixed bottom-20 left-4 right-4 z-[100] mx-auto max-w-xl lg:bottom-4 lg:left-auto lg:right-6 lg:mx-0"
         >
-          <div className="glass-strong rounded-2xl border border-border px-5 py-4 flex items-start gap-4 shadow-2xl">
-            <div className="flex-1 min-w-0">
-              <p className="text-sm text-foreground font-medium mb-0.5">We use cookies & you agree to our terms</p>
-              <p className="text-xs text-muted-foreground leading-relaxed">
+          <div className="surface-panel flex items-start gap-4 rounded-lg px-5 py-4 shadow-2xl">
+            <div className="min-w-0 flex-1">
+              <p className="mb-0.5 text-sm font-medium text-foreground">We use essential cookies</p>
+              <p className="text-xs leading-relaxed text-muted-foreground">
                 By using CoTask, you agree to our{' '}
                 <Link to="/Terms" className="text-primary hover:underline" onClick={accept}>
                   Terms & Conditions
                 </Link>
-                {' '}and our use of essential cookies.
+                {' '}and essential platform cookies.
               </p>
             </div>
-            <div className="flex items-center gap-2 flex-shrink-0 mt-0.5">
+            <div className="mt-0.5 flex shrink-0 items-center gap-2">
               <button
                 onClick={accept}
-                className="text-xs font-semibold px-3 py-1.5 bg-primary hover:bg-primary/90 text-white rounded-lg transition-colors"
+                className="rounded-lg bg-primary px-3 py-1.5 text-xs font-semibold text-primary-foreground transition-colors hover:bg-primary/90"
               >
                 Got it
               </button>
               <button
                 onClick={accept}
-                className="p-1.5 hover:bg-secondary/60 rounded-lg transition-colors text-muted-foreground"
+                className="rounded-lg p-1.5 text-muted-foreground transition-colors hover:bg-secondary/60"
               >
-                <X className="w-3.5 h-3.5" />
+                <X className="h-3.5 w-3.5" />
               </button>
             </div>
           </div>
@@ -64,3 +63,4 @@ export default function TermsBanner() {
     </AnimatePresence>
   );
 }
+
