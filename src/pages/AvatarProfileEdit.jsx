@@ -409,7 +409,7 @@ export default function AvatarProfileEdit() {
                     className="bg-transparent border-border"
                     placeholder="e.g. 50"
                   />
-                  <p className="text-xs text-muted-foreground mt-1">Jobs further than this won't be matched to you</p>
+                  <p className="text-xs text-muted-foreground mt-1">Tasks further than this won't be matched to you</p>
                 </div>
               )}
             </div>
