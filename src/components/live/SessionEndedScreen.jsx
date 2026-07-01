@@ -35,7 +35,7 @@ export default function SessionEndedScreen({ session, user }) {
         <CheckCircle className="w-8 h-8 text-green-400" />
       </div>
       <div>
-        <h3 className="text-xl font-bold mb-1">Session Complete!</h3>
+        <h3 className="text-xl font-bold mb-1">Session Complete</h3>
         <p className="text-sm text-muted-foreground">
           {session.duration_minutes ? `${session.duration_minutes} min` : 'Great'} session with {session.avatar_name}
         </p>
@@ -65,7 +65,7 @@ export default function SessionEndedScreen({ session, user }) {
           <textarea
             value={comment}
             onChange={e => setComment(e.target.value)}
-            placeholder="Leave a comment (optional)…"
+            placeholder="Leave a comment (optional)"
             rows={3}
             className="w-full text-sm bg-card border border-border rounded-xl px-3 py-2 focus:outline-none focus:border-primary/40 text-foreground placeholder:text-muted-foreground resize-none mb-3"
           />
@@ -74,7 +74,7 @@ export default function SessionEndedScreen({ session, user }) {
             onClick={submitReview}
             disabled={!rating || submitting}
           >
-            {submitting ? 'Submitting…' : 'Submit Review'}
+            {submitting ? 'Submitting...' : 'Submit Review'}
           </Button>
           <Link to="/Bookings" className="block text-center text-xs text-muted-foreground mt-3 hover:text-foreground">
             Skip for now
@@ -83,18 +83,18 @@ export default function SessionEndedScreen({ session, user }) {
       ) : (
         <GlassCard className="w-full max-w-sm p-5 text-center">
           <CheckCircle className="w-8 h-8 text-green-400 mx-auto mb-2" />
-          <p className="font-semibold text-sm">Review submitted — thank you!</p>
+          <p className="font-semibold text-sm">Review submitted - thank you.</p>
           <p className="text-xs text-muted-foreground mt-1">Your feedback helps the community.</p>
         </GlassCard>
       )}
 
       <div className="flex gap-3">
         <Link to="/Bookings">
-          <Button variant="outline" className="border-border gap-2">View Bookings</Button>
+          <Button variant="outline" className="border-border gap-2">View My Tasks</Button>
         </Link>
         <Link to="/Messages">
           <Button variant="outline" className="border-border gap-2">
-            <MessageSquare className="w-4 h-4" /> Message Avatar
+            <MessageSquare className="w-4 h-4" /> Open Messages
           </Button>
         </Link>
       </div>
