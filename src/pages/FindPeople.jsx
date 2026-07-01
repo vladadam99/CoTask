@@ -17,8 +17,8 @@ export default function FindPeople() {
       <div className="max-w-6xl mx-auto space-y-6">
         <PageHero
           eyebrow="Discover"
-          title="Find the right Local Agent"
-          description="Search verified people who can inspect, record, livestream, guide, or handle work where you need them."
+          title="Discover Local Agents"
+          description="Find verified Local Agents who can visit, inspect, record, or livestream from where you need them."
           icon={Compass}
           actions={(
             <Link to="/PostJob" className="inline-flex h-11 items-center justify-center gap-2 rounded-lg bg-primary px-4 text-sm font-bold text-primary-foreground shadow-sm hover:bg-primary/90">
@@ -26,9 +26,9 @@ export default function FindPeople() {
             </Link>
           )}
           stats={[
-            { label: 'Flow', value: 'Search' },
+            { label: 'Start', value: 'Search' },
             { label: 'Compare', value: 'Profiles' },
-            { label: 'Book', value: 'Securely' },
+            { label: 'Next', value: 'Direct Hire' },
           ]}
         />
 
@@ -50,4 +50,3 @@ export default function FindPeople() {
     </AppShell>);
 
 }
-
