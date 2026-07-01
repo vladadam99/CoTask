@@ -115,11 +115,46 @@ export default function UserBookingDetail() {
 
   const canCancel = isClient && ['pending', 'accepted', 'scheduled'].includes(booking.status);
   const needsPayment = isClient && booking.payment_status === 'pending' && booking.status === 'accepted' && negotiationResolved;
+  const nextAction = booking.status === 'pending'
+    ? {
+        title: 'Waiting for Local Agent',
+        description: 'Your Direct Hire request has been sent. You can discuss details now and fund Secure Payment after they accept.',
+        cta: convId ? <Link to={`/Messages?conv=${convId}`}><Button variant="outline" size="sm"><MessageSquare className="w-4 h-4" /> Open Messages</Button></Link> : null,
+      }
+    : needsPayment
+      ? {
+          title: 'Fund Secure Payment',
+          description: 'The Local Agent accepted. Confirm the task by funding Secure Payment before the session starts.',
+          cta: <Button size="sm" variant="payment" onClick={() => setShowPaymentModal(true)}><CreditCard className="w-4 h-4" /> Fund Secure Payment</Button>,
+        }
+      : liveSession
+        ? {
+            title: liveSession.status === 'live' ? 'Local Agent is live' : 'Waiting for Local Agent to go live',
+            description: liveSession.status === 'live' ? 'Join the live session and guide the task in real time.' : 'The Local Agent is preparing the session. This page refreshes automatically.',
+            cta: <Link to={`/ClientLiveView?session=${liveSession.id}`}><Button size="sm" variant="live"><Video className="w-4 h-4" /> Join Live Session</Button></Link>,
+          }
+        : booking.status === 'awaiting_approval'
+          ? {
+              title: 'Review Proof',
+              description: 'The Local Agent has submitted completion proof. Review it and choose the next payment action.',
+              cta: null,
+            }
+          : booking.status === 'completed'
+            ? {
+                title: 'Task Completed',
+                description: 'This Direct Hire task is complete. You can leave a review if you have not already.',
+                cta: null,
+              }
+            : {
+                title: 'Task in Progress',
+                description: 'Use messages to coordinate details and follow the task status here.',
+                cta: convId ? <Link to={`/Messages?conv=${convId}`}><Button variant="outline" size="sm"><MessageSquare className="w-4 h-4" /> Open Messages</Button></Link> : null,
+              };
 
   return (
     <AppShell navItems={getNavItems(user?.selected_role || user?.role || 'user')} user={user}>
-      <div className="bg-background p-4 lg:p-8 min-h-[calc(100vh-64px)]">
-      <div className="max-w-2xl mx-auto">
+      <div className="bg-background min-h-[calc(100vh-64px)]">
+      <div className="max-w-4xl mx-auto">
         <button onClick={() => navigate(-1)} className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground mb-6">
           <ArrowLeft className="w-4 h-4" /> Back
         </button>
@@ -160,6 +195,22 @@ export default function UserBookingDetail() {
         </div>
 
         <div className="space-y-4">
+          <GlassCard className="p-5 border-primary/20">
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+              <div className="flex items-start gap-3">
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                  <Clock className="h-5 w-5" />
+                </div>
+                <div>
+                  <p className="section-label">Next action</p>
+                  <h2 className="text-lg font-bold text-foreground">{nextAction.title}</h2>
+                  <p className="mt-1 text-sm leading-relaxed text-muted-foreground">{nextAction.description}</p>
+                </div>
+              </div>
+              {nextAction.cta && <div className="shrink-0">{nextAction.cta}</div>}
+            </div>
+          </GlassCard>
+
           <GlassCard className="p-6">
             <div className="flex items-center justify-between mb-4">
               <h2 className="font-semibold text-lg">{booking.category}</h2>
@@ -243,7 +294,7 @@ export default function UserBookingDetail() {
             </GlassCard>
           )}
 
-          <GlassCard className="p-6">
+          <GlassCard className="p-6 border-slate-200">
             <h3 className="font-semibold mb-3 flex items-center gap-2"><DollarSign className="w-4 h-4 text-primary" /> Secure Payment</h3>
             <div className="space-y-2 text-sm">
               <div className="flex justify-between"><span className="text-muted-foreground">Service</span><span>${booking.amount?.toFixed(2)}</span></div>
@@ -296,7 +347,8 @@ export default function UserBookingDetail() {
             {needsPayment && !showPaymentModal && (
               <div className="flex flex-col gap-1">
                 <Button
-                  className="w-full bg-primary hover:bg-primary/90 gap-2 h-12 text-base shadow-lg shadow-primary/20"
+                  variant="payment"
+                  className="w-full gap-2 h-12 text-base"
                   onClick={() => setShowPaymentModal(true)}
                 >
                   <CreditCard className="w-5 h-5" /> Fund Secure Payment — ${booking.total_amount?.toFixed(2)}
