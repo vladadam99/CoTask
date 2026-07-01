@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, FileText } from 'lucide-react';
+import { PageHero } from '@/components/ui/PagePrimitives';
 
 const sections = [
   {
@@ -9,7 +10,7 @@ const sections = [
   },
   {
     title: '2. How Does CoTask Work?',
-    content: `Clients can post a job or booking on the CoTask platform. Agents can respond to these opportunities, and both parties agree on the terms under which the Agent will provide services. If an agreement is reached, they enter into a contract with each other. CoTask is not a party to that agreement — we only facilitate the connection.`,
+    content: `Clients can post a job or booking on the CoTask platform. Agents can respond to these opportunities, and both parties agree on the terms under which the Agent will provide services. If an agreement is reached, they enter into a contract with each other. CoTask is not a party to that agreement ??? we only facilitate the connection.`,
   },
   {
     title: "3. CoTask's Role",
@@ -33,11 +34,11 @@ const sections = [
   },
   {
     title: '8. Guarantees and Liability',
-    content: `CoTask operates the platform and ensures its proper functioning. All information regarding clients, jobs, Agents, and assignments originates from users and third parties — CoTask is not responsible for accuracy or completeness. To the extent permitted by law, CoTask accepts no liability for any damage suffered by users, regardless of type. This does not limit liability that cannot legally be excluded, including liability for death or personal injury caused by negligence.`,
+    content: `CoTask operates the platform and ensures its proper functioning. All information regarding clients, jobs, Agents, and assignments originates from users and third parties ??? CoTask is not responsible for accuracy or completeness. To the extent permitted by law, CoTask accepts no liability for any damage suffered by users, regardless of type. This does not limit liability that cannot legally be excluded, including liability for death or personal injury caused by negligence.`,
   },
   {
     title: '9. Use of the Platform',
-    content: `The platform may only be used for its intended purpose — connecting clients with Agents for legitimate assignments. You may not use automated systems or bots to access the platform. Your login credentials are personal and must be kept confidential. CoTask may suspend or remove access if there is evidence of misuse, fraud, or violation of these terms.`,
+    content: `The platform may only be used for its intended purpose ??? connecting clients with Agents for legitimate assignments. You may not use automated systems or bots to access the platform. Your login credentials are personal and must be kept confidential. CoTask may suspend or remove access if there is evidence of misuse, fraud, or violation of these terms.`,
   },
   {
     title: '10. Identity Verification',
@@ -72,7 +73,7 @@ export default function TermsAndConditions() {
     <div className="min-h-screen bg-background text-foreground">
       {/* Header */}
       <div className="sticky top-0 z-10 glass-strong border-b border-border">
-        <div className="max-w-3xl mx-auto px-4 h-14 flex items-center gap-3">
+        <div className="mx-auto flex h-14 max-w-5xl items-center gap-3 px-4">
           <button onClick={() => navigate(-1)} className="p-2 hover:bg-secondary/60 rounded-lg transition-colors">
             <ArrowLeft className="w-4 h-4" />
           </button>
@@ -80,23 +81,25 @@ export default function TermsAndConditions() {
         </div>
       </div>
 
-      <div className="max-w-3xl mx-auto px-4 py-12">
+      <div className="mx-auto max-w-5xl px-4 py-10">
         {/* Title */}
-        <div className="mb-10">
-          <Link to="/" className="text-2xl font-black mb-4 inline-block">
-            Co<span className="text-primary">Task</span>
-          </Link>
-          <h1 className="text-3xl font-bold mb-3">Terms & Conditions</h1>
-          <p className="text-muted-foreground leading-relaxed">
-            Welcome to CoTask. These terms govern the relationship between CoTask and all users of the platform — both clients and Agents. Please read them carefully. By using CoTask, you agree to these terms.
-          </p>
-          <p className="text-xs text-muted-foreground mt-3">Last updated: May 2026</p>
-        </div>
+        <PageHero
+          eyebrow="CoTask legal"
+          title="Terms & Conditions"
+          description="These terms govern the relationship between CoTask and all users of the platform, including clients and Local Agents."
+          icon={FileText}
+          stats={[
+            { label: 'Last updated', value: 'May 2026' },
+            { label: 'Applies to', value: 'Clients and Agents' },
+            { label: 'Region', value: 'UK / EU ready' },
+          ]}
+          className="mb-8"
+        />
 
         {/* Sections */}
         <div className="space-y-8">
           {sections.map((section) => (
-            <div key={section.title} className="glass rounded-2xl p-6">
+            <div key={section.title} className="surface-panel rounded-lg p-6">
               <h2 className="font-semibold mb-3 text-foreground">{section.title}</h2>
               <p className="text-sm text-muted-foreground leading-relaxed">{section.content}</p>
             </div>
@@ -106,9 +109,10 @@ export default function TermsAndConditions() {
         {/* Footer note */}
         <div className="mt-10 text-center text-xs text-muted-foreground">
           <p>Questions about these terms? <Link to="/Contact" className="text-primary hover:underline">Contact us</Link></p>
-          <p className="mt-1">© 2026 CoTask. All rights reserved.</p>
+          <p className="mt-1">(c) 2026 CoTask. All rights reserved.</p>
         </div>
       </div>
     </div>
   );
 }
+
