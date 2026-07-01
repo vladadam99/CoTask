@@ -9,33 +9,33 @@ import { motion } from 'framer-motion';
 import SuggestedForYou from '@/components/dashboard/SuggestedForYou';
 
 const CATEGORIES = [
-  { label: 'City Guide', icon: '🌆' },
-  { label: 'Property Walkthrough', icon: '🏠' },
-  { label: 'Shopping Help', icon: '🛍️' },
-  { label: 'Event Attendance', icon: '🎫' },
-  { label: 'Queue & Errands', icon: '📦' },
-  { label: 'Family Support', icon: '👨‍👩‍👧' },
-  { label: 'Business Inspection', icon: '🏢' },
-  { label: 'Training & Coaching', icon: '🎓' },
-  { label: 'Travel Assistance', icon: '✈️' },
-  { label: 'Pets & Animals', icon: '🐾' },
-  { label: 'Cars & Vehicles', icon: '🚗' },
-  { label: 'Mechanics', icon: '🔧' },
-  { label: 'Plumbing', icon: '🚿' },
-  { label: 'Electrical Work', icon: '⚡' },
-  { label: 'Medical & Health', icon: '🏥' },
-  { label: 'Outdoors & Nature', icon: '🌿' },
-  { label: 'Cleaning', icon: '🧹' },
-  { label: 'Gardening', icon: '🌱' },
-  { label: 'Pick Ups', icon: '📍' },
-  { label: 'Deliveries', icon: '📦' },
-  { label: 'Cooking & Food', icon: '🍳' },
-  { label: 'Dating & Social', icon: '💬' },
-  { label: 'Driving', icon: '🚕' },
-  { label: 'Show Me Around', icon: '🗺️' },
-  { label: 'Carers & Companionship', icon: '🤝' },
-  { label: 'DIY & Repairs', icon: '🛠️' },
-  { label: 'Campus Help', icon: '🎓' },
+  { label: 'City Guide', icon: '????' },
+  { label: 'Property Walkthrough', icon: '????' },
+  { label: 'Shopping Help', icon: '???????' },
+  { label: 'Event Attendance', icon: '????' },
+  { label: 'Queue & Errands', icon: '????' },
+  { label: 'Family Support', icon: '??????????????????' },
+  { label: 'Business Inspection', icon: '????' },
+  { label: 'Training & Coaching', icon: '????' },
+  { label: 'Travel Assistance', icon: '??????' },
+  { label: 'Pets & Animals', icon: '????' },
+  { label: 'Cars & Vehicles', icon: '????' },
+  { label: 'Mechanics', icon: '????' },
+  { label: 'Plumbing', icon: '????' },
+  { label: 'Electrical Work', icon: '???' },
+  { label: 'Medical & Health', icon: '????' },
+  { label: 'Outdoors & Nature', icon: '????' },
+  { label: 'Cleaning', icon: '????' },
+  { label: 'Gardening', icon: '????' },
+  { label: 'Pick Ups', icon: '????' },
+  { label: 'Deliveries', icon: '????' },
+  { label: 'Cooking & Food', icon: '????' },
+  { label: 'Dating & Social', icon: '????' },
+  { label: 'Driving', icon: '????' },
+  { label: 'Show Me Around', icon: '???????' },
+  { label: 'Carers & Companionship', icon: '????' },
+  { label: 'DIY & Repairs', icon: '???????' },
+  { label: 'Campus Help', icon: '????' },
 ];
 
 export default function AvatarSearchSection({ user }) {
@@ -116,7 +116,7 @@ export default function AvatarSearchSection({ user }) {
       </div>
 
       {showCategoryFilter && (
-        <div className="mb-5 p-3 rounded-2xl bg-card/40 border border-border">
+        <div className="mb-5 surface-panel rounded-lg p-3">
           <div className="flex flex-wrap gap-2">
             {CATEGORIES.map(c => {
               const isSelected = selectedCategories.includes(c.label);
@@ -126,13 +126,13 @@ export default function AvatarSearchSection({ user }) {
                   onClick={() => setSelectedCategories(prev =>
                     isSelected ? prev.filter(x => x !== c.label) : [...prev, c.label]
                   )}
-                  className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs border transition-all ${
+                className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-full text-xs font-semibold border transition-all ${
                     isSelected
-                      ? 'bg-primary/20 text-primary border-primary/30'
-                      : 'bg-secondary/60 text-muted-foreground border-border hover:border-border'
+                      ? 'bg-primary text-primary-foreground border-primary'
+                      : 'bg-card text-muted-foreground border-border hover:border-primary/30 hover:text-foreground'
                   }`}
                 >
-                  <span>{c.icon}</span> {c.label}
+                  {c.label}
                 </button>
               );
             })}
@@ -146,12 +146,12 @@ export default function AvatarSearchSection({ user }) {
 
       {isLoading ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
-          {[1,2,3,4,5,6,7,8].map(i => <div key={i} className="rounded-2xl bg-card/40 border border-border h-32 animate-pulse" />)}
+          {[1,2,3,4,5,6,7,8].map(i => <div key={i} className="surface-panel rounded-lg h-36 animate-pulse" />)}
         </div>
       ) : filtered.length === 0 ? (
-        <div className="text-center py-20 space-y-3">
-          <p className="text-3xl">🔍</p>
+        <div className="surface-panel rounded-lg text-center py-16 px-6 space-y-3">
           <h3 className="font-bold">No local agents found</h3>
+          <p className="text-sm text-muted-foreground">Try another skill, location, or clear the active filters.</p>
           <Button variant="outline" className="border-border" onClick={() => { setOnlineOnly(false); setSelectedCategories([]); setAiMatchedIds(null); }}>Clear filters</Button>
         </div>
       ) : (
@@ -190,7 +190,7 @@ function AvatarCard({ avatar, i, user, queryClient }) {
 
   return (
     <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: Math.min(i * 0.04, 0.3) }}>
-      <div className="glass border border-border hover:border-primary/30 rounded-2xl p-4 transition-all hover:scale-[1.02] relative group">
+      <div className="surface-panel glass-hover rounded-lg p-4 transition-all relative group">
         <Link to={`/AvatarView?id=${avatar.id}`} className="absolute inset-0 z-0"></Link>
         <div className="relative z-10 pointer-events-none">
           {user && (
@@ -257,3 +257,4 @@ function AvatarCard({ avatar, i, user, queryClient }) {
     </motion.div>
   );
 }
+
