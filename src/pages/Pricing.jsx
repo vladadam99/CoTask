@@ -60,16 +60,17 @@ export default function Pricing() {
     <div className="min-h-screen">
       <InfoPageHeader />
       <div className="pt-24 pb-20 px-6 max-w-5xl mx-auto">
-        <div className="text-center mb-16">
-          <h1 className="text-4xl md:text-5xl font-bold mb-4">Simple, transparent pricing</h1>
-          <p className="text-lg text-muted-foreground max-w-xl mx-auto">
+        <div className="relative overflow-hidden rounded-lg border border-border bg-foreground p-6 md:p-8 text-center text-background shadow-sm mb-12">
+          <p className="text-xs font-bold tracking-[0.18em] text-primary">Pricing</p>
+          <h1 className="text-4xl md:text-5xl font-black mt-3 mb-4 text-white">Simple, transparent pricing</h1>
+          <p className="text-lg text-white/70 max-w-xl mx-auto">
             Pay only for what you use. Avatars set their own rates. CoTask charges a small platform fee.
           </p>
         </div>
 
         <div className="grid md:grid-cols-3 gap-6">
           {plans.map(plan => (
-            <GlassCard key={plan.name} className={`p-8 flex flex-col ${plan.featured ? 'border-primary/30 relative' : ''}`}>
+            <GlassCard key={plan.name} className={`p-6 md:p-8 flex flex-col ${plan.featured ? 'border-primary/30 relative' : ''}`}>
               {plan.featured && (
                 <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-primary text-primary-foreground text-xs font-medium px-3 py-1 rounded-full">
                   Most Popular
@@ -109,3 +110,4 @@ export default function Pricing() {
     </div>
   );
 }
+
