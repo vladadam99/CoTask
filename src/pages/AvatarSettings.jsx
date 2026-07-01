@@ -92,8 +92,8 @@ export default function AvatarSettings() {
   if (loading) return <div className="min-h-screen flex items-center justify-center"><div className="w-8 h-8 border-4 border-primary/20 border-t-primary rounded-full animate-spin" /></div>;
 
   const equipmentItems = [
-    { key: 'has_smartphone', icon: Smartphone, label: '360?? Smartphone', desc: 'Can stream via smartphone' },
-    { key: 'has_360_camera', icon: Camera, label: '360?? Camera', desc: 'Have a dedicated 360?? camera', comingSoon: true },
+    { key: 'has_smartphone', icon: Smartphone, label: '360° Smartphone', desc: 'Can stream via smartphone' },
+    { key: 'has_360_camera', icon: Camera, label: '360° Camera', desc: 'Have a dedicated 360° camera', comingSoon: true },
     { key: 'has_data_connection', icon: Radio, label: 'Data Connection', desc: 'Reliable mobile data connection' },
     { key: 'has_headset', icon: Headphones, label: 'Headset / Earpiece', desc: 'Can use voice/AR headset' },
     { key: 'has_vehicle', icon: Car, label: 'Vehicle', desc: 'Can travel by vehicle for sessions' },
@@ -170,7 +170,7 @@ export default function AvatarSettings() {
                 </div>
               </div>
               <button onClick={toggleTheme} className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-muted hover:bg-muted/80 transition-colors text-xs font-medium">
-                Next ???
+                Next →
               </button>
             </div>
             <div className="flex gap-2 mt-4">
@@ -243,4 +243,3 @@ export default function AvatarSettings() {
     </AppShell>
   );
 }
-
