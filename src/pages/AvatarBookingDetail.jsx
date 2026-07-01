@@ -92,11 +92,46 @@ export default function AvatarBookingDetail() {
   const canStart = ['accepted', 'scheduled'].includes(booking.status) && booking.payment_status === 'held' && booking.stream_mode === 'live_camera';
   const canComplete = ['scheduled', 'in_progress'].includes(booking.status) && booking.payment_status === 'held' && !booking.proof_url;
   const canUploadProof = ['scheduled', 'in_progress'].includes(booking.status) && booking.payment_status === 'held' && !booking.proof_url;
+  const nextAction = canAccept
+    ? {
+        title: 'Review Direct Hire Request',
+        description: 'Check the task details, propose a different amount if needed, or accept when you are ready.',
+        cta: <Button size="sm" onClick={() => updateStatus.mutate('accepted')}>Accept Request</Button>,
+      }
+    : booking.status === 'accepted' && booking.payment_status === 'pending'
+      ? {
+          title: 'Waiting for Secure Payment',
+          description: 'You accepted the task. The client needs to fund Secure Payment before you start.',
+          cta: convId ? <Link to={`/AvatarMessages?conv=${convId}`}><Button variant="outline" size="sm"><MessageSquare className="w-4 h-4" /> Open Messages</Button></Link> : null,
+        }
+      : canStart
+        ? {
+            title: 'Ready to Go Live',
+            description: 'Secure Payment is held. Start the live session when you are ready.',
+            cta: <Button size="sm" variant="live" onClick={() => navigate(`/LiveStreamStudio?booking=${booking.id}`)}><Video className="w-4 h-4" /> Start Live Session</Button>,
+          }
+        : canUploadProof
+          ? {
+              title: 'Submit Proof',
+              description: 'Upload completion proof so the client can review and approve the task.',
+              cta: null,
+            }
+          : booking.status === 'awaiting_approval'
+            ? {
+                title: 'Waiting for Client Review',
+                description: 'Your proof has been submitted. Secure Payment stays held while the client reviews.',
+                cta: null,
+              }
+            : {
+                title: 'Task Status',
+                description: 'Coordinate details in messages and follow the latest task state here.',
+                cta: convId ? <Link to={`/AvatarMessages?conv=${convId}`}><Button variant="outline" size="sm"><MessageSquare className="w-4 h-4" /> Open Messages</Button></Link> : null,
+              };
 
   return (
     <AppShell navItems={getNavItems(user?.selected_role || user?.role || 'user')} user={user}>
-      <div className="bg-background p-4 lg:p-8 min-h-[calc(100vh-64px)]">
-      <div className="max-w-2xl mx-auto">
+      <div className="bg-background min-h-[calc(100vh-64px)]">
+      <div className="max-w-4xl mx-auto">
         <button onClick={() => navigate(-1)} className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground mb-6">
           <ArrowLeft className="w-4 h-4" /> Back to Requests
         </button>
@@ -122,6 +157,22 @@ export default function AvatarBookingDetail() {
         )}
 
         <div className="space-y-4">
+          <GlassCard className="p-5 border-primary/20">
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+              <div className="flex items-start gap-3">
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                  <Clock className="h-5 w-5" />
+                </div>
+                <div>
+                  <p className="section-label">Next action</p>
+                  <h2 className="text-lg font-bold text-foreground">{nextAction.title}</h2>
+                  <p className="mt-1 text-sm leading-relaxed text-muted-foreground">{nextAction.description}</p>
+                </div>
+              </div>
+              {nextAction.cta && <div className="shrink-0">{nextAction.cta}</div>}
+            </div>
+          </GlassCard>
+
           <GlassCard className="p-6">
             <div className="flex items-center justify-between mb-4">
               <h2 className="font-semibold text-lg">{booking.category}</h2>
@@ -205,7 +256,7 @@ export default function AvatarBookingDetail() {
             </GlassCard>
           )}
 
-          <GlassCard className="p-6">
+          <GlassCard className="p-6 border-slate-200">
             <h3 className="font-semibold mb-3 flex items-center gap-2"><DollarSign className="w-4 h-4 text-primary" /> Your Earnings</h3>
             <div className="space-y-2 text-sm">
               <div className="flex justify-between"><span className="text-muted-foreground">Service rate</span><span>${booking.amount?.toFixed(2)}</span></div>
@@ -258,12 +309,12 @@ export default function AvatarBookingDetail() {
           <div className="flex flex-col gap-3 pb-8">
             <div className="flex flex-col sm:flex-row gap-3">
               {canAccept && (
-                <Button className="bg-primary hover:bg-primary/90 flex-1 h-12 text-base shadow-lg shadow-primary/20" onClick={() => updateStatus.mutate('accepted')}>
+                <Button className="flex-1 h-12 text-base" onClick={() => updateStatus.mutate('accepted')}>
                   Accept Request
                 </Button>
               )}
               {canStart && (
-                <Button className="bg-primary hover:bg-primary/90 flex-1 h-12 text-base shadow-lg shadow-primary/20" onClick={() => navigate(`/LiveStreamStudio?booking=${booking.id}`)}>
+                <Button variant="live" className="flex-1 h-12 text-base" onClick={() => navigate(`/LiveStreamStudio?booking=${booking.id}`)}>
                   Start Live Session
                 </Button>
               )}
