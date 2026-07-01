@@ -515,7 +515,7 @@ export default function LiveStreamStudio() {
                 <h2 className="text-sm font-semibold mb-3">View Mode</h2>
                 <ViewModeToggle mode={viewMode} onChange={setViewMode} available={availableViewModes} />
                 <p className="text-xs text-muted-foreground mt-3">
-                  {viewMode === 'fpv' && 'First Person View — client sees exactly what the avatar sees.'}
+                  {viewMode === 'fpv' && 'First Person View — client sees exactly what the Local Agent sees.'}
                   {viewMode === 'tps' && 'Third Person / Wide — rear camera, environment framing.'}
                   {viewMode === '360' && '360° Sphere — client can drag to look anywhere around you.'}
                 </p>
