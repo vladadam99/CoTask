@@ -68,7 +68,7 @@ export default function UserSettings() {
                 </div>
               </div>
               <button onClick={toggleTheme} className="px-3 py-1.5 rounded-full bg-muted hover:bg-muted/80 transition-colors text-xs font-medium">
-                Next ???
+                Next →
               </button>
             </div>
             <div className="flex gap-2">
@@ -111,15 +111,15 @@ export default function UserSettings() {
               <div className="flex items-center gap-2 py-2 px-3 rounded-xl bg-green-500/10 border border-green-500/20">
                 <CheckCircle2 className="w-4 h-4 text-green-400 flex-shrink-0" />
                 <div>
-                  <p className="text-sm font-semibold text-green-400">Identity Verified ???</p>
+                  <p className="text-sm font-semibold text-green-400">Identity Verified ✓</p>
                   <p className="text-xs text-muted-foreground">Your identity has been successfully confirmed.</p>
                 </div>
               </div>
             ) : (
               <>
-                <p className="text-xs text-muted-foreground mb-3">Verify your identity to build trust and unlock posting & applying for jobs.</p>
+                <p className="text-xs text-muted-foreground mb-3">Verify your identity to build trust and unlock posting or applying for tasks.</p>
                 <button onClick={() => navigate('/IdentityVerification')}
-                  className="text-xs text-primary hover:underline">Start verification ???</button>
+                  className="text-xs text-primary hover:underline">Start verification →</button>
               </>
             )}
           </GlassCard>
@@ -136,4 +136,3 @@ export default function UserSettings() {
     </AppShell>
   );
 }
-
