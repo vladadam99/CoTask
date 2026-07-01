@@ -12,6 +12,7 @@ import {
   ArrowRight, Calendar, FileText, DollarSign, Clock, Rocket, Star
 } from 'lucide-react';
 import { getNavItems } from '@/lib/navItems';
+import { EmptyState, PageHero, SectionTitle } from '@/components/ui/PagePrimitives';
 
 export default function EnterpriseDashboard() {
   const navigate = useNavigate();
@@ -63,18 +64,22 @@ export default function EnterpriseDashboard() {
 
   return (
     <AppShell navItems={getNavItems(user?.selected_role || user?.role || 'user')} user={user}>
-      {/* Header */}
-      <div className="flex items-center justify-between mb-8">
-        <div>
-          <h1 className="text-2xl lg:text-3xl font-bold mb-1">
-            {profile?.company_name || 'Enterprise'} Dashboard
-          </h1>
-          <p className="text-muted-foreground text-sm">Manage your remote presence deployments</p>
-        </div>
-      </div>
+      <div className="space-y-6">
+      <PageHero
+        eyebrow="Enterprise workspace"
+        title={`${profile?.company_name || 'Enterprise'} Dashboard`}
+        description="Deploy Local Agents for site visits, inspections, training, and field operations."
+        icon={Rocket}
+        actions={<Link to="/FindPeople"><Button size="lg" className="gap-2"><Plus className="w-5 h-5" /> Deploy Agent</Button></Link>}
+        stats={[
+          { label: 'Active', value: activeBookings.length },
+          { label: 'Total', value: bookings.length },
+          { label: 'Pending', value: pendingCount },
+        ]}
+      />
 
       {/* Primary CTA */}
-      <GlassCard className="p-6 mb-8 border border-primary/20 glow-primary">
+      <GlassCard className="p-5 md:p-6 border border-primary/20">
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div>
             <h2 className="text-lg font-bold flex items-center gap-2">
@@ -93,7 +98,7 @@ export default function EnterpriseDashboard() {
       </GlassCard>
 
       {/* Stats */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-8">
+      <div className="dashboard-grid">
         {avgRating && (
           <GlassCard className="p-5 border border-yellow-500/20 col-span-2 lg:col-span-1">
             <Star className="w-5 h-5 text-yellow-400 mb-3 fill-yellow-400" />
@@ -101,7 +106,7 @@ export default function EnterpriseDashboard() {
               <p className="text-2xl font-bold">{avgRating}</p>
               <p className="text-xs text-muted-foreground mb-1">/ 5</p>
             </div>
-            <p className="text-xs text-muted-foreground mt-1">Avg Client Rating · {myReviews.length} review{myReviews.length !== 1 ? 's' : ''}</p>
+            <p className="text-xs text-muted-foreground mt-1">Avg Client Rating ?? {myReviews.length} review{myReviews.length !== 1 ? 's' : ''}</p>
           </GlassCard>
         )}
         {[
@@ -120,23 +125,21 @@ export default function EnterpriseDashboard() {
 
       {/* No profile prompt */}
       {!profile && (
-        <GlassCard className="p-6 mb-8 border border-yellow-500/20 bg-yellow-500/5">
+        <GlassCard className="p-5 md:p-6 border border-yellow-500/20 bg-yellow-500/5">
           <p className="text-sm font-medium mb-1">Complete your company profile</p>
           <p className="text-xs text-muted-foreground mb-3">Add your company details to unlock enterprise features.</p>
           <Link to="/EnterpriseSettings">
-            <Button size="sm" variant="outline">Set up profile →</Button>
+            <Button size="sm" variant="outline">Set up profile ???</Button>
           </Link>
         </GlassCard>
       )}
 
       {/* Recent Bookings */}
-      <div>
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-base font-semibold">Recent Sessions</h2>
-          <Link to="/Bookings" className="text-sm text-primary hover:underline flex items-center gap-1">
-            View all <ArrowRight className="w-3 h-3" />
-          </Link>
-        </div>
+      <section className="space-y-4">
+        <SectionTitle
+          title="Recent Sessions"
+          action={<Link to="/Bookings" className="text-sm text-primary hover:underline flex items-center gap-1">View all <ArrowRight className="w-3 h-3" /></Link>}
+        />
         {bookings.length > 0 ? (
           <div className="space-y-3">
             {bookings.slice(0, 6).map(b => (
@@ -145,7 +148,7 @@ export default function EnterpriseDashboard() {
                   <div>
                     <p className="font-medium text-sm">{b.category}</p>
                     <p className="text-xs text-muted-foreground mt-1">
-                      {b.avatar_name} · {b.scheduled_date ? `${b.scheduled_date}${b.scheduled_time ? ` at ${b.scheduled_time}` : ''}` : 'Pending'} · {b.location || 'TBD'}
+                      {b.avatar_name} ?? {b.scheduled_date ? `${b.scheduled_date}${b.scheduled_time ? ` at ${b.scheduled_time}` : ''}` : 'Pending'} ?? {b.location || 'TBD'}
                     </p>
                   </div>
                   <div className="flex items-center gap-3">
@@ -157,15 +160,11 @@ export default function EnterpriseDashboard() {
             ))}
           </div>
         ) : (
-          <GlassCard className="p-8 text-center">
-            <Rocket className="w-8 h-8 text-muted-foreground mx-auto mb-3" />
-            <p className="text-sm text-muted-foreground mb-3">No sessions yet. Deploy your first agent.</p>
-            <Link to="/FindPeople">
-              <Button size="sm" className="bg-primary hover:bg-primary/90">Deploy Agent</Button>
-            </Link>
-          </GlassCard>
+          <EmptyState icon={Rocket} title="No sessions yet" description="Deploy your first agent to start tracking enterprise work." action={<Link to="/FindPeople"><Button size="sm">Deploy Agent</Button></Link>} />
         )}
+      </section>
       </div>
     </AppShell>
   );
 }
+
