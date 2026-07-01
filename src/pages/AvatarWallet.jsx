@@ -11,7 +11,7 @@ import { EmptyState, PageHero, SectionTitle } from '@/components/ui/PagePrimitiv
 
 const PLATFORM_FEE_RATE = 0.1;
 
-function downloadInvoice(job, userEmail, userName, role) {
+function downloadInvoice(job, userName, role) {
   const doc = new jsPDF();
   const gross = job.total_amount || job.amount || job.escrow_amount || job.budget_max || 0;
   const fee = gross * PLATFORM_FEE_RATE;
@@ -26,7 +26,7 @@ function downloadInvoice(job, userEmail, userName, role) {
   doc.text(`Date: ${date}`, 20, 45);
   doc.text(`Role: ${role === 'avatar' ? 'Local Agent' : 'Client'}`, 20, 52);
   doc.text(`Name: ${userName}`, 20, 59);
-  doc.text(`Email: ${userEmail}`, 20, 66);
+  doc.text(`Account: Earnings record`, 20, 66);
 
   doc.line(20, 72, 190, 72);
   doc.setFont('helvetica', 'bold');
@@ -46,7 +46,7 @@ function downloadInvoice(job, userEmail, userName, role) {
   doc.text(`Net Earned:`, 20, 152); doc.text(`$${net.toFixed(2)}`, 160, 152);
 
   doc.setFontSize(8); doc.setFont('helvetica', 'normal');
-  doc.text('CoTask Platform ?? cotask.app ?? support@cotask.app', 20, 280);
+  doc.text('CoTask Platform · cotask.app · support@cotask.app', 20, 280);
   doc.save(`cotask-invoice-${invoiceNo}.pdf`);
 }
 
@@ -99,19 +99,19 @@ export default function AvatarWallet() {
 
   return (
     <AppShell navItems={getNavItems(user?.selected_role || user?.role || 'user')} user={user}>
-      {/* Withdraw Modal */}
+      {/* Payout request modal */}
       {showWithdraw && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
           <div className="surface-panel rounded-lg p-6 w-full max-w-sm">
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-lg font-bold">Withdraw Funds</h2>
+              <h2 className="text-lg font-bold">Request Payout</h2>
               <button onClick={() => { setShowWithdraw(false); setWithdrawDone(false); }} className="text-muted-foreground hover:text-foreground"><X className="w-5 h-5" /></button>
             </div>
             {withdrawDone ? (
               <div className="text-center py-6">
                 <CheckCircle className="w-12 h-12 text-green-400 mx-auto mb-3" />
-                <p className="font-semibold">Withdrawal Requested!</p>
-                <p className="text-sm text-muted-foreground mt-1">Your request is being processed (1-3 business days).</p>
+                <p className="font-semibold">Payout Request Saved</p>
+                <p className="text-sm text-muted-foreground mt-1">Payouts are reviewed and processed manually during Production V1.</p>
                 <button onClick={() => { setShowWithdraw(false); setWithdrawDone(false); setWithdrawAmount(''); }} className="mt-4 w-full bg-primary text-primary-foreground rounded-xl py-2 text-sm font-medium">Close</button>
               </div>
             ) : (
@@ -129,8 +129,9 @@ export default function AvatarWallet() {
                   disabled={!withdrawAmount || parseFloat(withdrawAmount) <= 0 || parseFloat(withdrawAmount) > totalNet}
                   onClick={() => setWithdrawDone(true)}
                   className="w-full bg-primary text-primary-foreground rounded-xl py-2 text-sm font-medium disabled:opacity-40">
-                  Request Withdrawal
+                  Request Manual Payout
                 </button>
+                <p className="mt-3 text-xs leading-relaxed text-muted-foreground">Payouts are reviewed and processed manually during Production V1.</p>
               </>
             )}
           </div>
@@ -143,7 +144,7 @@ export default function AvatarWallet() {
         title="Earnings & Payouts"
         description="Track completed tasks, pending Secure Payments, payout settings, and downloadable invoices."
         icon={Wallet}
-        actions={<button onClick={() => setShowWithdraw(true)} className="inline-flex h-11 items-center gap-2 rounded-lg bg-primary px-4 text-sm font-bold text-primary-foreground shadow-sm hover:bg-primary/90"><ArrowUpRight className="w-4 h-4" /> Withdraw</button>}
+        actions={<button onClick={() => setShowWithdraw(true)} className="inline-flex h-11 items-center gap-2 rounded-lg bg-primary px-4 text-sm font-bold text-primary-foreground shadow-sm hover:bg-primary/90"><ArrowUpRight className="w-4 h-4" /> Request Payout</button>}
         stats={[
           { label: 'Available', value: `$${totalNet.toFixed(2)}` },
           { label: 'Pending', value: `$${pendingAmount.toFixed(2)}` },
@@ -197,14 +198,14 @@ export default function AvatarWallet() {
                       <CheckCircle className="w-5 h-5 text-green-400" />
                     </div>
                     <div>
-                      <p className="font-medium text-sm">{job.is_booking ? `${job.category} Booking` : job.title}</p>
-                      <p className="text-xs text-muted-foreground">Client: {job.client_name || job.posted_by_name} ?? {job.released_at ? new Date(job.released_at).toLocaleDateString() : (job.ended_at ? new Date(job.ended_at).toLocaleDateString() : new Date(job.updated_date).toLocaleDateString())}</p>
+                      <p className="font-medium text-sm">{job.is_booking ? `${job.category} Task` : job.title}</p>
+                      <p className="text-xs text-muted-foreground">Client: {job.client_name || job.posted_by_name} · {job.released_at ? new Date(job.released_at).toLocaleDateString() : (job.ended_at ? new Date(job.ended_at).toLocaleDateString() : new Date(job.updated_date).toLocaleDateString())}</p>
                     </div>
                   </div>
                   <div className="text-right flex-shrink-0">
                     <p className="font-bold text-green-400">+${net.toFixed(2)}</p>
-                    <p className="text-xs text-muted-foreground mb-1">Gross: ${gross.toFixed(2)} ?? Fee: -${fee.toFixed(2)}</p>
-                    <button onClick={() => downloadInvoice(job, user.email, user.full_name, 'avatar')} className="flex items-center gap-1 text-xs text-primary hover:underline ml-auto">
+                    <p className="text-xs text-muted-foreground mb-1">Gross: ${gross.toFixed(2)} · Fee: -${fee.toFixed(2)}</p>
+                    <button onClick={() => downloadInvoice(job, user.full_name, 'avatar')} className="flex items-center gap-1 text-xs text-primary hover:underline ml-auto">
                       <Download className="w-3 h-3" /> Invoice PDF
                     </button>
                   </div>
@@ -218,4 +219,3 @@ export default function AvatarWallet() {
     </AppShell>
   );
 }
-
