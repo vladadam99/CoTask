@@ -7,13 +7,13 @@ import { base44 } from '@/api/base44Client';
 import { useCurrentUser } from '@/lib/useCurrentUser';
 import GlassCard from '@/components/ui/GlassCard';
 import { Button } from '@/components/ui/button';
-import { Heart, Trash2, ArrowLeft } from 'lucide-react';
+import { Heart, Trash2 } from 'lucide-react';
+import { EmptyState, PageHero } from '@/components/ui/PagePrimitives';
 
 export default function Saved() {
   const { user } = useCurrentUser();
   const queryClient = useQueryClient();
   const activeRole = user?.selected_role || user?.role || 'user';
-  const dashPath = activeRole === 'avatar' ? '/AvatarDashboard' : activeRole === 'enterprise' ? '/EnterpriseDashboard' : '/UserDashboard';
 
   const { data: favorites = [] } = useQuery({
     queryKey: ['favorites', user?.email],
@@ -28,12 +28,18 @@ export default function Saved() {
 
   return (
     <AppShell navItems={getNavItems(activeRole)} user={user}>
-      <div className="max-w-3xl mx-auto">
-        <Link to={dashPath} className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground mb-6">
-          <ArrowLeft className="w-4 h-4" /> Dashboard
-        </Link>
-
-        <h1 className="text-2xl font-bold mb-6">Saved Avatars</h1>
+      <div className="max-w-4xl mx-auto space-y-6">
+        <PageHero
+          eyebrow="Saved"
+          title="Saved Local Agents"
+          description="Keep trusted agents close for repeat bookings and faster direct hire requests."
+          icon={Heart}
+          stats={[
+            { label: 'Saved', value: favorites.length },
+            { label: 'Next step', value: 'Book' },
+            { label: 'Use case', value: 'Repeat work' },
+          ]}
+        />
 
         {favorites.length > 0 ? (
           <div className="space-y-3">
@@ -52,16 +58,15 @@ export default function Saved() {
             ))}
           </div>
         ) : (
-          <GlassCard className="p-12 text-center flex flex-col items-center justify-center">
-            <div className="w-16 h-16 rounded-full bg-secondary flex items-center justify-center mb-4">
-              <Heart className="w-8 h-8 text-muted-foreground" />
-            </div>
-            <h3 className="text-xl font-bold mb-2">No saved Local Agents</h3>
-            <p className="text-sm text-muted-foreground mb-4">Browse and save your favorite Local Agents for quick access.</p>
-            <Link to="/FindPeople"><Button>Discover Local Agents</Button></Link>
-          </GlassCard>
+          <EmptyState
+            icon={Heart}
+            title="No saved Local Agents"
+            description="Browse and save agents you may want to hire again."
+            action={<Link to="/FindPeople"><Button>Discover Local Agents</Button></Link>}
+          />
         )}
       </div>
     </AppShell>
   );
 }
+
