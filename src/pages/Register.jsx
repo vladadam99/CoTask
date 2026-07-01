@@ -233,13 +233,13 @@ export default function Register() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-4 py-12 relative overflow-hidden">
-      <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-background to-background" />
+    <div className="min-h-screen flex items-center justify-center px-4 py-10 sm:py-12 relative overflow-hidden bg-background professional-grid">
+      <div className="absolute inset-0 bg-background/90 backdrop-blur-[1px]" />
       
       
 
-      <div className="relative z-10 max-w-md w-full">
-        <div className="text-center mb-8">
+      <div className="relative z-10 max-w-lg w-full">
+        <div className="text-center mb-7">
           <Link to="/" className="text-2xl font-bold tracking-tight inline-block mb-5">
             Co<span className="text-primary">Task</span>
           </Link>
@@ -261,8 +261,8 @@ export default function Register() {
 
             {/* Step 0: Personal Details */}
             {step === 0 && (
-              <div className="glass rounded-2xl p-8 space-y-4">
-                <div className="grid grid-cols-2 gap-3">
+              <div className="surface-panel rounded-lg p-5 sm:p-8 space-y-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div>
                     <label className="text-sm font-medium mb-1.5 block">First Name *</label>
                     <Input value={formData.first_name} onChange={e => update('first_name', e.target.value)}
@@ -303,20 +303,20 @@ export default function Register() {
                   </div>
                   <span className="text-xs text-muted-foreground leading-relaxed" onClick={() => setTermsAccepted(p => !p)}>
                     I have read and agree to CoTask's{' '}
-                    <Link to="/Terms" className="text-primary hover:underline" onClick={e => e.stopPropagation()} target="_blank">Terms & Conditions</Link>
+                    <Link to="/Terms" className="text-primary font-semibold hover:text-primary/80" onClick={e => e.stopPropagation()} target="_blank">Terms & Conditions</Link>
                     {' '}and{' '}
-                    <Link to="/Terms" className="text-primary hover:underline" onClick={e => e.stopPropagation()} target="_blank">Privacy Policy</Link>
+                    <Link to="/Terms" className="text-primary font-semibold hover:text-primary/80" onClick={e => e.stopPropagation()} target="_blank">Privacy Policy</Link>
                     . I understand that my personal data will be processed in accordance with UK GDPR and EU GDPR regulations.
                   </span>
                 </label>
 
-                {error && <p className="text-sm text-red-400 bg-red-500/10 rounded-lg px-3 py-2">{error}</p>}
-                <Button onClick={nextStep} disabled={!termsAccepted || !ageConfirmed} className="w-full bg-primary hover:bg-primary/90 h-11 disabled:opacity-50 disabled:cursor-not-allowed">
+                {error && <p className="text-sm text-red-700 bg-red-500/10 border border-red-200 rounded-lg px-3 py-2">{error}</p>}
+                <Button onClick={nextStep} disabled={!termsAccepted || !ageConfirmed} className="w-full bg-primary hover:bg-primary/90 h-12 disabled:opacity-50 disabled:cursor-not-allowed">
                   Next <ArrowRight className="w-4 h-4 ml-2" />
                 </Button>
                 <p className="text-center text-sm text-muted-foreground">
                   Already have an account?{' '}
-                  <button onClick={() => base44.auth.redirectToLogin('/RoleSelectExisting')} className="text-primary hover:underline">
+                  <button onClick={() => base44.auth.redirectToLogin('/RoleSelectExisting')} className="text-primary font-semibold hover:text-primary/80">
                     Sign in
                   </button>
                 </p>
@@ -325,7 +325,7 @@ export default function Register() {
 
             {/* Step 1: Address */}
             {step === 1 && (
-              <div className="glass rounded-2xl p-8 space-y-4">
+              <div className="surface-panel rounded-lg p-5 sm:p-8 space-y-4">
                 <div>
                   <label className="text-sm font-medium mb-1.5 block">Postcode / Zip Code</label>
                   <div className="flex gap-2">
@@ -344,7 +344,7 @@ export default function Register() {
                     </Button>
                   </div>
                   {postcodeValidated && !showSuggestions && (
-                    <p className="text-xs text-green-400 mt-1.5 flex items-center gap-1">
+                    <p className="text-xs text-green-700 mt-1.5 flex items-center gap-1">
                       <Check className="w-3 h-3" /> Postcode validated — complete your address below
                     </p>
                   )}
@@ -417,7 +417,7 @@ export default function Register() {
                       <Input value={formData.address_line2} onChange={e => update('address_line2', e.target.value)}
                         placeholder="Flat, apartment, suite, etc." className="bg-card border-border" />
                     </div>
-                    <div className="grid grid-cols-2 gap-3">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                       <div>
                         <label className="text-sm font-medium mb-1.5 block">City / Town *</label>
                         <Input value={formData.city} onChange={e => update('city', e.target.value)}
@@ -439,7 +439,7 @@ export default function Register() {
                   </div>
                 )}
 
-                {error && <p className="text-sm text-red-400 bg-red-500/10 rounded-lg px-3 py-2">{error}</p>}
+                {error && <p className="text-sm text-red-700 bg-red-500/10 border border-red-200 rounded-lg px-3 py-2">{error}</p>}
 
                 <div className="flex gap-3 pt-1">
                   <Button variant="ghost" onClick={() => { setStep(0); setError(''); }} className="flex-1 text-muted-foreground">
@@ -455,7 +455,7 @@ export default function Register() {
 
             {/* Step 2: Verify Email */}
             {step === 2 && (
-              <div className="glass rounded-2xl p-8 text-center space-y-6">
+              <div className="surface-panel rounded-lg p-5 sm:p-8 text-center space-y-6">
                 <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto">
                   <Mail className="w-8 h-8 text-primary" />
                 </div>
@@ -478,17 +478,17 @@ export default function Register() {
                       value={digit}
                       onChange={e => handleCodeInput(i, e.target.value)}
                       onKeyDown={e => handleCodeKeyDown(i, e)}
-                      className="w-11 h-14 text-center text-xl font-bold bg-card border border-border rounded-xl focus:outline-none focus:border-primary transition-colors text-foreground"
+                      className="w-11 h-14 text-center text-xl font-bold bg-card border border-border rounded-lg focus:outline-none focus:border-primary transition-colors text-foreground"
                     />
                   ))}
                 </div>
 
-                {error && <p className="text-sm text-red-400 bg-red-500/10 rounded-lg px-3 py-2">{error}</p>}
+                {error && <p className="text-sm text-red-700 bg-red-500/10 border border-red-200 rounded-lg px-3 py-2">{error}</p>}
 
                 <Button
                   onClick={verifyAndContinue}
                   disabled={submitting || verifyCode.join('').length !== 6}
-                  className="w-full bg-primary hover:bg-primary/90 h-11"
+                  className="w-full bg-primary hover:bg-primary/90 h-12"
                 >
                   {submitting
                     ? <Loader2 className="w-4 h-4 animate-spin mr-2" />
@@ -509,7 +509,7 @@ export default function Register() {
                       setSubmitting(false);
                     }}
                     disabled={submitting}
-                    className="text-primary hover:underline"
+                    className="text-primary font-semibold hover:text-primary/80"
                   >
                     Resend code
                   </button>
@@ -519,10 +519,10 @@ export default function Register() {
 
             {/* Step 3: Success */}
             {step === 3 && (
-              <div className="glass rounded-2xl p-10 text-center space-y-6">
+              <div className="surface-panel rounded-lg p-6 sm:p-10 text-center space-y-6">
                 <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ type: 'spring', stiffness: 200, damping: 15 }}>
                   <div className="w-24 h-24 bg-green-500/15 rounded-full flex items-center justify-center mx-auto border border-green-500/20">
-                    <Check className="w-12 h-12 text-green-400" />
+                    <Check className="w-12 h-12 text-green-700" />
                   </div>
                 </motion.div>
                 <div>
