@@ -19,6 +19,8 @@ export default function Explore() {
     queryFn: () => base44.entities.Post.filter({ is_published: true }, '-created_date', 12),
   });
 
+  const visiblePosts = recentPosts.filter(post => !(post.is_live && post.live_status === 'ended'));
+
   return (
     <AppShell navItems={getNavItems(user?.selected_role || user?.role || 'user')} user={user}>
       <div className="max-w-6xl mx-auto space-y-6">
@@ -34,11 +36,11 @@ export default function Explore() {
           )}
         />
 
-        {recentPosts.length > 0 && (
+        {visiblePosts.length > 0 && (
           <section className="space-y-4">
             <SectionTitle icon={Video} title="Recent work proof" description="Short proof posts from Local Agents." />
             <div className="flex gap-4 overflow-x-auto pb-4 snap-x snap-mandatory hide-scrollbar">
-              {recentPosts.map(post => (
+              {visiblePosts.map(post => (
                 <Link 
                   key={post.id} 
                   to={post.is_live && post.live_status === 'live' ? `/PublicLiveView?post=${post.id}` : `/PublicPostView?id=${post.id}`}
