@@ -9,8 +9,9 @@ import DailyIframe from '@daily-co/daily-js';
  *   onJoined      — callback when local peer joins
  *   onLeft        — callback when call ends
  *   className     — container class
+ *   videoConstraints — optional MediaTrackConstraints for the selected camera
  */
-export default function DailyVideoCall({ roomUrl, isHost = false, onJoined, onLeft, className = '' }) {
+export default function DailyVideoCall({ roomUrl, isHost = false, onJoined, onLeft, className = '', videoConstraints }) {
   const containerRef = useRef(null);
   const callRef = useRef(null);
   const [status, setStatus] = useState('connecting'); // connecting | joined | error
@@ -47,11 +48,17 @@ export default function DailyVideoCall({ roomUrl, isHost = false, onJoined, onLe
       setStatus('error');
     });
 
-    call.join({
+    const joinOptions = {
       url: roomUrl,
       startVideoOff: !isHost,
       startAudioOff: !isHost,
-    }).catch((e) => {
+    };
+
+    if (isHost && videoConstraints) {
+      joinOptions.userMediaVideoConstraints = videoConstraints;
+    }
+
+    call.join(joinOptions).catch((e) => {
       setError(e?.message || 'Failed to join room');
       setStatus('error');
     });
@@ -59,7 +66,7 @@ export default function DailyVideoCall({ roomUrl, isHost = false, onJoined, onLe
     return () => {
       call.destroy();
     };
-  }, [roomUrl]);
+  }, [roomUrl, isHost, videoConstraints]);
 
   return (
     <div className={`relative w-full h-full bg-black ${className}`}>
