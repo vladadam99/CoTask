@@ -1,6 +1,7 @@
-import { Search, Calendar, MessageSquare, Home, User, Inbox, DollarSign, Settings, Building2, Briefcase, Users, Wallet, Plus, UserSearch, BookOpen, Compass } from 'lucide-react';
+import { Calendar, MessageSquare, Home, DollarSign, Building2, Briefcase, Users, Wallet, Plus, Compass } from 'lucide-react';
 
 export const userNavItems = [
+  { icon: Home, label: 'Home', path: '/FindPeople' },
   { icon: Compass, label: 'Explore', path: '/Explore' },
   { icon: Plus, label: 'Post Task', path: '/PostJob' },
   { icon: Calendar, label: 'My Tasks', path: '/Bookings' },
@@ -8,6 +9,7 @@ export const userNavItems = [
   ];
 
   export const avatarNavItems = [
+  { icon: Home, label: 'Home', path: '/AvatarDashboard' },
   { icon: Briefcase, label: 'Task Board', path: '/JobMarketplace' },
   { icon: Calendar, label: 'Schedule', path: '/AvatarRequests' },
   { icon: MessageSquare, label: 'Messages', path: '/AvatarMessages' },
@@ -27,3 +29,4 @@ export function getNavItems(role) {
   if (role === 'enterprise') return enterpriseNavItems;
   return userNavItems;
 }
+
