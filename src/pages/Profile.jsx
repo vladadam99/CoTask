@@ -174,7 +174,7 @@ export default function Profile() {
     : '/FindPeople';
 
   const editPath = user?.selected_role === 'avatar' ? '/AvatarProfileEdit'
-    : user?.selected_role === 'enterprise' ? '/EnterpriseSettings'
+    : user?.selected_role === 'enterprise' ? '/EnterpriseProfile'
     : '/UserProfileEdit';
 
   return (
