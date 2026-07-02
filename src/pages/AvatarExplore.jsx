@@ -22,6 +22,8 @@ export default function AvatarExplore() {
     },
   });
 
+  const visiblePosts = posts.filter(post => !(post.is_live && post.live_status === 'ended'));
+
   return (
     <AppShell navItems={getNavItems(user?.selected_role || user?.role || 'user')} user={user} fullBleed title="Explore">
       <div className="fixed left-0 right-0 top-14 z-30 px-3 pt-3 lg:left-72 lg:top-0 lg:px-6 lg:pt-5">
@@ -57,7 +59,7 @@ export default function AvatarExplore() {
           <div className="h-screen flex items-center justify-center">
             <div className="w-8 h-8 border-4 border-border border-t-primary rounded-full animate-spin" />
           </div>
-        ) : posts.length === 0 ? (
+        ) : visiblePosts.length === 0 ? (
           <div className="flex h-screen items-center justify-center px-4 pt-28">
             <EmptyState
               icon={Camera}
@@ -67,7 +69,7 @@ export default function AvatarExplore() {
             />
           </div>
         ) : (
-          posts.map(post => (
+          visiblePosts.map(post => (
             <div key={post.id} className="h-screen w-full snap-start">
               <FeedCard post={post} user={user} />
             </div>
