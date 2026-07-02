@@ -128,8 +128,8 @@ export default function EnterpriseDashboard() {
         <GlassCard className="p-5 md:p-6 border border-yellow-500/20 bg-yellow-500/5">
           <p className="text-sm font-medium mb-1">Complete your company profile</p>
           <p className="text-xs text-muted-foreground mb-3">Add your company details to unlock enterprise features.</p>
-          <Link to="/EnterpriseSettings">
-            <Button size="sm" variant="outline">Set up profile →</Button>
+          <Link to="/EnterpriseProfile">
+            <Button size="sm" variant="outline">Set up profile</Button>
           </Link>
         </GlassCard>
       )}
