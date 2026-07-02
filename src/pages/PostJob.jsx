@@ -31,12 +31,17 @@ import TimePicker from '@/components/jobs/TimePicker';
 import LocationAutocomplete from '@/components/jobs/LocationAutocomplete';
 
 const CATEGORIES = [
-  'Business Inspection', 'Campus Help', 'Carers & Companionship', 'Cars & Vehicles', 'City Guide',
-  'Cleaning', 'Cooking & Food', 'Dating & Social', 'Deliveries', 'DIY & Repairs',
-  'Driving', 'Electrical Work', 'Event Attendance', 'Family Support', 'Gardening',
-  'Medical & Health', 'Mechanics', 'Outdoors & Nature', 'Pets & Animals', 'Pick Ups',
-  'Plumbing', 'Property Walkthrough', 'Queue & Errands', 'Shopping Help', 'Show Me Around',
-  'Training & Coaching', 'Travel Assistance',
+  'Property Walkthrough',
+  'Business Inspection',
+  'Queue & Errands',
+  'Shopping Help',
+  'Deliveries',
+  'Travel Assistance',
+  'Event Attendance',
+  'Cars & Vehicles',
+  'City Guide',
+  'DIY & Repairs',
+  'Other Local Help',
 ];
 const EQUIPMENT_OPTIONS = ['Smartphone', 'Laptop', 'Headset', 'Vehicle'];
 const COMING_SOON_EQUIPMENT = ['360 camera', 'Meta glasses'];
