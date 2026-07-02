@@ -4,7 +4,7 @@ import { useCurrentUser } from '@/lib/useCurrentUser';
 import AppShell from '@/components/layout/AppShell';
 import GlassCard from '@/components/ui/GlassCard';
 import { getNavItems } from '@/lib/navItems';
-import { ArrowLeft, Sun, Moon, Palette, ArrowRightLeft, LogOut, Shield, CheckCircle2 } from 'lucide-react';
+import { ArrowLeft, Sun, Moon, ArrowRightLeft, LogOut, Shield, CheckCircle2 } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { useTheme } from '@/lib/ThemeContext';
 import { PageHero } from '@/components/ui/PagePrimitives';
@@ -60,22 +60,20 @@ export default function UserSettings() {
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-3">
                 {theme === 'dark' ? <Moon className="w-4 h-4 text-muted-foreground" />
-                  : theme === 'loflo' ? <Palette className="w-4 h-4 text-muted-foreground" />
                   : <Sun className="w-4 h-4 text-muted-foreground" />}
                 <div>
-                  <p className="text-sm font-medium">{theme === 'dark' ? 'Dark Mode' : theme === 'loflo' ? 'Purple' : 'Light Mode'}</p>
-                  <p className="text-xs text-muted-foreground">Cycle between themes</p>
+                  <p className="text-sm font-medium">{theme === 'dark' ? 'Dark Mode' : 'Light Mode'}</p>
+                  <p className="text-xs text-muted-foreground">Choose the app appearance.</p>
                 </div>
               </div>
               <button onClick={toggleTheme} className="px-3 py-1.5 rounded-full bg-muted hover:bg-muted/80 transition-colors text-xs font-medium">
-                Next →
+                Switch
               </button>
             </div>
             <div className="flex gap-2">
               {[
                 { id: 'light', label: 'Light', color: '#f5f5f5', dot: '#e8304a' },
                 { id: 'dark', label: 'Dark', color: '#161c26', dot: '#e8304a' },
-                { id: 'loflo', label: 'Purple', color: '#1e1530', dot: '#c44dff' },
               ].map(t => (
                 <button key={t.id} onClick={() => setTheme(t.id)}
                   className={`flex-1 flex flex-col items-center gap-1.5 py-2 rounded-xl border-2 transition-all text-xs font-medium ${theme === t.id ? 'border-primary' : 'border-border'}`}
@@ -111,7 +109,7 @@ export default function UserSettings() {
               <div className="flex items-center gap-2 py-2 px-3 rounded-xl bg-green-500/10 border border-green-500/20">
                 <CheckCircle2 className="w-4 h-4 text-green-400 flex-shrink-0" />
                 <div>
-                  <p className="text-sm font-semibold text-green-400">Identity Verified ✓</p>
+                  <p className="text-sm font-semibold text-green-400">Identity verified</p>
                   <p className="text-xs text-muted-foreground">Your identity has been successfully confirmed.</p>
                 </div>
               </div>
@@ -119,7 +117,7 @@ export default function UserSettings() {
               <>
                 <p className="text-xs text-muted-foreground mb-3">Verify your identity to build trust and unlock posting or applying for tasks.</p>
                 <button onClick={() => navigate('/IdentityVerification')}
-                  className="text-xs text-primary hover:underline">Start verification →</button>
+                  className="text-xs text-primary hover:underline">Start verification</button>
               </>
             )}
           </GlassCard>
