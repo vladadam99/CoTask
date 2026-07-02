@@ -9,7 +9,7 @@ import StatusBadge from '@/components/ui/StatusBadge';
 import { Button } from '@/components/ui/button';
 import { getNavItems } from '@/lib/navItems';
 import {
-  Radio, Play, Square, Clock, Clapperboard, Film
+  Radio, Square, Clock, Clapperboard, Film
 } from 'lucide-react';
 
 
@@ -28,21 +28,6 @@ export default function AvatarLive() {
     queryKey: ['avatar-ready-bookings', user?.email],
     queryFn: () => base44.entities.Booking.filter({ avatar_email: user.email, status: 'accepted' }, '-scheduled_date', 10),
     enabled: !!user,
-  });
-
-  const startSession = useMutation({
-    mutationFn: (booking) => base44.entities.LiveSession.create({
-      booking_id: booking.id,
-      avatar_email: user.email,
-      avatar_name: user.full_name,
-      client_email: booking.client_email,
-      client_name: booking.client_name,
-      category: booking.category,
-      title: `${booking.category} session`,
-      status: 'live',
-      started_at: new Date().toISOString(),
-    }),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['avatar-live-sessions'] }),
   });
 
   const endSession = useMutation({
@@ -75,7 +60,7 @@ export default function AvatarLive() {
       <div className="flex items-start justify-between mb-8">
         <div>
           <h1 className="text-2xl lg:text-3xl font-bold mb-1">Live Sessions</h1>
-          <p className="text-muted-foreground text-sm">Manage and start your live sessions</p>
+          <p className="text-muted-foreground text-sm">Manage booked live sessions and open Studio when it is time to start.</p>
         </div>
         <div className="flex items-center gap-2">
           <Link to="/RecordingLibrary">
@@ -119,24 +104,25 @@ export default function AvatarLive() {
       {/* Ready to Start */}
       {readyBookings.length > 0 && (
         <div className="mb-8">
-          <h2 className="text-lg font-semibold mb-4">Ready to Start</h2>
-          <div className="space-y-3">
-            {readyBookings.map(b => (
-              <GlassCard key={b.id} className="p-4 flex items-center justify-between gap-4">
+        <h2 className="text-lg font-semibold mb-4">Ready for Studio</h2>
+        <div className="space-y-3">
+          {readyBookings.map(b => (
+            <GlassCard key={b.id} className="p-4 flex items-center justify-between gap-4">
                 <div>
                   <p className="font-medium text-sm">{b.category}</p>
                   <p className="text-xs text-muted-foreground mt-1">{b.client_name} - {b.scheduled_date || 'Immediate'}</p>
                 </div>
                 <div className="flex items-center gap-2">
                   <span className="text-primary font-semibold text-sm">${b.total_amount || b.amount || 0}</span>
-                  <Button
-                    size="sm"
-                    className="gap-1 bg-green-600 hover:bg-green-700"
-                    onClick={() => startSession.mutate(b)}
-                    disabled={startSession.isPending || !!liveSession}
-                  >
-                    <Play className="w-3 h-3" /> Start Live Session
-                  </Button>
+                  <Link to="/LiveStreamStudio">
+                    <Button
+                      size="sm"
+                      className="gap-1 bg-green-600 hover:bg-green-700"
+                      disabled={!!liveSession}
+                    >
+                      <Clapperboard className="w-3 h-3" /> Open Studio
+                    </Button>
+                  </Link>
                 </div>
               </GlassCard>
             ))}
