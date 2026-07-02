@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { useCurrentUser } from '@/lib/useCurrentUser';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import GlassCard from '@/components/ui/GlassCard';
 import { Button } from '@/components/ui/button';
 import CameraSourcePicker, { SOURCES } from '@/components/live/CameraSourcePicker';
@@ -10,7 +10,7 @@ import ViewModeToggle from '@/components/live/ViewModeToggle';
 import StreamHUD from '@/components/live/StreamHUD';
 import StreamViewer360 from '@/components/live/StreamViewer360';
 import StreamChatbox from '@/components/live/StreamChatbox';
-import { ArrowLeft, Radio, AlertTriangle, Wifi, MessageCircle, Circle, Square as StopIcon, Pen, Usb } from 'lucide-react';
+import { ArrowLeft, Radio, AlertTriangle, Wifi, MessageCircle, Circle, Square as StopIcon, Pen, Usb, Globe2, Lock } from 'lucide-react';
 import AnnotationCanvas from '@/components/live/AnnotationCanvas';
 import StreamQualityMonitor from '@/components/live/StreamQualityMonitor';
 import AIStreamHighlights from '@/components/live/AIStreamHighlights';
@@ -21,9 +21,12 @@ import DailyVideoCall from '@/components/live/DailyVideoCall';
 export default function LiveStreamStudio() {
   const { user, loading } = useCurrentUser();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const queryClient = useQueryClient();
+  const requestedMode = searchParams.get('mode') === 'public' ? 'public' : 'booked';
 
   // Stream state
+  const [sessionMode, setSessionMode] = useState(requestedMode);
   const [selectedSource, setSelectedSource] = useState(null);
   const [viewMode, setViewMode] = useState('fpv'); // fpv | tps | 360
   const [isLive, setIsLive] = useState(false);
@@ -39,6 +42,9 @@ export default function LiveStreamStudio() {
   const [attachedBooking, setAttachedBooking] = useState(null);
   const [annotationsOn, setAnnotationsOn] = useState(false);
   const [dailyRoomUrl, setDailyRoomUrl] = useState(null);
+  const [publicStarting, setPublicStarting] = useState(false);
+  const [publicPostId, setPublicPostId] = useState(null);
+  const [publicReelId, setPublicReelId] = useState(null);
 
   const videoRef = useRef(null);
   const streamRef = useRef(null);
@@ -92,6 +98,16 @@ export default function LiveStreamStudio() {
     queryFn: () => base44.entities.Booking.filter({ avatar_email: user.email, status: 'accepted' }, '-scheduled_date', 10),
     enabled: !!user,
   });
+
+  const { data: avatarProfile = null } = useQuery({
+    queryKey: ['stream-studio-avatar-profile', user?.email],
+    queryFn: () => base44.entities.AvatarProfile.filter({ user_email: user.email }).then(r => r[0] || null),
+    enabled: !!user,
+  });
+
+  useEffect(() => {
+    setSessionMode(requestedMode);
+  }, [requestedMode]);
 
   const startSessionMutation = useMutation({
     mutationFn: async ({ booking, streamMode }) => {
@@ -389,13 +405,99 @@ export default function LiveStreamStudio() {
     startSessionMutation.mutate({ booking, streamMode: viewMode });
   };
 
+  const startPublicLive = async () => {
+    if (!selectedSource) { setError('Select a camera source first.'); return; }
+    setPublicStarting(true);
+    setError('');
+    setAttachedBooking(null);
+
+    try {
+      const avatarName = avatarProfile?.display_name || user.full_name || 'Local Agent';
+      const avatarPhoto = avatarProfile?.photo_url || user.photo_url || '';
+      const session = await base44.entities.LiveSession.create({
+        booking_id: '',
+        avatar_email: user.email,
+        avatar_name: avatarName,
+        client_email: 'public',
+        client_name: 'Public audience',
+        category: 'Public Live',
+        title: `${avatarName} is live now`,
+        status: 'live',
+        stream_mode: viewMode === '360' ? '360' : 'standard',
+        started_at: new Date().toISOString(),
+      });
+
+      const res = await base44.functions.invoke('createDailyRoom', { sessionId: session.id });
+      const roomUrl = res.data.url;
+      const caption = `${avatarName} is live now on CoTask.`;
+      const thumbnail = avatarPhoto || '';
+
+      const post = await base44.entities.Post.create({
+        avatar_email: user.email,
+        avatar_name: avatarName,
+        avatar_photo_url: avatarPhoto,
+        avatar_profile_id: avatarProfile?.id || '',
+        type: 'video',
+        media_url: thumbnail || roomUrl,
+        thumbnail_url: thumbnail,
+        caption,
+        category: 'Live',
+        is_published: true,
+        is_live: true,
+        live_status: 'live',
+        live_url: roomUrl,
+        live_session_id: session.id,
+      });
+
+      const reel = await base44.entities.Reel.create({
+        avatar_email: user.email,
+        avatar_name: avatarName,
+        avatar_photo_url: avatarPhoto,
+        title: `${avatarName} is live`,
+        description: caption,
+        category: 'Live',
+        thumbnail_url: thumbnail,
+        video_url: roomUrl,
+        is_published: true,
+        is_live: true,
+        live_status: 'live',
+        live_url: roomUrl,
+        live_session_id: session.id,
+        live_post_id: post.id,
+      });
+
+      setCurrentSessionId(session.id);
+      setDailyRoomUrl(roomUrl);
+      setPublicPostId(post.id);
+      setPublicReelId(reel.id);
+      setIsLive(true);
+      setElapsed(0);
+      setChatOpen(false);
+      clearInterval(timerRef.current);
+      timerRef.current = setInterval(() => setElapsed(e => e + 1), 1000);
+      queryClient.invalidateQueries({ queryKey: ['explore-recent-posts'] });
+      queryClient.invalidateQueries({ queryKey: ['reels-feed'] });
+      queryClient.invalidateQueries({ queryKey: ['avatar-live-sessions'] });
+    } catch (e) {
+      setError('Failed to start public live: ' + (e?.message || 'Unknown error'));
+    } finally {
+      setPublicStarting(false);
+    }
+  };
+
   // End session
-  const endSession = () => {
+  const endSession = async () => {
     if (isRecording) stopRecording();
     setIsLive(false);
     clearInterval(timerRef.current);
     streamRef.current?.getTracks().forEach(t => t.stop());
-    if (currentSessionId) endSessionMutation.mutate(currentSessionId);
+    try {
+      if (currentSessionId) await endSessionMutation.mutateAsync(currentSessionId);
+      if (publicPostId) await base44.entities.Post.update(publicPostId, { is_live: false, live_status: 'ended' });
+      if (publicReelId) await base44.entities.Reel.update(publicReelId, { is_live: false, live_status: 'ended' });
+    } catch (_) {
+      // The session has already stopped locally; failed status updates can be retried from history.
+    }
     navigate('/AvatarLive');
   };
 
@@ -522,8 +624,42 @@ export default function LiveStreamStudio() {
               </GlassCard>
             )}
 
-            {/* Booking to attach / Session start */}
             {!isLive && (
+              <GlassCard className="p-5">
+                <h2 className="text-sm font-semibold mb-3">Live mode</h2>
+                <div className="grid grid-cols-2 gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setSessionMode('booked')}
+                    className={`rounded-xl border px-3 py-3 text-left transition-colors ${
+                      sessionMode === 'booked'
+                        ? 'border-primary/50 bg-primary/10 text-foreground'
+                        : 'border-border bg-background/40 text-muted-foreground hover:text-foreground'
+                    }`}
+                  >
+                    <Lock className="mb-2 h-4 w-4" />
+                    <span className="block text-sm font-semibold">Booked task</span>
+                    <span className="mt-1 block text-[11px] leading-snug">Private client session in conversation.</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setSessionMode('public')}
+                    className={`rounded-xl border px-3 py-3 text-left transition-colors ${
+                      sessionMode === 'public'
+                        ? 'border-primary/50 bg-primary/10 text-foreground'
+                        : 'border-border bg-background/40 text-muted-foreground hover:text-foreground'
+                    }`}
+                  >
+                    <Globe2 className="mb-2 h-4 w-4" />
+                    <span className="block text-sm font-semibold">Public live</span>
+                    <span className="mt-1 block text-[11px] leading-snug">Visible in Reels and Explore.</span>
+                  </button>
+                </div>
+              </GlassCard>
+            )}
+
+            {/* Booking to attach / Session start */}
+            {!isLive && sessionMode === 'booked' && (
               <GlassCard className="p-5">
                 <div className="mb-4 space-y-1">
                   <h2 className="text-sm font-semibold">Start client session</h2>
@@ -573,6 +709,33 @@ export default function LiveStreamStudio() {
                     </p>
                   )}
                 </div>
+              </GlassCard>
+            )}
+
+            {!isLive && sessionMode === 'public' && (
+              <GlassCard className="p-5">
+                <div className="mb-4 space-y-1">
+                  <h2 className="text-sm font-semibold">Start public live</h2>
+                  <p className="text-xs text-muted-foreground">
+                    Public live creates a live post and reel so anyone browsing CoTask can watch.
+                  </p>
+                </div>
+                <Button
+                  className="w-full gap-2 bg-red-600 hover:bg-red-700"
+                  onClick={startPublicLive}
+                  disabled={!selectedSource || publicStarting}
+                >
+                  {publicStarting ? (
+                    <><span className="w-3 h-3 border-2 border-white/30 border-t-white rounded-full animate-spin" /> Starting...</>
+                  ) : (
+                    <><Globe2 className="w-4 h-4" /> Go public live</>
+                  )}
+                </Button>
+                {!selectedSource && (
+                  <p className="mt-3 text-xs text-muted-foreground">
+                    Select a camera source first. Preview is private until you start public live.
+                  </p>
+                )}
               </GlassCard>
             )}
 
@@ -689,14 +852,26 @@ export default function LiveStreamStudio() {
             {selectedSource && !isLive && (insta360Status === 'connected' || (selectedSource.id !== 'insta360' && streamRef.current)) && (
               <div className="mt-3 flex items-center gap-3 text-xs text-muted-foreground px-1">
                 <span className="w-2 h-2 rounded-full bg-yellow-500 animate-pulse" />
-                Camera preview active - not broadcasting yet. Start from an accepted task when ready.
+                Camera preview active - not broadcasting yet. Choose booked or public live when ready.
               </div>
             )}
             {isLive && (
               <div className="mt-3 flex items-center justify-between px-1">
                 <div className="flex items-center gap-3 text-xs text-green-400">
                   <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
-                  You are live. Your client can view this stream in real time.
+                  {publicPostId ? (
+                    <>
+                      Public live is visible in Reels and Explore.
+                      <button
+                        onClick={() => navigate(`/PublicLiveView?post=${publicPostId}`)}
+                        className="font-semibold underline underline-offset-2"
+                      >
+                        View public page
+                      </button>
+                    </>
+                  ) : (
+                    'You are live. Your client can join from the conversation.'
+                  )}
                 </div>
                 <div className="flex items-center gap-2">
                   {!isRecording ? (
@@ -735,7 +910,7 @@ export default function LiveStreamStudio() {
           {chatOpen && isLive && (
             <div className="lg:col-span-1" style={{ height: '560px' }}>
               <StreamChatbox
-                clientName={attachedBooking?.client_name || 'Client'}
+                clientName={attachedBooking?.client_name || 'Audience'}
                 avatarName={user?.full_name || 'You'}
                 isOpen={chatOpen}
                 onClose={() => setChatOpen(false)}
