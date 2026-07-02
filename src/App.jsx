@@ -59,6 +59,7 @@ import AvatarBookingDetail from './pages/AvatarBookingDetail';
 import UserWallet from './pages/UserWallet';
 import UserBookingDetail from './pages/UserBookingDetail';
 import PublicPostView from './pages/PublicPostView';
+import PublicLiveView from './pages/PublicLiveView';
 import UserProfileEdit from './pages/UserProfileEdit';
 import UserProfile from './pages/UserProfile';
 import UserSettings from './pages/UserSettings';
@@ -77,6 +78,7 @@ const PUBLIC_ROUTES = new Set([
   '/Safety',
   '/Terms',
   '/PublicPostView',
+  '/PublicLiveView',
 ]);
 
 const AuthenticatedApp = () => {
@@ -112,6 +114,7 @@ const AuthenticatedApp = () => {
   return (
     <Routes>
       <Route path="/PublicPostView" element={<PublicPostView />} />
+      <Route path="/PublicLiveView" element={<PublicLiveView />} />
       <Route path="/UserProfileEdit" element={<UserProfileEdit />} />
       <Route path="/UserProfile" element={<UserProfile />} />
       <Route path="/UserSettings" element={<UserSettings />} />
