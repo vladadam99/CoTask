@@ -12,7 +12,7 @@ import { motion } from 'framer-motion';
 import { getNavItems } from '@/lib/navItems';
 import {
   Radio, Calendar,
-  ArrowRight, TrendingUp, CheckCircle, Zap,
+  ArrowRight, TrendingUp, CheckCircle,
   Clock, Play, PlusCircle
 } from 'lucide-react';
 import SuggestedJobs from '@/components/dashboard/SuggestedJobs';
@@ -84,7 +84,7 @@ export default function AvatarDashboard() {
         <div>
           <p className="section-label">Agent workspace</p>
           <h1 className="text-2xl lg:text-3xl font-black mb-1">Welcome, {firstName}</h1>
-          <p className="text-sm text-muted-foreground mb-2">Manage your tasks, live sessions, proposals, verification, and earnings.</p>
+          <p className="text-sm text-muted-foreground mb-2">Manage your tasks, proposals, verification, and earnings.</p>
           <div className="flex items-center gap-2 text-sm">
             <span className={`w-2 h-2 rounded-full ${profile?.is_available ? 'bg-green-400 animate-pulse' : 'bg-muted-foreground'}`} />
             <span className="text-muted-foreground">
@@ -105,26 +105,41 @@ export default function AvatarDashboard() {
         )}
       </motion.div>
 
-      {/* Go Live Hero Card */}
-      <div className="relative overflow-hidden surface-panel rounded-lg p-5 md:p-6 mb-6"
-        style={{ background: 'linear-gradient(135deg, rgba(220,38,38,0.15) 0%, rgba(153,27,27,0.08) 100%)' }}>
-        <div className="relative z-10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-          <div>
+      {/* Live Sessions */}
+      <div className="surface-panel rounded-lg p-5 md:p-6 mb-6">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <div className="min-w-0">
             <div className="flex items-center gap-2 mb-2">
-              <Radio className="w-5 h-5 text-primary animate-pulse" />
-              <span className="text-sm font-semibold text-primary">Ready to stream?</span>
+              <Radio className="w-5 h-5 text-primary" />
+              <span className="text-sm font-semibold text-primary">Live sessions</span>
             </div>
-            <h2 className="text-xl font-black mb-1">Go Live Now</h2>
-            <p className="text-sm text-muted-foreground">
-              Start a session and connect with clients worldwide.
+            <h2 className="text-lg font-bold mb-1">Start live from an accepted task</h2>
+            <p className="text-sm text-muted-foreground max-w-2xl">
+              Live video should begin from a scheduled or accepted client task. Use Studio only to test your camera and setup before the session.
             </p>
           </div>
-          <Link to="/AvatarLive">
-            <Button size="lg" className="bg-primary hover:bg-primary/90 font-bold shrink-0">
-              <Zap className="w-5 h-5 mr-2" /> Go Live
-            </Button>
-          </Link>
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+            <Link to="/AvatarRequests">
+              <Button className="w-full sm:w-auto">
+                <Calendar className="w-4 h-4" /> View schedule
+              </Button>
+            </Link>
+            <Link to="/LiveStreamStudio">
+              <Button variant="outline" className="w-full sm:w-auto">
+                Test camera
+              </Button>
+            </Link>
+          </div>
         </div>
+        {upcomingBookings.length > 0 ? (
+          <div className="mt-4 rounded-lg border border-primary/20 bg-primary/5 px-4 py-3 text-sm text-foreground">
+            {upcomingBookings.length} accepted task{upcomingBookings.length !== 1 ? 's' : ''} ready for scheduling or live preparation.
+          </div>
+        ) : (
+          <div className="mt-4 rounded-lg border border-border bg-secondary/45 px-4 py-3 text-sm text-muted-foreground">
+            No accepted live-ready tasks yet. New sessions will appear here after a client accepts or schedules work with you.
+          </div>
+        )}
       </div>
 
       {/* Stats Grid */}
