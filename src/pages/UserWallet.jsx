@@ -39,12 +39,15 @@ function downloadInvoice(tx, userName) {
   doc.text(`Status:`, 20, 141); doc.text(tx.status, 160, 141);
 
   doc.setFontSize(8); doc.setFont('helvetica', 'normal');
-  doc.text('CoTask Platform · cotask.app · support@cotask.app', 20, 280);
+  doc.text('CoTask Platform ? cotask.app ? support@cotask.app', 20, 280);
   doc.save(`cotask-invoice-${invoiceNo}.pdf`);
 }
 
 export default function UserWallet() {
   const { user, loading } = useCurrentUser();
+  const activeRole = user?.selected_role || user?.role || 'user';
+  const shellRole = activeRole === 'avatar' ? 'user' : activeRole;
+  const shellHomePath = shellRole === 'user' ? '/Explore' : undefined;
 
   const { data: jobs = [], isLoading: isLoadingJobs } = useQuery({
     queryKey: ['user-wallet-jobs', user?.email],
@@ -99,7 +102,7 @@ export default function UserWallet() {
   ].sort((a, b) => new Date(b.date) - new Date(a.date));
 
   return (
-    <AppShell navItems={getNavItems(user?.selected_role || user?.role || 'user')} user={user}>
+    <AppShell navItems={getNavItems(shellRole)} user={user} roleOverride={shellRole} homePathOverride={shellHomePath}>
       <div className="space-y-6">
       <PageHero
         eyebrow="Billing"
@@ -129,7 +132,7 @@ export default function UserWallet() {
             <span className="text-sm text-muted-foreground">Secure Payment Held</span>
           </div>
           <p className="text-2xl font-bold text-yellow-400">${pendingSecurePayment.toFixed(2)}</p>
-          <p className="text-xs text-muted-foreground mt-1">{pendingCount} task{pendingCount !== 1 ? 's' : ''} in progress · held securely</p>
+          <p className="text-xs text-muted-foreground mt-1">{pendingCount} task{pendingCount !== 1 ? 's' : ''} in progress ? held securely</p>
         </GlassCard>
       </div>
 
@@ -152,7 +155,7 @@ export default function UserWallet() {
                   </div>
                   <div>
                     <p className="font-medium text-sm">{tx.title}</p>
-                    <p className="text-xs text-muted-foreground">To: {tx.to} · {new Date(tx.date).toLocaleDateString()}</p>
+                    <p className="text-xs text-muted-foreground">To: {tx.to} ? {new Date(tx.date).toLocaleDateString()}</p>
                   </div>
                 </div>
                 <div className="text-right flex-shrink-0">
@@ -171,3 +174,4 @@ export default function UserWallet() {
     </AppShell>
   );
 }
+
