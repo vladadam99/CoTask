@@ -75,6 +75,9 @@ export default function AvatarView() {
   const navigate = useNavigate();
   const { user } = useCurrentUser();
   const queryClient = useQueryClient();
+  const activeRole = user?.selected_role || user?.role || 'user';
+  const shellRole = activeRole === 'avatar' ? 'user' : activeRole;
+  const shellHomePath = shellRole === 'user' ? '/Explore' : undefined;
   const params = new URLSearchParams(window.location.search);
   const id = params.get('id');
   const defaultTab = params.get('tab') || 'Portfolio';
@@ -158,11 +161,11 @@ export default function AvatarView() {
 
   if (!avatar) {
     return (
-      <AppShell navItems={getNavItems(user?.selected_role || user?.role || 'user')} user={user}>
+      <AppShell navItems={getNavItems(shellRole)} user={user} roleOverride={shellRole} homePathOverride={shellHomePath}>
         <EmptyState
           title="Local Agent not found"
           description="This profile may have been removed or is no longer active."
-          action={<Button variant="outline" onClick={() => navigate('/FindPeople')}>Back to Discover</Button>}
+          action={<Button variant="outline" onClick={() => navigate('/Explore')}>Back to Discover</Button>}
         />
       </AppShell>
     );
@@ -198,7 +201,7 @@ export default function AvatarView() {
   );
 
   return (
-    <AppShell navItems={getNavItems(user?.selected_role || user?.role || 'user')} user={user}>
+    <AppShell navItems={getNavItems(shellRole)} user={user} roleOverride={shellRole} homePathOverride={shellHomePath}>
       <div className="mx-auto max-w-6xl space-y-6 pb-20">
         <button onClick={() => navigate(-1)} className="inline-flex items-center gap-2 text-sm font-semibold text-muted-foreground hover:text-foreground">
           <ArrowLeft className="h-4 w-4" /> Back
@@ -415,3 +418,4 @@ export default function AvatarView() {
     </AppShell>
   );
 }
+
