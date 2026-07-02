@@ -1,13 +1,15 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { useCurrentUser } from '@/lib/useCurrentUser';
+import { useSearchParams } from 'react-router-dom';
 import AppShell from '@/components/layout/AppShell';
 import GlassCard from '@/components/ui/GlassCard';
 import { getNavItems } from '@/lib/navItems';
 import { Wallet, TrendingUp, DollarSign, CheckCircle, Clock, Download, ArrowUpRight, X } from 'lucide-react';
 import { jsPDF } from 'jspdf';
 import { EmptyState, PageHero, SectionTitle } from '@/components/ui/PagePrimitives';
+import PayoutSetup from '@/components/earnings/PayoutSetup';
 
 const PLATFORM_FEE_RATE = 0.1;
 
@@ -52,6 +54,8 @@ function downloadInvoice(job, userName, role) {
 
 export default function AvatarWallet() {
   const { user, loading } = useCurrentUser();
+  const [searchParams] = useSearchParams();
+  const payoutSettingsRef = useRef(null);
   const [showWithdraw, setShowWithdraw] = useState(false);
   const [withdrawAmount, setWithdrawAmount] = useState('');
   const [withdrawMethod, setWithdrawMethod] = useState('bank_transfer');
@@ -70,6 +74,14 @@ export default function AvatarWallet() {
   });
 
   const isLoadingTotal = isLoading || isLoadingBookings;
+
+  useEffect(() => {
+    if (searchParams.get('payout') !== 'settings') return;
+    const timer = window.setTimeout(() => {
+      payoutSettingsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 150);
+    return () => window.clearTimeout(timer);
+  }, [searchParams]);
 
   if (loading || isLoadingTotal) return <div className="min-h-screen flex items-center justify-center"><div className="w-8 h-8 border-4 border-primary/20 border-t-primary rounded-full animate-spin" /></div>;
 
@@ -178,6 +190,10 @@ export default function AvatarWallet() {
           <p className="text-2xl font-bold text-primary">${totalGross.toFixed(2)}</p>
           <p className="text-xs text-muted-foreground mt-1">{completedCount} completed task{completedCount !== 1 ? 's' : ''}</p>
         </GlassCard>
+      </div>
+
+      <div ref={payoutSettingsRef} className="scroll-mt-24">
+        <PayoutSetup avatarEmail={user?.email} />
       </div>
 
       {/* Transaction History */}
