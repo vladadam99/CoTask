@@ -45,6 +45,7 @@ export default function LiveStreamStudio() {
   const [publicStarting, setPublicStarting] = useState(false);
   const [publicPostId, setPublicPostId] = useState(null);
   const [publicReelId, setPublicReelId] = useState(null);
+  const [dailyVideoConstraints, setDailyVideoConstraints] = useState(null);
 
   const videoRef = useRef(null);
   const streamRef = useRef(null);
@@ -215,6 +216,13 @@ export default function LiveStreamStudio() {
 
       const stream = await navigator.mediaDevices.getUserMedia({ video: videoConstraints, audio: true });
       streamRef.current = stream;
+      const videoTrack = stream.getVideoTracks()[0];
+      const trackSettings = videoTrack?.getSettings?.() || {};
+      setDailyVideoConstraints(
+        trackSettings.deviceId
+          ? { deviceId: { exact: trackSettings.deviceId } }
+          : source.facingMode ? { facingMode: source.facingMode } : null
+      );
       if (videoRef.current) {
         videoRef.current.srcObject = stream;
         videoRef.current.play().catch(() => {});
@@ -260,6 +268,9 @@ export default function LiveStreamStudio() {
 
       const stream = await navigator.mediaDevices.getUserMedia(constraints);
       streamRef.current = stream;
+      const videoTrack = stream.getVideoTracks()[0];
+      const trackSettings = videoTrack?.getSettings?.() || {};
+      setDailyVideoConstraints(trackSettings.deviceId ? { deviceId: { exact: trackSettings.deviceId } } : null);
       if (videoRef.current) {
         videoRef.current.srcObject = stream;
         videoRef.current.src = '';
@@ -315,6 +326,7 @@ export default function LiveStreamStudio() {
     streamRef.current?.getTracks().forEach(t => t.stop());
     streamRef.current = null;
     if (videoRef.current) { videoRef.current.srcObject = null; videoRef.current.src = ''; }
+    setDailyVideoConstraints(null);
     setInsta360Status('idle');
     setSelectedSource(null);
   };
@@ -493,8 +505,8 @@ export default function LiveStreamStudio() {
     streamRef.current?.getTracks().forEach(t => t.stop());
     try {
       if (currentSessionId) await endSessionMutation.mutateAsync(currentSessionId);
-      if (publicPostId) await base44.entities.Post.update(publicPostId, { is_live: false, live_status: 'ended' });
-      if (publicReelId) await base44.entities.Reel.update(publicReelId, { is_live: false, live_status: 'ended' });
+      if (publicPostId) await base44.entities.Post.update(publicPostId, { is_live: true, live_status: 'ended', live_url: '' });
+      if (publicReelId) await base44.entities.Reel.update(publicReelId, { is_live: true, live_status: 'ended', live_url: '' });
     } catch (_) {
       // The session has already stopped locally; failed status updates can be retried from history.
     }
@@ -756,6 +768,7 @@ export default function LiveStreamStudio() {
                 <DailyVideoCall
                   roomUrl={dailyRoomUrl}
                   isHost={true}
+                  videoConstraints={dailyVideoConstraints}
                   className="w-full h-full"
                 />
               ) : !selectedSource ? (
@@ -895,12 +908,14 @@ export default function LiveStreamStudio() {
                   >
                     <Pen className="w-3 h-3" /> Annotate
                   </button>
-                  <button
-                    onClick={() => setChatOpen(v => !v)}
-                    className={`flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg transition-colors border ${chatOpen ? 'bg-primary/20 border-primary/30 text-primary' : 'bg-secondary border-border text-muted-foreground hover:text-foreground'}`}
-                  >
-                    <MessageCircle className="w-3 h-3" /> Chat
-                  </button>
+                  {attachedBooking?.id && (
+                    <button
+                      onClick={() => setChatOpen(v => !v)}
+                      className={`flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg transition-colors border ${chatOpen ? 'bg-primary/20 border-primary/30 text-primary' : 'bg-secondary border-border text-muted-foreground hover:text-foreground'}`}
+                    >
+                      <MessageCircle className="w-3 h-3" /> Chat
+                    </button>
+                  )}
                 </div>
               </div>
             )}
@@ -912,6 +927,9 @@ export default function LiveStreamStudio() {
               <StreamChatbox
                 clientName={attachedBooking?.client_name || 'Audience'}
                 avatarName={user?.full_name || 'You'}
+                bookingId={attachedBooking?.id}
+                senderRole="avatar"
+                notifyTargetRole={attachedBooking?.client_type === 'enterprise' ? 'enterprise' : 'user'}
                 isOpen={chatOpen}
                 onClose={() => setChatOpen(false)}
               />
