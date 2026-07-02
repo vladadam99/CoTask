@@ -372,10 +372,9 @@ export default function LiveStreamStudio() {
     if (!booking?.id) { setError('Choose an accepted task before starting a live session.'); return; }
     setAttachedBooking(booking);
 
-    // Create a Daily room first
+    // Create the Daily room from the accepted booking first, then attach it to the LiveSession record.
     try {
-      const tempId = `${booking.id}-${Date.now()}`;
-      const res = await base44.functions.invoke('createDailyRoom', { sessionId: tempId });
+      const res = await base44.functions.invoke('createDailyRoom', { bookingId: booking.id });
       setDailyRoomUrl(res.data.url);
       booking._dailyRoomUrl = res.data.url;
     } catch (e) {
