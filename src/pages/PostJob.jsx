@@ -216,7 +216,7 @@ export default function PostJob() {
     onError: (error) => {
       console.error(error);
       toast({
-        title: 'Error posting job',
+        title: 'Error posting task',
         description: error.message || 'An unknown error occurred',
         variant: 'destructive',
       });
@@ -241,7 +241,7 @@ export default function PostJob() {
           </div>
           <div>
             <h2 className="text-xl font-bold mb-2">Identity Verification Required</h2>
-            <p className="text-muted-foreground text-sm max-w-sm">You must verify your identity before posting a job. This keeps the platform safe and trustworthy for everyone.</p>
+            <p className="text-muted-foreground text-sm max-w-sm">You must verify your identity before posting a task. This keeps the platform safe and trustworthy for everyone.</p>
           </div>
           <Button onClick={() => navigate('/IdentityVerification')}>Verify My Identity</Button>
         </div>
@@ -251,45 +251,44 @@ export default function PostJob() {
 
   return (
     <AppShell navItems={getNavItems(activeRole)} user={user}>
-      <div className="max-w-7xl mx-auto space-y-6">
-        <div className="relative overflow-hidden rounded-lg border border-border bg-foreground text-background shadow-sm">
-          <div className="absolute inset-y-0 right-0 hidden w-1/2 professional-grid opacity-10 lg:block" />
-          <div className="relative p-5 md:p-7">
+      <div className="max-w-6xl mx-auto space-y-5">
+        <div className="surface-panel rounded-lg p-4 md:p-5">
+          <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+            <div className="min-w-0">
             <button
               type="button"
               onClick={() => navigate(-1)}
-              className="mb-5 inline-flex h-10 items-center gap-2 rounded-lg border border-white/15 bg-white/10 px-3 text-sm font-semibold text-white/85 transition-colors hover:bg-white/15"
+              className="mb-4 inline-flex h-9 items-center gap-2 rounded-lg border border-border bg-card px-3 text-sm font-semibold text-muted-foreground transition-colors hover:border-primary/30 hover:text-foreground"
             >
               <ArrowLeft className="w-4 h-4" />
               Back
             </button>
-            <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_320px] lg:items-end">
-              <div>
-                <p className="text-xs font-bold tracking-[0.18em] text-primary">Open task brief</p>
-                <h1 className="mt-3 text-3xl md:text-4xl font-black tracking-tight text-white">
+                <p className="section-label text-primary">Open task brief</p>
+                <h1 className="mt-2 text-2xl md:text-3xl font-bold tracking-tight text-foreground">
                   {editJobId ? 'Refine your open task' : 'Post an Open Task'}
                 </h1>
-                <p className="mt-3 max-w-2xl text-sm md:text-base leading-relaxed text-white/70">
+                <p className="mt-2 max-w-2xl text-sm leading-relaxed text-muted-foreground">
                   Create a clear task brief so qualified Local Agents can send useful proposals.
                 </p>
               </div>
-              <div className="grid grid-cols-3 gap-2 rounded-lg border border-white/15 bg-white/10 p-3 backdrop-blur">
-                {checklist.slice(0, 3).map((item) => (
-                  <div key={item.label} className="text-center">
-                    <div className={`mx-auto mb-1 h-8 w-8 rounded-lg flex items-center justify-center ${item.done ? 'bg-primary text-primary-foreground' : 'bg-white/10 text-white/50'}`}>
-                      <CheckCircle2 className="w-4 h-4" />
-                    </div>
-                    <p className="text-[11px] font-semibold text-white/75">{item.label}</p>
-                  </div>
-                ))}
+            <div className="w-full lg:max-w-sm">
+              <div className="mb-2 flex items-center justify-between text-xs font-semibold text-muted-foreground">
+                <span>Brief progress</span>
+                <span className="text-primary">{completedCount}/{checklist.length}</span>
+              </div>
+              <div className="h-2 rounded-full bg-secondary">
+                <div
+                  className="h-full rounded-full bg-primary transition-all"
+                  style={{ width: `${(completedCount / checklist.length) * 100}%` }}
+                />
               </div>
             </div>
           </div>
         </div>
 
-        <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_360px] lg:items-start">
-          <div className="space-y-5">
-            <section className="surface-panel rounded-lg p-5 md:p-6 space-y-5">
+        <div className="grid gap-5 xl:grid-cols-[minmax(0,1fr)_300px] xl:items-start">
+          <div className="space-y-4">
+            <section className="surface-panel rounded-lg p-4 md:p-5 space-y-4">
               <SectionHeader
                 icon={FileText}
                 eyebrow="Step 1"
@@ -353,7 +352,7 @@ export default function PostJob() {
               </div>
             </section>
 
-            <section className="surface-panel rounded-lg p-5 md:p-6 space-y-5">
+            <section className="surface-panel rounded-lg p-4 md:p-5 space-y-4">
               <SectionHeader
                 icon={Calendar}
                 eyebrow="Step 2"
@@ -384,7 +383,7 @@ export default function PostJob() {
               </div>
             </section>
 
-            <section className="surface-panel rounded-lg p-5 md:p-6 space-y-5">
+            <section className="surface-panel rounded-lg p-4 md:p-5 space-y-4">
               <SectionHeader
                 icon={DollarSign}
                 eyebrow="Step 3"
@@ -442,7 +441,7 @@ export default function PostJob() {
               </button>
             </section>
 
-            <section className="surface-panel rounded-lg p-5 md:p-6 space-y-5">
+            <section className="surface-panel rounded-lg p-4 md:p-5 space-y-4">
               <SectionHeader
                 icon={Smartphone}
                 eyebrow="Step 4"
@@ -531,7 +530,7 @@ export default function PostJob() {
               </div>
             </section>
 
-            <section className="surface-panel rounded-lg p-5 md:p-6 space-y-5">
+            <section className="surface-panel rounded-lg p-4 md:p-5 space-y-4">
               <SectionHeader
                 icon={FileText}
                 eyebrow="Step 5"
@@ -548,15 +547,15 @@ export default function PostJob() {
             </section>
           </div>
 
-          <aside className="lg:sticky lg:top-24 space-y-4">
+          <aside className="xl:sticky xl:top-6 space-y-4">
             <div className="surface-panel rounded-lg overflow-hidden">
-              <div className="border-b border-border bg-secondary/50 p-4">
+              <div className="border-b border-border bg-card p-4">
                 <div className="flex items-center justify-between gap-3">
                   <div>
-                    <p className="section-label">Live preview</p>
-                    <h2 className="text-lg font-bold text-foreground">Task snapshot</h2>
+                    <p className="section-label">Summary</p>
+                    <h2 className="text-base font-bold text-foreground">Task snapshot</h2>
                   </div>
-                  <div className="rounded-lg bg-primary/10 px-3 py-2 text-sm font-black text-primary">
+                  <div className="rounded-lg bg-primary/10 px-2.5 py-1.5 text-xs font-bold text-primary">
                     {completedCount}/{checklist.length}
                   </div>
                 </div>
