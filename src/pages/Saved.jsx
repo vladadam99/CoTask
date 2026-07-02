@@ -14,6 +14,8 @@ export default function Saved() {
   const { user } = useCurrentUser();
   const queryClient = useQueryClient();
   const activeRole = user?.selected_role || user?.role || 'user';
+  const shellRole = activeRole === 'avatar' ? 'user' : activeRole;
+  const shellHomePath = shellRole === 'user' ? '/Explore' : undefined;
 
   const { data: favorites = [] } = useQuery({
     queryKey: ['favorites', user?.email],
@@ -27,7 +29,7 @@ export default function Saved() {
   });
 
   return (
-    <AppShell navItems={getNavItems(activeRole)} user={user}>
+    <AppShell navItems={getNavItems(shellRole)} user={user} roleOverride={shellRole} homePathOverride={shellHomePath}>
       <div className="max-w-4xl mx-auto space-y-6">
         <PageHero
           eyebrow="Saved"
@@ -62,10 +64,11 @@ export default function Saved() {
             icon={Heart}
             title="No saved Local Agents"
             description="Browse and save agents you may want to hire again."
-            action={<Link to="/FindPeople"><Button>Discover Local Agents</Button></Link>}
+            action={<Link to="/Explore"><Button>Discover Local Agents</Button></Link>}
           />
         )}
       </div>
     </AppShell>
   );
 }
+
