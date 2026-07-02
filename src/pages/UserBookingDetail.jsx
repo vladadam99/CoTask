@@ -21,6 +21,9 @@ export default function UserBookingDetail() {
   const { user } = useCurrentUser();
   const queryClient = useQueryClient();
   const navigate = useNavigate();
+  const activeRole = user?.selected_role || user?.role || 'user';
+  const shellRole = activeRole === 'avatar' ? 'user' : activeRole;
+  const shellHomePath = shellRole === 'user' ? '/Explore' : undefined;
   const [checkoutLoading, setCheckoutLoading] = useState(false);
   const [convId, setConvId] = useState(null);
 
@@ -95,7 +98,7 @@ export default function UserBookingDetail() {
     <div className="min-h-screen flex items-center justify-center p-6">
       <GlassCard className="p-8 max-w-md w-full text-center space-y-5">
         <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-2">
-          <span className="text-primary text-2xl">🔍</span>
+          <span className="text-primary text-2xl">??</span>
         </div>
         <h2 className="text-xl font-bold">Task not found</h2>
         <p className="text-sm text-muted-foreground">
@@ -152,7 +155,7 @@ export default function UserBookingDetail() {
               };
 
   return (
-    <AppShell navItems={getNavItems(user?.selected_role || user?.role || 'user')} user={user}>
+    <AppShell navItems={getNavItems(shellRole)} user={user} roleOverride={shellRole} homePathOverride={shellHomePath}>
       <div className="bg-background min-h-[calc(100vh-64px)]">
       <div className="max-w-4xl mx-auto">
         <button onClick={() => navigate(-1)} className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground mb-6">
@@ -351,7 +354,7 @@ export default function UserBookingDetail() {
                   className="w-full gap-2 h-12 text-base"
                   onClick={() => setShowPaymentModal(true)}
                 >
-                  <CreditCard className="w-5 h-5" /> Fund Secure Payment — ${booking.total_amount?.toFixed(2)}
+                  <CreditCard className="w-5 h-5" /> Fund Secure Payment ? ${booking.total_amount?.toFixed(2)}
                 </Button>
                 <p className="text-center text-xs text-muted-foreground mt-1">
                   You are not charged until you fund Secure Payment. Funds are held and only released upon approval.
@@ -400,3 +403,4 @@ export default function UserBookingDetail() {
     </AppShell>
   );
 }
+
