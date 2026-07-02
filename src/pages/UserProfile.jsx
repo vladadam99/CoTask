@@ -18,6 +18,9 @@ export default function UserProfile() {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('Tasks Posted');
   const [menuOpen, setMenuOpen] = useState(false);
+  const activeRole = user?.selected_role || user?.role || 'user';
+  const shellRole = activeRole === 'avatar' ? 'user' : activeRole;
+  const shellHomePath = shellRole === 'user' ? '/Explore' : undefined;
 
   const profilePicUrl = user?.profile_picture_url || '';
   const coverUrl = user?.cover_picture_url || '';
@@ -38,10 +41,10 @@ export default function UserProfile() {
     ? (reviews.reduce((sum, r) => sum + (r.rating || 0), 0) / reviews.length).toFixed(1)
     : null;
 
-  const dashPath = '/FindPeople';
+  const dashPath = '/Explore';
 
   return (
-    <AppShell navItems={getNavItems(user?.selected_role || user?.role || 'user')} user={user}>
+    <AppShell navItems={getNavItems(shellRole)} user={user} roleOverride={shellRole} homePathOverride={shellHomePath}>
       <div className="mx-auto max-w-5xl space-y-4 pb-24 lg:pb-0">
 
         {/* Top bar */}
@@ -283,3 +286,4 @@ export default function UserProfile() {
     </AppShell>
   );
 }
+
