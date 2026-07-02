@@ -28,11 +28,14 @@ export default function ReelFeed() {
     // Optimistic only — no backend mutation to avoid race conditions in beta
   };
 
-  const filteredReels = reels.filter(r =>
-    !search || r.title?.toLowerCase().includes(search.toLowerCase()) ||
-    r.category?.toLowerCase().includes(search.toLowerCase()) ||
-    r.avatar_name?.toLowerCase().includes(search.toLowerCase())
-  );
+  const filteredReels = reels.filter((reel) => {
+    if (reel.is_live && reel.live_status === 'ended') return false;
+    if (!search) return true;
+    const value = search.toLowerCase();
+    return reel.title?.toLowerCase().includes(value) ||
+      reel.category?.toLowerCase().includes(value) ||
+      reel.avatar_name?.toLowerCase().includes(value);
+  });
 
   return (
     <div className="min-h-screen bg-background">
