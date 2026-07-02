@@ -137,6 +137,24 @@ export default function Messages() {
     return (convo.participant_names || [])[idx] || 'Unknown';
   };
 
+  const renderMessageContent = (message) => {
+    const content = message.content || '';
+    const liveMatch = content.match(/\/ClientLiveView\?session=([^\s]+)/);
+    if (!liveMatch) return <p>{content}</p>;
+
+    const text = content.replace(liveMatch[0], '').replace(/Join here:\s*$/i, '').trim();
+    return (
+      <div className="space-y-2">
+        {text && <p>{text}</p>}
+        <Link to={liveMatch[0]}>
+          <Button size="sm" className="h-8 gap-1.5 text-xs">
+            <Video className="w-3.5 h-3.5" /> Join live session
+          </Button>
+        </Link>
+      </div>
+    );
+  };
+
   return (
     <AppShell navItems={getNavItems(activeRole)} user={user} fullBleed>
     <div className="flex h-[calc(100vh-56px)] lg:h-screen bg-background overflow-hidden">
@@ -229,14 +247,14 @@ export default function Messages() {
                 <div key={m.id} className={`flex ${m.sender_email === user?.email ? 'justify-end' : 'justify-start'}`}>
                   {m.message_type === 'system' ? (
                     <div className="w-full flex justify-center">
-                      <div className="max-w-sm text-center px-3 py-2 rounded-xl bg-secondary border border-border text-xs text-muted-foreground italic">{m.content}</div>
+                      <div className="max-w-sm text-center px-3 py-2 rounded-xl bg-secondary border border-border text-xs text-muted-foreground">{renderMessageContent(m)}</div>
                     </div>
                   ) : (
                     <div className={`max-w-xs lg:max-w-md rounded-2xl px-4 py-2.5 text-sm ${
                       m.sender_email === user?.email ? 'bg-primary text-primary-foreground rounded-br-md' : 'bg-card border border-border rounded-bl-md'
                     }`}>
                       {m.message_type === 'photo' && <img src={m.content} alt="Photo" className="max-w-xs rounded-xl" />}
-                      {m.message_type !== 'photo' && <p>{m.content}</p>}
+                      {m.message_type !== 'photo' && renderMessageContent(m)}
                     </div>
                   )}
                 </div>
