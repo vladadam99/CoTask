@@ -36,9 +36,9 @@ function ProfilePanel({ user, onClose, navItems = [] }) {
   } else if (activeRole === 'enterprise') {
     menuItems = [
       { icon: LayoutDashboard, label: 'Enterprise Dashboard', path: '/EnterpriseDashboard' },
-      { icon: Users, label: 'Team / Company Profile', path: '/EnterpriseSettings' },
-      { icon: FileText, label: 'Billing / Invoices', path: '/EnterpriseSettings' },
-      { icon: Settings, label: 'Settings', path: '/EnterpriseSettings' },
+      { icon: Users, label: 'Company Profile / Settings', path: '/EnterpriseProfile' },
+      { icon: FileText, label: 'Team Workspace', path: '/EnterpriseTeam' },
+      { icon: DollarSign, label: 'Billing / Invoices', path: '/EnterpriseBilling' },
       { icon: HelpCircle, label: 'Help & FAQ', path: '/FAQ' },
     ];
   } else if (activeRole === 'avatar') {
@@ -71,7 +71,7 @@ function ProfilePanel({ user, onClose, navItems = [] }) {
 
       <div className="flex-1 overflow-y-auto pb-24">
         {/* User card */}
-        <Link to={activeRole === 'avatar' ? '/AvatarProfileEdit' : activeRole === 'enterprise' ? '/EnterpriseSettings' : '/UserProfile'} onClick={onClose} className="mx-4 mt-4 mb-3 p-4 rounded-lg bg-card border border-border shadow-sm flex items-center gap-3 hover:border-primary/30 hover:shadow-md transition-all">
+        <Link to={activeRole === 'avatar' ? '/AvatarProfileEdit' : activeRole === 'enterprise' ? '/EnterpriseProfile' : '/UserProfile'} onClick={onClose} className="mx-4 mt-4 mb-3 p-4 rounded-lg bg-card border border-border shadow-sm flex items-center gap-3 hover:border-primary/30 hover:shadow-md transition-all">
           <div className="w-14 h-14 rounded-full bg-primary/10 flex items-center justify-center text-xl font-bold text-primary flex-shrink-0">
             {user?.full_name?.[0] || 'U'}
           </div>
@@ -173,7 +173,7 @@ export default function AppShell({ children, navItems = [], user, fullBleed = fa
 
   const activeRole = user?.selected_role || user?.role || 'user';
   const homePath = activeRole === 'avatar' ? '/AvatarDashboard' : activeRole === 'enterprise' ? '/EnterpriseDashboard' : activeRole === 'admin' ? '/AdminDashboard' : '/FindPeople';
-  const settingsPath = activeRole === 'avatar' ? '/AvatarSettings' : activeRole === 'enterprise' ? '/EnterpriseSettings' : '/UserSettings';
+  const settingsPath = activeRole === 'avatar' ? '/AvatarSettings' : activeRole === 'enterprise' ? '/EnterpriseProfile' : '/UserSettings';
 
   return (
     <div className="min-h-screen flex overflow-x-hidden bg-background text-foreground">
