@@ -5,22 +5,22 @@ import { cn } from '@/lib/utils';
 export function PageHero({ eyebrow, title, description, icon: Icon, actions, stats = [], className = '' }) {
   return (
     <section className={cn('relative overflow-hidden rounded-lg border border-border bg-card text-foreground shadow-sm', className)}>
-      <div className="absolute inset-y-0 right-0 hidden w-1/2 professional-grid opacity-30 lg:block" />
+      <div className="absolute inset-y-0 right-0 hidden w-1/3 professional-grid opacity-20 lg:block" />
       <div className="absolute inset-x-0 top-0 h-1 bg-primary" />
-      <div className="relative p-5 md:p-7">
-        <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-end">
+      <div className="relative p-4 md:p-5">
+        <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-end">
           <div className="min-w-0">
             {eyebrow && <p className="text-xs font-bold tracking-[0.18em] text-primary">{eyebrow}</p>}
-            <div className="mt-3 flex items-start gap-3">
+            <div className="mt-2 flex items-start gap-3">
               {Icon && (
-                <div className="mt-1 hidden h-11 w-11 shrink-0 items-center justify-center rounded-lg border border-primary/15 bg-primary/10 text-primary sm:flex">
+                <div className="mt-1 hidden h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-primary/15 bg-primary/10 text-primary sm:flex">
                   <Icon className="h-5 w-5" />
                 </div>
               )}
               <div className="min-w-0">
-                <h1 className="text-3xl font-black tracking-tight text-foreground md:text-4xl">{title}</h1>
+                <h1 className="text-2xl font-bold tracking-tight text-foreground md:text-3xl">{title}</h1>
                 {description && (
-                  <p className="mt-3 max-w-2xl text-sm leading-relaxed text-muted-foreground md:text-base">
+                  <p className="mt-2 max-w-2xl text-sm leading-relaxed text-muted-foreground">
                     {description}
                   </p>
                 )}
@@ -31,7 +31,7 @@ export function PageHero({ eyebrow, title, description, icon: Icon, actions, sta
         </div>
 
         {stats.length > 0 && (
-          <div className="mt-6 grid gap-2 sm:grid-cols-3">
+          <div className="mt-4 grid gap-2 sm:grid-cols-3">
             {stats.map((stat) => (
               <div key={stat.label} className="rounded-lg border border-border bg-secondary/45 p-3">
                 <p className="text-[11px] font-semibold text-muted-foreground">{stat.label}</p>
