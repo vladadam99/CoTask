@@ -12,6 +12,7 @@ import {
   Briefcase,
   Calendar,
   Camera,
+  ChevronDown,
   CheckCircle2,
   Clock,
   DollarSign,
@@ -22,7 +23,6 @@ import {
   ShieldAlert,
   ShieldCheck,
   Sparkles,
-  Smartphone,
   X,
 } from 'lucide-react';
 import { useToast } from '@/components/ui/use-toast';
@@ -38,13 +38,14 @@ const CATEGORIES = [
   'Plumbing', 'Property Walkthrough', 'Queue & Errands', 'Shopping Help', 'Show Me Around',
   'Training & Coaching', 'Travel Assistance',
 ];
-const EQUIPMENT_OPTIONS = ['Smartphone', '360 Camera', 'Drone', 'Laptop', 'Headset', 'Vehicle'];
+const EQUIPMENT_OPTIONS = ['Smartphone', 'Laptop', 'Headset', 'Vehicle'];
+const COMING_SOON_EQUIPMENT = ['360 camera', 'Meta glasses'];
 const LANGUAGES = ['English', 'Spanish', 'French', 'German', 'Mandarin', 'Arabic', 'Portuguese', 'Italian', 'Japanese', 'Other'];
 
 const TASK_FLAGS = [
-  { key: 'remote_ok', title: 'Remote-friendly', hint: 'Agent can complete without travel between stops', icon: MapPin },
-  { key: 'travel_required', title: 'Travel needed', hint: 'Agent may need transport or multiple locations', icon: Briefcase },
-  { key: 'camera_required', title: 'Live camera', hint: 'Video, photos, or recorded proof expected', icon: Camera },
+  { key: 'remote_ok', title: 'Remote-friendly', hint: 'No complex travel', icon: MapPin },
+  { key: 'travel_required', title: 'Travel needed', hint: 'Agent moves around', icon: Briefcase },
+  { key: 'camera_required', title: 'Photo / video proof', hint: 'Proof expected', icon: Camera },
 ];
 
 function formatDateValue(value) {
@@ -76,6 +77,7 @@ export default function PostJob() {
   const urlParams = new URLSearchParams(window.location.search);
   const editJobId = urlParams.get('edit');
   const activeRole = user?.selected_role || user?.role || 'user';
+  const [showOptionalDetails, setShowOptionalDetails] = useState(false);
 
   const [form, setForm] = useState({
     title: '', description: '', category: '', location: '',
@@ -156,8 +158,9 @@ export default function PostJob() {
   const budgetSummary = form.budget
     ? `$${form.budget}${form.budget_type === 'hourly' ? '/hr' : ''}${form.negotiable ? ' negotiable' : ''}`
     : 'Set budget';
+  const activeEquipment = form.equipment_needed.filter(item => EQUIPMENT_OPTIONS.includes(item));
   const selectedRequirements = [
-    ...form.equipment_needed,
+    ...activeEquipment,
     ...form.languages_required,
     ...form.skills_required,
   ];
@@ -182,7 +185,7 @@ export default function PostJob() {
     negotiable: form.negotiable,
     skills_required: form.skills_required,
     languages_required: form.languages_required,
-    equipment_needed: form.equipment_needed,
+    equipment_needed: activeEquipment,
     budget_min: form.budget ? Number(form.budget) : undefined,
     budget_max: form.budget ? Number(form.budget) : undefined,
     duration_type: form.budget_type === 'hourly' ? 'hourly' : 'custom',
@@ -326,7 +329,7 @@ export default function PostJob() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
                 {TASK_FLAGS.map((flag) => {
                   const Icon = flag.icon;
                   const active = Boolean(form[flag.key]);
@@ -335,7 +338,7 @@ export default function PostJob() {
                       key={flag.key}
                       type="button"
                       onClick={() => set(flag.key, !active)}
-                      className={`rounded-lg border p-4 text-left transition-all ${
+                      className={`rounded-lg border p-3 text-left transition-all ${
                         active
                           ? 'border-primary bg-primary/10 text-primary shadow-sm'
                           : 'border-border bg-card text-muted-foreground hover:border-primary/30 hover:text-foreground'
@@ -345,7 +348,7 @@ export default function PostJob() {
                         <Icon className="w-4 h-4" />
                         <span className="text-sm font-bold">{flag.title}</span>
                       </div>
-                      <p className="mt-2 text-xs leading-relaxed">{flag.hint}</p>
+                      <p className="mt-1 text-xs leading-relaxed">{flag.hint}</p>
                     </button>
                   );
                 })}
@@ -443,97 +446,8 @@ export default function PostJob() {
 
             <section className="surface-panel rounded-lg p-4 md:p-5 space-y-4">
               <SectionHeader
-                icon={Smartphone}
-                eyebrow="Step 4"
-                title="Proof and requirements"
-                description="Add equipment, languages, and specific skills agents should have."
-              />
-              <div className="space-y-5">
-                <div>
-                  <div className="flex items-center gap-2 text-sm font-bold text-foreground mb-2">
-                    <Camera className="w-4 h-4 text-primary" /> Equipment
-                  </div>
-                  <div className="flex flex-wrap gap-2">
-                    {EQUIPMENT_OPTIONS.map((equipment) => (
-                      <button
-                        key={equipment}
-                        type="button"
-                        onClick={() => toggleArr('equipment_needed', equipment)}
-                        className={`rounded-full border px-3 py-2 text-xs font-semibold transition-all ${
-                          form.equipment_needed.includes(equipment)
-                            ? 'border-primary bg-primary text-primary-foreground'
-                            : 'border-border bg-card text-muted-foreground hover:border-primary/30 hover:text-foreground'
-                        }`}
-                      >
-                        {equipment}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                <div>
-                  <div className="flex items-center gap-2 text-sm font-bold text-foreground mb-2">
-                    <Languages className="w-4 h-4 text-primary" /> Languages
-                  </div>
-                  <div className="flex flex-wrap gap-2">
-                    {LANGUAGES.map((language) => (
-                      <button
-                        key={language}
-                        type="button"
-                        onClick={() => toggleArr('languages_required', language)}
-                        className={`rounded-full border px-3 py-2 text-xs font-semibold transition-all ${
-                          form.languages_required.includes(language)
-                            ? 'border-primary bg-primary text-primary-foreground'
-                            : 'border-border bg-card text-muted-foreground hover:border-primary/30 hover:text-foreground'
-                        }`}
-                      >
-                        {language}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                <div>
-                  <div className="flex items-center gap-2 text-sm font-bold text-foreground mb-2">
-                    <Sparkles className="w-4 h-4 text-primary" /> Skills
-                  </div>
-                  <div className="flex gap-2">
-                    <Input
-                      value={skillInput}
-                      onChange={(e) => setSkillInput(e.target.value)}
-                      onKeyDown={(e) => {
-                        if (e.key === 'Enter' || e.key === ',') {
-                          e.preventDefault();
-                          addSkill();
-                        }
-                      }}
-                      placeholder="Add skill, e.g. property inspection"
-                      className="h-11 bg-card border-input"
-                    />
-                    <Button type="button" variant="outline" onClick={addSkill} className="h-11 shrink-0">
-                      <Plus className="w-4 h-4" /> Add
-                    </Button>
-                  </div>
-                  {form.skills_required.length > 0 && (
-                    <div className="mt-3 flex flex-wrap gap-2">
-                      {form.skills_required.map((skill) => (
-                        <span key={skill} className="inline-flex items-center gap-1 rounded-full border border-primary/20 bg-primary/10 px-3 py-1.5 text-xs font-semibold text-primary">
-                          {skill}
-                          <button type="button" onClick={() => removeSkill(skill)} className="text-primary/70 hover:text-primary">
-                            <X className="w-3 h-3" />
-                          </button>
-                        </span>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              </div>
-            </section>
-
-            <section className="surface-panel rounded-lg p-4 md:p-5 space-y-4">
-              <SectionHeader
                 icon={FileText}
-                eyebrow="Step 5"
+                eyebrow="Step 4"
                 title="Task details"
                 description="Describe the outcome, proof needed, access instructions, and anything agents must avoid."
               />
@@ -544,6 +458,118 @@ export default function PostJob() {
                 rows={7}
                 className="w-full min-h-[180px] resize-none rounded-lg border border-input bg-card px-4 py-3 text-sm leading-relaxed text-foreground shadow-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/45"
               />
+            </section>
+
+            <section className="surface-panel rounded-lg overflow-hidden">
+              <button
+                type="button"
+                onClick={() => setShowOptionalDetails(value => !value)}
+                className="flex w-full items-center justify-between gap-4 p-4 text-left md:p-5"
+              >
+                <div className="flex items-start gap-3">
+                  <div className="h-10 w-10 rounded-lg bg-secondary text-muted-foreground flex items-center justify-center shrink-0">
+                    <Sparkles className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <p className="section-label">Optional</p>
+                    <h2 className="text-lg font-bold tracking-tight text-foreground">Agent requirements</h2>
+                    <p className="text-sm text-muted-foreground mt-1 leading-relaxed">
+                      Add these only when they matter. Most tasks can be posted without extra filters.
+                    </p>
+                  </div>
+                </div>
+                <ChevronDown className={`h-5 w-5 shrink-0 text-muted-foreground transition-transform ${showOptionalDetails ? 'rotate-180' : ''}`} />
+              </button>
+
+              {showOptionalDetails && (
+                <div className="border-t border-border p-4 md:p-5 space-y-5">
+                  <div>
+                    <div className="flex items-center gap-2 text-sm font-bold text-foreground mb-2">
+                      <Camera className="w-4 h-4 text-primary" /> Equipment
+                    </div>
+                    <div className="flex flex-wrap gap-2">
+                      {EQUIPMENT_OPTIONS.map((equipment) => (
+                        <button
+                          key={equipment}
+                          type="button"
+                          onClick={() => toggleArr('equipment_needed', equipment)}
+                          className={`rounded-full border px-3 py-2 text-xs font-semibold transition-all ${
+                            form.equipment_needed.includes(equipment)
+                              ? 'border-primary bg-primary text-primary-foreground'
+                              : 'border-border bg-card text-muted-foreground hover:border-primary/30 hover:text-foreground'
+                          }`}
+                        >
+                          {equipment}
+                        </button>
+                      ))}
+                    </div>
+                    <div className="mt-3 flex flex-wrap gap-2">
+                      {COMING_SOON_EQUIPMENT.map((equipment) => (
+                        <span key={equipment} className="rounded-full border border-dashed border-border bg-secondary/50 px-3 py-2 text-xs font-semibold text-muted-foreground">
+                          {equipment} coming later
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div>
+                    <div className="flex items-center gap-2 text-sm font-bold text-foreground mb-2">
+                      <Languages className="w-4 h-4 text-primary" /> Languages
+                    </div>
+                    <div className="flex flex-wrap gap-2">
+                      {LANGUAGES.map((language) => (
+                        <button
+                          key={language}
+                          type="button"
+                          onClick={() => toggleArr('languages_required', language)}
+                          className={`rounded-full border px-3 py-2 text-xs font-semibold transition-all ${
+                            form.languages_required.includes(language)
+                              ? 'border-primary bg-primary text-primary-foreground'
+                              : 'border-border bg-card text-muted-foreground hover:border-primary/30 hover:text-foreground'
+                          }`}
+                        >
+                          {language}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div>
+                    <div className="flex items-center gap-2 text-sm font-bold text-foreground mb-2">
+                      <Sparkles className="w-4 h-4 text-primary" /> Skills
+                    </div>
+                    <div className="flex gap-2">
+                      <Input
+                        value={skillInput}
+                        onChange={(e) => setSkillInput(e.target.value)}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter' || e.key === ',') {
+                            e.preventDefault();
+                            addSkill();
+                          }
+                        }}
+                        placeholder="Add skill, e.g. property inspection"
+                        className="h-11 bg-card border-input"
+                      />
+                      <Button type="button" variant="outline" onClick={addSkill} className="h-11 shrink-0">
+                        <Plus className="w-4 h-4" /> Add
+                      </Button>
+                    </div>
+                    {form.skills_required.length > 0 && (
+                      <div className="mt-3 flex flex-wrap gap-2">
+                        {form.skills_required.map((skill) => (
+                          <span key={skill} className="inline-flex items-center gap-1 rounded-full border border-primary/20 bg-primary/10 px-3 py-1.5 text-xs font-semibold text-primary">
+                            {skill}
+                            <button type="button" onClick={() => removeSkill(skill)} className="text-primary/70 hover:text-primary">
+                              <X className="w-3 h-3" />
+                            </button>
+                          </span>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
             </section>
           </div>
 
