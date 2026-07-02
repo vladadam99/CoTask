@@ -4,7 +4,7 @@ import SmartImage from '@/components/media/SmartImage';
 import { useQuery } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { useCurrentUser } from '@/lib/useCurrentUser'; // user used for future auth-gated features
-import { Play, Heart, ArrowLeft, Search } from 'lucide-react';
+import { Play, Heart, ArrowLeft, Search, Radio } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 export default function ReelFeed() {
@@ -94,10 +94,23 @@ export default function ReelFeed() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: i * 0.05 }}
+                onClick={() => {
+                  if (reel.is_live && reel.live_status === 'live') navigate(`/PublicLiveView?reel=${reel.id}`);
+                }}
                 className="relative aspect-[9/16] rounded-2xl overflow-hidden bg-card border border-border cursor-pointer group"
               >
                 {/* Thumbnail */}
-                {reel.thumbnail_url ? (
+                {reel.is_live && reel.live_status === 'live' ? (
+                  <div className="w-full h-full bg-gradient-to-br from-red-950 via-black to-slate-950 flex flex-col items-center justify-center gap-3 text-center px-4">
+                    <div className="h-14 w-14 rounded-full bg-red-600/20 border border-red-500/30 flex items-center justify-center">
+                      <Radio className="h-7 w-7 text-red-400" />
+                    </div>
+                    <div>
+                      <p className="text-white text-sm font-bold">Live now</p>
+                      <p className="text-white/60 text-xs mt-1">Tap to watch</p>
+                    </div>
+                  </div>
+                ) : reel.thumbnail_url ? (
                   <SmartImage src={reel.thumbnail_url} alt={reel.title} className="w-full h-full" width={400} />
                 ) : (
                   <div className="w-full h-full bg-gradient-to-br from-primary/20 to-purple-900/40 flex items-center justify-center">
@@ -110,6 +123,11 @@ export default function ReelFeed() {
 
                 {/* Top badges */}
                 <div className="absolute top-2 left-2 flex gap-1">
+                  {reel.is_live && reel.live_status === 'live' && (
+                    <span className="bg-red-600 text-white text-[10px] px-2 py-0.5 rounded-full font-bold flex items-center gap-1">
+                      <span className="h-1.5 w-1.5 rounded-full bg-white animate-pulse" /> LIVE
+                    </span>
+                  )}
                   {reel.category && (
                     <span className="bg-black/50 backdrop-blur-sm text-white text-[10px] px-2 py-0.5 rounded-full font-medium">
                       {reel.category}
