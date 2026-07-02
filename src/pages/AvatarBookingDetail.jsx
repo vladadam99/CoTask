@@ -77,7 +77,7 @@ export default function AvatarBookingDetail() {
         </p>
         <div className="flex flex-col gap-3 pt-2">
           <Button className="w-full" onClick={() => navigate('/AvatarRequests')}>
-            Back to My Schedule
+            Back to Schedule
           </Button>
           <Button variant="outline" className="w-full border-border" onClick={() => navigate('/JobMarketplace')}>
             Browse Open Tasks
