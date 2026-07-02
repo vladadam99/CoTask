@@ -2,8 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { base44 } from '@/api/base44Client';
 import { Button } from '@/components/ui/button';
-import { Heart, MessageCircle, Share2, Copy, ArrowLeft } from 'lucide-react';
+import { Heart, MessageCircle, Share2, Copy, ArrowLeft, Radio } from 'lucide-react';
 import SmartImage from '@/components/media/SmartImage';
+import DailyVideoCall from '@/components/live/DailyVideoCall';
 import { motion } from 'framer-motion';
 
 export default function PublicPostView() {
@@ -71,7 +72,9 @@ export default function PublicPostView() {
     : [{ url: post.media_url, type: post.type || 'photo' }];
   const currentMedia = mediaList[mediaIndex];
   const isMulti = mediaList.length > 1;
-  const postUrl = `${window.location.origin}/PublicPostView?id=${post.id}`;
+  const postUrl = post.is_live && post.live_status === 'live'
+    ? `${window.location.origin}/PublicLiveView?post=${post.id}`
+    : `${window.location.origin}/PublicPostView?id=${post.id}`;
 
   const handleShare = (type) => {
     if (type === 'copy') {
@@ -108,7 +111,15 @@ export default function PublicPostView() {
       <div className="max-w-2xl mx-auto px-4 py-8">
         {/* Media Section */}
         <div className="relative w-full aspect-square bg-background rounded-2xl overflow-hidden border border-border mb-6">
-          {currentMedia.type === 'video' ? (
+          {post.is_live && post.live_status === 'live' && post.live_url ? (
+            <DailyVideoCall roomUrl={post.live_url} isHost={false} className="w-full h-full" />
+          ) : post.is_live && post.live_status === 'ended' ? (
+            <div className="w-full h-full flex flex-col items-center justify-center gap-3 text-center bg-card">
+              <Radio className="w-10 h-10 text-muted-foreground" />
+              <h2 className="text-lg font-bold">This live has ended</h2>
+              <p className="max-w-sm text-sm text-muted-foreground">Check Reels for active public live sessions.</p>
+            </div>
+          ) : currentMedia.type === 'video' ? (
             <video src={currentMedia.url} className="w-full h-full object-contain" controls playsInline />
           ) : (
             <SmartImage src={currentMedia.url} alt={post.caption} className="w-full h-full object-contain" />
