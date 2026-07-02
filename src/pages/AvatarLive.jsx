@@ -47,7 +47,12 @@ export default function AvatarLive() {
         });
       }
     },
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['avatar-live-sessions'] }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['avatar-live-sessions'] });
+      queryClient.invalidateQueries({ queryKey: ['reels-feed'] });
+      queryClient.invalidateQueries({ queryKey: ['explore-recent-posts'] });
+      queryClient.invalidateQueries({ queryKey: ['explore-posts'] });
+    },
   });
 
   if (loading) return <div className="min-h-screen flex items-center justify-center"><div className="w-8 h-8 border-4 border-primary/20 border-t-primary rounded-full animate-spin" /></div>;
@@ -60,7 +65,7 @@ export default function AvatarLive() {
       <div className="flex items-start justify-between mb-8">
         <div>
           <h1 className="text-2xl lg:text-3xl font-bold mb-1">Live Sessions</h1>
-          <p className="text-muted-foreground text-sm">Manage booked live sessions and open Studio when it is time to start.</p>
+          <p className="text-muted-foreground text-sm">Manage private client sessions, public live streams, and recordings.</p>
         </div>
         <div className="flex items-center gap-2">
           <Link to="/RecordingLibrary">
@@ -68,9 +73,14 @@ export default function AvatarLive() {
               <Film className="w-4 h-4" /> Recordings
             </Button>
           </Link>
+          <Link to="/LiveStreamStudio?mode=public">
+            <Button variant="outline" className="gap-2">
+              <Radio className="w-4 h-4" /> Public Live
+            </Button>
+          </Link>
           <Link to="/LiveStreamStudio">
             <Button className="gap-2">
-              <Clapperboard className="w-4 h-4" /> Launch Studio
+              <Clapperboard className="w-4 h-4" /> Client Studio
             </Button>
           </Link>
         </div>
