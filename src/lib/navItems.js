@@ -17,9 +17,9 @@ export const userNavItems = [
 export const enterpriseNavItems = [
   { icon: Building2, label: 'Dashboard', path: '/EnterpriseDashboard' },
   { icon: Calendar, label: 'Tasks', path: '/Bookings' },
-  { icon: Users, label: 'Team or Company', path: '/EnterpriseSettings' },
-  { icon: DollarSign, label: 'Billing', path: '/EnterpriseSettings' },
-  { icon: Settings, label: 'Settings', path: '/EnterpriseSettings' },
+  { icon: Building2, label: 'Profile', path: '/EnterpriseProfile' },
+  { icon: Users, label: 'Team', path: '/EnterpriseTeam' },
+  { icon: DollarSign, label: 'Billing', path: '/EnterpriseBilling' },
 ];
 
 export function getNavItems(role) {
