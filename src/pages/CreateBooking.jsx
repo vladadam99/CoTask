@@ -26,6 +26,9 @@ export default function CreateBooking() {
   const { user } = useCurrentUser();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+  const activeRole = user?.selected_role || user?.role || 'user';
+  const shellRole = activeRole === 'avatar' ? 'user' : activeRole;
+  const shellHomePath = shellRole === 'user' ? '/Explore' : undefined;
   const [checkoutLoading, setCheckoutLoading] = useState(false);
   const [error, setError] = useState('');
 
@@ -95,7 +98,7 @@ Based on this, return:
       if (result?.equipment?.length) update('equipment_needed', result.equipment);
       setAiUsed(true);
     } catch (e) {
-      // silently fail — user can fill manually
+      // silently fail ? user can fill manually
     } finally {
       setAiLoading(false);
     }
@@ -176,14 +179,14 @@ Based on this, return:
 
   if (!avatarId) {
     return (
-      <AppShell navItems={getNavItems(user?.selected_role || user?.role || 'user')} user={user}>
+      <AppShell navItems={getNavItems(shellRole)} user={user} roleOverride={shellRole} homePathOverride={shellHomePath}>
         <EmptyState
           icon={Search}
           title="Choose a Local Agent first"
           description="Direct Hire requests must be connected to a specific Local Agent. Choose who you want to request, or post an open task for proposals."
           action={(
             <div className="flex flex-col gap-3 sm:flex-row">
-              <Button onClick={() => navigate('/FindPeople')}>Discover Local Agents</Button>
+              <Button onClick={() => navigate('/Explore')}>Discover Local Agents</Button>
               <Button variant="outline" className="border-border" onClick={() => navigate('/PostJob')}>Post an Open Task</Button>
             </div>
           )}
@@ -193,7 +196,7 @@ Based on this, return:
   }
   if (step === 'review') {
     return (
-      <AppShell navItems={getNavItems(user?.selected_role || user?.role || 'user')} user={user}>
+      <AppShell navItems={getNavItems(shellRole)} user={user} roleOverride={shellRole} homePathOverride={shellHomePath}>
         <div className="max-w-2xl mx-auto pt-8 pb-12">
           {error && <p className="text-sm text-red-400 bg-red-500/10 border border-red-500/20 rounded-xl px-4 py-3 mb-4">{error}</p>}
           <ReviewBookingPanel
@@ -207,7 +210,7 @@ Based on this, return:
   }
 
   return (
-    <AppShell navItems={getNavItems(user?.selected_role || user?.role || 'user')} user={user}>
+    <AppShell navItems={getNavItems(shellRole)} user={user} roleOverride={shellRole} homePathOverride={shellHomePath}>
       <div className="mx-auto max-w-5xl space-y-6 pb-12">
         <PageHero
           eyebrow="Direct hire"
@@ -233,7 +236,7 @@ Based on this, return:
               ? <img src={avatar.photo_url} className="w-9 h-9 rounded-full object-cover border border-border" alt={avatar.display_name} />
               : <div className="w-9 h-9 rounded-full bg-primary/20 flex items-center justify-center text-primary font-bold">{avatar.display_name?.[0]}</div>
             }
-            <p className="text-muted-foreground text-sm">with <span className="text-foreground font-medium">{avatar.display_name}</span> · ${rate}/hr</p>
+            <p className="text-muted-foreground text-sm">with <span className="text-foreground font-medium">{avatar.display_name}</span> ? ${rate}/hr</p>
           </div>
         )}
 
@@ -248,7 +251,7 @@ Based on this, return:
             <Textarea
               value={aiDescription}
               onChange={e => setAiDescription(e.target.value)}
-              placeholder="e.g. I need someone to pick up my dry cleaning from the shop on Oxford Street and drop it at my flat…"
+              placeholder="e.g. I need someone to pick up my dry cleaning from the shop on Oxford Street and drop it at my flat?"
               className="bg-card border-border h-20 text-sm"
             />
             <Button
@@ -421,7 +424,7 @@ Based on this, return:
           {/* Price */}
           <GlassCard className="p-5">
             <div className="space-y-2 text-sm">
-              <div className="flex justify-between text-muted-foreground"><span>Service ({form.duration_minutes} min × ${rate}/hr)</span><span className="text-foreground">${(amount - livePremium).toFixed(2)}</span></div>
+              <div className="flex justify-between text-muted-foreground"><span>Service ({form.duration_minutes} min ? ${rate}/hr)</span><span className="text-foreground">${(amount - livePremium).toFixed(2)}</span></div>
               {livePremium > 0 && <div className="flex justify-between"><span className="text-muted-foreground">Live camera premium</span><span className="text-primary">+${livePremium.toFixed(2)}</span></div>}
               <div className="flex justify-between text-muted-foreground"><span>Platform fee (15%)</span><span className="text-foreground">${serviceFee.toFixed(2)}</span></div>
               <div className="border-t border-border pt-2 flex justify-between font-bold text-base"><span>Total</span><span className="text-primary">${total.toFixed(2)}</span></div>
@@ -439,3 +442,4 @@ Based on this, return:
     </AppShell>
   );
 }
+
