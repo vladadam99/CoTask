@@ -30,7 +30,7 @@ const faqs = [
   },
   {
     q: 'What equipment do Local Agents need?',
-    a: 'At minimum, a smartphone with a reliable data connection. Some tasks may request extra equipment such as a headset, vehicle, laptop, drone, or 360-degree camera.',
+    a: 'At minimum, a smartphone with a reliable data connection. Some tasks may request extra equipment such as a headset, vehicle, or laptop. 360-degree camera and smart glasses support are planned for later workflows.',
   },
   {
     q: 'How do payments work?',
@@ -75,3 +75,4 @@ export default function FAQ() {
     </div>
   );
 }
+
