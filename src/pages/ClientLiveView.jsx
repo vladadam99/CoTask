@@ -1,29 +1,26 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { useQuery } from '@tanstack/react-query';
+import React, { useEffect, useRef, useState } from 'react';
+import { Link } from 'react-router-dom';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { useCurrentUser } from '@/lib/useCurrentUser';
 import GlassCard from '@/components/ui/GlassCard';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, MessageCircle, Clock, AlertTriangle, Square } from 'lucide-react';
+import { AlertTriangle, ArrowLeft, Clock, MessageCircle, Square } from 'lucide-react';
 import DailyVideoCall from '@/components/live/DailyVideoCall';
 import SessionEndedScreen from '@/components/live/SessionEndedScreen';
+import StreamChatbox from '@/components/live/StreamChatbox';
 
 export default function ClientLiveView() {
   const params = new URLSearchParams(window.location.search);
   const sessionId = params.get('session');
   const bookingId = params.get('booking');
   const { user } = useCurrentUser();
-  const navigate = useNavigate();
+  const queryClient = useQueryClient();
 
   const [elapsed, setElapsed] = useState(0);
   const [chatOpen, setChatOpen] = useState(true);
-  const [messages, setMessages] = useState([{ from: 'system', text: 'You are now connected to the live stream.' }]);
-  const [input, setInput] = useState('');
-  const [viewMode, setViewMode] = useState('standard');
   const [ending, setEnding] = useState(false);
   const timerRef = useRef(null);
-  const chatEndRef = useRef(null);
 
   const { data: session, isLoading } = useQuery({
     queryKey: ['client-live-session', sessionId, bookingId],
@@ -42,31 +39,31 @@ export default function ClientLiveView() {
     refetchInterval: 5000,
   });
 
-  // Subscribe to session changes in real time — just invalidate, don't auto-navigate
   useEffect(() => {
-    const unsub = base44.entities.LiveSession.subscribe((event) => {
-      if (event.id === session?.id && event.type === 'update') {
-        // Let the query refetch so isEnded becomes true and shows the review screen
+    if (!session?.id) return undefined;
+    const unsubscribe = base44.entities.LiveSession.subscribe((event) => {
+      if (event.id === session.id || event.data?.id === session.id) {
+        queryClient.invalidateQueries({ queryKey: ['client-live-session', sessionId, bookingId] });
       }
     });
-    return unsub;
-  }, [session?.id]);
+    return unsubscribe;
+  }, [bookingId, queryClient, session?.id, sessionId]);
 
-  // Timer
   useEffect(() => {
-    if (session?.status === 'live') {
-      timerRef.current = setInterval(() => setElapsed(e => e + 1), 1000);
+    if (session?.status !== 'live') {
+      clearInterval(timerRef.current);
+      return undefined;
     }
+
+    const startedAt = session.started_at ? new Date(session.started_at).getTime() : Date.now();
+    const updateElapsed = () => {
+      setElapsed(Math.max(0, Math.floor((Date.now() - startedAt) / 1000)));
+    };
+
+    updateElapsed();
+    timerRef.current = setInterval(updateElapsed, 1000);
     return () => clearInterval(timerRef.current);
-  }, [session?.status]);
-
-  useEffect(() => {
-    if (session?.stream_mode) setViewMode(session.stream_mode);
-  }, [session?.stream_mode]);
-
-  useEffect(() => {
-    chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [messages]);
+  }, [session?.started_at, session?.status]);
 
   const handleEndSession = async () => {
     if (!session) return;
@@ -77,35 +74,34 @@ export default function ClientLiveView() {
         status: 'ended',
         ended_at: new Date().toISOString(),
         duration_minutes: Math.round(elapsed / 60),
-      }
+      },
     });
     setEnding(false);
+    queryClient.invalidateQueries({ queryKey: ['client-live-session', sessionId, bookingId] });
   };
 
-  const sendMessage = () => {
-    if (!input.trim()) return;
-    setMessages(m => [...m, { from: 'you', text: input.trim() }]);
-    setInput('');
-  };
+  const fmt = (seconds) => `${String(Math.floor(seconds / 60)).padStart(2, '0')}:${String(seconds % 60).padStart(2, '0')}`;
 
-  const fmt = (s) => `${String(Math.floor(s / 60)).padStart(2, '0')}:${String(s % 60).padStart(2, '0')}`;
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="w-8 h-8 border-4 border-primary/20 border-t-primary rounded-full animate-spin" />
+      </div>
+    );
+  }
 
-  if (isLoading) return (
-    <div className="min-h-screen flex items-center justify-center">
-      <div className="w-8 h-8 border-4 border-primary/20 border-t-primary rounded-full animate-spin" />
-    </div>
-  );
-
-  if (!session) return (
-    <div className="min-h-screen flex items-center justify-center px-4">
-      <GlassCard className="p-10 text-center max-w-md">
-        <AlertTriangle className="w-10 h-10 text-yellow-400 mx-auto mb-4" />
-        <h2 className="text-xl font-bold mb-2">Session Not Found</h2>
-        <p className="text-sm text-muted-foreground mb-6">The live session could not be found or may have ended.</p>
-        <Link to="/LiveSessions"><Button className="bg-primary">View My Sessions</Button></Link>
-      </GlassCard>
-    </div>
-  );
+  if (!session) {
+    return (
+      <div className="min-h-screen flex items-center justify-center px-4">
+        <GlassCard className="p-10 text-center max-w-md">
+          <AlertTriangle className="w-10 h-10 text-yellow-400 mx-auto mb-4" />
+          <h2 className="text-xl font-bold mb-2">Session Not Found</h2>
+          <p className="text-sm text-muted-foreground mb-6">The live session could not be found or may have ended.</p>
+          <Link to="/LiveSessions"><Button className="bg-primary">View My Sessions</Button></Link>
+        </GlassCard>
+      </div>
+    );
+  }
 
   const isWaiting = session.status === 'waiting';
   const isLive = session.status === 'live';
@@ -114,7 +110,6 @@ export default function ClientLiveView() {
   return (
     <div className="min-h-screen pb-12 px-4">
       <div className="max-w-5xl mx-auto pt-6">
-        {/* Header */}
         <div className="flex items-center justify-between mb-6">
           <Link to="/LiveSessions" className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground">
             <ArrowLeft className="w-4 h-4" /> Back
@@ -123,12 +118,12 @@ export default function ClientLiveView() {
             {isLive && (
               <div className="flex items-center gap-2 bg-primary/10 border border-primary/20 text-primary text-xs px-3 py-1.5 rounded-full">
                 <span className="w-2 h-2 rounded-full bg-primary animate-pulse" />
-                LIVE · {fmt(elapsed)}
+                LIVE - {fmt(elapsed)}
               </div>
             )}
             {isWaiting && (
               <div className="flex items-center gap-2 bg-yellow-500/10 border border-yellow-500/20 text-yellow-400 text-xs px-3 py-1.5 rounded-full">
-                <Clock className="w-3 h-3" /> Waiting for Local Agent...
+                <Clock className="w-3 h-3" /> Waiting for Local Agent
               </div>
             )}
             {isEnded && (
@@ -144,7 +139,7 @@ export default function ClientLiveView() {
                 disabled={ending}
                 className="gap-1.5 text-xs"
               >
-                <Square className="w-3 h-3" /> {ending ? 'Ending…' : 'End Session'}
+                <Square className="w-3 h-3" /> {ending ? 'Ending...' : 'End Session'}
               </Button>
             )}
             <button
@@ -157,7 +152,6 @@ export default function ClientLiveView() {
         </div>
 
         <div className={`grid gap-6 ${chatOpen ? 'lg:grid-cols-3' : 'lg:grid-cols-1'}`}>
-          {/* Video area */}
           <div className={chatOpen ? 'lg:col-span-2' : ''}>
             <GlassCard className="p-0 overflow-hidden relative" style={{ height: '480px' }}>
               {isWaiting ? (
@@ -166,7 +160,7 @@ export default function ClientLiveView() {
                     <Clock className="w-8 h-8 text-yellow-400 animate-pulse" />
                   </div>
                   <h3 className="font-semibold">Waiting for {session.avatar_name}</h3>
-                  <p className="text-sm text-muted-foreground">Your Local Agent is about to start the stream. Please hold on...</p>
+                  <p className="text-sm text-muted-foreground">Your Local Agent is about to start the stream. Please hold on.</p>
                   <div className="flex items-center gap-2 text-xs text-muted-foreground">
                     <span className="w-2 h-2 rounded-full bg-yellow-400 animate-pulse" />
                     Auto-refreshing every 5 seconds
@@ -175,21 +169,14 @@ export default function ClientLiveView() {
               ) : isEnded ? (
                 <SessionEndedScreen session={session} user={user} />
               ) : isLive && session.session_url ? (
-                /* Real WebRTC video via Daily.co */
-                <DailyVideoCall
-                  roomUrl={session.session_url}
-                  isHost={false}
-                  className="w-full h-full"
-                />
+                <DailyVideoCall roomUrl={session.session_url} isHost={false} className="w-full h-full" />
               ) : isLive ? (
-                /* Live but room URL not yet available — waiting */
                 <div className="w-full h-full flex flex-col items-center justify-center gap-3 bg-black/60">
                   <div className="w-8 h-8 border-4 border-primary/20 border-t-primary rounded-full animate-spin" />
                   <p className="text-sm text-muted-foreground">Connecting to video stream...</p>
                 </div>
               ) : null}
 
-              {/* Duration overlay */}
               {isLive && (
                 <div className="absolute top-4 left-4 flex items-center gap-2 bg-black/60 px-3 py-1.5 rounded-full text-xs text-white">
                   <span className="w-2 h-2 rounded-full bg-primary animate-pulse" />
@@ -198,7 +185,6 @@ export default function ClientLiveView() {
               )}
             </GlassCard>
 
-            {/* Session info */}
             <GlassCard className="p-4 mt-4 flex items-center justify-between text-sm">
               <div>
                 <p className="font-medium">{session.title || session.category}</p>
@@ -211,38 +197,17 @@ export default function ClientLiveView() {
             </GlassCard>
           </div>
 
-          {/* Chat */}
           {chatOpen && (
             <div className="flex flex-col" style={{ height: '540px' }}>
-              <GlassCard className="flex flex-col flex-1 overflow-hidden p-0">
-                <div className="p-4 border-b border-border flex items-center gap-2">
-                  <MessageCircle className="w-4 h-4 text-primary" />
-                  <span className="text-sm font-semibold">Session Chat</span>
-                </div>
-                <div className="flex-1 overflow-y-auto p-4 space-y-3">
-                  {messages.map((m, i) => (
-                    <div key={i} className={`flex ${m.from === 'you' ? 'justify-end' : 'justify-start'}`}>
-                      <div className={`max-w-[80%] rounded-2xl px-3 py-2 text-sm ${
-                        m.from === 'system' ? 'bg-muted/40 text-muted-foreground text-xs text-center w-full rounded-lg' :
-                        m.from === 'you' ? 'bg-primary text-primary-foreground' : 'bg-muted/60 text-foreground'
-                      }`}>
-                        {m.text}
-                      </div>
-                    </div>
-                  ))}
-                  <div ref={chatEndRef} />
-                </div>
-                <div className="p-3 border-t border-border flex gap-2">
-                  <input
-                    value={input}
-                    onChange={e => setInput(e.target.value)}
-                    onKeyDown={e => e.key === 'Enter' && sendMessage()}
-                    placeholder="Type a message…"
-                    className="flex-1 text-sm bg-card border border-border rounded-xl px-3 py-2 focus:outline-none focus:border-primary/40 text-foreground placeholder:text-muted-foreground"
-                  />
-                  <Button size="sm" className="bg-primary" onClick={sendMessage}>Send</Button>
-                </div>
-              </GlassCard>
+              <StreamChatbox
+                clientName={user?.full_name || session.client_name || 'Client'}
+                avatarName={session.avatar_name || 'Local Agent'}
+                bookingId={session.booking_id}
+                senderRole="client"
+                notifyTargetRole="avatar"
+                isOpen={chatOpen}
+                onClose={() => setChatOpen(false)}
+              />
             </div>
           )}
         </div>
