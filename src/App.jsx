@@ -41,7 +41,9 @@ import LiveStreamStudio from './pages/LiveStreamStudio';
 import ExploreOnboarding from './pages/ExploreOnboarding';
 import RecordingLibrary from './pages/RecordingLibrary';
 import ClientLiveView from './pages/ClientLiveView';
-import EnterpriseSettings from './pages/EnterpriseSettings';
+import EnterpriseProfile from './pages/EnterpriseProfile';
+import EnterpriseTeam from './pages/EnterpriseTeam';
+import EnterpriseBilling from './pages/EnterpriseBilling';
 import ReelFeed from './pages/ReelFeed';
 import JobMarketplace from './pages/JobMarketplace';
 import PostJob from './pages/PostJob';
@@ -154,7 +156,10 @@ const AuthenticatedApp = () => {
       <Route path="/RecordingLibrary" element={<RecordingLibrary />} />
       <Route path="/ClientLiveView" element={<ClientLiveView />} />
       <Route path="/ExploreOnboarding" element={<ExploreOnboarding />} />
-      <Route path="/EnterpriseSettings" element={<EnterpriseSettings />} />
+      <Route path="/EnterpriseProfile" element={<EnterpriseProfile />} />
+      <Route path="/EnterpriseTeam" element={<EnterpriseTeam />} />
+      <Route path="/EnterpriseBilling" element={<EnterpriseBilling />} />
+      <Route path="/EnterpriseSettings" element={<Navigate to="/EnterpriseProfile" replace />} />
       <Route path="/ReelFeed" element={<ReelFeed />} />
       <Route path="/JobMarketplace" element={<JobMarketplace />} />
       <Route path="/JobDetail" element={<JobDetail />} />
