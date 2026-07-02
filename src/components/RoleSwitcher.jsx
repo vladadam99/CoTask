@@ -32,7 +32,7 @@ export default function RoleSwitcher({ user }) {
   const roles = [
     { key: 'user', label: 'Client', icon: User },
     { key: 'avatar', label: 'Agent', icon: Users },
-    { key: 'enterprise', label: 'Team', icon: Building2 },
+    { key: 'enterprise', label: 'Enterprise', icon: Building2 },
   ];
 
   return (
