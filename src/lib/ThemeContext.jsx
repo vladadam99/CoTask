@@ -1,16 +1,20 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 
 const ThemeContext = createContext(null);
-const THEMES = ['light', 'dark', 'loflo'];
+const THEMES = ['light', 'dark'];
+const normalizeTheme = (value) => THEMES.includes(value) ? value : 'light';
 
 export function ThemeProvider({ children }) {
-  const [theme, setTheme] = useState(() => localStorage.getItem('cotask-theme') || 'light');
+  const [theme, setThemeState] = useState(() => normalizeTheme(localStorage.getItem('cotask-theme')));
+
+  const setTheme = (nextTheme) => {
+    setThemeState((current) => normalizeTheme(typeof nextTheme === 'function' ? nextTheme(current) : nextTheme));
+  };
 
   useEffect(() => {
     const root = document.documentElement;
-    root.classList.remove('dark', 'loflo');
+    root.classList.remove('dark');
     if (theme === 'dark') root.classList.add('dark');
-    if (theme === 'loflo') root.classList.add('loflo');
     localStorage.setItem('cotask-theme', theme);
   }, [theme]);
 
