@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { X } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -7,6 +7,8 @@ const STORAGE_KEY = 'cotask_terms_accepted';
 
 export default function TermsBanner() {
   const [visible, setVisible] = useState(false);
+  const location = useLocation();
+  const publicRoute = ['/', '/Landing', '/HowItWorks', '/Pricing', '/FAQ', '/Contact', '/Safety', '/Terms'].includes(location.pathname);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -30,7 +32,9 @@ export default function TermsBanner() {
           animate={{ y: 0, opacity: 1 }}
           exit={{ y: 100, opacity: 0 }}
           transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-          className="fixed bottom-20 left-4 right-4 z-[100] mx-auto max-w-xl lg:bottom-4 lg:left-auto lg:right-6 lg:mx-0"
+          className={`fixed left-4 right-4 z-[100] mx-auto max-w-xl lg:bottom-4 lg:left-auto lg:right-6 lg:mx-0 ${
+            publicRoute ? 'bottom-4' : 'bottom-20'
+          }`}
         >
           <div className="surface-panel flex items-start gap-4 rounded-lg px-5 py-4 shadow-2xl">
             <div className="min-w-0 flex-1">
@@ -63,3 +67,4 @@ export default function TermsBanner() {
     </AnimatePresence>
   );
 }
+
