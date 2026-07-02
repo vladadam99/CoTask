@@ -13,7 +13,7 @@ import { getNavItems } from '@/lib/navItems';
 import {
   Radio, Calendar,
   ArrowRight, TrendingUp, CheckCircle,
-  Clock, Play, PlusCircle
+  Clock, Play, PlusCircle, Globe2
 } from 'lucide-react';
 import SuggestedJobs from '@/components/dashboard/SuggestedJobs';
 
@@ -113,12 +113,17 @@ export default function AvatarDashboard() {
               <Radio className="w-5 h-5 text-primary" />
               <span className="text-sm font-semibold text-primary">Live sessions</span>
             </div>
-            <h2 className="text-lg font-bold mb-1">Start live from an accepted task</h2>
+            <h2 className="text-lg font-bold mb-1">Go live the right way</h2>
             <p className="text-sm text-muted-foreground max-w-2xl">
-              Live video should begin from a scheduled or accepted client task. Use Studio only to test your camera and setup before the session.
+              Client sessions stay inside the booked task conversation. Public live starts from here and appears in Reels and Explore.
             </p>
           </div>
           <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+            <Link to="/LiveStreamStudio?mode=public">
+              <Button className="w-full sm:w-auto bg-red-600 hover:bg-red-700">
+                <Globe2 className="w-4 h-4" /> Public live
+              </Button>
+            </Link>
             <Link to="/AvatarRequests">
               <Button className="w-full sm:w-auto">
                 <Calendar className="w-4 h-4" /> View schedule
