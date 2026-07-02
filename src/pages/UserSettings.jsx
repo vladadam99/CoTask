@@ -14,6 +14,9 @@ export default function UserSettings() {
   const navigate = useNavigate();
   const { theme, setTheme, toggleTheme } = useTheme();
   const [switchingRole, setSwitchingRole] = useState(false);
+  const activeRole = user?.selected_role || user?.role || 'user';
+  const shellRole = activeRole === 'avatar' ? 'user' : activeRole;
+  const shellHomePath = shellRole === 'user' ? '/Explore' : undefined;
 
   const handleSwitchRole = async (targetRole) => {
     if (targetRole === user?.selected_role) return;
@@ -27,13 +30,13 @@ export default function UserSettings() {
       const profiles = await base44.entities.EnterpriseProfile.filter({ user_email: user.email });
       navigate(profiles.length > 0 ? '/EnterpriseDashboard' : '/Onboarding?role=enterprise');
     } else {
-      navigate('/FindPeople');
+      navigate('/Explore');
     }
     setSwitchingRole(false);
   };
 
   return (
-    <AppShell navItems={getNavItems(user?.selected_role || user?.role || 'user')} user={user}>
+    <AppShell navItems={getNavItems(shellRole)} user={user} roleOverride={shellRole} homePathOverride={shellHomePath}>
       <div className="max-w-3xl mx-auto space-y-6">
         <PageHero
           eyebrow="Account"
@@ -134,3 +137,4 @@ export default function UserSettings() {
     </AppShell>
   );
 }
+
