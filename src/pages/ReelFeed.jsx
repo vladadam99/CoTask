@@ -18,8 +18,8 @@ export default function ReelFeed() {
     queryFn: () => base44.entities.Reel.filter({ is_published: true }, '-created_date', 40),
   });
 
-  const { data: liveAvatars = [] } = useQuery({
-    queryKey: ['live-avatars'],
+  const { data: availableAvatars = [] } = useQuery({
+    queryKey: ['available-avatars'],
     queryFn: () => base44.entities.AvatarProfile.filter({ is_available: true, status: 'active' }, '-rating', 8),
   });
 
@@ -54,23 +54,23 @@ export default function ReelFeed() {
       </div>
 
       <div className="max-w-2xl mx-auto px-4 py-6">
-        {/* Live Now Strip */}
-        {liveAvatars.length > 0 && (
+        {/* Available Agents Strip */}
+        {availableAvatars.length > 0 && (
           <div className="mb-6">
             <div className="flex items-center gap-2 mb-3">
-              <span className="w-2 h-2 rounded-full bg-primary animate-pulse" />
-              <span className="text-sm font-semibold">Live Now</span>
+              <span className="w-2 h-2 rounded-full bg-green-500" />
+              <span className="text-sm font-semibold">Available now</span>
             </div>
             <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide">
-              {liveAvatars.map(avatar => (
+              {availableAvatars.map(avatar => (
                 <Link key={avatar.id} to={`/AvatarView?id=${avatar.id}`} className="flex-shrink-0 text-center">
                   <div className="relative">
-                    <div className="w-16 h-16 rounded-full border-2 border-primary overflow-hidden bg-primary/10 flex items-center justify-center text-xl font-bold text-primary mx-auto">
+                    <div className="w-16 h-16 rounded-full border-2 border-green-500/70 overflow-hidden bg-green-500/10 flex items-center justify-center text-xl font-bold text-green-600 mx-auto">
                       {avatar.photo_url
                         ? <SmartImage src={avatar.photo_url} alt={avatar.display_name} className="w-full h-full" width={64} />
                         : avatar.display_name?.[0] || 'A'}
                     </div>
-                    <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 bg-primary text-white text-[9px] font-bold px-1.5 rounded-full">LIVE</span>
+                    <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 bg-green-600 text-white text-[9px] font-bold px-1.5 rounded-full">OPEN</span>
                   </div>
                   <p className="text-xs mt-2 text-muted-foreground max-w-[64px] truncate">{avatar.display_name}</p>
                 </Link>
