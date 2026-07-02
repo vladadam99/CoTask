@@ -1,104 +1,92 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { motion } from 'framer-motion';
 import {
   ArrowRight,
-  Bell,
   Briefcase,
   Building2,
+  CalendarCheck,
   Camera,
   CheckCircle2,
   ChevronRight,
-  Clock3,
-  CreditCard,
-  Eye,
-  FileText,
+  ClipboardList,
   Home,
   MapPin,
   Menu,
   MessageSquare,
-  PlayCircle,
   Search,
   ShieldCheck,
   Smartphone,
   UserRoundCheck,
-  Users,
   Video,
   X,
-  Zap,
 } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { Button } from '@/components/ui/button';
 
 const HERO_IMAGE = 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=2400&q=82';
 
-const quickPaths = [
+const entryRoutes = [
   {
     icon: Search,
-    label: 'Clients',
-    title: 'Find someone local',
-    text: 'Book a trusted Local Agent, post an open task, or join a live session when the work starts.',
-    action: 'Find a Local Agent',
+    title: 'Find a Local Agent',
+    text: 'Choose someone nearby for a live visit, inspection, errand, or local proof.',
+    action: 'Explore agents',
     path: '/Explore',
-    accent: 'text-blue-600 bg-blue-500/10 border-blue-500/20',
   },
   {
-    icon: Zap,
-    label: 'Local Agents',
-    title: 'Earn from nearby tasks',
-    text: 'Browse open work, send proposals, accept direct requests, and deliver proof from your phone.',
-    action: 'Become an Agent',
-    path: '/Onboarding?role=avatar',
-    accent: 'text-emerald-600 bg-emerald-500/10 border-emerald-500/20',
+    icon: ClipboardList,
+    title: 'Post an Open Task',
+    text: 'Describe the job once and let qualified Local Agents send useful proposals.',
+    action: 'Create task',
+    path: '/PostJob',
   },
   {
     icon: Building2,
-    label: 'Enterprise',
-    title: 'Run field work remotely',
-    text: 'Coordinate inspections, site checks, event visits, and repeat multi-location workflows.',
-    action: 'Set Up Team',
+    title: 'Set Up Enterprise',
+    text: 'Coordinate repeat site checks, team tasks, and billing from one workspace.',
+    action: 'Start setup',
     path: '/Onboarding?role=enterprise',
-    accent: 'text-amber-700 bg-amber-500/10 border-amber-500/20',
   },
 ];
 
-const proofFlow = [
-  { icon: FileText, label: 'Task brief', text: 'Clear scope, location, budget, and timing.' },
-  { icon: MessageSquare, label: 'Conversation', text: 'Client and Local Agent agree details before work.' },
-  { icon: Video, label: 'Live or proof', text: 'Join live video or review photos, notes, and updates.' },
-  { icon: CreditCard, label: 'Secure Payment', text: 'Checkout handoff happens before chargeable work starts.' },
+const steps = [
+  { icon: ClipboardList, title: 'Brief', text: 'Set the place, timing, budget, and outcome.' },
+  { icon: MessageSquare, title: 'Agree', text: 'Chat, choose the agent, and confirm the task.' },
+  { icon: Video, title: 'Review', text: 'Join live or approve uploaded proof after the work.' },
 ];
 
 const useCases = [
-  { icon: Home, title: 'Property walkthrough', detail: 'View a rental, room, shop, or office remotely.' },
-  { icon: Camera, title: 'Condition check', detail: 'Inspect a vehicle, product, repair, or local listing.' },
-  { icon: MapPin, title: 'Local verification', detail: 'Confirm a queue, address, venue, storefront, or item.' },
-  { icon: Briefcase, title: 'Business field task', detail: 'Send a Local Agent for repeat operational checks.' },
+  { icon: Home, title: 'Property viewings' },
+  { icon: Camera, title: 'Item condition checks' },
+  { icon: MapPin, title: 'Local verification' },
+  { icon: Briefcase, title: 'Business site tasks' },
 ];
 
-const trustItems = [
-  'Profiles, reviews, and task history help clients choose.',
-  'Messages and notifications keep each side in the same workflow.',
-  'Live sessions can appear as public live posts when started publicly.',
-  'Smartphone video is supported now; 360 camera and smart glasses support are planned.',
+const trustSignals = [
+  { icon: UserRoundCheck, text: 'Agent profiles and reviews' },
+  { icon: ShieldCheck, text: 'Task records and proof' },
+  { icon: CalendarCheck, text: 'Scheduling and notifications' },
+  { icon: CheckCircle2, text: 'Secure Payment handoff' },
 ];
 
-const faqs = [
+const videoStories = [
   {
-    q: 'What is CoTask?',
-    a: 'CoTask connects clients and businesses with Local Agents who can physically visit a place, livestream, collect proof, or complete a local task.',
+    label: 'Client request',
+    title: 'Someone needs help somewhere else.',
+    text: 'A client posts what they need checked, shown, picked up, or verified.',
+    src: 'https://videos.pexels.com/video-files/6414089/6414089-uhd_2160_3840_24fps.mp4',
   },
   {
-    q: 'Can I post a task instead of choosing an agent?',
-    a: 'Yes. Post an Open Task with the essentials, then compare proposals and continue the conversation with the Local Agent you choose.',
+    label: 'Agent on location',
+    title: 'A Local Agent goes there.',
+    text: 'The agent follows the brief, talks through the details, and shares proof.',
+    src: 'https://videos.pexels.com/video-files/6715779/6715779-hd_1920_1080_25fps.mp4',
   },
   {
-    q: 'What happens when an agent goes live?',
-    a: 'Private task live sessions stay connected to the client conversation and Live Sessions. Public live sessions can surface in the public feed experience.',
-  },
-  {
-    q: 'Does CoTask charge me immediately?',
-    a: 'The app hands off to Secure Payment checkout when funding is needed. This pass keeps the flow up to checkout without making a hidden charge.',
+    label: 'Proof and payment',
+    title: 'The client reviews and pays safely.',
+    text: 'Proof, messages, status, and Secure Payment stay connected to the task.',
+    src: 'https://videos.pexels.com/video-files/7535102/7535102-hd_1920_1080_25fps.mp4',
   },
 ];
 
@@ -120,7 +108,7 @@ export default function Landing() {
   const goToApp = (path) => base44.auth.redirectToLogin(path);
 
   return (
-    <div className="min-h-screen overflow-x-hidden bg-background text-foreground selection:bg-primary/20">
+    <div className="min-h-screen overflow-x-hidden bg-background text-foreground">
       <nav
         className={`fixed inset-x-0 top-0 z-50 border-b transition-all duration-200 ${
           scrolled
@@ -137,11 +125,8 @@ export default function Landing() {
             <button onClick={() => scrollTo('start')} className="text-sm font-semibold opacity-80 transition hover:opacity-100">
               Start
             </button>
-            <button onClick={() => scrollTo('flow')} className="text-sm font-semibold opacity-80 transition hover:opacity-100">
-              Flow
-            </button>
-            <button onClick={() => scrollTo('use-cases')} className="text-sm font-semibold opacity-80 transition hover:opacity-100">
-              Use cases
+            <button onClick={() => scrollTo('how')} className="text-sm font-semibold opacity-80 transition hover:opacity-100">
+              How it works
             </button>
             <Link to="/Pricing" className="text-sm font-semibold opacity-80 transition hover:opacity-100">
               Pricing
@@ -177,22 +162,24 @@ export default function Landing() {
         {menuOpen && (
           <div className="border-t border-border bg-background px-4 py-4 text-foreground shadow-xl md:hidden">
             <div className="grid gap-2 text-sm font-semibold">
-              {[
-                ['Start', 'start'],
-                ['Flow', 'flow'],
-                ['Use cases', 'use-cases'],
-              ].map(([label, id]) => (
-                <button
-                  key={id}
-                  onClick={() => {
-                    scrollTo(id);
-                    setMenuOpen(false);
-                  }}
-                  className="rounded-lg px-3 py-3 text-left hover:bg-secondary"
-                >
-                  {label}
-                </button>
-              ))}
+              <button
+                onClick={() => {
+                  scrollTo('start');
+                  setMenuOpen(false);
+                }}
+                className="rounded-lg px-3 py-3 text-left hover:bg-secondary"
+              >
+                Start
+              </button>
+              <button
+                onClick={() => {
+                  scrollTo('how');
+                  setMenuOpen(false);
+                }}
+                className="rounded-lg px-3 py-3 text-left hover:bg-secondary"
+              >
+                How it works
+              </button>
               <Link to="/Pricing" onClick={() => setMenuOpen(false)} className="rounded-lg px-3 py-3 hover:bg-secondary">
                 Pricing
               </Link>
@@ -211,285 +198,188 @@ export default function Landing() {
       </nav>
 
       <section
-        id="hero"
-        className="relative flex min-h-[68svh] items-center bg-cover bg-center px-4 pb-8 pt-20 sm:px-6 md:min-h-[82svh] md:pb-10 md:pt-24 lg:px-8"
+        className="relative flex min-h-[72svh] items-center bg-cover bg-center px-4 pb-10 pt-24 sm:px-6 md:min-h-[82svh] lg:px-8"
         style={{
-          backgroundImage: `linear-gradient(90deg, hsl(222 47% 7% / 0.92) 0%, hsl(222 47% 7% / 0.74) 48%, hsl(222 47% 7% / 0.28) 100%), url(${HERO_IMAGE})`,
+          backgroundImage: `linear-gradient(90deg, hsl(222 47% 7% / 0.93) 0%, hsl(222 47% 7% / 0.78) 48%, hsl(222 47% 7% / 0.35) 100%), url(${HERO_IMAGE})`,
         }}
       >
         <div className="mx-auto w-full max-w-7xl">
-          <motion.div
-            initial={{ opacity: 0, y: 18 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.45 }}
-            className="max-w-3xl"
-          >
+          <div className="max-w-3xl">
             <span className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-3 py-1.5 text-xs font-bold uppercase tracking-[0.16em] text-white backdrop-blur">
-              <Eye className="h-3.5 w-3.5 text-cyan-200" />
+              <Smartphone className="h-3.5 w-3.5 text-cyan-200" />
               Live local help
             </span>
             <h1 className="mt-5 max-w-3xl text-4xl font-black leading-[1.02] tracking-tight text-white sm:text-5xl md:text-6xl lg:text-7xl">
-              Remote task help with live Local Agents.
+              Remote tasks, handled locally.
             </h1>
             <p className="mt-5 max-w-2xl text-base font-medium leading-relaxed text-white/80 md:text-xl">
-              Book someone trusted to be there for you. CoTask brings open tasks, direct hire, live video, proof, messages, and Secure Payment into one clear flow.
+              Book a Local Agent to visit, inspect, livestream, or collect proof when you cannot be there yourself.
             </p>
-            <div className="mt-7 flex flex-col gap-3 sm:flex-row">
-              <Button size="lg" onClick={() => goToApp('/Explore')} className="h-12 justify-center gap-2 px-7 text-base md:h-14">
-                Find a Local Agent <ArrowRight className="h-4 w-4" />
+            <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+              <Button size="lg" onClick={() => goToApp('/PostJob')} className="h-12 justify-center gap-2 px-7 text-base md:h-14">
+                Post a Task <ArrowRight className="h-4 w-4" />
               </Button>
               <Button
                 size="lg"
                 variant="outline"
-                onClick={() => goToApp('/PostJob')}
+                onClick={() => goToApp('/Explore')}
                 className="h-12 justify-center border-white/30 bg-white/10 px-7 text-base text-white hover:bg-white hover:text-foreground md:h-14"
               >
-                Post an Open Task
+                Find an Agent
               </Button>
             </div>
-            <div className="mt-5 flex flex-wrap items-center gap-3 text-sm font-semibold text-white/75">
-              <button onClick={() => goToApp('/Onboarding?role=avatar')} className="inline-flex items-center gap-1.5 transition hover:text-white">
-                Become a Local Agent <ChevronRight className="h-4 w-4" />
-              </button>
-              <span className="hidden h-1 w-1 rounded-full bg-white/40 sm:block" />
-              <button onClick={() => goToApp('/Onboarding?role=enterprise')} className="inline-flex items-center gap-1.5 transition hover:text-white">
-                Enterprise setup <ChevronRight className="h-4 w-4" />
-              </button>
-            </div>
-          </motion.div>
-
-          <div className="mt-8 hidden max-w-3xl grid-cols-3 gap-3 md:grid">
-            {[
-              ['Live video', Video],
-              ['Task proof', CheckCircle2],
-              ['Secure handoff', CreditCard],
-            ].map(([label, Icon]) => (
-              <div key={label} className="rounded-lg border border-white/20 bg-white/10 px-4 py-3 text-sm font-bold text-white backdrop-blur">
-                <Icon className="mb-2 h-4 w-4 text-cyan-200" />
-                {label}
-              </div>
-            ))}
+            <button onClick={() => goToApp('/Onboarding?role=avatar')} className="mt-5 inline-flex items-center gap-1.5 text-sm font-semibold text-white/75 transition hover:text-white">
+              Become a Local Agent <ChevronRight className="h-4 w-4" />
+            </button>
           </div>
         </div>
       </section>
 
-      <section id="start" className="relative z-10 border-b border-border bg-background px-4 py-16 scroll-mt-20 sm:px-6 lg:px-8">
-        <div className="mx-auto grid max-w-7xl gap-6 lg:grid-cols-[1.1fr_0.9fr]">
-          <div>
-            <p className="text-xs font-bold uppercase tracking-[0.18em] text-primary">Choose your path</p>
-            <h2 className="mt-3 text-3xl font-black tracking-tight text-foreground md:text-5xl">
-              One homepage. Three clean ways in.
-            </h2>
-            <p className="mt-4 max-w-2xl text-base leading-relaxed text-muted-foreground md:text-lg">
-              The app should not feel like a maze. Start with what you are trying to do, then move directly into the matching workflow.
-            </p>
-
-            <div className="mt-8 grid gap-4 md:grid-cols-3">
-              {quickPaths.map((item, index) => (
-                <motion.button
-                  key={item.label}
-                  type="button"
-                  initial={{ opacity: 0, y: 18 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: index * 0.06 }}
-                  onClick={() => goToApp(item.path)}
-                  className="surface-panel glass-hover rounded-lg p-5 text-left"
-                >
-                  <div className={`mb-5 inline-flex h-11 w-11 items-center justify-center rounded-lg border ${item.accent}`}>
-                    <item.icon className="h-5 w-5" />
-                  </div>
-                  <p className="text-xs font-bold uppercase tracking-[0.14em] text-muted-foreground">{item.label}</p>
-                  <h3 className="mt-2 text-lg font-bold text-foreground">{item.title}</h3>
-                  <p className="mt-3 min-h-[72px] text-sm leading-relaxed text-muted-foreground">{item.text}</p>
-                  <span className="mt-5 inline-flex items-center gap-1.5 text-sm font-bold text-primary">
-                    {item.action} <ArrowRight className="h-4 w-4" />
-                  </span>
-                </motion.button>
-              ))}
-            </div>
-          </div>
-
-          <div className="surface-panel rounded-lg p-5 md:p-6">
-            <div className="flex items-start justify-between gap-4 border-b border-border pb-5">
-              <div>
-                <p className="text-xs font-bold uppercase tracking-[0.16em] text-primary">Today on CoTask</p>
-                <h3 className="mt-2 text-2xl font-black">Live work, not static listings.</h3>
-              </div>
-              <span className="inline-flex items-center gap-1.5 rounded-full border border-emerald-500/20 bg-emerald-500/10 px-3 py-1 text-xs font-bold text-emerald-700">
-                <span className="h-2 w-2 rounded-full bg-emerald-500" />
-                Live ready
-              </span>
-            </div>
-
-            <div className="divide-y divide-border">
-              {[
-                {
-                  icon: PlayCircle,
-                  title: 'Public agent live',
-                  meta: 'Visible in feed when an agent starts public mode',
-                  tag: 'Reels / posts',
-                },
-                {
-                  icon: Bell,
-                  title: 'Private task live',
-                  meta: 'Client joins from notification or Live Sessions',
-                  tag: 'Conversation',
-                },
-                {
-                  icon: Clock3,
-                  title: 'Open task proposals',
-                  meta: 'Agents apply, client chooses, then funding starts',
-                  tag: 'Marketplace',
-                },
-              ].map((row) => (
-                <div key={row.title} className="flex gap-4 py-5">
-                  <div className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-lg bg-secondary text-foreground">
-                    <row.icon className="h-5 w-5" />
-                  </div>
-                  <div className="min-w-0 flex-1">
-                    <div className="flex flex-wrap items-center gap-2">
-                      <h4 className="font-bold">{row.title}</h4>
-                      <span className="rounded-full border border-border bg-card px-2 py-0.5 text-[11px] font-semibold text-muted-foreground">
-                        {row.tag}
-                      </span>
-                    </div>
-                    <p className="mt-1 text-sm leading-relaxed text-muted-foreground">{row.meta}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section id="flow" className="bg-secondary/35 px-4 py-20 scroll-mt-20 sm:px-6 lg:px-8">
+      <section id="start" className="border-b border-border bg-background px-4 py-16 scroll-mt-20 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-7xl">
-          <div className="max-w-3xl">
-            <p className="text-xs font-bold uppercase tracking-[0.18em] text-primary">Task flow</p>
-            <h2 className="mt-3 text-3xl font-black tracking-tight md:text-5xl">
-              From brief to proof without losing the thread.
-            </h2>
+          <div className="max-w-2xl">
+            <p className="text-xs font-bold uppercase tracking-[0.18em] text-primary">Start here</p>
+            <h2 className="mt-3 text-3xl font-black tracking-tight md:text-5xl">What do you need?</h2>
           </div>
 
-          <div className="mt-10 grid gap-4 md:grid-cols-4">
-            {proofFlow.map((step, index) => (
-              <div key={step.label} className="surface-panel rounded-lg p-5">
-                <div className="mb-5 flex items-center justify-between">
-                  <div className="flex h-11 w-11 items-center justify-center rounded-lg bg-primary/10 text-primary">
-                    <step.icon className="h-5 w-5" />
-                  </div>
-                  <span className="text-3xl font-black text-primary/20">{String(index + 1).padStart(2, '0')}</span>
-                </div>
-                <h3 className="font-bold">{step.label}</h3>
-                <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{step.text}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section id="use-cases" className="border-y border-border bg-background px-4 py-20 scroll-mt-20 sm:px-6 lg:px-8">
-        <div className="mx-auto grid max-w-7xl gap-10 lg:grid-cols-[0.9fr_1.1fr] lg:items-start">
-          <div>
-            <p className="text-xs font-bold uppercase tracking-[0.18em] text-primary">What it is for</p>
-            <h2 className="mt-3 text-3xl font-black tracking-tight md:text-5xl">
-              Practical remote presence, not a generic gig board.
-            </h2>
-            <p className="mt-4 text-base leading-relaxed text-muted-foreground">
-              The homepage now explains the actual product: remote physical tasks with live video, proof, messages, notifications, and payment handoff.
-            </p>
-            <Button onClick={() => goToApp('/PostJob')} className="mt-7 gap-2">
-              Create a task brief <ArrowRight className="h-4 w-4" />
-            </Button>
-          </div>
-
-          <div className="grid gap-4 sm:grid-cols-2">
-            {useCases.map((item) => (
-              <div key={item.title} className="surface-panel rounded-lg p-5">
+          <div className="mt-8 grid gap-4 md:grid-cols-3">
+            {entryRoutes.map((item) => (
+              <button
+                key={item.title}
+                type="button"
+                onClick={() => goToApp(item.path)}
+                className="surface-panel glass-hover rounded-lg p-5 text-left"
+              >
                 <div className="mb-5 flex h-11 w-11 items-center justify-center rounded-lg border border-primary/20 bg-primary/10 text-primary">
                   <item.icon className="h-5 w-5" />
                 </div>
-                <h3 className="font-bold">{item.title}</h3>
-                <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{item.detail}</p>
-              </div>
+                <h3 className="text-lg font-bold">{item.title}</h3>
+                <p className="mt-2 min-h-[64px] text-sm leading-relaxed text-muted-foreground">{item.text}</p>
+                <span className="mt-5 inline-flex items-center gap-1.5 text-sm font-bold text-primary">
+                  {item.action} <ArrowRight className="h-4 w-4" />
+                </span>
+              </button>
             ))}
           </div>
         </div>
       </section>
 
-      <section className="bg-foreground px-4 py-20 text-background sm:px-6 lg:px-8">
-        <div className="mx-auto grid max-w-7xl gap-10 lg:grid-cols-[0.95fr_1.05fr] lg:items-center">
-          <div>
-            <p className="text-xs font-bold uppercase tracking-[0.18em] text-primary">Trust and readiness</p>
-            <h2 className="mt-3 text-3xl font-black tracking-tight md:text-5xl">
-              Built for real tasks that need accountability.
-            </h2>
-            <p className="mt-4 max-w-2xl text-base leading-relaxed text-background/70">
-              CoTask works best when every action has a clear place: marketplace, conversation, live session, proof, payment status, and review.
-            </p>
-          </div>
-
-          <div className="grid gap-3">
-            {trustItems.map((item, index) => (
-              <div key={item} className="flex gap-3 rounded-lg border border-white/10 bg-white/10 p-4">
-                <div className="mt-0.5 flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-lg bg-primary text-primary-foreground">
-                  {index + 1}
-                </div>
-                <p className="text-sm font-medium leading-relaxed text-background/80">{item}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section className="bg-background px-4 py-20 sm:px-6 lg:px-8">
+      <section id="how" className="bg-secondary/35 px-4 py-16 scroll-mt-20 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-7xl">
-          <div className="grid gap-4 md:grid-cols-4">
-            {[
-              { value: 'Client', label: 'Post tasks, book agents, review proof.', icon: Users },
-              { value: 'Agent', label: 'Apply, accept, schedule, go live.', icon: UserRoundCheck },
-              { value: 'Enterprise', label: 'Coordinate field work and billing.', icon: Building2 },
-              { value: 'Admin', label: 'Review users, safety, payments, disputes.', icon: ShieldCheck },
-            ].map((role) => (
-              <div key={role.value} className="surface-panel rounded-lg p-5">
-                <role.icon className="h-6 w-6 text-primary" />
-                <h3 className="mt-5 text-xl font-black">{role.value}</h3>
-                <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{role.label}</p>
+          <div className="grid gap-8 lg:grid-cols-[0.85fr_1.15fr] lg:items-start">
+            <div>
+              <p className="text-xs font-bold uppercase tracking-[0.18em] text-primary">How it works</p>
+              <h2 className="mt-3 text-3xl font-black tracking-tight md:text-5xl">Simple flow. Fewer decisions.</h2>
+              <p className="mt-4 max-w-xl text-base leading-relaxed text-muted-foreground">
+                CoTask should move people quickly from a need to a clear task, then into messages, live video, proof, and payment status.
+              </p>
+            </div>
+
+            <div className="grid gap-4 md:grid-cols-3">
+              {steps.map((step, index) => (
+                <div key={step.title} className="surface-panel rounded-lg p-5">
+                  <div className="mb-5 flex items-center justify-between">
+                    <div className="flex h-11 w-11 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                      <step.icon className="h-5 w-5" />
+                    </div>
+                    <span className="text-2xl font-black text-primary/20">{index + 1}</span>
+                  </div>
+                  <h3 className="font-bold">{step.title}</h3>
+                  <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{step.text}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="border-y border-border bg-background px-4 py-16 sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-7xl">
+          <div className="mb-8 max-w-2xl">
+            <p className="text-xs font-bold uppercase tracking-[0.18em] text-primary">See the flow</p>
+            <h2 className="mt-3 text-3xl font-black tracking-tight md:text-5xl">A task should feel this clear.</h2>
+          </div>
+
+          <div className="grid gap-4 lg:grid-cols-3">
+            {videoStories.map((story) => (
+              <div key={story.label} className="group overflow-hidden rounded-lg border border-border bg-card shadow-sm">
+                <div className="relative aspect-[4/5] overflow-hidden bg-foreground sm:aspect-video">
+                  <video
+                    className="h-full w-full object-cover opacity-85 transition duration-300 group-hover:scale-[1.02] group-hover:opacity-100"
+                    autoPlay
+                    muted
+                    loop
+                    playsInline
+                    preload="metadata"
+                    aria-label={story.title}
+                    onCanPlay={(event) => event.currentTarget.play().catch(() => {})}
+                  >
+                    <source src={story.src} type="video/mp4" />
+                  </video>
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/25 to-black/10" />
+                  <div className="absolute inset-x-0 bottom-0 p-5 text-white">
+                    <p className="text-xs font-bold uppercase tracking-[0.16em] text-cyan-200">{story.label}</p>
+                    <h3 className="mt-2 text-xl font-black">{story.title}</h3>
+                    <p className="mt-2 text-sm font-medium leading-relaxed text-white/75">{story.text}</p>
+                  </div>
+                </div>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      <section className="border-y border-border bg-secondary/35 px-4 py-20 sm:px-6 lg:px-8">
-        <div className="mx-auto max-w-4xl">
-          <p className="text-center text-xs font-bold uppercase tracking-[0.18em] text-primary">Quick answers</p>
-          <h2 className="mt-3 text-center text-3xl font-black tracking-tight md:text-5xl">The idea in plain language.</h2>
-          <div className="mt-10 grid gap-4 md:grid-cols-2">
-            {faqs.map((faq) => (
-              <div key={faq.q} className="surface-panel rounded-lg p-5">
-                <h3 className="font-bold">{faq.q}</h3>
-                <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{faq.a}</p>
+      <section className="bg-secondary/35 px-4 py-16 sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-7xl">
+          <div className="grid gap-8 lg:grid-cols-[1fr_1fr] lg:items-center">
+            <div>
+              <p className="text-xs font-bold uppercase tracking-[0.18em] text-primary">Popular tasks</p>
+              <h2 className="mt-3 text-3xl font-black tracking-tight md:text-5xl">Useful when presence matters.</h2>
+            </div>
+
+            <div className="grid gap-3 sm:grid-cols-2">
+              {useCases.map((item) => (
+                <div key={item.title} className="surface-panel flex items-center gap-3 rounded-lg p-4">
+                  <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-lg bg-secondary text-foreground">
+                    <item.icon className="h-5 w-5" />
+                  </div>
+                  <span className="text-sm font-bold">{item.title}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="bg-foreground px-4 py-16 text-background sm:px-6 lg:px-8">
+        <div className="mx-auto grid max-w-7xl gap-8 lg:grid-cols-[1fr_1fr] lg:items-center">
+          <div>
+            <p className="text-xs font-bold uppercase tracking-[0.18em] text-primary">Built-in structure</p>
+            <h2 className="mt-3 text-3xl font-black tracking-tight md:text-5xl">Live, proof, messages, and payment in one place.</h2>
+          </div>
+          <div className="grid gap-3 sm:grid-cols-2">
+            {trustSignals.map((item) => (
+              <div key={item.text} className="flex items-center gap-3 rounded-lg border border-white/10 bg-white/10 p-4">
+                <item.icon className="h-5 w-5 flex-shrink-0 text-primary" />
+                <span className="text-sm font-semibold text-background/80">{item.text}</span>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      <section className="bg-background px-4 py-20 sm:px-6 lg:px-8">
+      <section className="bg-background px-4 py-16 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-4xl text-center">
-          <Smartphone className="mx-auto h-10 w-10 text-primary" />
-          <h2 className="mt-5 text-3xl font-black tracking-tight md:text-5xl">Start with the job, not the menu.</h2>
+          <h2 className="text-3xl font-black tracking-tight md:text-5xl">Start with one task.</h2>
           <p className="mx-auto mt-4 max-w-2xl text-base leading-relaxed text-muted-foreground">
-            Create a clean task brief, find a Local Agent, or set up your role. The homepage now sends each user to the right next step.
+            Write the brief, choose the Local Agent, and keep the whole job in one conversation.
           </p>
           <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
             <Button size="lg" onClick={() => goToApp('/PostJob')} className="gap-2">
               Post a Task <ArrowRight className="h-4 w-4" />
             </Button>
             <Button size="lg" variant="outline" onClick={() => goToApp('/Explore')}>
-              Find a Local Agent
+              Browse Agents
             </Button>
           </div>
         </div>
