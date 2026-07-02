@@ -174,7 +174,7 @@ export default function AvatarMessages() {
               <h3 className="text-lg font-bold mb-1">No conversations yet</h3>
               <p className="text-sm text-muted-foreground mb-4">Messages appear after a Direct Hire request or after a Local Agent is selected for an Open Task.</p>
               <Link to="/AvatarRequests">
-                <Button size="sm" variant="outline">Go to My Schedule</Button>
+                <Button size="sm" variant="outline">Go to Schedule</Button>
               </Link>
             </div>
           )}
