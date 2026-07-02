@@ -11,6 +11,7 @@ const DURATION_PRESETS = ['1', '2', '3', '4'];
 
 export default function TimePicker({ timeMode, onTimeMode, startTime, onStartTime, endTime, onEndTime, repeat, onRepeat }) {
   const repeatLabel = REPEAT_OPTIONS.find((option) => option.value === repeat)?.label || 'Once';
+  const [showRepeat, setShowRepeat] = React.useState(Boolean(repeat));
 
   return (
     <div className="space-y-4">
@@ -108,24 +109,32 @@ export default function TimePicker({ timeMode, onTimeMode, startTime, onStartTim
             <RefreshCw className="w-4 h-4 text-primary" />
             Repeat
           </div>
-          <span className="text-xs font-semibold text-muted-foreground">{repeatLabel}</span>
+          <button
+            type="button"
+            onClick={() => setShowRepeat(value => !value)}
+            className="rounded-lg border border-border bg-card px-3 py-1.5 text-xs font-semibold text-muted-foreground transition-colors hover:border-primary/30 hover:text-primary"
+          >
+            {repeat ? repeatLabel : 'No repeat'}
+          </button>
         </div>
-        <div className="mt-3 flex flex-wrap gap-2">
-          {REPEAT_OPTIONS.map((option) => (
-            <button
-              key={String(option.value)}
-              type="button"
-              onClick={() => onRepeat(option.value)}
-              className={`rounded-full border px-3 py-1.5 text-xs font-semibold transition-all ${
-                repeat === option.value
-                  ? 'border-primary bg-primary text-primary-foreground'
-                  : 'border-border bg-card text-muted-foreground hover:border-primary/30 hover:text-foreground'
-              }`}
-            >
-              {option.label}
-            </button>
-          ))}
-        </div>
+        {showRepeat && (
+          <div className="mt-3 flex flex-wrap gap-2">
+            {REPEAT_OPTIONS.map((option) => (
+              <button
+                key={String(option.value)}
+                type="button"
+                onClick={() => onRepeat(option.value)}
+                className={`rounded-full border px-3 py-1.5 text-xs font-semibold transition-all ${
+                  repeat === option.value
+                    ? 'border-primary bg-primary text-primary-foreground'
+                    : 'border-border bg-card text-muted-foreground hover:border-primary/30 hover:text-foreground'
+                }`}
+              >
+                {option.label}
+              </button>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );
