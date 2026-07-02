@@ -19,8 +19,8 @@ function getNavBadgeCount(path, unreadNotifs) {
   }).length;
 }
 
-function ProfilePanel({ user, onClose, navItems = [] }) {
-  const activeRole = user?.role === 'admin' ? 'admin' : (user?.selected_role || user?.role || 'user');
+function ProfilePanel({ user, onClose, navItems = [], roleOverride }) {
+  const activeRole = roleOverride || (user?.role === 'admin' ? 'admin' : (user?.selected_role || user?.role || 'user'));
   let menuItems = [];
 
   if (activeRole === 'admin') {
@@ -141,7 +141,7 @@ function ProfilePanel({ user, onClose, navItems = [] }) {
   );
 }
 
-export default function AppShell({ children, navItems = [], user, fullBleed = false, title }) {
+export default function AppShell({ children, navItems = [], user, fullBleed = false, title, roleOverride, homePathOverride }) {
   const [unreadNotifs, setUnreadNotifs] = useState([]);
   const [profileOpen, setProfileOpen] = useState(false);
   const location = useLocation();
@@ -151,14 +151,14 @@ export default function AppShell({ children, navItems = [], user, fullBleed = fa
     const load = async () => {
       try {
         const list = await base44.entities.Notification.filter({ user_email: user.email, is_read: false }, '-created_date', 100);
-        const activeRole = user.selected_role || user.role || 'user';
+        const activeRole = roleOverride || user.selected_role || user.role || 'user';
         setUnreadNotifs(list.filter(n => !n.target_role || n.target_role === activeRole));
       } catch (e) {}
     };
     load();
     const unsub = base44.entities.Notification.subscribe((event) => {
       if (event.data?.user_email === user.email) {
-        const activeRole = user.selected_role || user.role || 'user';
+        const activeRole = roleOverride || user.selected_role || user.role || 'user';
         if (event.type === 'create' && (!event.data?.target_role || event.data?.target_role === activeRole) && !event.data?.is_read) {
           setUnreadNotifs(prev => [event.data, ...prev]);
         } else if (event.type === 'update') {
@@ -169,10 +169,11 @@ export default function AppShell({ children, navItems = [], user, fullBleed = fa
       }
     });
     return unsub;
-  }, [user?.email, user?.selected_role, user?.role]);
+  }, [user?.email, user?.selected_role, user?.role, roleOverride]);
 
-  const activeRole = user?.selected_role || user?.role || 'user';
-  const homePath = activeRole === 'avatar' ? '/AvatarDashboard' : activeRole === 'enterprise' ? '/EnterpriseDashboard' : activeRole === 'admin' ? '/AdminDashboard' : '/FindPeople';
+  const activeRole = roleOverride || user?.selected_role || user?.role || 'user';
+  const computedHomePath = activeRole === 'avatar' ? '/AvatarDashboard' : activeRole === 'enterprise' ? '/EnterpriseDashboard' : activeRole === 'admin' ? '/AdminDashboard' : '/Explore';
+  const homePath = homePathOverride || computedHomePath;
   const settingsPath = activeRole === 'avatar' ? '/AvatarSettings' : activeRole === 'enterprise' ? '/EnterpriseProfile' : '/UserSettings';
 
   return (
@@ -232,7 +233,7 @@ export default function AppShell({ children, navItems = [], user, fullBleed = fa
       </div>
 
       {/* Profile Panel (full screen) */}
-      {profileOpen && <ProfilePanel user={user} onClose={() => setProfileOpen(false)} navItems={navItems} />}
+      {profileOpen && <ProfilePanel user={user} onClose={() => setProfileOpen(false)} navItems={navItems} roleOverride={roleOverride} />}
 
       {/* Mobile Bottom Nav */}
       <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-50 bg-card/95 backdrop-blur-xl border-t border-border flex items-center justify-around px-2 py-2 pb-safe shadow-[0_-12px_30px_hsl(222_47%_11%/0.08)]">
@@ -292,3 +293,4 @@ export default function AppShell({ children, navItems = [], user, fullBleed = fa
     </div>
   );
 }
+
