@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import SmartImage from '@/components/media/SmartImage';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
-import { Heart, MessageCircle, Send, X, Play, Volume2, VolumeX, Loader2, Share2, Copy, MessageSquare, Send as SendIcon } from 'lucide-react';
+import { Heart, MessageCircle, Send, X, Play, Volume2, VolumeX, Loader2, Share2, Copy, MessageSquare, Send as SendIcon, Radio } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 export default function FeedCard({ post, user, isActive = true, isNear = true }) {
@@ -19,6 +19,7 @@ export default function FeedCard({ post, user, isActive = true, isNear = true })
   const [videoLoading, setVideoLoading] = useState(false);
   const [showShareMenu, setShowShareMenu] = useState(false);
   const [shareCopied, setShareCopied] = useState(false);
+  const isLivePost = post.is_live && post.live_status === 'live' && post.live_url;
 
   const mediaList = (post.media_urls && post.media_urls.length > 0)
     ? post.media_urls.map((url, i) => ({ url, type: post.media_types?.[i] || 'photo' }))
@@ -30,6 +31,7 @@ export default function FeedCard({ post, user, isActive = true, isNear = true })
 
   // Autoplay when visible
   useEffect(() => {
+    if (isLivePost) return;
     if (currentMedia.type !== 'video') return;
     const video = videoRef.current;
     if (!video) return;
@@ -70,7 +72,7 @@ export default function FeedCard({ post, user, isActive = true, isNear = true })
       observer.disconnect();
       if (video) video.pause();
     };
-  }, [currentMedia.type, currentMedia.url, mediaIndex]);
+  }, [currentMedia.type, currentMedia.url, mediaIndex, isLivePost]);
 
   const { data: liked = false } = useQuery({
     queryKey: ['post-liked', user?.email, post.id],
@@ -135,7 +137,9 @@ export default function FeedCard({ post, user, isActive = true, isNear = true })
     setIsMuted(video.muted);
   };
 
-  const postUrl = `${window.location.origin}/PublicPostView?id=${post.id}`;
+  const postUrl = isLivePost
+    ? `${window.location.origin}/PublicLiveView?post=${post.id}`
+    : `${window.location.origin}/PublicPostView?id=${post.id}`;
 
   const handleShareToApp = (app) => {
     const text = `Check out this post from ${post.avatar_name}: ${post.caption || ''}`;
@@ -164,35 +168,51 @@ export default function FeedCard({ post, user, isActive = true, isNear = true })
 
       {/* Media carousel */}
       <div className="absolute inset-0">
-        <div
-          className="flex h-full transition-transform duration-300 ease-out"
-          style={{ transform: `translateX(-${(mediaIndex / mediaList.length) * 100}%)`, width: `${mediaList.length * 100}%` }}
-        >
-          {mediaList.map((media, i) => (
-            <div key={i} className="h-full flex-shrink-0 flex items-center justify-center" style={{ width: `${100 / mediaList.length}%`, objectFit: 'contain' }}>
-              {media.type === 'video' ? (
-                <video
-                   ref={i === mediaIndex ? videoRef : null}
-                   src={media.url}
-                   className="w-full h-full"
-                   style={{ objectFit: 'contain' }}
-                   loop
-                   playsInline
-                   muted
-                   preload={isNear ? 'auto' : 'none'}
-                   onClick={togglePlay}
-                 />
-              ) : (
-                <SmartImage
-                  src={media.url}
-                  alt={post.caption || 'Post'}
-                  className="w-full h-full"
-                  style={{ objectFit: 'contain' }}
-                />
-              )}
+        {isLivePost ? (
+          <button
+            type="button"
+            onClick={() => navigate(`/PublicLiveView?post=${post.id}`)}
+            className="h-full w-full bg-gradient-to-br from-red-950 via-black to-slate-950 flex flex-col items-center justify-center gap-4 text-center px-6"
+          >
+            <div className="h-16 w-16 rounded-full bg-red-600/20 border border-red-500/30 flex items-center justify-center">
+              <Radio className="h-8 w-8 text-red-400" />
             </div>
-          ))}
-        </div>
+            <div>
+              <p className="text-lg font-bold text-white">Live now</p>
+              <p className="mt-1 text-sm text-white/60">Tap to watch this public stream</p>
+            </div>
+          </button>
+        ) : (
+          <div
+            className="flex h-full transition-transform duration-300 ease-out"
+            style={{ transform: `translateX(-${(mediaIndex / mediaList.length) * 100}%)`, width: `${mediaList.length * 100}%` }}
+          >
+            {mediaList.map((media, i) => (
+              <div key={i} className="h-full flex-shrink-0 flex items-center justify-center" style={{ width: `${100 / mediaList.length}%`, objectFit: 'contain' }}>
+                {media.type === 'video' ? (
+                  <video
+                     ref={i === mediaIndex ? videoRef : null}
+                     src={media.url}
+                     className="w-full h-full"
+                     style={{ objectFit: 'contain' }}
+                     loop
+                     playsInline
+                     muted
+                     preload={isNear ? 'auto' : 'none'}
+                     onClick={togglePlay}
+                   />
+                ) : (
+                  <SmartImage
+                    src={media.url}
+                    alt={post.caption || 'Post'}
+                    className="w-full h-full"
+                    style={{ objectFit: 'contain' }}
+                  />
+                )}
+              </div>
+            ))}
+          </div>
+        )}
 
         {/* Tap zones for prev/next */}
         {isMulti && (
@@ -223,7 +243,7 @@ export default function FeedCard({ post, user, isActive = true, isNear = true })
       </div>
 
       {/* Play / loading overlay */}
-      {currentMedia.type === 'video' && (videoLoading || !playing) && (
+      {!isLivePost && currentMedia.type === 'video' && (videoLoading || !playing) && (
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
           <div className="w-16 h-16 rounded-full bg-black/50 flex items-center justify-center">
             {videoLoading
@@ -278,7 +298,7 @@ export default function FeedCard({ post, user, isActive = true, isNear = true })
           <span className="text-xs text-white font-medium">{post.comments_count || 0}</span>
         </div>
 
-        {currentMedia.type === 'video' && (
+        {!isLivePost && currentMedia.type === 'video' && (
           <button
             onClick={toggleMute}
             className="w-11 h-11 rounded-full bg-black/40 backdrop-blur flex items-center justify-center"
