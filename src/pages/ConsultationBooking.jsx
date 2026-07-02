@@ -29,6 +29,9 @@ export default function ConsultationBooking() {
 
   const { user } = useCurrentUser();
   const navigate = useNavigate();
+  const activeRole = user?.selected_role || user?.role || 'user';
+  const shellRole = activeRole === 'avatar' ? 'user' : activeRole;
+  const shellHomePath = shellRole === 'user' ? '/Explore' : undefined;
 
   const [step, setStep] = useState('pick'); // pick | confirm | done
   const [selectedDate, setSelectedDate] = useState('');
@@ -136,14 +139,14 @@ export default function ConsultationBooking() {
 
   if (!avatarId && !offeringId) {
     return (
-      <AppShell navItems={getNavItems(user?.selected_role || user?.role || 'user')} user={user}>
+      <AppShell navItems={getNavItems(shellRole)} user={user} roleOverride={shellRole} homePathOverride={shellHomePath}>
         <EmptyState
           icon={Search}
           title="Choose a Local Agent first"
           description="Consultations must be connected to a specific expert. Choose who you want to consult, or post an open task for proposals."
           action={(
             <div className="flex flex-col gap-3 sm:flex-row">
-              <Button onClick={() => navigate('/FindPeople')}>Discover Experts</Button>
+              <Button onClick={() => navigate('/Explore')}>Discover Experts</Button>
               <Button variant="outline" className="border-border" onClick={() => navigate('/PostJob')}>Post an Open Task</Button>
             </div>
           )}
@@ -159,7 +162,7 @@ export default function ConsultationBooking() {
             <CheckCircle2 className="w-10 h-10 text-green-400" />
           </div>
           <div>
-            <h1 className="text-2xl font-black mb-2">Request Sent! 🎉</h1>
+            <h1 className="text-2xl font-black mb-2">Request Sent! ??</h1>
             <p className="text-muted-foreground text-sm">
               Your consultation request for <strong>{selectedDate}</strong> at <strong>{selectedTime}</strong> has been sent.
               The expert will confirm or decline shortly.
@@ -191,7 +194,7 @@ export default function ConsultationBooking() {
   }
 
   return (
-    <AppShell navItems={getNavItems(user?.selected_role || user?.role || 'user')} user={user}>
+    <AppShell navItems={getNavItems(shellRole)} user={user} roleOverride={shellRole} homePathOverride={shellHomePath}>
       <div className="mx-auto max-w-5xl space-y-6 pb-12">
         <PageHero
           eyebrow="Expert session"
@@ -283,7 +286,7 @@ export default function ConsultationBooking() {
                 <div className="space-y-2">
                   <p className="text-xs text-muted-foreground">
                     {officeHours.length === 0
-                      ? 'No office hours set — pick any time and the expert will confirm.'
+                      ? 'No office hours set ? pick any time and the expert will confirm.'
                       : `No expert hours on ${todayDay}. Pick another day or enter a time below.`}
                   </p>
                   <Input
@@ -315,7 +318,7 @@ export default function ConsultationBooking() {
             {[
               { icon: Video, text: 'Private video call link auto-generated at booking time' },
               { icon: Clock, text: `${offering?.duration_minutes || 60} minute live session` },
-              { icon: Shield, text: 'Payment held securely — released after session' },
+              { icon: Shield, text: 'Payment held securely ? released after session' },
             ].map(({ icon: Icon, text }) => (
               <div key={text} className="flex items-center gap-2.5 text-sm text-muted-foreground">
                 <Icon className="w-4 h-4 text-primary flex-shrink-0" />
@@ -364,3 +367,4 @@ export default function ConsultationBooking() {
     </AppShell>
   );
 }
+
