@@ -14,6 +14,9 @@ export default function UserProfileEdit() {
   const { user, updateUser } = useCurrentUser();
   const navigate = useNavigate();
   const { toast } = useToast();
+  const activeRole = user?.selected_role || user?.role || 'user';
+  const shellRole = activeRole === 'avatar' ? 'user' : activeRole;
+  const shellHomePath = shellRole === 'user' ? '/Explore' : undefined;
 
   const [displayName, setDisplayName] = useState('');
   const [city, setCity] = useState('');
@@ -62,7 +65,7 @@ export default function UserProfileEdit() {
   };
 
   return (
-    <AppShell navItems={getNavItems(user?.selected_role || user?.role || 'user')} user={user}>
+    <AppShell navItems={getNavItems(shellRole)} user={user} roleOverride={shellRole} homePathOverride={shellHomePath}>
       <div className="max-w-lg mx-auto">
         {/* Header */}
         <div className="flex items-center gap-3 mb-6">
@@ -136,3 +139,4 @@ export default function UserProfileEdit() {
     </AppShell>
   );
 }
+
