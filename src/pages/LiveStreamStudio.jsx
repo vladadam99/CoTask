@@ -366,17 +366,18 @@ export default function LiveStreamStudio() {
     } catch (_) { /* silent — download fallback still works */ }
   };
 
-  // Go live
+  // Start a booked client session.
   const goLive = async (booking) => {
     if (!selectedSource) { setError('Select a camera source first.'); return; }
+    if (!booking?.id) { setError('Choose an accepted task before starting a live session.'); return; }
     setAttachedBooking(booking);
 
     // Create a Daily room first
     try {
-      const tempId = `${booking?.id || 'quick'}-${Date.now()}`;
+      const tempId = `${booking.id}-${Date.now()}`;
       const res = await base44.functions.invoke('createDailyRoom', { sessionId: tempId });
       setDailyRoomUrl(res.data.url);
-      if (booking) booking._dailyRoomUrl = res.data.url;
+      booking._dailyRoomUrl = res.data.url;
     } catch (e) {
       setError('Failed to create video room: ' + e.message);
       return;
@@ -386,7 +387,7 @@ export default function LiveStreamStudio() {
     setElapsed(0);
     setChatOpen(true);
     timerRef.current = setInterval(() => setElapsed(e => e + 1), 1000);
-    if (booking) startSessionMutation.mutate({ booking, streamMode: viewMode });
+    startSessionMutation.mutate({ booking, streamMode: viewMode });
   };
 
   // End session
@@ -522,19 +523,23 @@ export default function LiveStreamStudio() {
               </GlassCard>
             )}
 
-            {/* Booking to attach / Go Live */}
+            {/* Booking to attach / Session start */}
             {!isLive && (
               <GlassCard className="p-5">
-                <h2 className="text-sm font-semibold mb-3">Go Live</h2>
+                <div className="mb-4 space-y-1">
+                  <h2 className="text-sm font-semibold">Start client session</h2>
+                  <p className="text-xs text-muted-foreground">
+                    Live video starts from an accepted task. Use preview here to test your camera before the appointment.
+                  </p>
+                </div>
                 <div className="space-y-3">
-                  {readyBookings.length > 0 && (
+                  {readyBookings.length > 0 ? (
                     <div className="space-y-2">
-                      <p className="text-xs text-muted-foreground">With a task:</p>
                       {readyBookings.map(b => (
-                        <div key={b.id} className="flex items-center justify-between gap-3">
+                        <div key={b.id} className="flex items-center justify-between gap-3 rounded-xl border border-border/70 bg-background/40 p-3">
                           <div className="min-w-0">
                             <p className="text-sm font-medium truncate">{b.category}</p>
-                            <p className="text-xs text-muted-foreground">{b.client_name}</p>
+                            <p className="text-xs text-muted-foreground truncate">{b.client_name || 'Client task'}</p>
                           </div>
                           <Button
                             size="sm"
@@ -542,27 +547,32 @@ export default function LiveStreamStudio() {
                             onClick={() => goLive(b)}
                             disabled={!selectedSource || startSessionMutation.isPending}
                           >
-                            <Radio className="w-3 h-3" /> Go Live
+                            <Radio className="w-3 h-3" /> Start session
                           </Button>
                         </div>
                       ))}
-                      <div className="border-t border-border pt-2" />
+                    </div>
+                  ) : (
+                    <div className="rounded-xl border border-dashed border-border/80 bg-background/30 p-4">
+                      <p className="text-sm font-medium">No accepted task is ready</p>
+                      <p className="mt-1 text-xs text-muted-foreground">
+                        You can test the camera preview here, but live client calls should start from a confirmed task.
+                      </p>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        className="mt-3"
+                        onClick={() => navigate('/AvatarRequests')}
+                      >
+                        View requests
+                      </Button>
                     </div>
                   )}
-                  <div className="flex items-center justify-between gap-3">
-                    <div>
-                      <p className="text-sm font-medium">Quick Stream</p>
-                      <p className="text-xs text-muted-foreground">Go live without a task</p>
-                    </div>
-                    <Button
-                      size="sm"
-                      className="bg-primary hover:bg-primary/90 shrink-0 gap-1"
-                      onClick={() => goLive(null)}
-                      disabled={!selectedSource || startSessionMutation.isPending}
-                    >
-                      <Radio className="w-3 h-3" /> Go Live
-                    </Button>
-                  </div>
+                  {!selectedSource && (
+                    <p className="text-xs text-muted-foreground">
+                      Select a camera source first. Nothing broadcasts during preview.
+                    </p>
+                  )}
                 </div>
               </GlassCard>
             )}
@@ -680,7 +690,7 @@ export default function LiveStreamStudio() {
             {selectedSource && !isLive && (insta360Status === 'connected' || (selectedSource.id !== 'insta360' && streamRef.current)) && (
               <div className="mt-3 flex items-center gap-3 text-xs text-muted-foreground px-1">
                 <span className="w-2 h-2 rounded-full bg-yellow-500 animate-pulse" />
-                Camera preview active — not broadcasting yet. Select a task above to go live.
+                Camera preview active - not broadcasting yet. Start from an accepted task when ready.
               </div>
             )}
             {isLive && (
