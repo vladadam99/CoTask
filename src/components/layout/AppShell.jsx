@@ -46,7 +46,7 @@ function ProfilePanel({ user, onClose, navItems = [] }) {
       { icon: User, label: 'Public Profile', path: '/AvatarProfileEdit' },
       { icon: Shield, label: 'Verification', path: '/IdentityVerification' },
       { icon: Wallet, label: 'Earnings', path: '/AvatarWallet' },
-      { icon: DollarSign, label: 'Payout Settings', path: '/AvatarSettings' },
+      { icon: DollarSign, label: 'Payout Settings', path: '/AvatarWallet?payout=settings' },
       { icon: Settings, label: 'Settings', path: '/AvatarSettings' },
       { icon: HelpCircle, label: 'Help & FAQ', path: '/FAQ' },
     ];
