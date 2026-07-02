@@ -178,18 +178,18 @@ export default function AppShell({ children, navItems = [], user, fullBleed = fa
   return (
     <div className="min-h-screen flex overflow-x-hidden bg-background text-foreground">
       {/* Desktop Sidebar */}
-      <aside className="hidden lg:flex flex-col w-72 bg-card/95 backdrop-blur-xl border-r border-border fixed inset-y-0 left-0 z-40 shadow-[12px_0_40px_hsl(222_47%_11%/0.04)]">
-        <div className="h-16 flex items-center px-5 border-b border-border">
+      <aside className="hidden lg:flex flex-col w-64 bg-card border-r border-border fixed inset-y-0 left-0 z-40">
+        <div className="h-14 flex items-center px-4 border-b border-border">
           <Link to={homePath} className="text-xl font-extrabold tracking-tight flex-1 py-3 px-2 rounded-lg hover:bg-secondary transition-colors">
             Co<span className="text-primary">Task</span>
           </Link>
         </div>
-        <nav className="flex-1 py-5 px-3 space-y-1.5 overflow-y-auto">
+        <nav className="flex-1 py-4 px-3 space-y-1 overflow-y-auto">
           {navItems.map(item => {
             const isActive = location.pathname === item.path;
             return (
               <Link key={item.path} to={item.path}
-                className={`flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-sm transition-all ${
+                className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-all ${
                   isActive ? 'bg-primary text-primary-foreground font-semibold shadow-sm' : 'text-muted-foreground hover:text-foreground hover:bg-secondary'
                 }`}>
                 <item.icon className="w-4 h-4" />
@@ -198,17 +198,17 @@ export default function AppShell({ children, navItems = [], user, fullBleed = fa
             );
           })}
         </nav>
-        <div className="p-4 border-t border-border space-y-4 bg-secondary/35">
+        <div className="p-3 border-t border-border space-y-3 bg-secondary/35">
           <div className="hidden lg:flex justify-end mb-2">
             <NotificationBell userEmail={user?.email} userRole={activeRole} />
           </div>
           <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-sm font-medium text-primary">
+            <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-sm font-semibold text-primary">
               {user?.full_name?.[0] || 'U'}
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium text-foreground truncate">{user?.full_name || 'User'}</p>
-              <p className="text-xs text-muted-foreground truncate">{user?.email}</p>
+              <p className="text-sm font-semibold text-foreground truncate">{user?.full_name || 'User'}</p>
+              <p className="text-xs text-muted-foreground truncate capitalize">{activeRole === 'avatar' ? 'Local Agent' : activeRole}</p>
             </div>
           </div>
           {user && <RoleSwitcher user={user} />}
@@ -282,7 +282,7 @@ export default function AppShell({ children, navItems = [], user, fullBleed = fa
       </nav>
 
       {/* Main Content */}
-      <main className={`flex-1 min-w-0 lg:ml-72 ${fullBleed ? '' : 'overflow-x-hidden pt-14 lg:pt-0 pb-28 lg:pb-0'}`}>
+      <main className={`flex-1 min-w-0 lg:ml-64 ${fullBleed ? '' : 'overflow-x-hidden pt-14 lg:pt-0 pb-28 lg:pb-0'}`}>
         {fullBleed ? children : (
           <div className="page-shell">
             {children}
