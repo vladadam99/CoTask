@@ -77,6 +77,8 @@ export default function PostJob() {
   const urlParams = new URLSearchParams(window.location.search);
   const editJobId = urlParams.get('edit');
   const activeRole = user?.selected_role || user?.role || 'user';
+  const shellRole = activeRole === 'avatar' ? 'user' : activeRole;
+  const shellHomePath = shellRole === 'user' ? '/Explore' : undefined;
   const [showOptionalDetails, setShowOptionalDetails] = useState(false);
 
   const [form, setForm] = useState({
@@ -237,7 +239,7 @@ export default function PostJob() {
 
   if (!user.identity_verified) {
     return (
-      <AppShell navItems={getNavItems(activeRole)} user={user}>
+      <AppShell navItems={getNavItems(shellRole)} user={user} roleOverride={shellRole} homePathOverride={shellHomePath}>
         <div className="max-w-2xl mx-auto flex flex-col items-center justify-center py-24 text-center gap-5">
           <div className="w-16 h-16 rounded-lg bg-yellow-500/10 flex items-center justify-center">
             <ShieldAlert className="w-8 h-8 text-yellow-500" />
@@ -253,7 +255,7 @@ export default function PostJob() {
   }
 
   return (
-    <AppShell navItems={getNavItems(activeRole)} user={user}>
+    <AppShell navItems={getNavItems(shellRole)} user={user} roleOverride={shellRole} homePathOverride={shellHomePath}>
       <div className="max-w-6xl mx-auto space-y-5">
         <div className="surface-panel rounded-lg p-4 md:p-5">
           <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
@@ -654,3 +656,4 @@ export default function PostJob() {
     </AppShell>
   );
 }
+
