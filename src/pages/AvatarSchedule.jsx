@@ -55,7 +55,7 @@ export default function AvatarSchedule() {
       <div className="space-y-6">
       <PageHero
         eyebrow="Availability"
-        title="My Schedule"
+        title="Schedule"
         description="See confirmed sessions, prepare for upcoming work, and keep your availability current."
         icon={Calendar}
         stats={[
