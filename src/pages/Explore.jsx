@@ -8,7 +8,7 @@ import AvatarSearchSection from '@/components/professionals/AvatarSearchSection'
 import ExpertSearchSection from '@/components/professionals/ExpertSearchSection';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Link } from 'react-router-dom';
-import { Video, Play, Compass, Plus } from 'lucide-react';
+import { Video, Play, Compass, Plus, Radio } from 'lucide-react';
 import { PageHero, SectionTitle } from '@/components/ui/PagePrimitives';
 
 export default function Explore() {
@@ -41,11 +41,28 @@ export default function Explore() {
               {recentPosts.map(post => (
                 <Link 
                   key={post.id} 
-                  to={`/PublicPostView?id=${post.id}`} 
+                  to={post.is_live && post.live_status === 'live' ? `/PublicLiveView?post=${post.id}` : `/PublicPostView?id=${post.id}`}
                   className="snap-start shrink-0 w-48 h-64 relative rounded-xl overflow-hidden group bg-muted border border-border"
                 >
-                  <img src={post.thumbnail_url || post.media_url} alt={post.caption} className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
+                  {post.is_live && post.live_status === 'live' ? (
+                    <div className="absolute inset-0 bg-gradient-to-br from-red-950 via-black to-slate-950 flex flex-col items-center justify-center gap-3 text-center px-4">
+                      <div className="h-12 w-12 rounded-full bg-red-600/20 border border-red-500/30 flex items-center justify-center">
+                        <Radio className="h-6 w-6 text-red-400" />
+                      </div>
+                      <div>
+                        <p className="text-sm font-bold text-white">Live now</p>
+                        <p className="mt-1 text-xs text-white/60">Tap to watch</p>
+                      </div>
+                    </div>
+                  ) : (
+                    <img src={post.thumbnail_url || post.media_url} alt={post.caption} className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
+                  )}
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-80" />
+                  {post.is_live && post.live_status === 'live' && (
+                    <div className="absolute top-2 left-2 rounded-full bg-red-600 px-2 py-0.5 text-[10px] font-bold text-white flex items-center gap-1">
+                      <span className="h-1.5 w-1.5 rounded-full bg-white animate-pulse" /> LIVE
+                    </div>
+                  )}
                   <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
                     <div className="w-10 h-10 rounded-full bg-primary/90 flex items-center justify-center backdrop-blur-sm">
                       <Play className="w-4 h-4 text-white ml-0.5" />
