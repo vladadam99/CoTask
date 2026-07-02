@@ -1,79 +1,110 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Menu, X, ArrowLeft } from 'lucide-react';
+import { Menu, X } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 
 export default function PublicNav() {
   const [open, setOpen] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
   const location = useLocation();
-  const isSubPage = ['/HowItWorks', '/Pricing', '/FAQ'].includes(location.pathname);
+  const links = [
+    { label: 'Home', to: '/' },
+    { label: 'How it works', to: '/HowItWorks' },
+    { label: 'Pricing', to: '/Pricing' },
+    { label: 'FAQ', to: '/FAQ' },
+    { label: 'Safety', to: '/Safety' },
+  ];
 
-  useEffect(() => {
-    const fn = () => setScrolled(window.scrollY > 30);
-    window.addEventListener('scroll', fn);
-    return () => window.removeEventListener('scroll', fn);
-  }, []);
+  const isActive = (to) => (to === '/' ? ['/', '/Landing'].includes(location.pathname) : location.pathname === to);
 
   return (
-    <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${scrolled ? 'bg-background/95 backdrop-blur-xl border-b border-border' : 'bg-transparent'}`}>
-      <div className="max-w-7xl mx-auto px-6 lg:px-12 h-16 flex items-center justify-between">
-        <Link to="/Landing" className="text-xl font-black tracking-tighter text-white">
+    <nav className="fixed left-0 right-0 top-0 z-50 border-b border-border bg-background/95 text-foreground shadow-sm backdrop-blur-xl">
+      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
+        <Link to="/" className="text-xl font-black tracking-tight">
           Co<span className="text-primary">Task</span>
         </Link>
 
-        {/* Desktop */}
-        <div className="hidden md:flex items-center gap-10">
-          <Link to="/HowItWorks" className="text-sm text-white/50 hover:text-white transition-colors font-medium">How it works</Link>
-          <Link to="/Pricing" className="text-sm text-white/50 hover:text-white transition-colors font-medium">Pricing</Link>
-          <Link to="/FAQ" className="text-sm text-white/50 hover:text-white transition-colors font-medium">FAQ</Link>
-        </div>
-
-        <div className="hidden md:flex items-center gap-3">
-          <button onClick={() => base44.auth.redirectToLogin('/UserDashboard')}
-            className="text-sm font-semibold text-white/60 hover:text-white transition-colors px-4 py-2 rounded-full hover:bg-secondary/60">
-            Sign in
-          </button>
-          <Link to="/RoleSelect">
-            <button className="bg-white text-black text-sm font-bold px-5 py-2 rounded-full hover:bg-white/90 transition-all">
-              Get started
-            </button>
-          </Link>
-        </div>
-
-        {/* Mobile toggle / back */}
-        {isSubPage ? (
-          <Link to="/Landing" className="md:hidden flex items-center gap-1.5 text-sm font-semibold text-white/70 hover:text-white transition-colors">
-            <ArrowLeft className="w-4 h-4" /> Back
-          </Link>
-        ) : (
-          <button onClick={() => setOpen(!open)} className="md:hidden p-2 rounded-xl hover:bg-secondary/60 text-white">
-            {open ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-          </button>
-        )}
-      </div>
-
-      {/* Mobile drawer */}
-      {open && (
-        <div className="md:hidden bg-background border-t border-border px-6 py-6 space-y-4">
-          {[{label:'How it works', to:'/HowItWorks'},{label:'Pricing',to:'/Pricing'},{label:'FAQ',to:'/FAQ'}].map(l => (
-            <Link key={l.to} to={l.to} onClick={() => setOpen(false)} className="block py-2 text-white/60 font-medium text-sm hover:text-white transition-colors">
-              {l.label}
+        <div className="hidden items-center gap-7 md:flex">
+          {links.map((link) => (
+            <Link
+              key={link.to}
+              to={link.to}
+              className={`text-sm font-semibold transition-colors ${
+                isActive(link.to) ? 'text-foreground' : 'text-muted-foreground hover:text-foreground'
+              }`}
+            >
+              {link.label}
             </Link>
           ))}
-          <div className="flex gap-3 pt-4 border-t border-border">
-            <button onClick={() => { base44.auth.redirectToLogin('/UserDashboard'); setOpen(false); }}
-              className="flex-1 border border-border text-white font-semibold text-sm py-3 rounded-full hover:bg-secondary/60 transition-colors">
+        </div>
+
+        <div className="hidden items-center gap-2 md:flex">
+          <button
+            type="button"
+            onClick={() => base44.auth.redirectToLogin('/FindPeople')}
+            className="rounded-lg px-4 py-2 text-sm font-semibold text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
+          >
+            Sign in
+          </button>
+          <button
+            type="button"
+            onClick={() => base44.auth.redirectToLogin('/RoleSelect')}
+            className="rounded-lg bg-primary px-5 py-2 text-sm font-bold text-primary-foreground transition-colors hover:bg-primary/90"
+          >
+            Get started
+          </button>
+        </div>
+
+        <button
+          type="button"
+          aria-label="Open menu"
+          onClick={() => setOpen(!open)}
+          className="inline-flex h-10 w-10 items-center justify-center rounded-lg border border-border text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground md:hidden"
+        >
+          {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+        </button>
+      </div>
+
+      {open && (
+        <div className="border-t border-border bg-background px-4 py-4 shadow-xl md:hidden">
+          <div className="grid gap-2">
+            {links.map((link) => (
+              <Link
+                key={link.to}
+                to={link.to}
+                onClick={() => setOpen(false)}
+                className={`rounded-lg px-3 py-3 text-sm font-semibold ${
+                  isActive(link.to) ? 'bg-secondary text-foreground' : 'text-muted-foreground hover:bg-secondary hover:text-foreground'
+                }`}
+              >
+                {link.label}
+              </Link>
+            ))}
+          </div>
+          <div className="mt-4 grid gap-2 border-t border-border pt-4">
+            <button
+              type="button"
+              onClick={() => {
+                base44.auth.redirectToLogin('/FindPeople');
+                setOpen(false);
+              }}
+              className="rounded-lg border border-border bg-card px-4 py-3 text-sm font-bold text-foreground"
+            >
               Sign in
             </button>
-            <Link to="/RoleSelect" onClick={() => setOpen(false)} className="flex-1">
-              <button className="w-full bg-white text-black font-bold text-sm py-3 rounded-full hover:bg-white/90 transition-colors">
-                Get started
-              </button>
-            </Link>
+            <button
+              type="button"
+              onClick={() => {
+                base44.auth.redirectToLogin('/RoleSelect');
+                setOpen(false);
+              }}
+              className="rounded-lg bg-primary px-4 py-3 text-sm font-bold text-primary-foreground"
+            >
+              Get started
+            </button>
           </div>
         </div>
       )}
     </nav>
   );
 }
+
