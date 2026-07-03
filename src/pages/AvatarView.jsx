@@ -195,7 +195,7 @@ export default function AvatarView() {
         Open Messages
       </Button>
       <Button variant="ghost" className="w-full" asChild>
-        <Link to="/PostJob">Post an Open Task instead</Link>
+        <Link to="/PostJob">Create a Brief instead</Link>
       </Button>
     </>
   );
