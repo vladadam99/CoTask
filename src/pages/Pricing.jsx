@@ -79,7 +79,7 @@ export default function Pricing() {
             </p>
             <div className="mt-5 flex flex-col justify-center gap-3 sm:flex-row">
               <Button asChild>
-                <Link to="/PostJob">Post Open Task</Link>
+                <Link to="/PostJob">New Brief</Link>
               </Button>
               <Button variant="outline" asChild>
                 <Link to="/FindPeople">Discover Local Agents</Link>
@@ -92,3 +92,4 @@ export default function Pricing() {
     </div>
   );
 }
+
