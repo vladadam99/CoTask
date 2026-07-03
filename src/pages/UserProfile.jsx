@@ -147,7 +147,7 @@ export default function UserProfile() {
                   <Briefcase className="w-10 h-10 text-muted-foreground mx-auto" />
                   <p className="font-semibold">No tasks posted yet</p>
                   <Link to="/PostJob">
-                    <Button size="sm" className="mt-2">Post Open Task</Button>
+                    <Button size="sm" className="mt-2">New Brief</Button>
                   </Link>
                 </div>
               ) : (
