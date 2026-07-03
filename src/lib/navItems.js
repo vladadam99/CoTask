@@ -2,9 +2,9 @@ import { Calendar, MessageSquare, Home, DollarSign, Building2, Briefcase, Users,
 
 export const userNavItems = [
   { icon: Compass, label: 'Explore', path: '/Explore' },
-  { icon: Plus, label: 'Post Task', path: '/PostJob' },
-  { icon: Calendar, label: 'My Tasks', path: '/Bookings' },
-  { icon: MessageSquare, label: 'Messages', path: '/Messages' },
+  { icon: Plus, label: 'Create', path: '/PostJob' },
+  { icon: Calendar, label: 'Workboard', path: '/Bookings' },
+  { icon: MessageSquare, label: 'Inbox', path: '/Messages' },
   ];
 
   export const avatarNavItems = [
