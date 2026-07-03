@@ -267,16 +267,16 @@ export default function Bookings() {
                   </span>
                 )}
               </div>
-              <h1 className="mt-4 text-3xl font-black tracking-tight text-foreground md:text-4xl">My Tasks</h1>
+              <h1 className="mt-4 text-3xl font-black tracking-tight text-foreground md:text-4xl">Workboard</h1>
               <p className="mt-3 max-w-2xl text-sm leading-relaxed text-muted-foreground">
-                Track proposals, direct hires, Secure Payment, live sessions, proof review, and completed work in one focused workspace.
+                Track proposals, direct hires, Secure Payment, live sessions, proof review, and completed work in one focused place.
               </p>
               <div className="mt-5 flex flex-col gap-3 sm:flex-row">
                 <Link to="/PostJob" className="inline-flex h-11 items-center justify-center gap-2 rounded-lg bg-primary px-4 text-sm font-bold text-primary-foreground shadow-sm hover:bg-primary/90">
-                  <Plus className="h-4 w-4" /> Post Task
+                  <Plus className="h-4 w-4" /> New Brief
                 </Link>
                 <Link to="/Explore" className="inline-flex h-11 items-center justify-center gap-2 rounded-lg border border-border bg-card px-4 text-sm font-bold text-foreground hover:bg-secondary">
-                  Find Agent <ArrowRight className="h-4 w-4" />
+                  Browse Agents <ArrowRight className="h-4 w-4" />
                 </Link>
               </div>
             </div>
@@ -294,8 +294,8 @@ export default function Bookings() {
               ) : (
                 <div className="rounded-lg border border-dashed border-border bg-card p-4">
                   <p className="section-label">Next action</p>
-                  <h2 className="mt-2 text-lg font-black text-foreground">Start with a task</h2>
-                  <p className="mt-2 text-sm text-muted-foreground">Post a brief or choose an agent to begin.</p>
+                  <h2 className="mt-2 text-lg font-black text-foreground">Start with a brief</h2>
+                  <p className="mt-2 text-sm text-muted-foreground">Create a request or choose an agent to begin.</p>
                 </div>
               )}
             </div>
@@ -366,15 +366,15 @@ export default function Bookings() {
         ) : (
           <EmptyState
             icon={CreditCard}
-            title={allTasks.length === 0 ? 'No tasks yet' : 'No tasks match this view'}
-            description={allTasks.length === 0 ? 'Post an Open Task or request Direct Hire to start working with a Local Agent.' : 'Try another filter or search term.'}
+            title={allTasks.length === 0 ? 'No work yet' : 'No work matches this view'}
+            description={allTasks.length === 0 ? 'Create a brief or request Direct Hire to start working with a Local Agent.' : 'Try another filter or search term.'}
             action={(
               <div className="flex w-full max-w-md flex-col justify-center gap-3 sm:flex-row">
                 <Link to="/PostJob" className="flex-1 rounded-lg bg-primary px-6 py-2.5 text-center font-bold text-primary-foreground transition-colors hover:bg-primary/90">
-                  Post Open Task
+                  New Brief
                 </Link>
                 <Link to="/Explore" className="flex-1 rounded-lg border border-border bg-card px-6 py-2.5 text-center font-bold text-foreground transition-colors hover:bg-secondary">
-                  Discover Agents
+                  Browse Agents
                 </Link>
               </div>
             )}
