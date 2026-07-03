@@ -106,7 +106,7 @@ export default function UserBookingDetail() {
         </p>
         <div className="flex flex-col gap-3 pt-2">
           <Button className="w-full" onClick={() => navigate('/Bookings')}>
-            Back to My Tasks
+            Back to Workboard
           </Button>
           <Button variant="outline" className="w-full border-border" onClick={() => navigate('/FindPeople')}>
             Discover Local Agents
