@@ -187,7 +187,7 @@ Based on this, return:
           action={(
             <div className="flex flex-col gap-3 sm:flex-row">
               <Button onClick={() => navigate('/Explore')}>Discover Local Agents</Button>
-              <Button variant="outline" className="border-border" onClick={() => navigate('/PostJob')}>Post an Open Task</Button>
+              <Button variant="outline" className="border-border" onClick={() => navigate('/PostJob')}>New Brief</Button>
             </div>
           )}
         />
@@ -226,7 +226,7 @@ Based on this, return:
 
         <div className="surface-panel rounded-lg p-4">
           <p className="text-sm text-muted-foreground">
-            <strong className="text-foreground">Tip:</strong> Direct Hire is best when you already selected a Local Agent. If you want multiple proposals, <a href="/PostJob" className="text-primary hover:underline">post an Open Task</a> instead.
+            <strong className="text-foreground">Tip:</strong> Direct Hire is best when you already selected a Local Agent. If you want multiple proposals, <a href="/PostJob" className="text-primary hover:underline">create a brief</a> instead.
           </p>
         </div>
 
