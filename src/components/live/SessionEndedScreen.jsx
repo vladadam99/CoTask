@@ -90,7 +90,7 @@ export default function SessionEndedScreen({ session, user }) {
 
       <div className="flex gap-3">
         <Link to="/Bookings">
-          <Button variant="outline" className="border-border gap-2">View My Tasks</Button>
+          <Button variant="outline" className="border-border gap-2">Open Workboard</Button>
         </Link>
         <Link to="/Messages">
           <Button variant="outline" className="border-border gap-2">
@@ -101,3 +101,4 @@ export default function SessionEndedScreen({ session, user }) {
     </div>
   );
 }
+
