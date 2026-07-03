@@ -52,7 +52,7 @@ function ProfilePanel({ user, onClose, navItems = [], roleOverride }) {
     ];
   } else {
     menuItems = [
-      { icon: Calendar, label: 'My Tasks', path: '/Bookings' },
+      { icon: Calendar, label: 'Workboard', path: '/Bookings' },
       { icon: CreditCard, label: 'Billing / Payments', path: '/UserWallet' },
       { icon: Settings, label: 'Settings', path: '/UserSettings' },
       { icon: HelpCircle, label: 'Help & FAQ', path: '/FAQ' },
