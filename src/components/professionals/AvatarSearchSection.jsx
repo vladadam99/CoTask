@@ -169,12 +169,12 @@ export default function AvatarSearchSection({ user }) {
               <div>
                 <p className="text-sm font-bold text-foreground">Want proposals?</p>
                 <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
-                  Post one open task and let qualified agents respond before you fund Secure Payment.
+                  Create one clear brief and let qualified agents respond before you fund Secure Payment.
                 </p>
               </div>
             </div>
             <Button asChild className="mt-4 w-full">
-              <Link to="/PostJob">Post Open Task</Link>
+              <Link to="/PostJob">New Brief</Link>
             </Button>
           </div>
         </aside>
@@ -202,7 +202,7 @@ export default function AvatarSearchSection({ user }) {
               </p>
               <div className="mt-5 flex flex-col justify-center gap-2 sm:flex-row">
                 <Button variant="outline" className="border-border" onClick={clearFilters}>Clear filters</Button>
-                <Button asChild><Link to="/PostJob">Post Open Task</Link></Button>
+                <Button asChild><Link to="/PostJob">New Brief</Link></Button>
               </div>
             </div>
           ) : (
