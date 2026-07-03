@@ -275,7 +275,7 @@ export default function PostJob() {
             </button>
                 <p className="section-label text-primary">Open task brief</p>
                 <h1 className="mt-2 text-2xl md:text-3xl font-bold tracking-tight text-foreground">
-                  {editJobId ? 'Refine your open task' : 'Post an Open Task'}
+                  {editJobId ? 'Refine your brief' : 'Create a Brief'}
                 </h1>
                 <p className="mt-2 max-w-2xl text-sm leading-relaxed text-muted-foreground">
                   Create a clear task brief so qualified Local Agents can send useful proposals.
@@ -648,7 +648,7 @@ export default function PostJob() {
                 </div>
 
                 <Button className="w-full h-12 text-base" onClick={handleSubmit} disabled={submit.isPending}>
-                  {submit.isPending ? (editJobId ? 'Saving...' : 'Posting...') : (editJobId ? 'Save Changes' : 'Post Task for Proposals')}
+                  {submit.isPending ? (editJobId ? 'Saving...' : 'Sending...') : (editJobId ? 'Save Changes' : 'Send Brief for Proposals')}
                 </Button>
                 <p className="text-xs leading-relaxed text-muted-foreground">
                   Open Tasks work best when you want several Local Agents to respond. Compare proposals, choose who to work with, then fund Secure Payment.
