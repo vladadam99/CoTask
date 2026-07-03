@@ -147,7 +147,7 @@ export default function ConsultationBooking() {
           action={(
             <div className="flex flex-col gap-3 sm:flex-row">
               <Button onClick={() => navigate('/Explore')}>Discover Experts</Button>
-              <Button variant="outline" className="border-border" onClick={() => navigate('/PostJob')}>Post an Open Task</Button>
+              <Button variant="outline" className="border-border" onClick={() => navigate('/PostJob')}>New Brief</Button>
             </div>
           )}
         />
@@ -185,7 +185,7 @@ export default function ConsultationBooking() {
           )}
 
           <div className="flex flex-col gap-2">
-            <Button onClick={() => navigate('/Bookings')} className="w-full">View My Tasks</Button>
+            <Button onClick={() => navigate('/Bookings')} className="w-full">Open Workboard</Button>
             <Button variant="outline" className="w-full border-border" onClick={() => navigate(-1)}>Back to Profile</Button>
           </div>
         </div>
