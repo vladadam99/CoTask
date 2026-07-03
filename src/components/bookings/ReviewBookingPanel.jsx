@@ -33,7 +33,7 @@ export default function ReviewBookingPanel({ form, avatar, amount, livePremium, 
             <Link to="/FindPeople">Discover Local Agents</Link>
           </Button>
           <Button variant="outline" className="w-full border-border" asChild>
-            <Link to="/PostJob">Post an Open Task</Link>
+            <Link to="/PostJob">New Brief</Link>
           </Button>
         </div>
       </GlassCard>
@@ -137,7 +137,7 @@ export default function ReviewBookingPanel({ form, avatar, amount, livePremium, 
       <GlassCard className="p-5">
         <h3 className="font-semibold text-sm mb-3 text-muted-foreground uppercase tracking-wider">Price Breakdown</h3>
         <div className="space-y-2 text-sm">
-          <div className="flex justify-between"><span className="text-muted-foreground">Service ({form.duration_minutes} min × ${rate}/hr)</span><span>${(amount - livePremium).toFixed(2)}</span></div>
+          <div className="flex justify-between"><span className="text-muted-foreground">Service ({form.duration_minutes} min ? ${rate}/hr)</span><span>${(amount - livePremium).toFixed(2)}</span></div>
           {livePremium > 0 && <div className="flex justify-between"><span className="text-muted-foreground">Live camera premium</span><span className="text-primary">+${livePremium.toFixed(2)}</span></div>}
           <div className="flex justify-between"><span className="text-muted-foreground">Platform fee (15%)</span><span>${serviceFee.toFixed(2)}</span></div>
           <div className="border-t border-border pt-2 flex justify-between font-bold text-base">
@@ -166,3 +166,4 @@ export default function ReviewBookingPanel({ form, avatar, amount, livePremium, 
     </div>
   );
 }
+
