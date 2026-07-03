@@ -49,7 +49,7 @@ function downloadInvoice(job, userEmail, userName) {
   doc.setFont('helvetica', 'bold');
   doc.text('Net Earned:', 20, 145); doc.text(`$${net.toFixed(2)}`, 160, 145);
   doc.setFontSize(8); doc.setFont('helvetica', 'normal');
-  doc.text('CoTask Platform · cotask.app · support@cotask.app', 20, 280);
+  doc.text('CoTask Platform ? cotask.app ? support@cotask.app', 20, 280);
   doc.save(`cotask-invoice-${invoiceNo}.pdf`);
 }
 
@@ -289,7 +289,7 @@ export default function Profile() {
                   <Briefcase className="w-10 h-10 text-muted-foreground mx-auto" />
                   <p className="font-semibold">No tasks posted yet</p>
                   <Link to="/PostJob">
-                    <Button size="sm" className="mt-2">Post Open Task</Button>
+                    <Button size="sm" className="mt-2">New Brief</Button>
                   </Link>
                 </div>
               ) : (
@@ -311,7 +311,7 @@ export default function Profile() {
                           <span>{job.category}</span>
                           {(job.budget_min || job.budget_max) && (
                             <span className="font-semibold text-primary">
-                              ${job.budget_min || 0}{job.budget_max ? ` – $${job.budget_max}` : '+'}
+                              ${job.budget_min || 0}{job.budget_max ? ` ? $${job.budget_max}` : '+'}
                             </span>
                           )}
                         </div>
@@ -496,7 +496,7 @@ export default function Profile() {
                             </div>
                             <div>
                               <p className="font-medium text-sm">{job.title}</p>
-                              <p className="text-xs text-muted-foreground">{job.posted_by_name} · {job.ended_at ? new Date(job.ended_at).toLocaleDateString() : new Date(job.updated_date).toLocaleDateString()}</p>
+                              <p className="text-xs text-muted-foreground">{job.posted_by_name} ? {job.ended_at ? new Date(job.ended_at).toLocaleDateString() : new Date(job.updated_date).toLocaleDateString()}</p>
                             </div>
                           </div>
                           <div className="text-right flex-shrink-0">
@@ -602,3 +602,4 @@ export default function Profile() {
     </AppShell>
   );
 }
+
