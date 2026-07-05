@@ -283,6 +283,10 @@ export default function PostJob() {
     });
   }, [editJobId]);
 
+  useEffect(() => {
+    composerScrollRef.current?.scrollTo({ top: 0, behavior: 'smooth' });
+  }, [activePanel]);
+
   const set = (key, value) => setForm((prev) => ({ ...prev, [key]: value }));
   const toggleArr = (key, value) => setForm((prev) => ({
     ...prev,
