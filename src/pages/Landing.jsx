@@ -35,7 +35,7 @@ const entryRoutes = [
   },
   {
     icon: ClipboardList,
-    title: 'Create a Brief',
+    title: 'Create a Task',
     text: 'Describe the job once and let qualified Local Agents send useful proposals.',
     action: 'Create task',
     path: '/PostJob',
@@ -50,7 +50,7 @@ const entryRoutes = [
 ];
 
 const steps = [
-  { icon: ClipboardList, title: 'Brief', text: 'Set the place, timing, budget, and outcome.' },
+  { icon: ClipboardList, title: 'Task', text: 'Set the place, timing, budget, and outcome.' },
   { icon: MessageSquare, title: 'Agree', text: 'Chat, choose the agent, and confirm the task.' },
   { icon: Video, title: 'Review', text: 'Join live or approve uploaded proof after the work.' },
 ];
@@ -79,7 +79,7 @@ const videoStories = [
   {
     label: 'Agent on location',
     title: 'A Local Agent goes there.',
-    text: 'The agent follows the brief, talks through the details, and shares proof.',
+    text: 'The agent follows the task, talks through the details, and shares proof.',
     src: 'https://videos.pexels.com/video-files/6715779/6715779-hd_1920_1080_25fps.mp4',
   },
   {
@@ -145,7 +145,7 @@ export default function Landing() {
               Sign in
             </Button>
             <Button onClick={() => goToApp('/PostJob')} className="font-semibold">
-              New Brief
+              New Task
             </Button>
           </div>
 
@@ -191,7 +191,7 @@ export default function Landing() {
               <Button variant="outline" onClick={() => goToApp('/FindPeople')}>
                 Sign in
               </Button>
-              <Button onClick={() => goToApp('/PostJob')}>New Brief</Button>
+              <Button onClick={() => goToApp('/PostJob')}>New Task</Button>
             </div>
           </div>
         )}
@@ -217,7 +217,7 @@ export default function Landing() {
             </p>
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
               <Button size="lg" onClick={() => goToApp('/PostJob')} className="h-12 justify-center gap-2 px-7 text-base md:h-14">
-                New Brief <ArrowRight className="h-4 w-4" />
+                New Task <ArrowRight className="h-4 w-4" />
               </Button>
               <Button
                 size="lg"
@@ -372,11 +372,11 @@ export default function Landing() {
         <div className="mx-auto max-w-4xl text-center">
           <h2 className="text-3xl font-black tracking-tight md:text-5xl">Start with one task.</h2>
           <p className="mx-auto mt-4 max-w-2xl text-base leading-relaxed text-muted-foreground">
-            Write the brief, choose the Local Agent, and keep the whole job in one conversation.
+            Write the task, choose the Local Agent, and keep the whole job in one conversation.
           </p>
           <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
             <Button size="lg" onClick={() => goToApp('/PostJob')} className="gap-2">
-              New Brief <ArrowRight className="h-4 w-4" />
+              New Task <ArrowRight className="h-4 w-4" />
             </Button>
             <Button size="lg" variant="outline" onClick={() => goToApp('/Explore')}>
               Browse Agents
