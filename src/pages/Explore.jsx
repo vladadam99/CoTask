@@ -62,12 +62,12 @@ export default function Explore() {
                 Find a Local Agent who can be there for you.
               </h1>
               <p className="mt-4 max-w-2xl text-base leading-relaxed text-muted-foreground">
-                Search people by city, task type, live availability, reviews, and proof. Hire directly or create a brief when you want proposals.
+                Search people by city, task type, live availability, reviews, and proof. Hire directly or create a task when you want proposals.
               </p>
 
               <div className="mt-6 flex flex-col gap-3 sm:flex-row">
                 <Link to="/PostJob" className="inline-flex h-12 items-center justify-center gap-2 rounded-lg bg-primary px-5 text-sm font-bold text-primary-foreground shadow-sm hover:bg-primary/90">
-                  <Plus className="w-4 h-4" /> New Brief
+                  <Plus className="w-4 h-4" /> New Task
                 </Link>
                 <Link to="/ReelFeed" className="inline-flex h-12 items-center justify-center gap-2 rounded-lg border border-border bg-card px-5 text-sm font-bold text-foreground hover:bg-secondary">
                   <Play className="w-4 h-4" /> Watch Proof
