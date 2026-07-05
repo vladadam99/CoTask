@@ -17,7 +17,7 @@ const roles = [
     subtitle: 'Client / Explorer',
     desc: 'Hire someone on the ground for inspections, errands, shopping, queue checks, and live video help where available.',
     cta: 'Continue as Client',
-    tags: ['Create Briefs', 'Live Sessions', 'Direct Hire'],
+    tags: ['Create Tasks', 'Live Sessions', 'Direct Hire'],
   },
   {
     key: 'avatar',
