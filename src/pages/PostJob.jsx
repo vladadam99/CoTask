@@ -345,7 +345,7 @@ export default function PostJob() {
   const renderPanel = () => {
     if (activePanel === 'what') {
       return (
-        <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_260px]">
+        <div className="grid gap-4">
           <label className="block">
             <span className="text-sm font-bold text-foreground">Task title *</span>
             <Input
