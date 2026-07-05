@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import JobCountdown from '@/components/jobs/JobCountdown';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { useCurrentUser } from '@/lib/useCurrentUser';
@@ -10,10 +9,65 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import StatusBadge from '@/components/ui/StatusBadge';
 import SecurePaymentModal from '@/components/jobs/SecurePaymentModal';
-import { ArrowLeft, MapPin, Clock, DollarSign, CheckCircle, XCircle, Star, Award, MessageCircle, Pencil, Calendar, AlertCircle, ShieldAlert } from 'lucide-react';
 import JobNegotiationFlow from '@/components/jobs/JobNegotiationFlow';
+import JobCountdown from '@/components/jobs/JobCountdown';
+import {
+  ArrowLeft,
+  Award,
+  Calendar,
+  CheckCircle,
+  Clock,
+  DollarSign,
+  MapPin,
+  MessageCircle,
+  Pencil,
+  ShieldAlert,
+  Star,
+  Trash2,
+  UserCheck,
+  XCircle,
+} from 'lucide-react';
 
 const DURATION_LABELS = { hourly: '/hr', daily: '/day', weekly: '/wk', monthly: '/mo', custom: '' };
+
+function money(value, fallback = 'TBD') {
+  if (value === undefined || value === null || value === '') return fallback;
+  return `$${Number(value).toLocaleString()}`;
+}
+
+function dateLine(job) {
+  if (job?.flexible_dates) return 'Flexible timing';
+  if (!job?.scheduled_date) return 'Date not set';
+  return `${job.scheduled_date}${job.scheduled_time ? ` at ${job.scheduled_time}` : ''}`;
+}
+
+function SnapshotCard({ icon: Icon, label, value, tone = 'default' }) {
+  const toneClass = tone === 'primary' ? 'bg-primary/10 text-primary' : 'bg-secondary text-muted-foreground';
+  return (
+    <div className="rounded-lg border border-border bg-card p-4">
+      <div className={`mb-3 flex h-9 w-9 items-center justify-center rounded-lg ${toneClass}`}>
+        <Icon className="h-4 w-4" />
+      </div>
+      <p className="text-[11px] font-bold uppercase tracking-[0.16em] text-muted-foreground">{label}</p>
+      <p className="mt-1 text-sm font-black text-foreground">{value}</p>
+    </div>
+  );
+}
+
+function InfoPill({ children, tone = 'default' }) {
+  const tones = {
+    default: 'border-border bg-secondary text-muted-foreground',
+    primary: 'border-primary/20 bg-primary/10 text-primary',
+    amber: 'border-amber-500/20 bg-amber-500/10 text-amber-700 dark:text-amber-300',
+    blue: 'border-blue-500/20 bg-blue-500/10 text-blue-700 dark:text-blue-300',
+    green: 'border-green-500/20 bg-green-500/10 text-green-700 dark:text-green-300',
+  };
+  return (
+    <span className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs font-bold ${tones[tone]}`}>
+      {children}
+    </span>
+  );
+}
 
 export default function JobDetail() {
   const { user } = useCurrentUser();
@@ -26,7 +80,6 @@ export default function JobDetail() {
   const [showEditForm, setShowEditForm] = useState(false);
   const [editForm, setEditForm] = useState({});
   const [showPaymentModal, setShowPaymentModal] = useState(false);
-
 
   const { data: job, isLoading } = useQuery({
     queryKey: ['job-detail', jobId],
@@ -42,13 +95,13 @@ export default function JobDetail() {
 
   const { data: myApplication } = useQuery({
     queryKey: ['my-application', jobId, user?.email],
-    queryFn: () => base44.entities.JobApplication.filter({ job_id: jobId, applicant_email: user.email }).then(r => r[0] || null),
+    queryFn: () => base44.entities.JobApplication.filter({ job_id: jobId, applicant_email: user.email }).then((r) => r[0] || null),
     enabled: !!jobId && !!user,
   });
 
   const { data: myAvatarProfile } = useQuery({
     queryKey: ['my-avatar-profile', user?.email],
-    queryFn: () => base44.entities.AvatarProfile.filter({ user_email: user.email }).then(r => r[0] || null),
+    queryFn: () => base44.entities.AvatarProfile.filter({ user_email: user.email }).then((r) => r[0] || null),
     enabled: !!user,
   });
 
@@ -56,7 +109,7 @@ export default function JobDetail() {
     queryKey: ['applicant-profiles', jobId],
     queryFn: async () => {
       const profiles = await Promise.all(
-        applications.map(app => base44.entities.AvatarProfile.filter({ user_email: app.applicant_email }).then(r => r[0]))
+        applications.map((app) => base44.entities.AvatarProfile.filter({ user_email: app.applicant_email }).then((r) => r[0]))
       );
       return profiles.filter(Boolean);
     },
@@ -72,7 +125,7 @@ export default function JobDetail() {
         proposed_duration: applyForm.proposed_duration,
         available_from: applyForm.available_from,
         applicant_profile_id: myAvatarProfile?.id,
-        applicant_type: 'avatar'
+        applicant_type: 'avatar',
       });
       if (res.data?.error) throw new Error(res.data.error);
       return res.data?.application;
@@ -108,7 +161,7 @@ export default function JobDetail() {
 
   const { data: jobConversation } = useQuery({
     queryKey: ['job-conversation', jobId],
-    queryFn: () => base44.entities.Conversation.filter({ booking_id: `job_${jobId}` }).then(r => r[0] || null),
+    queryFn: () => base44.entities.Conversation.filter({ booking_id: `job_${jobId}` }).then((r) => r[0] || null),
     enabled: !!jobId && job?.status !== 'open',
   });
 
@@ -117,8 +170,9 @@ export default function JobDetail() {
   const isHiredAgent = job?.winner_email === user?.email;
   const isProspectAgent = isAvatar && !isOwner && !isHiredAgent;
   const hasSubmittedProposal = !!myApplication;
-
   const paymentStatus = job?.payment_status || (job?.escrow_status === 'authorized' ? 'held' : job?.escrow_status === 'captured' ? 'released' : 'pending');
+  const canApply = isProspectAgent && job?.status === 'open' && !hasSubmittedProposal;
+  const showOwnerControls = isOwner;
 
   const openEditForm = () => {
     setEditForm({
@@ -144,471 +198,432 @@ export default function JobDetail() {
         location: editForm.location,
         scheduled_date: editForm.scheduled_date || undefined,
         scheduled_time: editForm.scheduled_time || undefined,
-      }
+      },
     });
     queryClient.invalidateQueries({ queryKey: ['job-detail', jobId] });
     setShowEditForm(false);
   };
 
-  const showOwnerControls = isOwner;
-  const canApply = isProspectAgent && job?.status === 'open' && !hasSubmittedProposal;
   const nextAction = job?.status === 'open'
     ? isOwner
       ? {
-          title: 'Review Proposals',
-          description: applications.length > 0 ? 'Compare Local Agent proposals and choose who you want to work with.' : 'Your Open Task is live. Proposals from Local Agents will appear here.',
+          title: applications.length ? 'Review proposals' : 'Waiting for proposals',
+          description: applications.length ? 'Compare agents, negotiate if needed, then choose who should handle the task.' : 'Your task is live. Agents will appear here when they propose.',
         }
       : canApply
         ? {
-            title: 'Submit Proposal',
-            description: 'Send a useful proposal that explains availability, rate, and how you will complete the task.',
+            title: 'Send a proposal',
+            description: 'Explain how you will complete the task, your rate, and when you can start.',
           }
         : {
-            title: 'Open Task',
-            description: 'Review the task and use messages after the client selects a Local Agent.',
+            title: 'Open task',
+            description: 'Review the task details. Messages become available after the client selects an agent.',
           }
     : paymentStatus === 'pending' && isOwner
       ? {
           title: 'Fund Secure Payment',
-          description: 'A Local Agent has been selected. Fund Secure Payment to confirm the task before work begins.',
+          description: 'An agent has been selected. Fund Secure Payment to confirm the task before work begins.',
         }
       : paymentStatus === 'pending' && isHiredAgent
         ? {
             title: 'Waiting for Secure Payment',
-            description: 'The client selected you and now needs to fund Secure Payment before the task starts.',
+            description: 'The client selected you and needs to fund Secure Payment before the task starts.',
           }
         : job?.status === 'in_progress'
           ? {
-              title: 'Task In Progress',
-              description: isHiredAgent ? 'Update your status, share progress photos, and submit proof when ready.' : 'Follow live progress and review proof when the Local Agent submits it.',
+              title: 'Task in progress',
+              description: isHiredAgent ? 'Share updates and proof as you complete the work.' : 'Follow progress and review proof when submitted.',
             }
           : job?.status === 'awaiting_approval'
             ? {
-                title: 'Review Proof',
+                title: 'Review proof',
                 description: 'Completion proof is ready for client review.',
               }
             : {
-                title: 'Task Details',
-                description: 'Follow the status, payment state, messages, and proof from one place.',
+                title: 'Task workspace',
+                description: 'Follow status, payment, messages, and proof from this page.',
               };
 
-  if (isLoading) return (
-    <AppShell navItems={getNavItems(user?.selected_role || user?.role || 'user')} user={user}>
-      <div className="flex items-center justify-center h-64">
-        <div className="w-8 h-8 border-4 border-primary/30 border-t-primary rounded-full animate-spin" />
-      </div>
-    </AppShell>
-  );
+  if (isLoading) {
+    return (
+      <AppShell navItems={getNavItems(user?.selected_role || user?.role || 'user')} user={user}>
+        <div className="flex h-64 items-center justify-center">
+          <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary/30 border-t-primary" />
+        </div>
+      </AppShell>
+    );
+  }
 
-  if (!job) return (
-    <AppShell navItems={getNavItems(user?.selected_role || user?.role || 'user')} user={user}>
-      <div className="flex items-center justify-center h-64 text-muted-foreground">Task not found.</div>
-    </AppShell>
-  );
+  if (!job) {
+    return (
+      <AppShell navItems={getNavItems(user?.selected_role || user?.role || 'user')} user={user}>
+        <div className="flex h-64 items-center justify-center text-muted-foreground">Task not found.</div>
+      </AppShell>
+    );
+  }
+
+  const budgetValue = job.budget_min
+    ? `${money(job.budget_min)}${DURATION_LABELS[job.duration_type] || ''}${job.negotiable ? ' negotiable' : ''}`
+    : 'Budget not set';
 
   return (
     <AppShell navItems={getNavItems(user?.selected_role || user?.role || 'user')} user={user}>
-      <div className="max-w-5xl mx-auto space-y-6">
-        {/* Back + Delete */}
-        <div className="flex items-center justify-between">
-          <button onClick={() => navigate(-1)} className="w-9 h-9 rounded-full bg-secondary border border-border flex items-center justify-center hover:border-primary/30 transition-colors">
-            <ArrowLeft className="w-4 h-4" />
-          </button>
-          {isOwner && (
-            <div className="flex gap-2">
-              {job.status === 'open' && (
-                <Button variant="outline" size="sm" className="border-border text-xs gap-1" onClick={() => navigate(`/PostJob?edit=${jobId}`)}>
-                  <Pencil className="w-3 h-3" /> Edit
-                </Button>
-              )}
-              <Button
-                variant="outline"
-                size="sm"
-                className="border-red-500/30 text-red-400 hover:bg-red-500/10 text-xs"
-                onClick={async () => {
-                  if (!confirm('Delete this task? This cannot be undone.')) return;
-                  await base44.entities.JobPost.delete(jobId);
-                  navigate('/JobMarketplace');
-                }}
-              >
-                Delete
-              </Button>
-            </div>
-          )}
-        </div>
+      <div className="mx-auto max-w-6xl space-y-5">
+        <section className="overflow-hidden rounded-lg border border-border bg-card shadow-sm">
+          <div className="grid lg:grid-cols-[minmax(0,1fr)_330px]">
+            <div className="p-4 md:p-6">
+              <div className="mb-5 flex items-center justify-between gap-3">
+                <button
+                  type="button"
+                  onClick={() => navigate(-1)}
+                  className="inline-flex h-10 items-center gap-2 rounded-lg border border-border bg-background px-3 text-sm font-bold text-muted-foreground transition-colors hover:border-primary/30 hover:text-foreground"
+                >
+                  <ArrowLeft className="h-4 w-4" />
+                  Back
+                </button>
+                {isOwner && (
+                  <div className="flex gap-2">
+                    {job.status === 'open' && (
+                      <Button variant="outline" size="sm" className="border-border" onClick={openEditForm}>
+                        <Pencil className="h-3.5 w-3.5" /> Edit
+                      </Button>
+                    )}
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="border-red-500/30 text-red-600 hover:bg-red-500/10"
+                      onClick={async () => {
+                        if (!confirm('Delete this task? This cannot be undone.')) return;
+                        await base44.entities.JobPost.delete(jobId);
+                        navigate('/JobMarketplace');
+                      }}
+                    >
+                      <Trash2 className="h-3.5 w-3.5" /> Delete
+                    </Button>
+                  </div>
+                )}
+              </div>
 
-        {/* Job Header */}
-        <div className="surface-panel rounded-lg p-5 md:p-6 space-y-5">
-          <div className="flex items-start justify-between gap-3">
-            <div>
-              <div className="flex items-center gap-2 flex-wrap mb-1">
-                <h1 className="text-2xl font-black tracking-tight">{job.title}</h1>
-                <Badge variant="outline" className="text-xs font-medium px-2.5 py-1 rounded-md bg-secondary text-secondary-foreground border-border">Open Task</Badge>
+              <div className="flex flex-wrap items-center gap-2">
                 <StatusBadge status={job.status} />
-                {job.camera_required && <Badge variant="outline" className="text-xs bg-primary/10 text-primary border-primary/20">Camera Required</Badge>}
+                <Badge variant="outline" className="rounded-full border-primary/20 bg-primary/10 px-3 py-1 text-xs font-bold text-primary">Open Task</Badge>
+                {job.camera_required && <Badge variant="outline" className="rounded-full border-primary/20 bg-primary/10 px-3 py-1 text-xs font-bold text-primary">Proof required</Badge>}
               </div>
-              <p className="text-sm text-muted-foreground">Posted by {job.posted_by_name || 'Client'} ?? {job.posted_by_type === 'enterprise' ? 'Enterprise' : 'Client'}</p>
+
+              <h1 className="mt-4 max-w-3xl text-3xl font-black tracking-tight text-foreground md:text-4xl">
+                {job.title}
+              </h1>
+              <p className="mt-2 text-sm font-semibold text-muted-foreground">
+                Posted by {job.posted_by_name || 'Client'} - {job.posted_by_type === 'enterprise' ? 'Enterprise' : 'Client'}
+              </p>
+
+              <p className="mt-5 max-w-3xl whitespace-pre-line text-sm leading-7 text-foreground/85">
+                {job.description}
+              </p>
+
+              <div className="mt-5 flex flex-wrap gap-2">
+                {job.remote_ok && <InfoPill tone="blue">Remote-friendly</InfoPill>}
+                {job.travel_required && <InfoPill tone="amber">Travel needed</InfoPill>}
+                {job.flexible_dates && <InfoPill tone="green">Flexible timing</InfoPill>}
+                {(job.skills_required || []).slice(0, 5).map((skill) => <InfoPill key={skill}>{skill}</InfoPill>)}
+                {(job.languages_required || []).slice(0, 4).map((lang) => <InfoPill key={lang}>{lang}</InfoPill>)}
+                {(job.equipment_needed || []).slice(0, 4).map((eq) => <InfoPill key={eq}>{eq}</InfoPill>)}
+              </div>
             </div>
-            {showOwnerControls && job.status === 'open' && (
-              <Badge variant="outline" className="text-xs bg-yellow-500/10 text-yellow-400 border-yellow-500/20">
-                {job.application_count || 0} proposal{job.application_count !== 1 ? 's' : ''}
-              </Badge>
-            )}
+
+            <aside className="border-t border-border bg-secondary/35 p-4 lg:border-l lg:border-t-0">
+              <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-1">
+                <SnapshotCard icon={MapPin} label="Where" value={job.location || (job.remote_ok ? 'Remote-friendly' : 'Location not set')} />
+                <SnapshotCard icon={Calendar} label="When" value={dateLine(job)} />
+                <SnapshotCard icon={DollarSign} label="Budget" value={budgetValue} tone="primary" />
+                <SnapshotCard icon={UserCheck} label="Proposals" value={`${applications.length || job.application_count || 0} received`} />
+              </div>
+            </aside>
           </div>
+        </section>
 
-          <p className="text-sm leading-relaxed text-muted-foreground">{job.description}</p>
-
-          <div className="flex flex-wrap gap-4 text-sm text-muted-foreground">
-            {job.location && <span className="flex items-center gap-1.5"><MapPin className="w-4 h-4" />{job.location}</span>}
-            {job.duration_value && <span className="flex items-center gap-1.5"><Clock className="w-4 h-4" />{job.duration_value} {job.duration_value === 1 ? 'hour' : 'hours'}</span>}
-            {job.budget_min && (
-              <span className="text-primary font-semibold">
-                ${job.budget_min}{DURATION_LABELS[job.duration_type]}{job.negotiable ? ' ?? negotiable' : ''}
-              </span>
-            )}
-          </div>
-
-          <div className="flex flex-wrap gap-2 text-xs">
-            {job.remote_ok && <span className="px-2 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400">Remote OK</span>}
-            {job.travel_required && <span className="px-2 py-1 rounded-full bg-orange-500/10 border border-orange-500/20 text-orange-400">Travel Required</span>}
-            {job.flexible_dates
-              ? <span className="px-2 py-1 rounded-full bg-green-500/10 border border-green-500/20 text-green-400">Flexible Dates</span>
-              : job.scheduled_date && (
-                <span className="px-2 py-1 rounded-full bg-secondary border border-border text-muted-foreground flex items-center gap-1.5">
-                  <Calendar className="w-3.5 h-3.5" />
-                  {job.scheduled_date}{job.scheduled_time ? ` at ${job.scheduled_time}` : ''}
-                </span>
-              )}
-            {!job.flexible_dates && job.scheduled_date && job.scheduled_time && job.status === 'open' && (
-              <span className="px-2 py-1 rounded-full bg-yellow-500/10 border border-yellow-500/20 text-yellow-400 flex items-center gap-1.5 text-xs">
-                <AlertCircle className="w-3 h-3" /> Expires if unclaimed by {job.scheduled_time} on {job.scheduled_date}
-              </span>
-            )}
-          </div>
-
-          {(job.skills_required || []).length > 0 && (
+        <section className="rounded-lg border border-primary/20 bg-primary/10 p-4 md:p-5">
+          <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
             <div>
-              <p className="text-xs font-semibold text-muted-foreground mb-1.5">SKILLS REQUIRED</p>
-              <div className="flex flex-wrap gap-1.5">
-                {job.skills_required.map(s => <span key={s} className="text-xs bg-secondary border border-border rounded-full px-2.5 py-1">{s}</span>)}
-              </div>
-            </div>
-          )}
-          {(job.languages_required || []).length > 0 && (
-            <div>
-              <p className="text-xs font-semibold text-muted-foreground mb-1.5">LANGUAGES</p>
-              <div className="flex flex-wrap gap-1.5">
-                {job.languages_required.map(l => <span key={l} className="text-xs bg-secondary border border-border rounded-full px-2.5 py-1">{l}</span>)}
-              </div>
-            </div>
-          )}
-          {(job.equipment_needed || []).length > 0 && (
-            <div>
-              <p className="text-xs font-semibold text-muted-foreground mb-1.5">EQUIPMENT NEEDED</p>
-              <div className="flex flex-wrap gap-1.5">
-                {job.equipment_needed.map(eq => <span key={eq} className="text-xs bg-secondary border border-border rounded-full px-2.5 py-1">{eq}</span>)}
-              </div>
-            </div>
-          )}
-        </div>
-
-        <div className="surface-panel rounded-lg border-primary/20 p-5">
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-            <div>
-              <p className="section-label">Next action</p>
-              <h2 className="text-lg font-bold text-foreground">{nextAction.title}</h2>
+              <p className="section-label text-primary">Next action</p>
+              <h2 className="mt-1 text-xl font-black text-foreground">{nextAction.title}</h2>
               <p className="mt-1 max-w-2xl text-sm leading-relaxed text-muted-foreground">{nextAction.description}</p>
             </div>
-            {canApply && !showApplyForm && user?.identity_verified && (
-              <Button className="shrink-0" onClick={() => setShowApplyForm(true)}>Submit Proposal</Button>
-            )}
-            {paymentStatus === 'pending' && job.winner_email && isOwner && !showPaymentModal && (
-              <Button variant="payment" className="shrink-0 gap-2" onClick={() => setShowPaymentModal(true)}>
-                <DollarSign className="w-4 h-4" /> Fund Secure Payment
-              </Button>
-            )}
-          </div>
-        </div>
-
-        {job.winner_email && paymentStatus === 'pending' && isOwner && (
-          <div className="surface-panel rounded-lg p-4 border border-yellow-500/20 flex flex-col gap-3">
-            <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-full bg-yellow-500/10 flex items-center justify-center flex-shrink-0">
-                <AlertCircle className="w-4 h-4 text-yellow-400" />
-              </div>
-              <div>
-                <p className="text-sm font-semibold text-yellow-400">Agent Selected</p>
-                <p className="text-xs text-muted-foreground">Please fund Secure Payment to confirm the task.</p>
-              </div>
-            </div>
-            {!showPaymentModal ? (
-              <div className="flex flex-col gap-1 w-full">
-                <Button
-                  variant="payment"
-                  className="w-full gap-2"
-                  onClick={() => setShowPaymentModal(true)}
-                >
-                  <DollarSign className="w-4 h-4" /> Fund Secure Payment ??? ${job.budget_max || job.budget_min || 50}
+            <div className="flex flex-col gap-2 sm:flex-row md:shrink-0">
+              {canApply && !showApplyForm && user?.identity_verified && (
+                <Button className="h-11 font-bold" onClick={() => setShowApplyForm(true)}>Submit Proposal</Button>
+              )}
+              {paymentStatus === 'pending' && job.winner_email && isOwner && !showPaymentModal && (
+                <Button variant="payment" className="h-11 gap-2 font-bold" onClick={() => setShowPaymentModal(true)}>
+                  <DollarSign className="h-4 w-4" /> Fund Secure Payment
                 </Button>
-                <p className="text-center text-xs text-muted-foreground mt-1">
-                  You are not charged until you fund Secure Payment. Funds are held and only released upon approval.
-                </p>
-              </div>
-            ) : (
-              <div className="w-full mt-2">
-                <SecurePaymentModal 
-                  job={{ ...job, task_type: 'job', escrow_amount: job.budget_max || job.budget_min || 50 }} 
-                  onCancel={() => setShowPaymentModal(false)}
-                />
-              </div>
-            )}
+              )}
+              {jobConversation && (isHiredAgent || showOwnerControls) && (
+                <Button className="h-11 gap-2 font-bold" onClick={() => navigate(`/Messages?conversation=${jobConversation.id}`)}>
+                  <MessageCircle className="h-4 w-4" /> Open Messages
+                </Button>
+              )}
+            </div>
           </div>
+        </section>
+
+        {showPaymentModal && (
+          <section className="rounded-lg border border-primary/20 bg-card p-4 shadow-sm">
+            <SecurePaymentModal
+              job={{ ...job, task_type: 'job', escrow_amount: job.budget_max || job.budget_min || 50 }}
+              onCancel={() => setShowPaymentModal(false)}
+            />
+          </section>
         )}
 
         {job.winner_email && paymentStatus === 'pending' && isHiredAgent && (
-          <div className="surface-panel rounded-lg p-4 border border-blue-500/20 flex flex-col gap-3">
+          <section className="rounded-lg border border-blue-500/20 bg-blue-500/10 p-4">
             <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-full bg-blue-500/10 flex items-center justify-center flex-shrink-0">
-                <span className="w-2 h-2 rounded-full bg-blue-400 animate-pulse" />
-              </div>
+              <span className="h-2.5 w-2.5 rounded-full bg-blue-500 animate-pulse" />
               <div>
-                <p className="text-sm font-semibold text-blue-400">Waiting for Client to fund Secure Payment</p>
-                <p className="text-xs text-muted-foreground">You have been selected! The client has been notified to confirm with payment.</p>
+                <p className="text-sm font-black text-blue-700 dark:text-blue-300">Waiting for client payment</p>
+                <p className="text-xs text-muted-foreground">The client selected you and now needs to fund Secure Payment.</p>
               </div>
             </div>
-          </div>
+          </section>
         )}
 
-        {/* Secure Payment Status Banner */}
         {job.stripe_payment_intent_id && paymentStatus === 'held' && isOwner && (
-          <div className="surface-panel rounded-lg p-4 border border-yellow-500/20 flex items-center gap-3">
-            <div className="w-8 h-8 rounded-full bg-yellow-500/10 flex items-center justify-center flex-shrink-0">
-              <DollarSign className="w-4 h-4 text-yellow-400" />
+          <section className="rounded-lg border border-amber-500/20 bg-amber-500/10 p-4">
+            <div className="flex items-center gap-3">
+              <DollarSign className="h-5 w-5 text-amber-700 dark:text-amber-300" />
+              <div>
+                <p className="text-sm font-black text-amber-700 dark:text-amber-300">{money(job.escrow_amount)} Secure Payment held</p>
+                <p className="text-xs text-muted-foreground">Funds are released to the Local Agent after approval or resolution.</p>
+              </div>
             </div>
-            <div>
-              <p className="text-sm font-semibold text-yellow-400">
-                ${job.escrow_amount} Secure Payment Held{job.stripe_payment_intent_id?.startsWith('sim_') ? ' (Test Secure Payment Flow)' : ''}
-              </p>
-              <p className="text-xs text-muted-foreground">Funds are held for this task and paid to the Local Agent after client approval or a reviewed resolution.</p>
-            </div>
-          </div>
+          </section>
         )}
+
         {paymentStatus === 'released' && (showOwnerControls || isHiredAgent) && (
-          <div className="surface-panel rounded-lg p-3 border border-green-500/20 flex items-center gap-2">
-            <CheckCircle className="w-4 h-4 text-green-400" />
-            <p className="text-xs text-green-400">Secure Payment of ${job.escrow_amount || job.budget_max || job.budget_min} paid to the Local Agent.</p>
-          </div>
-        )}
-
-        {/* Edit Form */}
-        {showEditForm && (
-          <div className="surface-panel rounded-lg p-6 border border-primary/20 space-y-4">
-            <h3 className="font-bold">Edit Open Task</h3>
-            <div>
-              <label className="text-sm font-medium mb-1.5 block">Title</label>
-              <input value={editForm.title} onChange={e => setEditForm(p => ({ ...p, title: e.target.value }))}
-                className="w-full bg-secondary border border-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-primary/50 text-foreground" />
-            </div>
-            <div>
-              <label className="text-sm font-medium mb-1.5 block">Description</label>
-              <textarea value={editForm.description} onChange={e => setEditForm(p => ({ ...p, description: e.target.value }))} rows={4}
-                className="w-full bg-secondary border border-border rounded-lg px-3 py-2 text-sm resize-none focus:outline-none focus:border-primary/50 text-foreground" />
-            </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label className="text-sm font-medium mb-1.5 block">Budget Min ($)</label>
-                <input type="number" value={editForm.budget_min} onChange={e => setEditForm(p => ({ ...p, budget_min: e.target.value }))}
-                  className="w-full bg-secondary border border-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-primary/50 text-foreground" />
-              </div>
-              <div>
-                <label className="text-sm font-medium mb-1.5 block">Budget Max ($)</label>
-                <input type="number" value={editForm.budget_max} onChange={e => setEditForm(p => ({ ...p, budget_max: e.target.value }))}
-                  className="w-full bg-secondary border border-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-primary/50 text-foreground" />
-              </div>
-            </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label className="text-sm font-medium mb-1.5 block">Location</label>
-                <input value={editForm.location} onChange={e => setEditForm(p => ({ ...p, location: e.target.value }))}
-                  className="w-full bg-secondary border border-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-primary/50 text-foreground" />
-              </div>
-              <div>
-                <label className="text-sm font-medium mb-1.5 block">Scheduled Date</label>
-                <input type="date" value={editForm.scheduled_date} onChange={e => setEditForm(p => ({ ...p, scheduled_date: e.target.value }))}
-                  className="w-full bg-secondary border border-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-primary/50 text-foreground" />
-              </div>
-              <div>
-                <label className="text-sm font-medium mb-1.5 block">Scheduled Time</label>
-                <input type="time" value={editForm.scheduled_time || ''} onChange={e => setEditForm(p => ({ ...p, scheduled_time: e.target.value }))}
-                  className="w-full bg-secondary border border-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-primary/50 text-foreground" />
-              </div>
-            </div>
-            <div className="flex gap-3">
-              <Button className="flex-1" onClick={saveEdit}>Save Changes</Button>
-              <Button variant="outline" className="border-border" onClick={() => setShowEditForm(false)}>Cancel</Button>
-            </div>
-          </div>
-        )}
-
-        {/* My Application Status (Prospect With Proposal) */}
-        {hasSubmittedProposal && !isHiredAgent && (
-          <div className={`surface-panel rounded-lg p-4 border ${myApplication.status === 'rejected' ? 'border-red-500/20' : 'border-yellow-500/20'}`}>
+          <section className="rounded-lg border border-green-500/20 bg-green-500/10 p-4">
             <div className="flex items-center gap-2">
-              {myApplication.status === 'rejected' ? (
-                <XCircle className="w-5 h-5 text-red-400" />
-              ) : (
-                <Clock className="w-5 h-5 text-yellow-400" />
-              )}
-              <div>
-                <p className={`font-semibold text-sm ${myApplication.status === 'rejected' ? 'text-red-400' : 'text-yellow-400'}`}>
-                  {myApplication.status === 'rejected' ? 'Proposal Not Selected' : 'Proposal Submitted'}
-                </p>
-                <p className="text-xs text-muted-foreground">
-                  {myApplication.status === 'rejected' ? 'The client has chosen another agent or declined this proposal.' : 'Your proposal is pending review by the client.'}
-                </p>
+              <CheckCircle className="h-5 w-5 text-green-700 dark:text-green-300" />
+              <p className="text-sm font-bold text-green-700 dark:text-green-300">Secure Payment paid to the Local Agent.</p>
+            </div>
+          </section>
+        )}
+
+        {showEditForm && (
+          <section className="rounded-lg border border-primary/20 bg-card p-5 shadow-sm">
+            <div className="mb-4 flex items-center justify-between">
+              <h3 className="text-lg font-black">Edit task</h3>
+              <Button variant="ghost" size="sm" onClick={() => setShowEditForm(false)}>Close</Button>
+            </div>
+            <div className="grid gap-4">
+              <label className="block">
+                <span className="text-sm font-bold">Title</span>
+                <input value={editForm.title} onChange={(e) => setEditForm((p) => ({ ...p, title: e.target.value }))}
+                  className="mt-1.5 h-11 w-full rounded-lg border border-input bg-card px-3 text-sm text-foreground focus:border-primary/45 focus:outline-none focus:ring-2 focus:ring-primary/20" />
+              </label>
+              <label className="block">
+                <span className="text-sm font-bold">Description</span>
+                <textarea value={editForm.description} onChange={(e) => setEditForm((p) => ({ ...p, description: e.target.value }))} rows={4}
+                  className="mt-1.5 w-full resize-none rounded-lg border border-input bg-card px-3 py-2 text-sm text-foreground focus:border-primary/45 focus:outline-none focus:ring-2 focus:ring-primary/20" />
+              </label>
+              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+                <label className="block">
+                  <span className="text-sm font-bold">Budget min</span>
+                  <input type="number" value={editForm.budget_min} onChange={(e) => setEditForm((p) => ({ ...p, budget_min: e.target.value }))}
+                    className="mt-1.5 h-11 w-full rounded-lg border border-input bg-card px-3 text-sm text-foreground focus:border-primary/45 focus:outline-none focus:ring-2 focus:ring-primary/20" />
+                </label>
+                <label className="block">
+                  <span className="text-sm font-bold">Budget max</span>
+                  <input type="number" value={editForm.budget_max} onChange={(e) => setEditForm((p) => ({ ...p, budget_max: e.target.value }))}
+                    className="mt-1.5 h-11 w-full rounded-lg border border-input bg-card px-3 text-sm text-foreground focus:border-primary/45 focus:outline-none focus:ring-2 focus:ring-primary/20" />
+                </label>
+                <label className="block sm:col-span-2">
+                  <span className="text-sm font-bold">Location</span>
+                  <input value={editForm.location} onChange={(e) => setEditForm((p) => ({ ...p, location: e.target.value }))}
+                    className="mt-1.5 h-11 w-full rounded-lg border border-input bg-card px-3 text-sm text-foreground focus:border-primary/45 focus:outline-none focus:ring-2 focus:ring-primary/20" />
+                </label>
+                <label className="block">
+                  <span className="text-sm font-bold">Date</span>
+                  <input type="date" value={editForm.scheduled_date} onChange={(e) => setEditForm((p) => ({ ...p, scheduled_date: e.target.value }))}
+                    className="mt-1.5 h-11 w-full rounded-lg border border-input bg-card px-3 text-sm text-foreground focus:border-primary/45 focus:outline-none focus:ring-2 focus:ring-primary/20" />
+                </label>
+                <label className="block">
+                  <span className="text-sm font-bold">Time</span>
+                  <input type="time" value={editForm.scheduled_time || ''} onChange={(e) => setEditForm((p) => ({ ...p, scheduled_time: e.target.value }))}
+                    className="mt-1.5 h-11 w-full rounded-lg border border-input bg-card px-3 text-sm text-foreground focus:border-primary/45 focus:outline-none focus:ring-2 focus:ring-primary/20" />
+                </label>
+              </div>
+              <div className="flex gap-3">
+                <Button className="flex-1" onClick={saveEdit}>Save Changes</Button>
+                <Button variant="outline" className="border-border" onClick={() => setShowEditForm(false)}>Cancel</Button>
               </div>
             </div>
-            <div className="mt-3 p-3 bg-secondary/50 rounded-xl text-sm border border-border">
-              <p className="text-muted-foreground mb-2">"{myApplication.cover_message}"</p>
-              <div className="flex gap-4 font-medium">
-                {myApplication.proposed_rate && <span>${myApplication.proposed_rate} rate</span>}
+          </section>
+        )}
+
+        {hasSubmittedProposal && !isHiredAgent && (
+          <section className={`rounded-lg border p-4 ${myApplication.status === 'rejected' ? 'border-red-500/20 bg-red-500/10' : 'border-amber-500/20 bg-amber-500/10'}`}>
+            <div className="flex items-center gap-2">
+              {myApplication.status === 'rejected' ? <XCircle className="h-5 w-5 text-red-600" /> : <Clock className="h-5 w-5 text-amber-700 dark:text-amber-300" />}
+              <div>
+                <p className="text-sm font-black">{myApplication.status === 'rejected' ? 'Proposal not selected' : 'Proposal submitted'}</p>
+                <p className="text-xs text-muted-foreground">{myApplication.status === 'rejected' ? 'The client chose another agent or declined this proposal.' : 'Your proposal is pending client review.'}</p>
+              </div>
+            </div>
+            <div className="mt-3 rounded-lg border border-border bg-card p-3 text-sm">
+              <p className="text-muted-foreground">"{myApplication.cover_message}"</p>
+              <div className="mt-2 flex flex-wrap gap-3 font-bold">
+                {myApplication.proposed_rate && <span>{money(myApplication.proposed_rate)} rate</span>}
                 {myApplication.available_from && <span>Available: {myApplication.available_from}</span>}
               </div>
             </div>
-          </div>
+          </section>
         )}
 
-
-
-        {/* Apply Button / Form */}
         {canApply && !showApplyForm && !user?.identity_verified && (
-          <div className="surface-panel rounded-lg p-5 border border-yellow-500/20 flex items-center gap-4">
-            <ShieldAlert className="w-6 h-6 text-yellow-400 flex-shrink-0" />
-            <div className="flex-1 min-w-0" title="Identity verification ensures a safe and trusted marketplace for all users.">
-              <p className="font-semibold text-sm">Identity Verification Required</p>
-              <p className="text-xs text-muted-foreground">You must verify your identity before submitting proposals.</p>
+          <section className="rounded-lg border border-amber-500/20 bg-amber-500/10 p-4">
+            <div className="flex items-center gap-4">
+              <ShieldAlert className="h-6 w-6 shrink-0 text-amber-700 dark:text-amber-300" />
+              <div className="min-w-0 flex-1">
+                <p className="font-black">Identity Verification Required</p>
+                <p className="text-xs text-muted-foreground">You must verify your identity before submitting proposals.</p>
+              </div>
+              <Button size="sm" onClick={() => navigate('/IdentityVerification')}>Verify</Button>
             </div>
-            <Button size="sm" onClick={() => navigate('/IdentityVerification')}>Verify</Button>
-          </div>
+          </section>
         )}
 
         {showApplyForm && (
-          <div className="surface-panel rounded-lg p-6 border border-primary/20 space-y-4">
-            <h3 className="font-bold">Your Proposal</h3>
-            <div>
-              <label className="text-sm font-medium mb-1.5 block" title="Tell the client why you are a good fit and what rate you propose.">Cover Message *</label>
-              <textarea
-                value={applyForm.cover_message}
-                onChange={e => setApplyForm(p => ({ ...p, cover_message: e.target.value }))}
-                placeholder="Introduce yourself, explain why you're a great fit, relevant experience..."
-                rows={4}
-                className="w-full bg-secondary border border-border rounded-lg px-3 py-2 text-sm resize-none focus:outline-none focus:border-primary/50 text-foreground placeholder:text-muted-foreground"
-              />
-            </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label className="text-sm font-medium mb-1.5 block">Your Rate ($)</label>
-                <input type="number" value={applyForm.proposed_rate} onChange={e => setApplyForm(p => ({ ...p, proposed_rate: e.target.value }))}
-                  placeholder="e.g. 35" className="w-full bg-secondary border border-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-primary/50 text-foreground placeholder:text-muted-foreground" />
+          <section className="rounded-lg border border-primary/20 bg-card p-5 shadow-sm">
+            <h3 className="mb-4 text-lg font-black">Your proposal</h3>
+            <div className="grid gap-4">
+              <label className="block">
+                <span className="text-sm font-bold">Cover message *</span>
+                <textarea
+                  value={applyForm.cover_message}
+                  onChange={(e) => setApplyForm((p) => ({ ...p, cover_message: e.target.value }))}
+                  placeholder="Introduce yourself, explain your plan, and mention relevant experience."
+                  rows={4}
+                  className="mt-1.5 w-full resize-none rounded-lg border border-input bg-card px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary/45 focus:outline-none focus:ring-2 focus:ring-primary/20"
+                />
+              </label>
+              <div className="grid gap-4 sm:grid-cols-2">
+                <label className="block">
+                  <span className="text-sm font-bold">Your rate</span>
+                  <input type="number" value={applyForm.proposed_rate} onChange={(e) => setApplyForm((p) => ({ ...p, proposed_rate: e.target.value }))}
+                    placeholder="35" className="mt-1.5 h-11 w-full rounded-lg border border-input bg-card px-3 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary/45 focus:outline-none focus:ring-2 focus:ring-primary/20" />
+                </label>
+                <label className="block">
+                  <span className="text-sm font-bold">Available from</span>
+                  <input type="date" value={applyForm.available_from} onChange={(e) => setApplyForm((p) => ({ ...p, available_from: e.target.value }))}
+                    className="mt-1.5 h-11 w-full rounded-lg border border-input bg-card px-3 text-sm text-foreground focus:border-primary/45 focus:outline-none focus:ring-2 focus:ring-primary/20" />
+                </label>
               </div>
-              <div>
-                <label className="text-sm font-medium mb-1.5 block">Available From</label>
-                <input type="date" value={applyForm.available_from} onChange={e => setApplyForm(p => ({ ...p, available_from: e.target.value }))}
-                  className="w-full bg-secondary border border-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-primary/50 text-foreground placeholder:text-muted-foreground" />
+              <div className="flex gap-3">
+                <Button className="flex-1" onClick={() => applyMutation.mutate()} disabled={applyMutation.isPending || !applyForm.cover_message}>
+                  {applyMutation.isPending ? 'Submitting...' : 'Submit Proposal'}
+                </Button>
+                <Button variant="outline" className="border-border" onClick={() => setShowApplyForm(false)}>Cancel</Button>
               </div>
             </div>
-            <div className="flex gap-3">
-              <Button className="flex-1" onClick={() => applyMutation.mutate()} disabled={applyMutation.isPending || !applyForm.cover_message}>
-                {applyMutation.isPending ? 'Submitting...' : 'Submit Proposal'}
-              </Button>
-              <Button variant="outline" className="border-border" onClick={() => setShowApplyForm(false)}>Cancel</Button>
-            </div>
-          </div>
+          </section>
         )}
 
-        {/* Applications List (Owner Only) */}
-        {showOwnerControls && applications.length > 0 && (
-          <div className="space-y-3">
-            <h2 className="font-bold text-lg">Proposals ({applications.length})</h2>
-            {applications.map(app => {
-              const profile = applicantProfiles.find(p => p?.user_email === app.applicant_email);
-              return (
-                <div key={app.id} className={`surface-panel rounded-lg p-5 border transition-all ${app.status === 'accepted' ? 'border-green-500/30' : 'border-border'}`}>
-                  <div className="flex items-start justify-between gap-3">
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2 mb-1">
-                        <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-sm font-bold text-primary">
-                          {app.applicant_name?.[0] || 'A'}
-                        </div>
-                        <div>
-                          <p className="font-semibold text-sm">{app.applicant_name}</p>
-                          <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                            <span className="capitalize">{app.applicant_type}</span>
-                            {profile?.rating > 0 && <span className="flex items-center gap-0.5"><Star className="w-3 h-3 text-yellow-400" />{profile.rating.toFixed(1)}</span>}
-                            {profile?.completed_jobs > 0 && <span>{profile.completed_jobs} tasks done</span>}
+        {showOwnerControls && (
+          <section className="space-y-3">
+            <div className="flex items-center justify-between gap-3">
+              <div>
+                <p className="section-label">Proposals</p>
+                <h2 className="text-xl font-black text-foreground">{applications.length} agent response{applications.length === 1 ? '' : 's'}</h2>
+              </div>
+            </div>
+
+            {applications.length === 0 ? (
+              <div className="rounded-lg border border-dashed border-border bg-card p-8 text-center">
+                <UserCheck className="mx-auto mb-3 h-9 w-9 text-muted-foreground" />
+                <h3 className="text-lg font-black text-foreground">No proposals yet</h3>
+                <p className="mx-auto mt-2 max-w-sm text-sm leading-relaxed text-muted-foreground">Agents will appear here with their rate, availability, and proposal message.</p>
+              </div>
+            ) : (
+              <div className="grid gap-3">
+                {applications.map((app) => {
+                  const profile = applicantProfiles.find((p) => p?.user_email === app.applicant_email);
+                  return (
+                    <article key={app.id} className={`rounded-lg border bg-card p-4 shadow-sm transition-all ${app.status === 'accepted' ? 'border-green-500/30' : 'border-border hover:border-primary/30'}`}>
+                      <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+                        <div className="min-w-0 flex-1">
+                          <div className="flex items-center gap-3">
+                            <div className="flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-lg bg-primary/10 text-base font-black text-primary">
+                              {profile?.photo_url ? <img src={profile.photo_url} alt={app.applicant_name} className="h-full w-full object-cover" /> : app.applicant_name?.[0] || 'A'}
+                            </div>
+                            <div className="min-w-0">
+                              <div className="flex flex-wrap items-center gap-2">
+                                <p className="font-black text-foreground">{app.applicant_name}</p>
+                                <StatusBadge status={app.status} />
+                              </div>
+                              <div className="mt-0.5 flex flex-wrap items-center gap-2 text-xs font-semibold text-muted-foreground">
+                                <span className="capitalize">{app.applicant_type}</span>
+                                {profile?.rating > 0 && <span className="inline-flex items-center gap-0.5"><Star className="h-3 w-3 text-amber-400" />{profile.rating.toFixed(1)}</span>}
+                                {profile?.completed_jobs > 0 && <span>{profile.completed_jobs} tasks done</span>}
+                              </div>
+                            </div>
                           </div>
+
+                          <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{app.cover_message}</p>
+                          <div className="mt-3 flex flex-wrap gap-2 text-xs font-bold">
+                            {app.proposed_rate && <InfoPill tone="primary">{money(app.proposed_rate)}</InfoPill>}
+                            {app.available_from && <InfoPill>Available {app.available_from}</InfoPill>}
+                          </div>
+
+                          <JobNegotiationFlow
+                            application={app}
+                            job={job}
+                            user={user}
+                            onRateAgreed={() => {
+                              queryClient.invalidateQueries({ queryKey: ['job-applications', jobId] });
+                            }}
+                          />
                         </div>
-                        <StatusBadge status={app.status} />
+
+                        {showOwnerControls && job.status === 'open' && app.status === 'pending' && (
+                          <div className="flex shrink-0 flex-col gap-2 sm:flex-row lg:flex-col">
+                            <Button size="sm" variant="outline" className="border-border" asChild>
+                              <Link to={`/AvatarView?id=${profile?.id || ''}`}>View Profile</Link>
+                            </Button>
+                            <Button
+                              size="sm"
+                              className="bg-green-600 text-white hover:bg-green-700"
+                              onClick={() => selectWinner.mutate(app)}
+                              disabled={selectWinner.isPending}
+                            >
+                              <Award className="h-3.5 w-3.5" /> Select Agent
+                            </Button>
+                          </div>
+                        )}
+                        {app.status === 'accepted' && <CheckCircle className="h-5 w-5 shrink-0 text-green-600" />}
                       </div>
-                      <p className="text-sm text-muted-foreground mt-2">{app.cover_message}</p>
-                      <div className="flex gap-3 mt-2 text-xs text-muted-foreground">
-                        {app.proposed_rate && <span className="text-primary font-medium">${app.proposed_rate}</span>}
-                        {app.available_from && <span>Available: {app.available_from}</span>}
-                      </div>
-                      <JobNegotiationFlow
-                        application={app}
-                        job={job}
-                        user={user}
-                        onRateAgreed={(agreedRate) => {
-                          queryClient.invalidateQueries({ queryKey: ['job-applications', jobId] });
-                        }}
-                      />
-                    </div>
-                    {showOwnerControls && job.status === 'open' && app.status === 'pending' && (
-                      <div className="flex flex-col gap-2">
-                        <Link to={`/AvatarView?id=${profile?.id || ''}`}>
-                          <Button size="sm" variant="outline" className="border-border text-xs w-full">View Profile</Button>
-                        </Link>
-                        <Button size="sm" className="text-xs gap-1 bg-green-600 hover:bg-green-700 text-white border-transparent"
-                          onClick={() => selectWinner.mutate(app)}
-                          disabled={selectWinner.isPending}>
-                          <Award className="w-3 h-3" /> Select Local Agent
-                        </Button>
-                      </div>
-                    )}
-                    {app.status === 'accepted' && (
-                      <CheckCircle className="w-5 h-5 text-green-400 flex-shrink-0" />
-                    )}
-                  </div>
-                </div>
-              );
-            })}
-          </div>
+                    </article>
+                  );
+                })}
+              </div>
+            )}
+          </section>
         )}
 
-        {/* Countdown for scheduled assigned jobs */}
         {job.status === 'in_progress' && !job.flexible_dates && job.scheduled_date && (isHiredAgent || showOwnerControls) && (
           <JobCountdown scheduledDate={job.scheduled_date} />
         )}
 
-        {/* Open Chat button for assigned participants */}
-        {jobConversation && (isHiredAgent || showOwnerControls) && (
-          <Button className="w-full h-11 gap-2" onClick={() => navigate(`/Messages?conversation=${jobConversation.id}`)}>
-            <MessageCircle className="w-4 h-4" /> Open Messages
-          </Button>
-        )}
-
-        {/* Winner Info (public) */}
         {job.winner_email && job.status !== 'open' && (
-          <div className="surface-panel rounded-lg p-4 border border-green-500/20">
+          <section className="rounded-lg border border-green-500/20 bg-green-500/10 p-4">
             <div className="flex items-center gap-2">
-              <Award className="w-5 h-5 text-yellow-400" />
+              <Award className="h-5 w-5 text-amber-500" />
               <div>
-                <p className="font-semibold text-sm text-green-400">Task Assigned</p>
-                <p className="text-xs text-muted-foreground">This task has been assigned to a Local Agent</p>
+                <p className="text-sm font-black text-green-700 dark:text-green-300">Task assigned</p>
+                <p className="text-xs text-muted-foreground">This task has been assigned to a Local Agent.</p>
               </div>
             </div>
-          </div>
+          </section>
         )}
       </div>
     </AppShell>
