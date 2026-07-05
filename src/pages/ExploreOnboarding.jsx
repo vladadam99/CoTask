@@ -237,7 +237,7 @@ function IntroTwo() {
         </span>
         <h2 className="text-4xl font-black leading-tight tracking-tight">Search, choose, coordinate, approve.</h2>
         <p className="mx-auto mt-3 max-w-md text-sm text-muted-foreground">
-          A clear task brief and strong Local Agent profile make the work easier to review.
+          A clear task and strong Local Agent profile make the work easier to review.
         </p>
       </div>
 
@@ -386,3 +386,4 @@ function QuestionStep({ question, answers, setAnswers }) {
     </div>
   );
 }
+
