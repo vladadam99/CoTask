@@ -165,7 +165,7 @@ export default function JobDetail() {
           }
         : {
             title: 'Open Task',
-            description: 'Review the brief and use messages after the client selects a Local Agent.',
+            description: 'Review the task and use messages after the client selects a Local Agent.',
           }
     : paymentStatus === 'pending' && isOwner
       ? {
@@ -247,7 +247,7 @@ export default function JobDetail() {
                 <StatusBadge status={job.status} />
                 {job.camera_required && <Badge variant="outline" className="text-xs bg-primary/10 text-primary border-primary/20">Camera Required</Badge>}
               </div>
-              <p className="text-sm text-muted-foreground">Posted by {job.posted_by_name || 'Client'} · {job.posted_by_type === 'enterprise' ? 'Enterprise' : 'Client'}</p>
+              <p className="text-sm text-muted-foreground">Posted by {job.posted_by_name || 'Client'} ?? {job.posted_by_type === 'enterprise' ? 'Enterprise' : 'Client'}</p>
             </div>
             {showOwnerControls && job.status === 'open' && (
               <Badge variant="outline" className="text-xs bg-yellow-500/10 text-yellow-400 border-yellow-500/20">
@@ -263,7 +263,7 @@ export default function JobDetail() {
             {job.duration_value && <span className="flex items-center gap-1.5"><Clock className="w-4 h-4" />{job.duration_value} {job.duration_value === 1 ? 'hour' : 'hours'}</span>}
             {job.budget_min && (
               <span className="text-primary font-semibold">
-                ${job.budget_min}{DURATION_LABELS[job.duration_type]}{job.negotiable ? ' · negotiable' : ''}
+                ${job.budget_min}{DURATION_LABELS[job.duration_type]}{job.negotiable ? ' ?? negotiable' : ''}
               </span>
             )}
           </div>
@@ -348,7 +348,7 @@ export default function JobDetail() {
                   className="w-full gap-2"
                   onClick={() => setShowPaymentModal(true)}
                 >
-                  <DollarSign className="w-4 h-4" /> Fund Secure Payment — ${job.budget_max || job.budget_min || 50}
+                  <DollarSign className="w-4 h-4" /> Fund Secure Payment ??? ${job.budget_max || job.budget_min || 50}
                 </Button>
                 <p className="text-center text-xs text-muted-foreground mt-1">
                   You are not charged until you fund Secure Payment. Funds are held and only released upon approval.
@@ -614,3 +614,4 @@ export default function JobDetail() {
     </AppShell>
   );
 }
+
