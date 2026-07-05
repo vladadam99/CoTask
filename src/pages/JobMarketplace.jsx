@@ -56,7 +56,7 @@ export default function JobMarketplace() {
           actions={canPost && (
             <Link to="/PostJob">
               <Button size="lg" className="gap-2 w-full sm:w-auto">
-                <Plus className="w-4 h-4" /> New Brief
+                <Plus className="w-4 h-4" /> New Task
               </Button>
             </Link>
           )}
@@ -115,7 +115,7 @@ export default function JobMarketplace() {
             <p className="text-sm text-muted-foreground mb-6 max-w-sm">Check back later or adjust your filters.</p>
             {canPost && (
               <Link to="/PostJob" className="inline-block mt-4">
-                <Button size="sm">New Brief</Button>
+                <Button size="sm">New Task</Button>
               </Link>
             )}
           </div>
