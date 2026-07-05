@@ -72,7 +72,7 @@ function TaskTab({ item, active, done, disabled, onClick }) {
       type="button"
       onClick={onClick}
       disabled={disabled}
-      className={`group relative flex min-w-[112px] flex-1 items-center justify-center gap-2 rounded-lg border px-3 py-3 text-sm font-bold transition-all ${
+      className={`group relative flex min-w-[96px] flex-1 items-center justify-center gap-2 rounded-lg border px-2 py-3 text-sm font-bold transition-all sm:min-w-[112px] sm:px-3 ${
         active
           ? 'border-primary bg-primary text-primary-foreground shadow-sm shadow-primary/20'
           : done
