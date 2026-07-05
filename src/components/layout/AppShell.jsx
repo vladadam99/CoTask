@@ -122,7 +122,7 @@ function ProfilePanel({ user, onClose, navItems = [], roleOverride }) {
       {/* Bottom nav inside profile panel */}
       <nav className="fixed inset-x-3 bottom-3 z-50 rounded-lg border border-border/80 bg-card/95 backdrop-blur-2xl shadow-[0_18px_55px_hsl(222_47%_11%/0.18)]">
         <div className="flex items-center justify-around gap-1 p-1.5">
-        {navItems.slice(0, 5).map(item => (
+        {navItems.slice(0, 4).map(item => (
           <Link key={item.path} to={item.path} onClick={onClose}
             className="relative flex min-w-0 flex-1 flex-col items-center gap-1 rounded-lg px-2 py-2 text-muted-foreground transition-all hover:bg-secondary/75 hover:text-foreground">
             <item.icon className="h-5 w-5" />
@@ -240,7 +240,7 @@ export default function AppShell({ children, navItems = [], user, fullBleed = fa
       {/* Mobile Bottom Nav */}
       <nav className="lg:hidden fixed inset-x-3 bottom-3 z-50 rounded-lg border border-border/80 bg-card/95 backdrop-blur-2xl shadow-[0_18px_55px_hsl(222_47%_11%/0.18)]">
         <div className="flex items-center justify-around gap-1 p-1.5">
-        {navItems.slice(0, 5).map(item => {
+        {navItems.slice(0, 4).map(item => {
           const isActive = location.pathname === item.path;
           const badgeCount = getNavBadgeCount(item.path, unreadNotifs);
           const handleNavClick = async () => {
