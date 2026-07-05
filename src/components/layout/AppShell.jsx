@@ -69,7 +69,7 @@ function ProfilePanel({ user, onClose, navItems = [], roleOverride }) {
         </button>
       </div>
 
-      <div className="flex-1 overflow-y-auto pb-24">
+      <div className="flex-1 overflow-y-auto pb-28">
         {/* User card */}
         <Link to={activeRole === 'avatar' ? '/AvatarProfileEdit' : activeRole === 'enterprise' ? '/EnterpriseProfile' : '/UserProfile'} onClick={onClose} className="mx-4 mt-4 mb-3 p-4 rounded-lg bg-card border border-border shadow-sm flex items-center gap-3 hover:border-primary/30 hover:shadow-md transition-all">
           <div className="w-14 h-14 rounded-full bg-primary/10 flex items-center justify-center text-xl font-bold text-primary flex-shrink-0">
@@ -120,22 +120,24 @@ function ProfilePanel({ user, onClose, navItems = [], roleOverride }) {
       </div>
 
       {/* Bottom nav inside profile panel */}
-      <nav className="fixed bottom-0 left-0 right-0 z-50 bg-card/95 backdrop-blur-xl border-t border-border flex items-center justify-around px-2 py-2 shadow-[0_-12px_30px_hsl(222_47%_11%/0.08)]">
+      <nav className="fixed inset-x-3 bottom-3 z-50 rounded-lg border border-border/80 bg-card/95 backdrop-blur-2xl shadow-[0_18px_55px_hsl(222_47%_11%/0.18)]">
+        <div className="flex items-center justify-around gap-1 p-1.5">
         {navItems.slice(0, 5).map(item => (
           <Link key={item.path} to={item.path} onClick={onClose}
-            className="relative flex flex-col items-center gap-1 px-3 py-1.5 rounded-xl transition-all text-muted-foreground">
-            <item.icon className="w-5 h-5" />
-            <span className="text-[10px] font-medium">{item.label}</span>
+            className="relative flex min-w-0 flex-1 flex-col items-center gap-1 rounded-lg px-2 py-2 text-muted-foreground transition-all hover:bg-secondary/75 hover:text-foreground">
+            <item.icon className="h-5 w-5" />
+            <span className="max-w-full truncate text-[10px] font-bold">{item.label}</span>
           </Link>
         ))}
         <button
-          className="relative flex flex-col items-center gap-1 px-3 py-1.5 rounded-xl transition-all text-primary"
+          className="relative flex min-w-0 flex-1 flex-col items-center gap-1 rounded-lg bg-primary px-2 py-2 text-primary-foreground shadow-sm transition-all"
         >
-          <div className="w-5 h-5 rounded-full bg-primary/20 flex items-center justify-center text-[10px] font-bold text-primary">
+          <div className="flex h-5 w-5 items-center justify-center rounded-full bg-primary-foreground/20 text-[10px] font-black text-primary-foreground">
             {user?.full_name?.[0] || 'U'}
           </div>
-          <span className="text-[10px] font-medium">Profile</span>
+          <span className="text-[10px] font-bold">Profile</span>
         </button>
+        </div>
       </nav>
     </div>
   );
@@ -236,7 +238,8 @@ export default function AppShell({ children, navItems = [], user, fullBleed = fa
       {profileOpen && <ProfilePanel user={user} onClose={() => setProfileOpen(false)} navItems={navItems} roleOverride={roleOverride} />}
 
       {/* Mobile Bottom Nav */}
-      <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-50 bg-card/95 backdrop-blur-xl border-t border-border flex items-center justify-around px-2 py-2 pb-safe shadow-[0_-12px_30px_hsl(222_47%_11%/0.08)]">
+      <nav className="lg:hidden fixed inset-x-3 bottom-3 z-50 rounded-lg border border-border/80 bg-card/95 backdrop-blur-2xl shadow-[0_18px_55px_hsl(222_47%_11%/0.18)]">
+        <div className="flex items-center justify-around gap-1 p-1.5">
         {navItems.slice(0, 5).map(item => {
           const isActive = location.pathname === item.path;
           const badgeCount = getNavBadgeCount(item.path, unreadNotifs);
@@ -254,16 +257,18 @@ export default function AppShell({ children, navItems = [], user, fullBleed = fa
           };
           return (
             <Link key={item.path} to={item.path} onClick={handleNavClick}
-              className={`relative flex flex-col items-center gap-1 px-3 py-1.5 rounded-xl transition-all ${
-                isActive ? 'text-primary font-semibold' : 'text-muted-foreground'
+              className={`relative flex min-w-0 flex-1 flex-col items-center gap-1 rounded-lg px-2 py-2 transition-all ${
+                isActive ? 'bg-primary text-primary-foreground shadow-sm' : 'text-muted-foreground hover:bg-secondary/75 hover:text-foreground'
               }`}>
-              <item.icon className="w-5 h-5" />
+              <item.icon className="h-5 w-5" />
               {badgeCount > 0 && (
-                <span className="absolute -top-0.5 right-1 w-4 h-4 bg-primary text-primary-foreground text-[9px] font-bold rounded-full flex items-center justify-center">
+                <span className={`absolute right-1 top-1 flex h-4 w-4 items-center justify-center rounded-full text-[9px] font-black ${
+                  isActive ? 'bg-primary-foreground text-primary' : 'bg-primary text-primary-foreground'
+                }`}>
                   {badgeCount > 9 ? '9+' : badgeCount}
                 </span>
               )}
-              <span className="text-[10px] font-medium">{item.label}</span>
+              <span className="max-w-full truncate text-[10px] font-bold">{item.label}</span>
             </Link>
           );
         })}
@@ -271,15 +276,18 @@ export default function AppShell({ children, navItems = [], user, fullBleed = fa
         {/* Profile tab */}
         <button
           onClick={() => setProfileOpen(true)}
-          className={`relative flex flex-col items-center gap-1 px-3 py-1.5 rounded-xl transition-all ${
-            profileOpen ? 'text-primary' : 'text-muted-foreground'
+          className={`relative flex min-w-0 flex-1 flex-col items-center gap-1 rounded-lg px-2 py-2 transition-all ${
+            profileOpen ? 'bg-primary text-primary-foreground shadow-sm' : 'text-muted-foreground hover:bg-secondary/75 hover:text-foreground'
           }`}
         >
-          <div className="w-5 h-5 rounded-full bg-primary/20 flex items-center justify-center text-[10px] font-bold text-primary">
+          <div className={`flex h-5 w-5 items-center justify-center rounded-full text-[10px] font-black ${
+            profileOpen ? 'bg-primary-foreground/20 text-primary-foreground' : 'bg-primary/15 text-primary'
+          }`}>
             {user?.full_name?.[0] || 'U'}
           </div>
-          <span className="text-[10px] font-medium">Profile</span>
+          <span className="text-[10px] font-bold">Profile</span>
         </button>
+        </div>
       </nav>
 
       {/* Main Content */}
