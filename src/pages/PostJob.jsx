@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
@@ -35,6 +35,45 @@ import LocationAutocomplete from '@/components/jobs/LocationAutocomplete';
 const TASK_IMAGE =
   'https://images.unsplash.com/photo-1521737711867-e3b97375f902?auto=format&fit=crop&w=1400&q=82';
 
+const STEP_VISUALS = {
+  what: {
+    image: 'https://images.unsplash.com/photo-1521737711867-e3b97375f902?auto=format&fit=crop&w=1200&q=82',
+    eyebrow: 'What',
+    title: 'Name the task clearly',
+    hint: 'A simple title and category helps the right Local Agents understand the job fast.',
+  },
+  when: {
+    image: 'https://images.unsplash.com/photo-1506784365847-bbad939e9335?auto=format&fit=crop&w=1200&q=82',
+    eyebrow: 'When',
+    title: 'Choose the time window',
+    hint: 'Pick a date, time, or flexible window so agents know when they need to be ready.',
+  },
+  where: {
+    image: 'https://images.unsplash.com/photo-1524661135-423995f22d0b?auto=format&fit=crop&w=1200&q=82',
+    eyebrow: 'Where',
+    title: 'Set the place',
+    hint: 'Add the city, address area, or mark it remote-friendly when no visit is needed.',
+  },
+  budget: {
+    image: 'https://images.unsplash.com/photo-1554224155-6726b3ff858f?auto=format&fit=crop&w=1200&q=82',
+    eyebrow: 'Budget',
+    title: 'Set a fair payment',
+    hint: 'Give agents a clear starting point. You can still negotiate after proposals arrive.',
+  },
+  details: {
+    image: 'https://images.unsplash.com/photo-1455390582262-044cdead277a?auto=format&fit=crop&w=1200&q=82',
+    eyebrow: 'Details',
+    title: 'Explain the outcome',
+    hint: 'Say what success looks like, what to check, and what proof you expect.',
+  },
+  extras: {
+    image: 'https://images.unsplash.com/photo-1497366754035-f200968a6e72?auto=format&fit=crop&w=1200&q=82',
+    eyebrow: 'Extras',
+    title: 'Add useful requirements',
+    hint: 'Keep optional needs here: proof, travel, equipment, language, and skills.',
+  },
+};
+
 const CATEGORIES = [
   'Property Walkthrough',
   'Business Inspection',
@@ -58,13 +97,6 @@ const TASK_FLAGS = [
   { key: 'camera_required', title: 'Photo or video proof', hint: 'Proof before approval', icon: Camera },
 ];
 
-function formatDateValue(value) {
-  if (!value) return 'Not set';
-  const date = value instanceof Date ? value : new Date(value);
-  if (Number.isNaN(date.getTime())) return 'Not set';
-  return new Intl.DateTimeFormat('en', { weekday: 'short', month: 'short', day: 'numeric' }).format(date);
-}
-
 function TaskTab({ item, active, done, disabled, onClick }) {
   const Icon = item.icon;
   return (
@@ -72,7 +104,7 @@ function TaskTab({ item, active, done, disabled, onClick }) {
       type="button"
       onClick={onClick}
       disabled={disabled}
-      className={`group relative flex min-w-[96px] flex-1 items-center justify-center gap-2 rounded-lg border px-2 py-3 text-sm font-bold transition-all sm:min-w-[112px] sm:px-3 ${
+      className={`group relative flex min-w-0 items-center justify-center gap-1.5 rounded-lg border px-2 py-2.5 text-xs font-bold transition-all sm:gap-2 sm:py-3 sm:text-sm ${
         active
           ? 'border-primary bg-primary text-primary-foreground shadow-sm shadow-primary/20'
           : done
@@ -80,8 +112,8 @@ function TaskTab({ item, active, done, disabled, onClick }) {
             : 'border-border bg-card text-muted-foreground hover:border-primary/30 hover:text-foreground'
       } ${disabled ? 'cursor-not-allowed opacity-45' : ''}`}
     >
-      <Icon className="h-4 w-4" />
-      <span>{item.label}</span>
+      <Icon className="h-4 w-4 shrink-0" />
+      <span className="truncate">{item.label}</span>
       {done && !active && <CheckCircle2 className="h-3.5 w-3.5" />}
     </button>
   );
@@ -123,13 +155,60 @@ function RequirementPill({ active, children, onClick }) {
   );
 }
 
-function MiniRow({ icon: Icon, label, value }) {
+function StepCover({ visual }) {
   return (
-    <div className="flex items-start gap-2 rounded-lg bg-secondary/55 px-3 py-2">
-      <Icon className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
-      <div className="min-w-0">
-        <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-muted-foreground">{label}</p>
-        <p className="truncate text-sm font-bold text-foreground">{value || 'Not set'}</p>
+    <div
+      className="relative min-h-[104px] overflow-hidden rounded-lg border border-border bg-cover bg-center"
+      style={{ backgroundImage: `url(${visual.image})` }}
+    >
+      <div className="absolute inset-0 bg-gradient-to-r from-slate-950/85 via-slate-950/55 to-slate-950/10" />
+      <div className="relative flex min-h-[104px] flex-col justify-end p-4 text-white">
+        <p className="text-[11px] font-black uppercase tracking-[0.18em] text-white/70">{visual.eyebrow}</p>
+        <h2 className="mt-1 text-lg font-black leading-tight">{visual.title}</h2>
+        <p className="mt-1 max-w-xl text-xs font-medium leading-relaxed text-white/75">{visual.hint}</p>
+      </div>
+    </div>
+  );
+}
+
+function ProgressSummary({ steps, completedCount, activePanel }) {
+  const activeVisual = STEP_VISUALS[activePanel] || STEP_VISUALS.what;
+  const essentials = steps.filter((item) => item.key !== 'extras');
+
+  return (
+    <div className="rounded-lg border border-border bg-card p-3">
+      <div className="flex items-center justify-between gap-3">
+        <div>
+          <p className="section-label">Progress</p>
+          <h2 className="text-base font-black text-foreground">{completedCount}/5 essentials</h2>
+        </div>
+        <span className="rounded-full bg-primary/10 px-2.5 py-1 text-xs font-black text-primary">
+          {Math.round((completedCount / 5) * 100)}%
+        </span>
+      </div>
+
+      <div className="mt-3 h-2 overflow-hidden rounded-full bg-secondary">
+        <div
+          className="h-full rounded-full bg-primary transition-all"
+          style={{ width: `${(completedCount / 5) * 100}%` }}
+        />
+      </div>
+
+      <div className="mt-3 grid grid-cols-5 gap-1.5">
+        {essentials.map((step) => (
+          <span
+            key={step.key}
+            className={`h-1.5 rounded-full transition-colors ${
+              step.done ? 'bg-primary' : step.key === activePanel ? 'bg-primary/40' : 'bg-secondary'
+            }`}
+            title={step.label}
+          />
+        ))}
+      </div>
+
+      <div className="mt-3 rounded-lg bg-secondary/55 p-3">
+        <p className="text-[10px] font-black uppercase tracking-[0.14em] text-muted-foreground">Current step</p>
+        <p className="mt-1 text-sm font-black text-foreground">{activeVisual.title}</p>
       </div>
     </div>
   );
@@ -145,6 +224,7 @@ export default function PostJob() {
   const shellRole = activeRole === 'avatar' ? 'user' : activeRole;
   const shellHomePath = shellRole === 'user' ? '/Explore' : undefined;
   const [activePanel, setActivePanel] = useState('what');
+  const composerScrollRef = useRef(null);
 
   const [form, setForm] = useState({
     title: '',
@@ -228,21 +308,6 @@ export default function PostJob() {
   const detailsDone = Boolean(form.description?.trim());
   const readyToPost = whatDone && whenDone && whereDone && budgetDone && detailsDone;
 
-  const dateSummary = form.scheduled_date
-    ? form.date_range_end
-      ? `${formatDateValue(form.scheduled_date)} - ${formatDateValue(form.date_range_end)}`
-      : formatDateValue(form.scheduled_date)
-    : form.timing_mode === 'flexible'
-      ? 'Flexible date'
-      : 'Choose a date';
-  const timeSummary = form.time_mode === 'flexible'
-    ? form.scheduled_time_end ? `${form.scheduled_time_end} hour estimate` : 'Flexible time'
-    : form.scheduled_time && form.scheduled_time_end
-      ? `${form.scheduled_time} - ${form.scheduled_time_end}`
-      : form.scheduled_time || 'Choose time';
-  const budgetSummary = form.budget
-    ? `$${form.budget}${form.budget_type === 'hourly' ? '/hr' : ''}${form.negotiable ? ' negotiable' : ''}`
-    : 'Set budget';
   const activeEquipment = form.equipment_needed.filter((item) => EQUIPMENT_OPTIONS.includes(item));
   const selectedRequirements = [
     ...activeEquipment,
@@ -259,6 +324,7 @@ export default function PostJob() {
     { key: 'extras', label: 'Extras', icon: SlidersHorizontal, done: selectedRequirements.length > 0 || form.camera_required || form.travel_required },
   ]), [budgetDone, detailsDone, form.camera_required, form.travel_required, selectedRequirements.length, whatDone, whenDone, whereDone]);
   const completedCount = steps.filter((item) => item.key !== 'extras' && item.done).length;
+  const activeVisual = STEP_VISUALS[activePanel] || STEP_VISUALS.what;
 
   const jobPayload = {
     title: form.title,
@@ -312,8 +378,19 @@ export default function PostJob() {
     },
   });
 
-  const focusMissing = (panel, title, description) => {
+  const scrollComposerTop = () => {
+    window.setTimeout(() => {
+      composerScrollRef.current?.scrollTo({ top: 0, behavior: 'smooth' });
+    }, 0);
+  };
+
+  const activatePanel = (panel) => {
     setActivePanel(panel);
+    scrollComposerTop();
+  };
+
+  const focusMissing = (panel, title, description) => {
+    activatePanel(panel);
     toast({ title, description, variant: 'destructive' });
   };
 
@@ -339,7 +416,7 @@ export default function PostJob() {
   const goNext = () => {
     const order = ['what', 'when', 'where', 'budget', 'details', 'extras'];
     const idx = order.indexOf(activePanel);
-    setActivePanel(order[Math.min(idx + 1, order.length - 1)]);
+    activatePanel(order[Math.min(idx + 1, order.length - 1)]);
   };
 
   const renderPanel = () => {
@@ -609,7 +686,7 @@ export default function PostJob() {
           <section className="overflow-hidden rounded-lg border border-border bg-card shadow-2xl shadow-slate-950/10">
             <div className="grid lg:grid-cols-[220px_minmax(0,1fr)]">
               <div className="relative hidden min-h-full overflow-hidden lg:block">
-                <img src={TASK_IMAGE} alt="People planning a local task" className="absolute inset-0 h-full w-full object-cover" />
+                <img src={activeVisual.image || TASK_IMAGE} alt={`${activeVisual.eyebrow} task step`} className="absolute inset-0 h-full w-full object-cover" />
                 <div className="absolute inset-0 bg-gradient-to-t from-slate-950/85 via-slate-950/30 to-transparent" />
                 <div className="absolute bottom-4 left-4 right-4 text-white">
                   <button
@@ -621,7 +698,7 @@ export default function PostJob() {
                     Back
                   </button>
                   <p className="text-xs font-bold uppercase tracking-[0.18em] text-white/70">{editJobId ? 'Edit task' : 'Create task'}</p>
-                  <h1 className="mt-1 text-xl font-black leading-tight">What, when, where. Then post.</h1>
+                  <h1 className="mt-1 text-xl font-black leading-tight">{activeVisual.title}</h1>
                   <div className="mt-4 h-2 overflow-hidden rounded-full bg-white/20">
                     <div
                       className="h-full rounded-full bg-white transition-all"
@@ -631,7 +708,7 @@ export default function PostJob() {
                 </div>
               </div>
 
-              <div className="max-h-[calc(100svh-7.25rem)] overflow-y-auto">
+              <div ref={composerScrollRef} className="max-h-[calc(100svh-7.25rem)] overflow-y-auto">
                 <div className="border-b border-border p-3 sm:p-4">
                   <div className="mb-3 flex items-center justify-between gap-3 lg:hidden">
                     <button
@@ -647,7 +724,7 @@ export default function PostJob() {
                     </div>
                   </div>
 
-                  <div className="flex gap-2 overflow-x-auto pb-1 hide-scrollbar">
+                  <div className="grid grid-cols-3 gap-2 sm:grid-cols-6">
                     {steps.map((item) => (
                       <TaskTab
                         key={item.key}
@@ -655,40 +732,20 @@ export default function PostJob() {
                         active={activePanel === item.key}
                         done={item.done}
                         disabled={false}
-                        onClick={() => setActivePanel(item.key)}
+                        onClick={() => activatePanel(item.key)}
                       />
                     ))}
                   </div>
                 </div>
 
                 <div className="grid gap-4 p-3 sm:p-4 xl:grid-cols-[minmax(0,1fr)_280px]">
-                  <div className="min-h-[260px] rounded-lg border border-border bg-background/55 p-4">
+                  <div className="min-h-[260px] space-y-4 rounded-lg border border-border bg-background/55 p-4">
+                    <StepCover visual={activeVisual} />
                     {renderPanel()}
                   </div>
 
                   <aside className="space-y-3">
-                    <div className="rounded-lg border border-border bg-card p-3">
-                      <div className="mb-3 flex items-center justify-between gap-3">
-                        <div>
-                          <p className="section-label">Task</p>
-                          <h2 className="truncate text-base font-black text-foreground">{form.title?.trim() || 'Untitled task'}</h2>
-                        </div>
-                        <span className="rounded-lg bg-primary/10 px-2.5 py-1 text-xs font-black text-primary">{completedCount}/5</span>
-                      </div>
-                      <div className="grid gap-2">
-                        <MiniRow icon={FileText} label="What" value={form.category || 'Category'} />
-                        <MiniRow icon={Calendar} label="When" value={`${dateSummary}${timeSummary !== 'Choose time' ? `, ${timeSummary}` : ''}`} />
-                        <MiniRow icon={MapPin} label="Where" value={form.remote_ok ? 'Remote-friendly' : form.location || 'Location'} />
-                        <MiniRow icon={BadgeDollarSign} label="Budget" value={budgetSummary} />
-                      </div>
-                      <div className="mt-3 flex flex-wrap gap-1.5">
-                        {form.camera_required && <span className="rounded-full bg-primary/10 px-2 py-1 text-[11px] font-bold text-primary">Proof</span>}
-                        {form.travel_required && <span className="rounded-full bg-amber-500/10 px-2 py-1 text-[11px] font-bold text-amber-700">Travel</span>}
-                        {selectedRequirements.slice(0, 3).map((item) => (
-                          <span key={item} className="rounded-full bg-secondary px-2 py-1 text-[11px] font-bold text-muted-foreground">{item}</span>
-                        ))}
-                      </div>
-                    </div>
+                    <ProgressSummary steps={steps} completedCount={completedCount} activePanel={activePanel} />
 
                     <div className="rounded-lg border border-primary/20 bg-primary/10 p-3 text-sm text-primary">
                       <div className="flex items-start gap-2">
