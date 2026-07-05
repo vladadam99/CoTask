@@ -18,12 +18,12 @@ export default function CTASection() {
             Need trusted eyes on the ground?
           </h2>
           <p className="mx-auto mt-4 max-w-xl text-muted-foreground">
-            Create a clear brief or discover a Local Agent who can help with a specific location, proof, or live session.
+            Create a clear task or discover a Local Agent who can help with a specific location, proof, or live session.
           </p>
           <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
             <Link to="/PostJob">
               <button className="group flex w-full items-center justify-center gap-3 rounded-lg bg-primary px-8 py-3.5 text-sm font-bold text-primary-foreground transition-colors hover:bg-primary/90 sm:w-auto">
-                New Brief <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+                New Task <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
               </button>
             </Link>
             <Link to="/FindPeople">
