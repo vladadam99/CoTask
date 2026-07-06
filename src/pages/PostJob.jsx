@@ -73,7 +73,7 @@ function ChoiceButton({ active, title, hint, onClick }) {
       onClick={onClick}
       className={`rounded-lg border p-4 text-left transition-all ${
         active
-          ? 'border-primary bg-primary text-primary-foreground shadow-sm shadow-primary/15'
+          ? 'border-primary bg-primary text-primary-foreground shadow-sm shadow-primary/20'
           : 'border-border bg-card text-muted-foreground hover:border-primary/30 hover:bg-secondary/60 hover:text-foreground'
       }`}
     >
@@ -86,26 +86,37 @@ function ChoiceButton({ active, title, hint, onClick }) {
   );
 }
 
-function StepHeader({ visual, progress }) {
+function StepHero({ visual }) {
   return (
     <div className="overflow-hidden rounded-lg border border-border bg-card shadow-sm">
       <div
-        className="relative min-h-[140px] bg-cover bg-center sm:min-h-[160px]"
+        className="relative min-h-[150px] bg-cover bg-center sm:min-h-[190px]"
         style={{ backgroundImage: `url(${visual.image})` }}
         aria-label={`${visual.eyebrow} task step`}
       >
-        <div className="absolute inset-0 bg-gradient-to-t from-slate-950/30 via-transparent to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-slate-950/25 via-transparent to-transparent" />
       </div>
-      <div className="bg-card px-3 py-3 sm:px-4">
-        <div className="h-2 overflow-hidden rounded-full bg-secondary">
-          <div
-            className="h-full rounded-full bg-primary transition-all"
-            style={{ width: `${progress}%` }}
-          />
-        </div>
-        <div className="mt-2 flex items-center gap-3">
-          <p className="text-sm font-black text-foreground">{visual.eyebrow}</p>
-        </div>
+    </div>
+  );
+}
+
+function FloatingProgress({ progress }) {
+  return (
+    <div className="h-2 overflow-hidden rounded-full bg-secondary shadow-inner">
+      <div
+        className="h-full rounded-full bg-primary transition-all"
+        style={{ width: `${progress}%` }}
+      />
+    </div>
+  );
+}
+
+function CurrentStepLabel({ label }) {
+  return (
+    <div className="mb-4 flex items-center justify-between gap-3">
+      <div>
+        <p className="section-label">Create task</p>
+        <h2 className="text-xl font-black tracking-tight text-foreground">{label}</h2>
       </div>
     </div>
   );
@@ -122,6 +133,7 @@ export default function PostJob() {
   const shellHomePath = shellRole === 'user' ? '/Explore' : undefined;
   const [activePanel, setActivePanel] = useState('what');
   const composerScrollRef = useRef(null);
+  const formPanelRef = useRef(null);
 
   const [form, setForm] = useState({
     title: '',
@@ -178,10 +190,6 @@ export default function PostJob() {
       });
     });
   }, [editJobId]);
-
-  useEffect(() => {
-    composerScrollRef.current?.scrollTo({ top: 0, behavior: 'smooth' });
-  }, [activePanel]);
 
   const set = (key, value) => setForm((prev) => ({ ...prev, [key]: value }));
   const whatDone = Boolean(form.title?.trim() && form.category);
@@ -256,7 +264,7 @@ export default function PostJob() {
 
   const scrollComposerTop = () => {
     window.setTimeout(() => {
-      composerScrollRef.current?.scrollTo({ top: 0, behavior: 'smooth' });
+      formPanelRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }, 0);
   };
 
@@ -454,16 +462,21 @@ export default function PostJob() {
   return (
     <AppShell navItems={getNavItems(shellRole)} user={user} roleOverride={shellRole} homePathOverride={shellHomePath}>
       <div className="mx-auto max-w-6xl">
-        <div className="sticky top-16 z-30 lg:top-4">
+        <div>
           <section className="overflow-hidden rounded-lg border border-border bg-card shadow-2xl shadow-slate-950/10">
-            <div ref={composerScrollRef} className="max-h-[calc(100svh-7.25rem)] overflow-y-auto">
-              <div className="sticky top-0 z-20 border-b border-border bg-card p-3 sm:p-4">
-                <StepHeader visual={activeVisual} progress={progressPercent} />
+            <div ref={composerScrollRef}>
+              <div className="p-3 sm:p-4">
+                <StepHero visual={activeVisual} />
+              </div>
+
+              <div className="sticky top-14 z-20 border-y border-border bg-card/95 px-3 py-2 backdrop-blur-xl lg:top-0 sm:px-4">
+                <FloatingProgress progress={progressPercent} />
               </div>
 
               <div className="grid gap-4 p-3 sm:p-4 xl:grid-cols-[minmax(0,1fr)_240px]">
-                <div className="min-h-[260px] rounded-lg border border-border bg-background/55 p-4">
-                    {renderPanel()}
+                <div ref={formPanelRef} className="min-h-[260px] rounded-lg border border-border bg-background/55 p-4 scroll-mt-24">
+                  <CurrentStepLabel label={activeVisual.eyebrow} />
+                  {renderPanel()}
                 </div>
 
                 <aside className="space-y-3">
