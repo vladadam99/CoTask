@@ -10,6 +10,7 @@ const REPEAT_OPTIONS = [
 const DURATION_PRESETS = ['1', '2', '3', '4'];
 
 export default function TimePicker({ timeMode, onTimeMode, startTime, onStartTime, endTime, onEndTime, repeat, onRepeat }) {
+  const canRepeat = typeof onRepeat === 'function';
   const repeatLabel = REPEAT_OPTIONS.find((option) => option.value === repeat)?.label || 'Once';
   const [showRepeat, setShowRepeat] = React.useState(Boolean(repeat));
 
@@ -103,6 +104,7 @@ export default function TimePicker({ timeMode, onTimeMode, startTime, onStartTim
         </div>
       )}
 
+      {canRepeat && (
       <div className="rounded-lg border border-border bg-secondary/40 p-3">
         <div className="flex items-center justify-between gap-3">
           <div className="flex items-center gap-2 text-sm font-semibold text-foreground">
@@ -136,6 +138,8 @@ export default function TimePicker({ timeMode, onTimeMode, startTime, onStartTim
           </div>
         )}
       </div>
+      )}
     </div>
   );
 }
+
