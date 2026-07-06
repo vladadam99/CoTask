@@ -8,6 +8,11 @@ const REPEAT_OPTIONS = [
   { label: 'Monthly', value: 'monthly' },
 ];
 const DURATION_PRESETS = ['1', '2', '3', '4'];
+const TIME_PRESETS = [
+  { label: 'Morning', start: '09:00', end: '12:00' },
+  { label: 'Afternoon', start: '13:00', end: '17:00' },
+  { label: 'Evening', start: '18:00', end: '21:00' },
+];
 
 export default function TimePicker({ timeMode, onTimeMode, startTime, onStartTime, endTime, onEndTime, repeat, onRepeat }) {
   const canRepeat = typeof onRepeat === 'function';
@@ -15,7 +20,7 @@ export default function TimePicker({ timeMode, onTimeMode, startTime, onStartTim
   const [showRepeat, setShowRepeat] = React.useState(Boolean(repeat));
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-5">
       <div className="grid grid-cols-2 gap-2">
         {[
           { key: 'range', title: 'Exact time', hint: 'Set a start and end' },
@@ -27,21 +32,21 @@ export default function TimePicker({ timeMode, onTimeMode, startTime, onStartTim
             onClick={() => onTimeMode(option.key)}
             className={`rounded-lg border p-3 text-left transition-all ${
               timeMode === option.key
-                ? 'border-primary bg-primary/10 text-primary shadow-sm'
+                ? 'border-primary bg-primary text-primary-foreground shadow-sm shadow-primary/20'
                 : 'border-border bg-card text-muted-foreground hover:border-primary/30 hover:text-foreground'
             }`}
           >
-            <span className="block text-sm font-semibold">{option.title}</span>
-            <span className="block text-xs mt-0.5">{option.hint}</span>
+            <span className="block text-sm font-black">{option.title}</span>
+            <span className={`mt-0.5 block text-xs ${timeMode === option.key ? 'text-primary-foreground/75' : ''}`}>{option.hint}</span>
           </button>
         ))}
       </div>
 
       {timeMode === 'range' ? (
-        <div className="rounded-lg border border-border bg-card p-3 shadow-sm">
+        <div className="rounded-lg border border-border bg-card p-4 shadow-sm">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <label className="block">
-              <span className="text-xs font-semibold text-muted-foreground">Starts</span>
+              <span className="text-xs font-black uppercase tracking-[0.12em] text-muted-foreground">Starts</span>
               <div className="relative mt-1.5">
                 <Clock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none" />
                 <input
@@ -53,7 +58,7 @@ export default function TimePicker({ timeMode, onTimeMode, startTime, onStartTim
               </div>
             </label>
             <label className="block">
-              <span className="text-xs font-semibold text-muted-foreground">Ends</span>
+              <span className="text-xs font-black uppercase tracking-[0.12em] text-muted-foreground">Ends</span>
               <div className="relative mt-1.5">
                 <Clock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none" />
                 <input
@@ -65,11 +70,30 @@ export default function TimePicker({ timeMode, onTimeMode, startTime, onStartTim
               </div>
             </label>
           </div>
+          <div className="mt-3 flex flex-wrap gap-2">
+            {TIME_PRESETS.map((preset) => (
+              <button
+                key={preset.label}
+                type="button"
+                onClick={() => {
+                  onStartTime(preset.start);
+                  onEndTime(preset.end);
+                }}
+                className={`rounded-full border px-3 py-1.5 text-xs font-bold transition-all ${
+                  startTime === preset.start && endTime === preset.end
+                    ? 'border-primary bg-primary text-primary-foreground'
+                    : 'border-border bg-background text-muted-foreground hover:border-primary/30 hover:text-foreground'
+                }`}
+              >
+                {preset.label}
+              </button>
+            ))}
+          </div>
         </div>
       ) : (
-        <div className="rounded-lg border border-border bg-card p-3 shadow-sm">
+        <div className="rounded-lg border border-border bg-card p-4 shadow-sm">
           <label className="block">
-            <span className="text-xs font-semibold text-muted-foreground">Expected duration</span>
+            <span className="text-xs font-black uppercase tracking-[0.12em] text-muted-foreground">Expected duration</span>
             <div className="mt-1.5 flex items-center gap-2">
               <div className="relative flex-1">
                 <TimerReset className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none" />
@@ -91,7 +115,7 @@ export default function TimePicker({ timeMode, onTimeMode, startTime, onStartTim
                 key={hours}
                 type="button"
                 onClick={() => onEndTime(hours)}
-                className={`rounded-full border px-3 py-1.5 text-xs font-semibold transition-all ${
+                className={`rounded-full border px-3 py-1.5 text-xs font-bold transition-all ${
                   endTime === hours
                     ? 'border-primary bg-primary text-primary-foreground'
                     : 'border-border bg-background text-muted-foreground hover:border-primary/30 hover:text-foreground'
