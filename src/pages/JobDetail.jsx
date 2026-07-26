@@ -165,9 +165,13 @@ export default function JobDetail() {
     enabled: !!jobId && job?.status !== 'open',
   });
 
-  const isAvatar = user?.selected_role === 'avatar';
+  const activeRole = user?.selected_role || user?.role || 'user';
+  const isAvatar = activeRole === 'avatar';
   const isOwner = user?.email === job?.posted_by_email;
   const isHiredAgent = job?.winner_email === user?.email;
+  const shellRole = isOwner && activeRole === 'avatar' ? 'user' : activeRole;
+  const shellHomePath = shellRole === 'user' ? '/Explore' : undefined;
+  const messagesPath = isHiredAgent && activeRole === 'avatar' ? '/AvatarMessages' : '/Messages';
   const isProspectAgent = isAvatar && !isOwner && !isHiredAgent;
   const hasSubmittedProposal = !!myApplication;
   const paymentStatus = job?.payment_status || (job?.escrow_status === 'authorized' ? 'held' : job?.escrow_status === 'captured' ? 'released' : 'pending');
@@ -245,8 +249,9 @@ export default function JobDetail() {
               };
 
   if (isLoading) {
+    const activeRole = user?.selected_role || user?.role || 'user';
     return (
-      <AppShell navItems={getNavItems(user?.selected_role || user?.role || 'user')} user={user}>
+      <AppShell navItems={getNavItems(activeRole)} user={user} roleOverride={activeRole} homePathOverride={activeRole === 'user' ? '/Explore' : undefined}>
         <div className="flex h-64 items-center justify-center">
           <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary/30 border-t-primary" />
         </div>
@@ -255,8 +260,9 @@ export default function JobDetail() {
   }
 
   if (!job) {
+    const activeRole = user?.selected_role || user?.role || 'user';
     return (
-      <AppShell navItems={getNavItems(user?.selected_role || user?.role || 'user')} user={user}>
+      <AppShell navItems={getNavItems(activeRole)} user={user} roleOverride={activeRole} homePathOverride={activeRole === 'user' ? '/Explore' : undefined}>
         <div className="flex h-64 items-center justify-center text-muted-foreground">Task not found.</div>
       </AppShell>
     );
@@ -267,7 +273,7 @@ export default function JobDetail() {
     : 'Budget not set';
 
   return (
-    <AppShell navItems={getNavItems(user?.selected_role || user?.role || 'user')} user={user}>
+    <AppShell navItems={getNavItems(shellRole)} user={user} roleOverride={shellRole} homePathOverride={shellHomePath}>
       <div className="mx-auto max-w-6xl space-y-5">
         <section className="overflow-hidden rounded-lg border border-border bg-card shadow-sm">
           <div className="grid lg:grid-cols-[minmax(0,1fr)_330px]">
@@ -295,7 +301,7 @@ export default function JobDetail() {
                       onClick={async () => {
                         if (!confirm('Delete this task? This cannot be undone.')) return;
                         await base44.entities.JobPost.delete(jobId);
-                        navigate('/JobMarketplace');
+                        navigate('/Bookings');
                       }}
                     >
                       <Trash2 className="h-3.5 w-3.5" /> Delete
@@ -359,7 +365,7 @@ export default function JobDetail() {
                 </Button>
               )}
               {jobConversation && (isHiredAgent || showOwnerControls) && (
-                <Button className="h-11 gap-2 font-bold" onClick={() => navigate(`/Messages?conversation=${jobConversation.id}`)}>
+                <Button className="h-11 gap-2 font-bold" onClick={() => navigate(`${messagesPath}?conversation=${jobConversation.id}`)}>
                   <MessageCircle className="h-4 w-4" /> Open Messages
                 </Button>
               )}
@@ -629,4 +635,3 @@ export default function JobDetail() {
     </AppShell>
   );
 }
-
